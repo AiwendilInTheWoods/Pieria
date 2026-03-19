@@ -1,0 +1,200 @@
+/* Root full-screen setup */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #000;
+}
+
+#display-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Base Artwork layer styling */
+.artwork-item {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 2s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    opacity: 0;
+}
+
+.artwork-item.active {
+    opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Rendering Modes (PRD Section 4)
+   -------------------------------------------------------------------------- */
+
+/* Mode A: Ken Burns Pan & Zoom */
+.ken-burns .artwork-item {
+    background-size: cover;
+    animation: kenburns 45s linear infinite alternate;
+}
+
+@keyframes kenburns {
+    0% { transform: scale(1) translate(0%, 0%); }
+    100% { transform: scale(1.15) translate(-2%, -2%); }
+}
+
+/* Mode B: Static User-Defined Crop (Centered Cover) */
+.static-crop .artwork-item {
+    background-size: cover;
+    animation: none;
+}
+
+/* Mode C: Contain (Fallback with Matte Effect) */
+.contain-matte .artwork-item {
+    background-size: contain;
+    animation: none;
+}
+
+.matte-effect {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px) brightness(0.5);
+    z-index: 1;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Control Overlay (Minimalist Design)
+   -------------------------------------------------------------------------- */
+
+.controls-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 40px;
+    padding: 10px 25px;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+    pointer-events: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.controls-overlay:hover, 
+.controls-overlay.visible {
+    opacity: 1;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.control-group label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Select Styling */
+#playlist-select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.9rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.2s;
+}
+
+#playlist-select:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Ensure dropdown options are legible */
+#playlist-select option {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 10px;
+}
+
+/* Mode Toggles & Nav Controls */
+.mode-toggles, .nav-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.mode-toggles button, .nav-controls button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: bold;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mode-toggles button.active, .nav-controls button:active {
+    background: white;
+    color: black;
+}
+
+.mode-toggles button:hover:not(.active), .nav-controls button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* --------------------------------------------------------------------------
+   General Overlays
+   -------------------------------------------------------------------------- */
+
+.fade-overlay {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Segoe UI', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 1.5s ease-out;
+}
+
+.fade-overlay.show {
+    opacity: 1;
+}

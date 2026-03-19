@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artwork Display Engine</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="display-container" class="ken-burns">
+        <!-- Background matte layer for 'Mode C' -->
+        <div id="matte-layer" class="matte-effect hidden"></div>
+        
+        <!-- Artwork Layers for Crossfading -->
+        <div id="artwork-1" class="artwork-item active"></div>
+        <div id="artwork-2" class="artwork-item"></div>
+        
+        <!-- Minimalist Control Overlay -->
+        <div id="controls" class="controls-overlay">
+            <div class="control-group">
+                <label>Navigate</label>
+                <div class="nav-controls">
+                    <button id="prev-btn" title="Previous Image">❮</button>
+                    <button id="next-btn" title="Next Image">❯</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Playlist</label>
+                <select id="playlist-select"></select>
+            </div>
+
+            <div class="control-group">
+                <label>Rendering Mode</label>
+                <div class="mode-toggles">
+                    <button id="mode-a" class="active" title="Ken Burns Pan">↔</button>
+                    <button id="mode-b" title="Static Crop">▣</button>
+                    <button id="mode-c" title="Contain (Matte)">⛶</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Overlay -->
+        <div id="overlay" class="fade-overlay">
+            <h2 id="playlist-title"></h2>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

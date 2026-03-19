@@ -1,0 +1,21 @@
+# Environments
+venv/
+.venv/
+ENV/
+.env
+
+# Database
+*.db
+artwork.db
+
+# Media & Assets
+Artwork/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# System
+.DS_Store
+.thumbs.db

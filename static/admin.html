@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artwork Admin Console</title>
+    <!-- Cropper.js CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <!-- Sortable.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --text-color: #f1f5f9;
+            --border-color: #334155;
+            --card-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: 320px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        h1 { font-size: 1.25rem; margin-bottom: 30px; color: var(--accent-color); }
+        h2 { font-size: 0.9rem; text-transform: uppercase; color: #94a3b8; margin-top: 20px; }
+
+        .playlist-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
+        .playlist-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .playlist-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .playlist-item.active { border-color: var(--accent-color); background: rgba(59, 130, 246, 0.1); }
+
+        .playlist-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+        .playlist-meta label { font-size: 0.7rem; color: #94a3b8; }
+        .playlist-meta input { 
+            width: 50px; background: #0f172a; border: 1px solid var(--border-color); 
+            color: white; font-size: 0.75rem; padding: 2px 4px; border-radius: 4px;
+        }
+
+        .new-playlist { margin-top: 20px; display: flex; gap: 10px; }
+        .new-playlist input {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        /* Main Content */
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: border-color 0.2s;
+            cursor: pointer;
+        }
+        .upload-zone:hover { border-color: var(--accent-color); }
+        
+        .artwork-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .artwork-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            position: relative;
+            cursor: grab;
+        }
+        .artwork-card:active { cursor: grabbing; }
+        .artwork-card img { width: 100%; height: 150px; object-fit: cover; pointer-events: none; }
+        .artwork-card .info { padding: 12px; font-size: 0.85rem; }
+        .artwork-card .actions { 
+            position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; 
+        }
+        .artwork-card button {
+            background: rgba(0,0,0,0.6);
+            border: none;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .sortable-ghost { opacity: 0.4; background: var(--accent-color); }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+        }
+        .cropper-container { max-width: 800px; max-height: 500px; }
+        
+        .modal-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .ratio-buttons { display: flex; gap: 10px; }
+        .ratio-buttons button { 
+            background: #0f172a; border: 1px solid var(--border-color); 
+            color: #94a3b8; padding: 5px 12px; border-radius: 6px; cursor: pointer;
+        }
+        .ratio-buttons button.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+
+        .modal-footer { margin-top: 20px; display: flex; justify-content: flex-end; gap: 15px; }
+
+        button.primary { background: var(--accent-color); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        button.secondary { background: transparent; border: 1px solid var(--border-color); color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <aside>
+        <h1>Art Engine Admin</h1>
+        <h2>Playlists</h2>
+        <ul id="playlist-list" class="playlist-list"></ul>
+        <div class="new-playlist">
+            <input type="text" id="new-playlist-name" placeholder="New Playlist Name...">
+            <button onclick="createPlaylist()">+</button>
+        </div>
+    </aside>
+
+    <main>
+        <div id="upload-zone" class="upload-zone">
+            Drag & Drop or Click to Upload Artwork to <span id="target-playlist-name">None</span>
+            <input type="file" id="file-input" hidden multiple>
+        </div>
+
+        <div id="artwork-grid" class="artwork-grid"></div>
+    </main>
+
+    <!-- Cropping Modal -->
+    <div id="crop-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Define Static Crop</h3>
+                <div class="ratio-buttons">
+                    <button onclick="setRatio(16/9, this)">16:9</button>
+                    <button onclick="setRatio(9/16, this)">9:16</button>
+                    <button onclick="setRatio(NaN, this)" class="active">Freeform</button>
+                </div>
+            </div>
+            <div class="cropper-container">
+                <img id="cropper-image" src="">
+            </div>
+            <div class="modal-footer">
+                <button class="secondary" onclick="closeModal()">Cancel</button>
+                <button class="primary" onclick="saveCrop()">Save Crop Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
