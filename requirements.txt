@@ -6,3 +6,4 @@ python-dotenv==1.0.1
 scapy==2.6.1
 sqlalchemy==2.0.30
 Pillow==10.3.0
+google-generativeai==0.5.2

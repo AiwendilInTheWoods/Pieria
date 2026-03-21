@@ -79,6 +79,107 @@ html, body {
 }
 
 /* --------------------------------------------------------------------------
+   UI Overlay Wrapper (Museum Placard & Controls)
+   -------------------------------------------------------------------------- */
+
+.ui-overlay-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Let clicks pass through empty space to the art */
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.ui-overlay-wrapper.visible {
+    opacity: 1;
+}
+
+/* Museum Placard (Phase 3) */
+.museum-placard {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    max-height: 80vh; /* Prevent it from covering the bottom controls */
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 30px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    pointer-events: auto; /* Catch clicks for the placard */
+}
+
+.placard-content h1 {
+    font-size: 1.5rem;
+    margin: 0 0 5px 0;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+.placard-content h2 {
+    font-size: 0.9rem;
+    margin: 0 0 15px 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Segoe UI', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.placard-content p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tags-container span {
+    font-size: 0.65rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.qrcode-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.qrcode-wrapper small {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+}
+
+#qrcode img {
+    border: 4px solid white;
+    border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
    Control Overlay (Minimalist Design)
    -------------------------------------------------------------------------- */
 
@@ -94,16 +195,9 @@ html, body {
     display: flex;
     gap: 30px;
     align-items: center;
-    z-index: 100;
-    opacity: 0;
-    transition: opacity 0.4s ease-in-out;
-    pointer-events: auto;
     border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.controls-overlay:hover, 
-.controls-overlay.visible {
-    opacity: 1;
+    pointer-events: auto; /* Catch clicks for the controls */
+    z-index: 110; /* Ensure it's above the placard if they overlap */
 }
 
 .control-group {
@@ -120,29 +214,71 @@ html, body {
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Select Styling */
-#playlist-select {
+/* Custom Dropdown Styling */
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-trigger {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     font-family: 'Segoe UI', sans-serif;
     font-size: 0.9rem;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 6px 15px;
+    border-radius: 20px;
     cursor: pointer;
     outline: none;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    min-width: 140px;
+    text-align: left;
 }
 
-#playlist-select:hover {
+.dropdown-trigger:hover {
     background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Ensure dropdown options are legible */
-#playlist-select option {
-    background-color: #1a1a1a;
+.dropdown-options {
+    position: absolute;
+    bottom: 100%; /* Open upwards */
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.dropdown-option {
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-option:last-child {
+    border-bottom: none;
+}
+
+.dropdown-option:hover {
+    background: rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 10px;
+}
+
+.dropdown-option.active {
+    color: white;
+    background: rgba(59, 130, 246, 0.3);
+    font-weight: bold;
 }
 
 /* Mode Toggles & Nav Controls */

@@ -14,6 +14,7 @@
             --bg-color: #0f172a;
             --sidebar-bg: #1e293b;
             --accent-color: #3b82f6;
+            --success-color: #10b981;
             --text-color: #f1f5f9;
             --border-color: #334155;
             --card-bg: #1e293b;
@@ -39,7 +40,19 @@
         }
 
         h1 { font-size: 1.25rem; margin-bottom: 30px; color: var(--accent-color); }
-        h2 { font-size: 0.9rem; text-transform: uppercase; color: #94a3b8; margin-top: 20px; }
+        h2 { font-size: 0.9rem; text-transform: uppercase; color: #94a3b8; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+
+        .nav-tabs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .nav-btn {
+            background: transparent; border: 1px solid var(--border-color);
+            color: var(--text-color); padding: 12px; border-radius: 8px;
+            text-align: left; cursor: pointer; transition: all 0.2s;
+        }
+        .nav-btn.active { background: var(--accent-color); border-color: var(--accent-color); }
+        .nav-btn .badge { 
+            float: right; background: rgba(0,0,0,0.3); padding: 2px 8px; 
+            border-radius: 10px; font-size: 0.75rem; 
+        }
 
         .playlist-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
         .playlist-item {
@@ -74,12 +87,14 @@
         /* Main Content */
         main { flex-grow: 1; padding: 40px; overflow-y: auto; }
 
+        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
         .upload-zone {
             border: 2px dashed var(--border-color);
             border-radius: 12px;
             padding: 40px;
             text-align: center;
-            margin-bottom: 30px;
+            flex-grow: 1;
             transition: border-color 0.2s;
             cursor: pointer;
         }
@@ -87,7 +102,7 @@
         
         .artwork-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
         }
         .artwork-card {
@@ -96,11 +111,9 @@
             overflow: hidden;
             border: 1px solid var(--border-color);
             position: relative;
-            cursor: grab;
         }
-        .artwork-card:active { cursor: grabbing; }
-        .artwork-card img { width: 100%; height: 150px; object-fit: cover; pointer-events: none; }
-        .artwork-card .info { padding: 12px; font-size: 0.85rem; }
+        .artwork-card img { width: 100%; height: 180px; object-fit: cover; }
+        .artwork-card .info { padding: 15px; font-size: 0.85rem; }
         .artwork-card .actions { 
             position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; 
         }
@@ -113,7 +126,29 @@
             cursor: pointer;
         }
 
-        .sortable-ghost { opacity: 0.4; background: var(--accent-color); }
+        /* Review Queue Styling */
+        .review-card {
+            display: flex;
+            gap: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .review-image { width: 300px; flex-shrink: 0; }
+        .review-image img { width: 100%; border-radius: 8px; }
+        .review-form { flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group.full { grid-column: span 2; }
+        .form-group label { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; }
+        .form-group input, .form-group textarea {
+            background: #0f172a; border: 1px solid var(--border-color);
+            color: white; padding: 10px; border-radius: 6px; font-family: inherit;
+        }
+        .review-actions { grid-column: span 2; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+
+        .hidden { display: none !important; }
 
         /* Modal */
         .modal {
@@ -133,41 +168,89 @@
             max-height: 90%;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
         }
         .cropper-container { max-width: 800px; max-height: 500px; }
-        
         .modal-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .ratio-buttons { display: flex; gap: 10px; }
-        .ratio-buttons button { 
-            background: #0f172a; border: 1px solid var(--border-color); 
-            color: #94a3b8; padding: 5px 12px; border-radius: 6px; cursor: pointer;
-        }
-        .ratio-buttons button.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
-
         .modal-footer { margin-top: 20px; display: flex; justify-content: flex-end; gap: 15px; }
 
         button.primary { background: var(--accent-color); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        button.success { background: var(--success-color); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         button.secondary { background: transparent; border: 1px solid var(--border-color); color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+
+        /* Library Picker */
+        .library-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            max-width: 800px;
+        }
+        .picker-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .picker-card:hover { transform: scale(1.05); }
+        .picker-card img { width: 100%; height: 100px; object-fit: cover; }
+        .picker-card p { font-size: 0.7rem; padding: 5px; text-align: center; margin: 0; }
     </style>
 </head>
 <body>
     <aside>
         <h1>Art Engine Admin</h1>
-        <h2>Playlists</h2>
-        <ul id="playlist-list" class="playlist-list"></ul>
-        <div class="new-playlist">
-            <input type="text" id="new-playlist-name" placeholder="New Playlist Name...">
-            <button onclick="createPlaylist()">+</button>
+        
+        <div class="nav-tabs">
+            <button id="nav-library" class="nav-btn" onclick="switchView('library')">
+                Full Library <span id="library-count" class="badge">0</span>
+            </button>
+            <button id="nav-playlists" class="nav-btn active" onclick="switchView('playlists')">
+                Collections <span id="playlist-count" class="badge">0</span>
+            </button>
+            <button id="nav-review" class="nav-btn" onclick="switchView('review')">
+                Review Queue <span id="review-count" class="badge">0</span>
+            </button>
+        </div>
+
+        <div id="sidebar-playlists">
+            <h2>Playlists</h2>
+            <ul id="playlist-list" class="playlist-list"></ul>
+            <div class="new-playlist">
+                <input type="text" id="new-playlist-name" placeholder="New Playlist Name...">
+                <button onclick="createPlaylist()">+</button>
+            </div>
         </div>
     </aside>
 
     <main>
-        <div id="upload-zone" class="upload-zone">
-            Drag & Drop or Click to Upload Artwork to <span id="target-playlist-name">None</span>
-            <input type="file" id="file-input" hidden multiple>
+        <!-- Library View -->
+        <div id="view-library" class="hidden">
+            <div class="action-bar">
+                <div id="library-upload-zone" class="upload-zone" onclick="document.getElementById('library-file-input').click()">
+                    Drag & Drop or Click to Add to Library
+                    <input type="file" id="library-file-input" hidden multiple onchange="uploadFiles(this.files, null)">
+                </div>
+            </div>
+            <div id="library-grid" class="artwork-grid"></div>
         </div>
 
-        <div id="artwork-grid" class="artwork-grid"></div>
+        <!-- Playlist Management View -->
+        <div id="view-playlists">
+            <div class="action-bar">
+                <div id="upload-zone" class="upload-zone">
+                    Upload New to <span id="target-playlist-name">None</span>
+                    <input type="file" id="file-input" hidden multiple>
+                </div>
+                <button class="primary" style="margin-left: 20px;" onclick="openLibraryPicker()">Add from Library</button>
+            </div>
+            <div id="artwork-grid" class="artwork-grid"></div>
+        </div>
+
+        <!-- Review Queue View -->
+        <div id="view-review" class="hidden">
+            <div id="review-list"></div>
+        </div>
     </main>
 
     <!-- Cropping Modal -->
@@ -188,6 +271,17 @@
                 <button class="secondary" onclick="closeModal()">Cancel</button>
                 <button class="primary" onclick="saveCrop()">Save Crop Settings</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Library Picker Modal -->
+    <div id="library-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Artwork from Library</h3>
+                <button class="secondary" onclick="closeLibraryPicker()">×</button>
+            </div>
+            <div id="library-picker-grid" class="library-picker-grid"></div>
         </div>
     </div>
 

@@ -1,6 +1,6 @@
 /**
  * Artwork Display Engine - Frontend Client (app.js)
- * Phase 2 Polish: Dynamic Timing, Static Crop, and Manual Navigation.
+ * Phase 3: Dynamic Timing, Static Crop, Manual Navigation, Museum Placard, and Custom Dropdown.
  */
 
 const API_BASE = (window.location.origin === 'null' || window.location.protocol === 'file:') 
@@ -17,149 +17,202 @@ let currentImageUrl = '';
 let currentDisplayTime = 30000; 
 let currentCropData = null;
 let cycleTimeout = null;
+let currentPlaylists = [];
 
-/**
- * Main entry point.
- */
 async function init() {
-    console.log(`[Client] Initializing Phase 2 Engine. API Base: ${API_BASE}`);
+    console.log(`[Client] Initializing Engine. API: ${API_BASE}`);
     setupControlVisibility();
     initModeToggles();
     initNavButtons();
+    initCustomDropdown();
 
+    await refreshPlaylists(true);
+    setInterval(() => refreshPlaylists(false), 15000);
+}
+
+/**
+ * Initializes the toggle logic for the custom dropdown.
+ */
+function initCustomDropdown() {
+    const trigger = document.getElementById('playlist-current');
+    const options = document.getElementById('playlist-options');
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        options.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking elsewhere
+    document.addEventListener('click', () => {
+        options.classList.add('hidden');
+    });
+}
+
+async function refreshPlaylists(isInitial = false) {
     try {
         const response = await fetch(`${API_BASE}/playlists`);
         const playlists = await response.json();
         
         if (playlists.length > 0) {
+            currentPlaylists = playlists;
             populatePlaylistSelect(playlists);
-            const activePlaylist = playlists.find(p => (p.artworks?.length || 0) > 0) || playlists[0];
-            currentPlaylist = activePlaylist.name;
-            currentDisplayTime = activePlaylist.display_time * 1000;
             
-            document.getElementById('playlist-select').value = currentPlaylist;
-            showPlaylistTitle(currentPlaylist);
-            startDisplayCycle();
+            if (isInitial) {
+                const activePlaylist = playlists.find(p => (p.artworks?.length || 0) > 0) || playlists[0];
+                currentPlaylist = activePlaylist.name;
+                currentDisplayTime = activePlaylist.display_time * 1000;
+                
+                updateDropdownLabel(activePlaylist.name, activePlaylist.artworks?.length || 0);
+                showPlaylistTitle(currentPlaylist);
+                startDisplayCycle();
+            }
         }
-    } catch (error) {
-        console.error('[Client] Init failed:', error);
-    }
+    } catch (error) { console.error('[Client] Playlist Sync Failed:', error); }
 }
 
-/**
- * Cycle logic using recursive setTimeout.
- */
+function updateDropdownLabel(name, count) {
+    const trigger = document.getElementById('playlist-current');
+    trigger.textContent = `${name} (${count})`;
+}
+
+function populatePlaylistSelect(playlists) {
+    const optionsContainer = document.getElementById('playlist-options');
+    optionsContainer.innerHTML = '';
+
+    playlists.forEach(p => {
+        const div = document.createElement('div');
+        div.className = `dropdown-option ${p.name === currentPlaylist ? 'active' : ''}`;
+        div.textContent = `${p.name} (${p.artworks?.length || 0})`;
+        div.onclick = (e) => {
+            e.stopPropagation();
+            currentPlaylist = p.name;
+            currentDisplayTime = p.display_time * 1000;
+            currentImageIndex = null;
+            
+            updateDropdownLabel(p.name, p.artworks?.length || 0);
+            optionsContainer.classList.add('hidden');
+            showPlaylistTitle(currentPlaylist);
+            startDisplayCycle();
+            
+            // Mark active
+            document.querySelectorAll('.dropdown-option').forEach(el => el.classList.remove('active'));
+            div.classList.add('active');
+        };
+        optionsContainer.appendChild(div);
+    });
+}
+
 async function startDisplayCycle() {
-    await fetchAndTransition(1); // Default direction is Forward
-    
-    // Clear any existing timeout to prevent double-cycling
     if (cycleTimeout) clearTimeout(cycleTimeout);
+    await fetchAndTransition(1); 
     cycleTimeout = setTimeout(startDisplayCycle, currentDisplayTime);
 }
 
-/**
- * Fetches next/prev image and metadata.
- * @param {number} direction 1 for next, -1 for previous.
- */
-async function fetchAndTransition(direction = 1, isManual = false) {
+async function fetchAndTransition(direction = 1) {
     if (!currentPlaylist) return;
-
     try {
-        const params = new URLSearchParams({ 
-            playlist_name: currentPlaylist,
-            direction: direction,
-            // Honor DB order by disabling shuffle if manual, or add a toggle later
-            shuffle: isManual ? 'false' : 'false' 
-        });
-        if (currentImageIndex !== null) params.append('current_index', currentImageIndex);
+        const params = new URLSearchParams({ playlist_name: currentPlaylist, direction: direction, shuffle: 'false' });
+        if (currentImageIndex !== null && currentImageIndex !== undefined) params.append('current_index', currentImageIndex);
 
         const response = await fetch(`${API_BASE}/next-image?${params.toString()}`);
+        if (!response.ok) throw new Error('No approved images');
+        
         const data = await response.json();
-
         currentImageIndex = data.index;
         currentImageUrl = `${API_BASE}${data.image_url}`;
         currentCropData = data.crop;
+        if (data.display_time) currentDisplayTime = data.display_time * 1000;
         
-        if (data.display_time) {
-            currentDisplayTime = data.display_time * 1000;
-        }
-        
+        updatePlacard(data.metadata);
         performCrossfade(currentImageUrl, data.crop);
-    } catch (error) {
-        console.error('[Client] Transition Error:', error);
-    }
+    } catch (error) { console.error('[Client] Transition Error:', error.message); }
 }
 
-/**
- * Manages the double-buffer crossfade transition.
- */
+function showUI(duration) {
+    const uiWrapper = document.getElementById('ui-wrapper');
+    uiWrapper.classList.add('visible');
+    if (controlsTimeout) clearTimeout(controlsTimeout);
+    controlsTimeout = setTimeout(() => {
+        const options = document.getElementById('playlist-options');
+        const isOptionsOpen = !options.classList.contains('hidden');
+        if (!isOptionsOpen) uiWrapper.classList.remove('visible');
+        else showUI(2000);
+    }, duration);
+}
+
+function updatePlacard(metadata) {
+    const placard = document.getElementById('placard');
+    if (!metadata || !metadata.title) { placard.classList.add('hidden'); return; }
+    placard.classList.remove('hidden');
+    document.getElementById('art-title').textContent = metadata.title;
+    document.getElementById('art-artist-year').textContent = `${metadata.artist || 'Unknown Artist'} ${metadata.year ? '• ' + metadata.year : ''}`;
+    document.getElementById('art-description').textContent = metadata.description || '';
+    const tagsContainer = document.getElementById('art-tags');
+    tagsContainer.innerHTML = '';
+    if (metadata.tags) {
+        metadata.tags.split(',').forEach(tag => {
+            const span = document.createElement('span');
+            span.textContent = tag.trim();
+            tagsContainer.appendChild(span);
+        });
+    }
+    const qrEl = document.getElementById('qrcode');
+    qrEl.innerHTML = '';
+    new QRCode(qrEl, {
+        text: `https://www.google.com/search?q=${encodeURIComponent(metadata.artist + " " + metadata.title)}`,
+        width: 80, height: 80, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
+    });
+}
+
 function performCrossfade(imageUrl, cropData) {
     const targetLayerId = activeLayerId === 1 ? 2 : 1;
     const activeLayer = document.getElementById(`artwork-${activeLayerId}`);
     const targetLayer = document.getElementById(`artwork-${targetLayerId}`);
-    const matteLayer = document.getElementById('matte-layer');
-
     const img = new Image();
     img.src = imageUrl;
-    
     img.onload = () => {
-        if (displayMode === 'contain-matte') {
-            matteLayer.style.backgroundImage = `url('${imageUrl}')`;
-        }
-
+        const matteLayer = document.getElementById('matte-layer');
+        if (displayMode === 'contain-matte') matteLayer.style.backgroundImage = `url('${imageUrl}')`;
         targetLayer.style.backgroundImage = `url('${imageUrl}')`;
         applyModeStyles(targetLayer, img, cropData);
-
         targetLayer.classList.add('active');
         activeLayer.classList.remove('active');
         activeLayerId = targetLayerId;
         firstLoad = false;
+        setTimeout(() => { showUI(15000); }, 5000);
     };
 }
 
 function applyModeStyles(element, img, cropData) {
     const hasValidCrop = cropData && cropData.width > 1;
-
     if (displayMode === 'static-crop' && hasValidCrop) {
         const zoomX = (img.naturalWidth / cropData.width) * 100;
         const zoomY = (img.naturalHeight / cropData.height) * 100;
         const posX = (cropData.x / (img.naturalWidth - cropData.width)) * 100 || 0;
         const posY = (cropData.y / (img.naturalHeight - cropData.height)) * 100 || 0;
-
         element.style.backgroundSize = `${zoomX}% ${zoomY}%`;
         element.style.backgroundPosition = `${posX}% ${posY}%`;
         element.style.transform = 'none';
-    } else if (displayMode === 'static-crop' || displayMode === 'ken-burns') {
-        element.style.backgroundSize = 'cover';
-        element.style.backgroundPosition = 'center';
-    } else if (displayMode === 'contain-matte') {
-        element.style.backgroundSize = 'contain';
+    } else {
+        element.style.backgroundSize = displayMode === 'contain-matte' ? 'contain' : 'cover';
         element.style.backgroundPosition = 'center';
         element.style.transform = 'none';
     }
 }
 
 function initNavButtons() {
-    document.getElementById('prev-btn').addEventListener('click', () => {
-        // Reset cycle timer on manual interaction
-        if (cycleTimeout) clearTimeout(cycleTimeout);
-        fetchAndTransition(-1);
-        cycleTimeout = setTimeout(startDisplayCycle, currentDisplayTime);
-    });
+    document.getElementById('prev-btn').addEventListener('click', () => startDisplayCycleManually(-1));
+    document.getElementById('next-btn').addEventListener('click', () => startDisplayCycleManually(1));
+}
 
-    document.getElementById('next-btn').addEventListener('click', () => {
-        if (cycleTimeout) clearTimeout(cycleTimeout);
-        fetchAndTransition(1);
-        cycleTimeout = setTimeout(startDisplayCycle, currentDisplayTime);
-    });
+async function startDisplayCycleManually(direction) {
+    if (cycleTimeout) clearTimeout(cycleTimeout);
+    await fetchAndTransition(direction);
+    cycleTimeout = setTimeout(startDisplayCycle, currentDisplayTime);
 }
 
 function initModeToggles() {
-    const modeButtons = {
-        'ken-burns': document.getElementById('mode-a'),
-        'static-crop': document.getElementById('mode-b'),
-        'contain-matte': document.getElementById('mode-c')
-    };
+    const modeButtons = { 'ken-burns': document.getElementById('mode-a'), 'static-crop': document.getElementById('mode-b'), 'contain-matte': document.getElementById('mode-c') };
     Object.entries(modeButtons).forEach(([mode, btn]) => {
         btn.addEventListener('click', () => {
             setMode(mode);
@@ -188,34 +241,9 @@ function setMode(mode) {
     }
 }
 
-function populatePlaylistSelect(playlists) {
-    const select = document.getElementById('playlist-select');
-    playlists.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.name;
-        opt.textContent = `${p.name} (${p.artworks?.length || 0})`;
-        select.appendChild(opt);
-    });
-    select.addEventListener('change', (e) => {
-        currentPlaylist = e.target.value;
-        const p = playlists.find(pl => pl.name === currentPlaylist);
-        if (p) currentDisplayTime = p.display_time * 1000;
-        currentImageIndex = null;
-        showPlaylistTitle(currentPlaylist);
-        if (cycleTimeout) clearTimeout(cycleTimeout);
-        startDisplayCycle();
-    });
-}
-
 function setupControlVisibility() {
-    const controls = document.getElementById('controls');
-    document.addEventListener('mousemove', () => {
-        controls.classList.add('visible');
-        clearTimeout(controlsTimeout);
-        controlsTimeout = setTimeout(() => {
-            if (!controls.matches(':hover')) controls.classList.remove('visible');
-        }, 3000);
-    });
+    document.addEventListener('mousemove', () => { showUI(10000); });
+    document.addEventListener('mousedown', () => { showUI(10000); });
 }
 
 function showPlaylistTitle(title) {

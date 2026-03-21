@@ -1,6 +1,7 @@
 /**
  * Artwork Admin Console - Client Logic (admin.js)
- * Phase 2 Polish: Reactive UI, Ratios, Display Timings, Reordering, and Precision Scaling.
+ * Phase 3 Refactor: Many-to-Many Playlists and Centralized Library.
+ * Enhanced with automatic background polling for live updates.
  */
 
 const API_BASE = (window.location.origin === 'null' || window.location.protocol === 'file:') 
@@ -9,24 +10,81 @@ const API_BASE = (window.location.origin === 'null' || window.location.protocol 
 
 let currentPlaylistId = null;
 let currentPlaylists = [];
+let fullLibrary = [];
 let cropper = null;
 let currentArtworkId = null;
-let sortable = null;
+let currentView = 'playlists';
+let pollInterval = null;
 
-/**
- * Initializes the dashboard.
- */
 async function init() {
-    console.log('[Admin] Initializing Admin Console...');
+    console.log('[Admin] Initializing Refactored Console...');
     setupUploadZone();
     setupSortable();
-    await fetchPlaylists();
+    await refreshData();
+    
+    // Start background polling every 5 seconds for live updates
+    startPolling();
+}
+
+/**
+ * Periodically refreshes data to reflect background AI processing or uploads.
+ */
+function startPolling() {
+    if (pollInterval) clearInterval(pollInterval);
+    pollInterval = setInterval(async () => {
+        // Only refresh if no modal is open to avoid disrupting user interaction
+        const isModalOpen = document.getElementById('crop-modal').style.display === 'flex' || 
+                           document.getElementById('library-modal').style.display === 'flex';
+        
+        if (!isModalOpen) {
+            await refreshData();
+        }
+    }, 5000);
+}
+
+async function refreshData() {
+    // We fetch in parallel for efficiency
+    await Promise.all([
+        fetchPlaylists(),
+        fetchLibrary(),
+        fetchReviewQueue()
+    ]);
+}
+
+function switchView(view) {
+    currentView = view;
+    document.getElementById('nav-playlists').classList.toggle('active', view === 'playlists');
+    document.getElementById('nav-library').classList.toggle('active', view === 'library');
+    document.getElementById('nav-review').classList.toggle('active', view === 'review');
+    
+    document.getElementById('view-playlists').classList.toggle('hidden', view !== 'playlists');
+    document.getElementById('view-library').classList.toggle('hidden', view !== 'library');
+    document.getElementById('view-review').classList.toggle('hidden', view !== 'review');
+    
+    document.getElementById('sidebar-playlists').classList.toggle('hidden', view !== 'playlists');
+}
+
+async function fetchLibrary() {
+    try {
+        const response = await fetch(`${API_BASE}/artworks`);
+        const data = await response.json();
+        
+        // Simple optimization: only re-render if count changed
+        if (data.length !== fullLibrary.length) {
+            fullLibrary = data;
+            document.getElementById('library-count').textContent = fullLibrary.length;
+            renderLibraryGrid();
+        }
+    } catch (error) { console.error('[Admin] Fetch library failed:', error); }
 }
 
 async function fetchPlaylists() {
     try {
         const response = await fetch(`${API_BASE}/playlists`);
-        currentPlaylists = await response.json();
+        const data = await response.json();
+        
+        currentPlaylists = data;
+        document.getElementById('playlist-count').textContent = currentPlaylists.length;
         renderSidebar();
         
         if (currentPlaylistId) {
@@ -35,8 +93,114 @@ async function fetchPlaylists() {
         } else if (currentPlaylists.length > 0) {
             selectPlaylist(currentPlaylists[0].id);
         }
-    } catch (error) { console.error('[Admin] Fetch failed:', error); }
+    } catch (error) { console.error('[Admin] Fetch playlists failed:', error); }
 }
+
+async function fetchReviewQueue() {
+    try {
+        const response = await fetch(`${API_BASE}/artworks/pending`);
+        const data = await response.json();
+        
+        // Always update count
+        document.getElementById('review-count').textContent = data.length;
+        
+        // Only re-render list if count changed to preserve scroll/input state if user is looking
+        const list = document.getElementById('review-list');
+        if (data.length !== list.children.length || (data.length > 0 && list.innerHTML.includes('Queue is empty'))) {
+            renderReviewQueue(data);
+        }
+    } catch (error) { console.error('[Admin] Fetch queue failed:', error); }
+}
+
+function renderLibraryGrid() {
+    const grid = document.getElementById('library-grid');
+    grid.innerHTML = '';
+    fullLibrary.forEach(art => {
+        const card = document.createElement('div');
+        card.className = 'artwork-card';
+        card.innerHTML = `
+            <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
+            <div class="info">
+                <strong>${art.title || art.filename}</strong><br>
+                <small>${art.artist || 'Unknown'}</small>
+            </div>
+            <div class="actions">
+                <button onclick="openCropModal(${art.id})">Crop</button>
+                <button onclick="deleteArtworkPermanently(${art.id})" style="color: #ef4444;">Delete Permanently</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderArtworkGrid(artworks) {
+    const grid = document.getElementById('artwork-grid');
+    grid.innerHTML = '';
+    artworks.forEach(art => {
+        const card = document.createElement('div');
+        card.className = 'artwork-card';
+        card.dataset.id = art.id;
+        card.innerHTML = `
+            <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
+            <div class="info">
+                <strong>${art.title || art.filename}</strong><br>
+                <small>${art.artist || 'Unknown'}</small>
+            </div>
+            <div class="actions">
+                <button onclick="openCropModal(${art.id})">Crop</button>
+                <button onclick="removeArtworkFromPlaylist(${art.id})" style="color: #f59e0b;">Remove</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+async function removeArtworkFromPlaylist(artworkId) {
+    if (!currentPlaylistId) return;
+    try {
+        await fetch(`${API_BASE}/playlists/${currentPlaylistId}/artworks/${artworkId}`, { method: 'DELETE' });
+        await refreshData();
+    } catch (error) { console.error('[Admin] Unlink failed:', error); }
+}
+
+async function deleteArtworkPermanently(id) {
+    if (!confirm('PERMANENTLY delete this artwork from the library and all playlists? This wipes the file.')) return;
+    try {
+        await fetch(`${API_BASE}/artworks/${id}`, { method: 'DELETE' });
+        await refreshData();
+    } catch (error) { console.error('[Admin] Delete failed:', error); }
+}
+
+function openLibraryPicker() {
+    const modal = document.getElementById('library-modal');
+    const grid = document.getElementById('library-picker-grid');
+    grid.innerHTML = '';
+    
+    const playlist = currentPlaylists.find(p => p.id === currentPlaylistId);
+    const existingIds = new Set(playlist.artworks.map(a => a.id));
+
+    fullLibrary.filter(art => !existingIds.has(art.id)).forEach(art => {
+        const card = document.createElement('div');
+        card.className = 'picker-card';
+        card.onclick = () => addExistingToPlaylist(art.id);
+        card.innerHTML = `
+            <img src="${API_BASE}/artworks/${art.id}/thumbnail">
+            <p>${art.title || art.filename}</p>
+        `;
+        grid.appendChild(card);
+    });
+    modal.style.display = 'flex';
+}
+
+async function addExistingToPlaylist(artworkId) {
+    try {
+        await fetch(`${API_BASE}/playlists/${currentPlaylistId}/artworks/${artworkId}`, { method: 'POST' });
+        closeLibraryPicker();
+        await refreshData();
+    } catch (error) { console.error('[Admin] Link failed:', error); }
+}
+
+function closeLibraryPicker() { document.getElementById('library-modal').style.display = 'none'; }
 
 function renderSidebar() {
     const list = document.getElementById('playlist-list');
@@ -44,9 +208,13 @@ function renderSidebar() {
     currentPlaylists.forEach(p => {
         const li = document.createElement('li');
         li.className = `playlist-item ${p.id === currentPlaylistId ? 'active' : ''}`;
-        li.dataset.id = p.id; // Store ID for lookup
+        li.dataset.id = p.id;
         li.innerHTML = `
-            <div><strong>${p.name}</strong> (${p.artworks?.length || 0})</div>
+            <div style="display:flex; justify-content:space-between;">
+                <strong>${p.name}</strong>
+                <button onclick="event.stopPropagation(); deletePlaylist(${p.id}, '${p.name}')" style="background:none; border:none; color:#ef4444;">×</button>
+            </div>
+            <div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">${p.artworks?.length || 0} images</div>
             <div class="playlist-meta" onclick="event.stopPropagation()">
                 <label>Cycle (s):</label>
                 <input type="number" value="${p.display_time}" onchange="updatePlaylistTime(${p.id}, this.value)">
@@ -57,6 +225,56 @@ function renderSidebar() {
     });
 }
 
+async function deletePlaylist(id, name) {
+    if (!confirm(`Delete playlist "${name}"? Library images will remain.`)) return;
+    try {
+        await fetch(`${API_BASE}/playlists/${id}`, { method: 'DELETE' });
+        if (currentPlaylistId === id) currentPlaylistId = null;
+        await refreshData();
+    } catch (error) { console.error('[Admin] Delete failed:', error); }
+}
+
+function selectPlaylist(id) {
+    currentPlaylistId = id;
+    const playlist = currentPlaylists.find(p => p.id === id);
+    if (!playlist) return;
+    document.querySelectorAll('.playlist-item').forEach(el => el.classList.toggle('active', parseInt(el.dataset.id) === id));
+    document.getElementById('target-playlist-name').textContent = playlist.name;
+    renderArtworkGrid(playlist.artworks || []);
+}
+
+function setupUploadZone() {
+    const zones = [document.getElementById('upload-zone'), document.getElementById('library-upload-zone')];
+    const inputs = [document.getElementById('file-input'), document.getElementById('library-file-input')];
+
+    zones.forEach((zone, idx) => {
+        if (!zone) return;
+        zone.ondragover = (e) => { e.preventDefault(); zone.style.borderColor = '#3b82f6'; };
+        zone.ondragleave = () => { zone.style.borderColor = '#334155'; };
+        zone.ondrop = (e) => {
+            e.preventDefault();
+            zone.style.borderColor = '#334155';
+            const pid = (zone.id === 'upload-zone') ? currentPlaylistId : null;
+            if (e.dataTransfer.files) uploadFiles(e.dataTransfer.files, pid);
+        };
+    });
+
+    document.getElementById('upload-zone').onclick = () => document.getElementById('file-input').click();
+    document.getElementById('file-input').onchange = (e) => { if (e.target.files) uploadFiles(e.target.files, currentPlaylistId); };
+}
+
+async function uploadFiles(files, playlistId) {
+    for (let file of files) {
+        const fd = new FormData();
+        fd.append('file', file);
+        if (playlistId) fd.append('playlist_id', playlistId);
+        try { await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd }); }
+        catch (error) { console.error('[Admin] Upload failed:', error); }
+    }
+    // Immediate refresh after upload completes
+    await refreshData();
+}
+
 async function updatePlaylistTime(id, seconds) {
     try {
         await fetch(`${API_BASE}/playlists/${id}`, {
@@ -64,51 +282,13 @@ async function updatePlaylistTime(id, seconds) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ display_time: parseInt(seconds) })
         });
-        await fetchPlaylists();
+        await refreshData();
     } catch (error) { console.error('[Admin] Timing update failed:', error); }
-}
-
-function selectPlaylist(id) {
-    currentPlaylistId = id;
-    const playlist = currentPlaylists.find(p => p.id === id);
-    if (!playlist) return;
-
-    // Immediate UI Feedback: Update highlighting
-    document.querySelectorAll('.playlist-item').forEach(el => {
-        el.classList.toggle('active', parseInt(el.dataset.id) === id);
-    });
-
-    document.getElementById('target-playlist-name').textContent = playlist.name;
-    renderArtworkGrid(playlist.artworks || []);
-}
-
-function renderArtworkGrid(artworks) {
-    const grid = document.getElementById('artwork-grid');
-    grid.innerHTML = '';
-    artworks.forEach(art => {
-        const card = document.createElement('div');
-        card.className = 'artwork-card';
-        card.dataset.id = art.id;
-        const thumbUrl = `${API_BASE}/artworks/${art.id}/thumbnail`;
-        card.innerHTML = `
-            <img src="${thumbUrl}" alt="${art.filename}">
-            <div class="info">
-                <strong>${art.filename}</strong><br>
-                <small>Res: ${art.original_width}x${art.original_height}</small><br>
-                <small>Crop: ${Math.round(art.crop_width)}x${Math.round(art.crop_height)}</small>
-            </div>
-            <div class="actions">
-                <button onclick="event.stopPropagation(); openCropModal(${art.id})">Crop</button>
-                <button onclick="event.stopPropagation(); deleteArtwork(${art.id})" style="color: #ef4444;">Delete</button>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
 }
 
 function setupSortable() {
     const grid = document.getElementById('artwork-grid');
-    sortable = new Sortable(grid, {
+    new Sortable(grid, {
         animation: 150, ghostClass: 'sortable-ghost',
         onEnd: async () => {
             const ids = Array.from(grid.children).map(el => parseInt(el.dataset.id));
@@ -125,62 +305,66 @@ async function saveOrder(ids) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ artwork_ids: ids })
         });
-        await fetchPlaylists();
+        await refreshData();
     } catch (error) { console.error('[Admin] Reorder failed:', error); }
 }
 
-async function createPlaylist() {
-    const input = document.getElementById('new-playlist-name');
-    const name = input.value.trim();
-    if (!name) return;
+function renderReviewQueue(artworks) {
+    const list = document.getElementById('review-list');
+    list.innerHTML = artworks.length === 0 ? '<p style="text-align:center; color:#94a3b8; margin-top:40px;">Queue is empty.</p>' : '';
+    artworks.forEach(art => {
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        card.innerHTML = `
+            <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail"></div>
+            <div class="review-form">
+                <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
+                <div class="form-group"><label>Artist</label><input type="text" id="artist-${art.id}" value="${art.artist || ''}"></div>
+                <div class="form-group"><label>Year</label><input type="text" id="year-${art.id}" value="${art.year || ''}"></div>
+                <div class="form-group"><label>Tags</label><input type="text" id="tags-${art.id}" value="${art.tags || ''}"></div>
+                <div class="form-group full"><label>Description</label><textarea id="desc-${art.id}" rows="3">${art.description || ''}</textarea></div>
+                <div class="review-actions">
+                    <button class="secondary" onclick="deleteArtworkPermanently(${art.id})">Delete</button>
+                    <button class="success" onclick="approveArtwork(${art.id})">Approve & Publish</button>
+                </div>
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+async function approveArtwork(id) {
+    const metadata = {
+        title: document.getElementById(`title-${id}`).value,
+        artist: document.getElementById(`artist-${id}`).value,
+        year: document.getElementById(`year-${id}`).value,
+        tags: document.getElementById(`tags-${id}`).value,
+        description: document.getElementById(`desc-${id}`).value
+    };
     try {
-        const fd = new FormData(); fd.append('name', name);
-        const res = await fetch(`${API_BASE}/playlists`, { method: 'POST', body: fd });
-        if (res.ok) { input.value = ''; await fetchPlaylists(); }
-    } catch (error) { console.error('[Admin] Playlist creation failed:', error); }
+        await fetch(`${API_BASE}/artworks/${id}/approve`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(metadata)
+        });
+        await refreshData();
+    } catch (error) { console.error('[Admin] Approval failed:', error); }
 }
 
-function setupUploadZone() {
-    const zone = document.getElementById('upload-zone');
-    const input = document.getElementById('file-input');
-    zone.onclick = () => input.click();
-    input.onchange = (e) => { if (e.target.files) uploadFiles(e.target.files); };
-}
-
-async function uploadFiles(files) {
-    if (!currentPlaylistId) return alert('Select playlist.');
-    for (let file of files) {
-        const fd = new FormData(); fd.append('file', file);
-        try { await fetch(`${API_BASE}/playlists/${currentPlaylistId}/upload`, { method: 'POST', body: fd }); }
-        catch (error) { console.error('[Admin] Upload error:', error); }
-    }
-    await fetchPlaylists();
-}
-
-async function deleteArtwork(id) {
-    if (!confirm('Delete this artwork?')) return;
-    try {
-        const res = await fetch(`${API_BASE}/artworks/${id}`, { method: 'DELETE' });
-        if (res.ok) await fetchPlaylists();
-    } catch (error) { console.error('[Admin] Delete error:', error); }
-}
-
-/**
- * Opens the Cropper modal and loads optimized preview.
- */
 function openCropModal(id) {
     currentArtworkId = id;
     const modal = document.getElementById('crop-modal');
     const image = document.getElementById('cropper-image');
-    
-    const playlist = currentPlaylists.find(p => p.id === currentPlaylistId);
-    const artwork = playlist.artworks.find(a => a.id === id);
-
+    let artwork = fullLibrary.find(a => a.id === id);
+    if (!artwork) {
+        for (let p of currentPlaylists) {
+            artwork = p.artworks.find(a => a.id === id);
+            if (artwork) break;
+        }
+    }
     image.src = `${API_BASE}/artworks/${id}/preview`;
     modal.style.display = 'flex';
-
     if (cropper) cropper.destroy();
-    
     cropper = new Cropper(image, {
         viewMode: 1, dragMode: 'move', autoCropArea: 0.8,
         restore: false, guides: true, center: true, highlight: false,
@@ -215,12 +399,16 @@ async function saveCrop() {
     if (!cropper || !currentArtworkId) return;
     const data = cropper.getData();
     const canvasData = cropper.getCanvasData();
-    const playlist = currentPlaylists.find(p => p.id === currentPlaylistId);
-    const artwork = playlist.artworks.find(a => a.id === currentArtworkId);
+    let artwork = fullLibrary.find(a => a.id === currentArtworkId);
+    if (!artwork) {
+        for (let p of currentPlaylists) {
+            artwork = p.artworks.find(a => a.id === currentArtworkId);
+            if (artwork) break;
+        }
+    }
     const ratio = artwork.original_width / canvasData.naturalWidth;
-
     try {
-        const response = await fetch(`${API_BASE}/artworks/${currentArtworkId}/crop`, {
+        await fetch(`${API_BASE}/artworks/${currentArtworkId}/crop`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -228,7 +416,9 @@ async function saveCrop() {
                 crop_width: data.width * ratio, crop_height: data.height * ratio
             })
         });
-        if (response.ok) { closeModal(); await fetchPlaylists(); }
+        document.getElementById('crop-modal').style.display = 'none';
+        if (cropper) cropper.destroy();
+        await refreshData();
     } catch (error) { console.error('[Admin] Save crop failed:', error); }
 }
 

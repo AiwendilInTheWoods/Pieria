@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artwork Display Engine</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- QRCode.js CDN for Phase 3 Museum Placard -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <div id="display-container" class="ken-burns">
@@ -15,27 +17,47 @@
         <div id="artwork-1" class="artwork-item active"></div>
         <div id="artwork-2" class="artwork-item"></div>
         
-        <!-- Minimalist Control Overlay -->
-        <div id="controls" class="controls-overlay">
-            <div class="control-group">
-                <label>Navigate</label>
-                <div class="nav-controls">
-                    <button id="prev-btn" title="Previous Image">❮</button>
-                    <button id="next-btn" title="Next Image">❯</button>
+        <!-- UI Overlay Wrapper -->
+        <div id="ui-wrapper" class="ui-overlay-wrapper">
+            
+            <!-- Museum Placard (Phase 3) -->
+            <div id="placard" class="museum-placard">
+                <div class="placard-content">
+                    <h1 id="art-title"></h1>
+                    <h2 id="art-artist-year"></h2>
+                    <p id="art-description"></p>
+                    <div id="art-tags" class="tags-container"></div>
+                </div>
+                <div id="qrcode-container" class="qrcode-wrapper">
+                    <div id="qrcode"></div>
+                    <small>Scan to Learn More</small>
                 </div>
             </div>
 
-            <div class="control-group">
-                <label>Playlist</label>
-                <select id="playlist-select"></select>
-            </div>
+            <!-- Minimalist Control Overlay -->
+            <div id="controls" class="controls-overlay">
+                <div class="control-group">
+                    <label>Navigate</label>
+                    <div class="nav-controls">
+                        <button id="prev-btn" title="Previous Image">❮</button>
+                        <button id="next-btn" title="Next Image">❯</button>
+                    </div>
+                </div>
 
-            <div class="control-group">
-                <label>Rendering Mode</label>
-                <div class="mode-toggles">
-                    <button id="mode-a" class="active" title="Ken Burns Pan">↔</button>
-                    <button id="mode-b" title="Static Crop">▣</button>
-                    <button id="mode-c" title="Contain (Matte)">⛶</button>
+                <div class="control-group">
+                    <label>Playlist</label>
+                    <div id="playlist-dropdown" class="custom-dropdown">
+                        <button id="playlist-current" class="dropdown-trigger">Loading...</button>
+                        <div id="playlist-options" class="dropdown-options hidden"></div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Rendering Mode</label>
+                    <div class="mode-toggles">
+                        <button id="mode-a" class="active" title="Ken Burns Pan">↔</button>
+                        <button id="mode-b" title="Static Crop">▣</button>
+                        <button id="mode-c" title="Contain (Matte)">⛶</button>
+                    </div>
                 </div>
             </div>
         </div>
