@@ -1,7 +1,7 @@
 /**
  * Artwork Display Engine - Frontend Client (app.js)
  * Phase 3: Dynamic Timing, Static Crop, Manual Navigation, Museum Placard, and Custom Dropdown.
- * V3.2: Support for CCW Rotation via URL Parameter (?rotate=true)
+ * V3.3: Support for CCW Rotation via URL Parameter (?rotate=true) - Trigger Fix
  */
 
 // 1. Digital Signage Rotation Logic
@@ -28,7 +28,7 @@ let cycleTimeout = null;
 let currentPlaylists = [];
 
 async function init() {
-    console.log(`[Client] Initializing Engine V3.2. API: ${API_BASE}`);
+    console.log(`[Client] Initializing Engine V3.3. API: ${API_BASE}`);
     setupUIInteraction();
     initModeToggles();
     initNavButtons();
@@ -49,13 +49,13 @@ function setupUIInteraction() {
         
         if (isRotated) {
             // In -90deg (CCW) rotation:
-            // The physical bottom of the TV is the browser's LEFT edge.
-            const threshold = window.innerWidth * 0.3; // Left 30% of browser
-            if (e.clientX < threshold) {
+            // The physical bottom of the TV is the browser's RIGHT edge.
+            const threshold = window.innerWidth * 0.7; // Right 30% of browser
+            if (e.clientX > threshold) {
                 showControls(10000);
             }
         } else {
-            // Standard landscape: Bottom 30%
+            // Standard landscape: Bottom 30% of browser height
             const threshold = window.innerHeight * 0.7;
             if (e.clientY > threshold) {
                 showControls(10000);
@@ -68,8 +68,8 @@ function setupUIInteraction() {
         const isRotated = document.body.classList.contains('force-portrait');
         
         if (isRotated) {
-            const threshold = window.innerWidth * 0.3;
-            if (e.clientX < threshold) showControls(10000);
+            const threshold = window.innerWidth * 0.7;
+            if (e.clientX > threshold) showControls(10000);
         } else {
             const threshold = window.innerHeight * 0.7;
             if (e.clientY > threshold) showControls(10000);
