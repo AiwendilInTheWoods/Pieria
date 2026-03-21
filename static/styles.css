@@ -93,34 +93,32 @@ body.force-portrait .ui-overlay-wrapper {
     z-index: 100;
 }
 
-/* Museum Placard - Refined for TV Scaling & Overflow */
+/* Museum Placard - Dynamic Height for Full Descriptions */
 .museum-placard {
     position: absolute;
     left: 5vw;
     top: 50%;
     transform: translateY(-50%);
     
-    /* Relative units for proportional scaling */
-    width: 25vmin; 
+    width: 28vmin; 
     min-width: 280px;
-    max-width: 450px;
-    max-height: 80vh;
+    max-width: 500px;
     
-    /* Layout & Overflow safety */
+    /* Allow it to grow, but cap it before it hits screen edges */
+    max-height: 85vh; 
+    
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Strictly prevent scrollbars */
     
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 3vmin;
+    border-radius: 2vmin;
+    padding: 3.5vmin;
     color: white;
     gap: 2vmin;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    box-shadow: 0 2vmin 5vmin rgba(0,0,0,0.6);
     
-    /* Default hidden */
     opacity: 0;
     transition: opacity 0.8s ease-in-out;
 }
@@ -138,10 +136,10 @@ body.placard-visible .museum-placard {
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(15px);
-    border-radius: 60px;
-    padding: 12px 35px;
+    border-radius: 6vmin;
+    padding: 1.5vmin 4vmin;
     display: flex;
-    gap: 40px;
+    gap: 4vmin;
     align-items: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 110;
@@ -156,65 +154,72 @@ body.controls-visible .controls-overlay {
 
 .placard-content {
     flex-grow: 1;
-    overflow: hidden;
+    overflow-y: auto; /* Scroll if description is truly massive */
     display: flex;
     flex-direction: column;
 }
 
+/* Hide scrollbar for clean look but allow scrolling */
+.placard-content::-webkit-scrollbar { width: 0px; background: transparent; }
+
 .placard-content h1 {
-    font-size: clamp(1.2rem, 2vmin, 2.2rem);
-    margin: 0 0 0.5vh 0;
+    font-size: 2.8vmin;
+    margin: 0 0 0.8vmin 0;
     font-family: 'Playfair Display', serif;
     font-weight: 700;
+    line-height: 1.2;
 }
 
 .placard-content h2 {
-    font-size: clamp(0.7rem, 1.2vmin, 1.1rem);
-    margin: 0 0 2vh 0;
+    font-size: 1.4vmin;
+    margin: 0 0 2.5vmin 0;
     color: rgba(255, 255, 255, 0.6);
     font-family: 'Segoe UI', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.1rem;
+    letter-spacing: 0.15vmin;
 }
 
+/* Updated: Full text visibility */
 .placard-content p {
-    font-size: clamp(0.8rem, 1.1vmin, 1.2rem);
+    font-size: 1.6vmin;
     line-height: 1.6;
-    margin: 0 0 3vh 0;
+    margin: 0 0 3vmin 0;
     color: rgba(255, 255, 255, 0.8);
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* Remove clamping */
+    display: block;
+    overflow: visible;
 }
 
 .tags-container {
-    display: flex; flex-wrap: wrap; gap: 8px;
-    margin-bottom: 1vh;
+    display: flex; flex-wrap: wrap; gap: 1vmin;
+    margin-bottom: 1.5vmin;
 }
 
 .tags-container span {
-    font-size: clamp(0.6rem, 0.8vmin, 0.9rem);
+    font-size: 1vmin;
     background: rgba(255, 255, 255, 0.1);
-    padding: 4px 12px;
-    border-radius: 20px;
+    padding: 0.6vmin 1.5vmin;
+    border-radius: 2vmin;
     text-transform: uppercase;
+    letter-spacing: 0.05vmin;
 }
 
-/* QR Code Native Scaling Fix */
+/* QR Code Native Scaling */
 .qrcode-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding-top: 2vh;
+    gap: 1.2vmin;
+    padding-top: 2.5vmin;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
 }
 
 .qrcode-wrapper small {
-    font-size: 0.6rem;
+    font-size: 0.9vmin;
     color: rgba(255, 255, 255, 0.4);
     text-transform: uppercase;
-    letter-spacing: 0.1rem;
+    letter-spacing: 0.15vmin;
 }
 
 #qrcode {
@@ -228,13 +233,13 @@ body.controls-visible .controls-overlay {
     max-width: 100%;
     height: auto !important;
     object-fit: contain;
-    border: 4px solid white;
-    border-radius: 4px;
+    border: 0.5vmin solid white;
+    border-radius: 0.5vmin;
 }
 
-.control-group { display: flex; flex-direction: column; gap: 6px; }
+.control-group { display: flex; flex-direction: column; gap: 0.8vmin; }
 .control-group label {
-    font-size: 0.7rem;
+    font-size: 1vmin;
     color: rgba(255, 255, 255, 0.4);
     text-transform: uppercase;
     font-family: 'Segoe UI', sans-serif;
@@ -248,41 +253,40 @@ body.controls-visible .controls-overlay {
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     font-family: 'Segoe UI', sans-serif;
-    font-size: 1rem;
-    padding: 10px 20px;
-    border-radius: 30px;
+    font-size: 1.4vmin;
+    padding: 1vmin 2.5vmin;
+    border-radius: 4vmin;
     cursor: pointer;
     outline: none;
     transition: all 0.2s;
-    min-width: 180px;
+    min-width: 20vmin;
     text-align: left;
 }
 
 .dropdown-trigger:hover {
     background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .dropdown-options {
     position: absolute;
     bottom: 100%; left: 50%; transform: translateX(-50%);
-    margin-bottom: 15px;
+    margin-bottom: 2vmin;
     background: rgba(20, 20, 20, 0.95);
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    width: 240px;
-    max-height: 400px;
+    border-radius: 2vmin;
+    width: 25vmin;
+    max-height: 40vh;
     overflow-y: auto;
     z-index: 1000;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 2vmin 5vmin rgba(0,0,0,0.6);
 }
 
 .dropdown-option {
-    padding: 15px 25px;
+    padding: 1.5vmin 3vmin;
     color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1.3vmin;
     transition: all 0.2s;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -291,16 +295,16 @@ body.controls-visible .controls-overlay {
 .dropdown-option:hover { background: rgba(255, 255, 255, 0.1); color: white; }
 .dropdown-option.active { color: white; background: rgba(59, 130, 246, 0.3); font-weight: bold; }
 
-.mode-toggles, .nav-controls { display: flex; gap: 12px; }
+.mode-toggles, .nav-controls { display: flex; gap: 1.5vmin; }
 
 .mode-toggles button, .nav-controls button {
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: rgba(255, 255, 255, 0.6);
-    width: 40px; height: 40px;
+    width: 5vmin; height: 5vmin;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1rem; font-weight: bold;
+    font-size: 1.5vmin; font-weight: bold;
     transition: all 0.2s;
     display: flex; align-items: center; justify-content: center;
 }
@@ -316,7 +320,7 @@ body.controls-visible .controls-overlay {
     color: rgba(255, 255, 255, 0.7);
     font-family: 'Segoe UI', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.2rem;
+    letter-spacing: 0.2vmin;
     pointer-events: none;
     z-index: 10;
     opacity: 0;
