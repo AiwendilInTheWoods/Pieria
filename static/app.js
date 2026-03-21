@@ -1,7 +1,7 @@
 /**
  * Artwork Display Engine - Frontend Client (app.js)
  * Phase 3: Dynamic Timing, Static Crop, Manual Navigation, Museum Placard, and Custom Dropdown.
- * V3.3: Support for CCW Rotation via URL Parameter (?rotate=true) - Trigger Fix
+ * V3.4: Support for Digital Signage Rotation and True Fullscreen Mode.
  */
 
 // 1. Digital Signage Rotation Logic
@@ -9,6 +9,16 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('rotate') === 'true') {
     document.body.classList.add('force-portrait');
 }
+
+// 2. True Fullscreen Trigger
+// Requirement: Hide address bar on TVs by forcing full-screen on first interaction.
+document.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.warn(`[Client] Fullscreen request failed: ${err.message}`);
+        });
+    }
+}, { once: false }); // We keep it active in case it exits
 
 const API_BASE = (window.location.origin === 'null' || window.location.protocol === 'file:') 
     ? 'http://localhost:8000' 
@@ -28,7 +38,7 @@ let cycleTimeout = null;
 let currentPlaylists = [];
 
 async function init() {
-    console.log(`[Client] Initializing Engine V3.3. API: ${API_BASE}`);
+    console.log(`[Client] Initializing Engine V3.4. API: ${API_BASE}`);
     setupUIInteraction();
     initModeToggles();
     initNavButtons();
@@ -48,14 +58,11 @@ function setupUIInteraction() {
         const isRotated = document.body.classList.contains('force-portrait');
         
         if (isRotated) {
-            // In -90deg (CCW) rotation:
-            // The physical bottom of the TV is the browser's RIGHT edge.
-            const threshold = window.innerWidth * 0.7; // Right 30% of browser
+            const threshold = window.innerWidth * 0.7; 
             if (e.clientX > threshold) {
                 showControls(10000);
             }
         } else {
-            // Standard landscape: Bottom 30% of browser height
             const threshold = window.innerHeight * 0.7;
             if (e.clientY > threshold) {
                 showControls(10000);
