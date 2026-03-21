@@ -1,8 +1,14 @@
 /**
  * Artwork Display Engine - Frontend Client (app.js)
  * Phase 3: Dynamic Timing, Static Crop, Manual Navigation, Museum Placard, and Custom Dropdown.
- * V3: Precision UI Triggering.
+ * V3.2: Support for CCW Rotation via URL Parameter (?rotate=true)
  */
+
+// 1. Digital Signage Rotation Logic
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('rotate') === 'true') {
+    document.body.classList.add('force-portrait');
+}
 
 const API_BASE = (window.location.origin === 'null' || window.location.protocol === 'file:') 
     ? 'http://localhost:8000' 
@@ -22,7 +28,7 @@ let cycleTimeout = null;
 let currentPlaylists = [];
 
 async function init() {
-    console.log(`[Client] Initializing Engine V3. API: ${API_BASE}`);
+    console.log(`[Client] Initializing Engine V3.2. API: ${API_BASE}`);
     setupUIInteraction();
     initModeToggles();
     initNavButtons();
@@ -36,24 +42,37 @@ async function init() {
  * Robust UI Trigger Logic
  */
 function setupUIInteraction() {
-    // We use a single document-level listener to calculate exactly what should be shown.
-    // This is more reliable than multiple competing listeners.
     document.addEventListener('mousemove', (e) => {
-        // ALWAYS show placard on any movement
         showPlacard(10000);
 
-        // ONLY show controls if mouse is in bottom 30% of screen
-        const threshold = window.innerHeight * 0.7;
-        if (e.clientY > threshold) {
-            showControls(10000);
+        const isRotated = document.body.classList.contains('force-portrait');
+        
+        if (isRotated) {
+            // In -90deg (CCW) rotation:
+            // The physical bottom of the TV is the browser's LEFT edge.
+            const threshold = window.innerWidth * 0.3; // Left 30% of browser
+            if (e.clientX < threshold) {
+                showControls(10000);
+            }
+        } else {
+            // Standard landscape: Bottom 30%
+            const threshold = window.innerHeight * 0.7;
+            if (e.clientY > threshold) {
+                showControls(10000);
+            }
         }
     });
 
     document.addEventListener('mousedown', (e) => {
         showPlacard(10000);
-        const threshold = window.innerHeight * 0.7;
-        if (e.clientY > threshold) {
-            showControls(10000);
+        const isRotated = document.body.classList.contains('force-portrait');
+        
+        if (isRotated) {
+            const threshold = window.innerWidth * 0.3;
+            if (e.clientX < threshold) showControls(10000);
+        } else {
+            const threshold = window.innerHeight * 0.7;
+            if (e.clientY > threshold) showControls(10000);
         }
     });
 }
@@ -73,7 +92,6 @@ function showControls(duration) {
         const options = document.getElementById('playlist-options');
         const isOptionsOpen = !options.classList.contains('hidden');
         const controls = document.getElementById('controls');
-        // Stay visible if interacting with dropdown or hovering the bar
         const isHovering = controls.matches(':hover');
 
         if (!isOptionsOpen && !isHovering) {
@@ -199,14 +217,8 @@ function performCrossfade(imageUrl, cropData) {
         activeLayer.classList.remove('active');
         activeLayerId = targetLayerId;
         firstLoad = false;
-
-        // Force hide controls on transition
         document.body.classList.remove('controls-visible');
-        
-        // Show ONLY placard after 5s
-        setTimeout(() => { 
-            showPlacard(15000); 
-        }, 5000);
+        setTimeout(() => { showPlacard(15000); }, 5000);
     };
 }
 

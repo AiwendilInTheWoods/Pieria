@@ -1,3 +1,23 @@
+/* --------------------------------------------------------------------------
+   Screen Rotation (Digital Signage support)
+   -------------------------------------------------------------------------- */
+
+body.force-portrait {
+    width: 100vh;
+    height: 100vw;
+    transform: rotate(-90deg);
+    transform-origin: top left;
+    position: absolute;
+    top: 100%;
+    left: 0;
+}
+
+/* Ensure rotated overlays remain interactive and correctly positioned */
+body.force-portrait .ui-overlay-wrapper {
+    width: 100vh;
+    height: 100vw;
+}
+
 /* Root full-screen setup */
 html, body {
     margin: 0; padding: 0;
