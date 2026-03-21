@@ -20,10 +20,47 @@ async function init() {
     console.log('[Admin] Initializing Refactored Console...');
     setupUploadZone();
     setupSortable();
+    setupPlaylistInput(); // Add key listener
     await refreshData();
     
     // Start background polling every 5 seconds for live updates
     startPolling();
+}
+
+/**
+ * Handles Enter key on playlist input.
+ */
+function setupPlaylistInput() {
+    const input = document.getElementById('new-playlist-name');
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            createPlaylist();
+        }
+    });
+}
+
+/**
+ * Creates a new playlist via the API.
+ */
+async function createPlaylist() {
+    const input = document.getElementById('new-playlist-name');
+    const name = input.value.trim();
+    if (!name) return;
+
+    try {
+        const fd = new FormData();
+        fd.append('name', name);
+        const res = await fetch(`${API_BASE}/playlists`, { method: 'POST', body: fd });
+        if (res.ok) {
+            input.value = '';
+            await refreshData();
+        } else {
+            const err = await res.json();
+            alert(`Error: ${err.detail}`);
+        }
+    } catch (error) {
+        console.error('[Admin] Playlist creation failed:', error);
+    }
 }
 
 /**
@@ -83,9 +120,16 @@ async function fetchPlaylists() {
         const response = await fetch(`${API_BASE}/playlists`);
         const data = await response.json();
         
+        // Check if any playlist input is currently focused to avoid overwriting user edits
+        const focusedEl = document.activeElement;
+        const isEditingSidebar = focusedEl && focusedEl.tagName === 'INPUT' && focusedEl.closest('.playlist-item');
+
         currentPlaylists = data;
         document.getElementById('playlist-count').textContent = currentPlaylists.length;
-        renderSidebar();
+        
+        if (!isEditingSidebar) {
+            renderSidebar();
+        }
         
         if (currentPlaylistId) {
             const active = currentPlaylists.find(p => p.id === currentPlaylistId);
@@ -217,7 +261,8 @@ function renderSidebar() {
             <div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">${p.artworks?.length || 0} images</div>
             <div class="playlist-meta" onclick="event.stopPropagation()">
                 <label>Cycle (s):</label>
-                <input type="number" value="${p.display_time}" onchange="updatePlaylistTime(${p.id}, this.value)">
+                <input type="number" value="${p.display_time}" min="1" max="14400" 
+                    onchange="updatePlaylistTime(${p.id}, this.value)">
             </div>
         `;
         li.onclick = () => selectPlaylist(p.id);
@@ -277,13 +322,22 @@ async function uploadFiles(files, playlistId) {
 
 async function updatePlaylistTime(id, seconds) {
     try {
+        // Temporarily pause polling
+        if (pollInterval) clearInterval(pollInterval);
+        
         await fetch(`${API_BASE}/playlists/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ display_time: parseInt(seconds) })
         });
+        
+        // Refresh local state and restart polling
         await refreshData();
-    } catch (error) { console.error('[Admin] Timing update failed:', error); }
+        startPolling();
+    } catch (error) { 
+        console.error('[Admin] Timing update failed:', error); 
+        startPolling();
+    }
 }
 
 function setupSortable() {

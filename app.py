@@ -204,6 +204,20 @@ async def create_playlist(name: str = Form(...), db: Session = Depends(get_db)):
     new_p = PlaylistModel(name=name); db.add(new_p); db.commit(); db.refresh(new_p)
     return new_p
 
+@app.patch("/playlists/{playlist_id}", response_model=PlaylistSchema)
+async def update_playlist(playlist_id: int, data: PlaylistUpdate, db: Session = Depends(get_db)):
+    p = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail="Playlist not found.")
+    
+    if data.display_time is not None:
+        p.display_time = data.display_time
+        logger.info(f"Updating display_time for playlist {playlist_id} to {data.display_time}")
+    
+    db.commit()
+    db.refresh(p)
+    return p
+
 @app.delete("/playlists/{playlist_id}")
 async def delete_playlist(playlist_id: int, db: Session = Depends(get_db)):
     p = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first()
