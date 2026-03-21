@@ -1,0 +1,15 @@
+services:
+  art-curator:
+    build: .
+    container_name: art-curator
+    ports:
+      - "8000:8000"
+    volumes:
+      # Map the local artwork library for persistence
+      - ./Artwork:/app/Artwork
+      # Map the SQLite database file for state persistence
+      # Note: Mapping artwork.db as per app logic
+      - ./artwork.db:/app/artwork.db
+    env_file:
+      - .env
+    restart: unless-stopped

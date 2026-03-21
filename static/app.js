@@ -1,6 +1,7 @@
 /**
  * Artwork Display Engine - Frontend Client (app.js)
  * Phase 3: Dynamic Timing, Static Crop, Manual Navigation, Museum Placard, and Custom Dropdown.
+ * V3: Precision UI Triggering.
  */
 
 const API_BASE = (window.location.origin === 'null' || window.location.protocol === 'file:') 
@@ -12,6 +13,7 @@ let currentImageIndex = null;
 let activeLayerId = 1;
 let firstLoad = true;
 let displayMode = 'ken-burns'; 
+let placardTimeout = null;
 let controlsTimeout = null;
 let currentImageUrl = '';
 let currentDisplayTime = 30000; 
@@ -20,8 +22,8 @@ let cycleTimeout = null;
 let currentPlaylists = [];
 
 async function init() {
-    console.log(`[Client] Initializing Engine. API: ${API_BASE}`);
-    setupControlVisibility();
+    console.log(`[Client] Initializing Engine V3. API: ${API_BASE}`);
+    setupUIInteraction();
     initModeToggles();
     initNavButtons();
     initCustomDropdown();
@@ -31,54 +33,90 @@ async function init() {
 }
 
 /**
- * Initializes the toggle logic for the custom dropdown.
+ * Robust UI Trigger Logic
  */
+function setupUIInteraction() {
+    // We use a single document-level listener to calculate exactly what should be shown.
+    // This is more reliable than multiple competing listeners.
+    document.addEventListener('mousemove', (e) => {
+        // ALWAYS show placard on any movement
+        showPlacard(10000);
+
+        // ONLY show controls if mouse is in bottom 30% of screen
+        const threshold = window.innerHeight * 0.7;
+        if (e.clientY > threshold) {
+            showControls(10000);
+        }
+    });
+
+    document.addEventListener('mousedown', (e) => {
+        showPlacard(10000);
+        const threshold = window.innerHeight * 0.7;
+        if (e.clientY > threshold) {
+            showControls(10000);
+        }
+    });
+}
+
+function showPlacard(duration) {
+    document.body.classList.add('placard-visible');
+    if (placardTimeout) clearTimeout(placardTimeout);
+    placardTimeout = setTimeout(() => {
+        document.body.classList.remove('placard-visible');
+    }, duration);
+}
+
+function showControls(duration) {
+    document.body.classList.add('controls-visible');
+    if (controlsTimeout) clearTimeout(controlsTimeout);
+    controlsTimeout = setTimeout(() => {
+        const options = document.getElementById('playlist-options');
+        const isOptionsOpen = !options.classList.contains('hidden');
+        const controls = document.getElementById('controls');
+        // Stay visible if interacting with dropdown or hovering the bar
+        const isHovering = controls.matches(':hover');
+
+        if (!isOptionsOpen && !isHovering) {
+            document.body.classList.remove('controls-visible');
+        } else {
+            showControls(2000); 
+        }
+    }, duration);
+}
+
 function initCustomDropdown() {
     const trigger = document.getElementById('playlist-current');
     const options = document.getElementById('playlist-options');
-
-    trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        options.classList.toggle('hidden');
-    });
-
-    // Close dropdown when clicking elsewhere
-    document.addEventListener('click', () => {
-        options.classList.add('hidden');
-    });
+    trigger.addEventListener('click', (e) => { e.stopPropagation(); options.classList.toggle('hidden'); });
+    document.addEventListener('click', () => { options.classList.add('hidden'); });
 }
 
 async function refreshPlaylists(isInitial = false) {
     try {
         const response = await fetch(`${API_BASE}/playlists`);
         const playlists = await response.json();
-        
         if (playlists.length > 0) {
             currentPlaylists = playlists;
             populatePlaylistSelect(playlists);
-            
             if (isInitial) {
                 const activePlaylist = playlists.find(p => (p.artworks?.length || 0) > 0) || playlists[0];
                 currentPlaylist = activePlaylist.name;
                 currentDisplayTime = activePlaylist.display_time * 1000;
-                
                 updateDropdownLabel(activePlaylist.name, activePlaylist.artworks?.length || 0);
                 showPlaylistTitle(currentPlaylist);
                 startDisplayCycle();
             }
         }
-    } catch (error) { console.error('[Client] Playlist Sync Failed:', error); }
+    } catch (error) { console.error('[Client] Sync Failed:', error); }
 }
 
 function updateDropdownLabel(name, count) {
-    const trigger = document.getElementById('playlist-current');
-    trigger.textContent = `${name} (${count})`;
+    document.getElementById('playlist-current').textContent = `${name} (${count})`;
 }
 
 function populatePlaylistSelect(playlists) {
     const optionsContainer = document.getElementById('playlist-options');
     optionsContainer.innerHTML = '';
-
     playlists.forEach(p => {
         const div = document.createElement('div');
         div.className = `dropdown-option ${p.name === currentPlaylist ? 'active' : ''}`;
@@ -88,13 +126,10 @@ function populatePlaylistSelect(playlists) {
             currentPlaylist = p.name;
             currentDisplayTime = p.display_time * 1000;
             currentImageIndex = null;
-            
             updateDropdownLabel(p.name, p.artworks?.length || 0);
             optionsContainer.classList.add('hidden');
             showPlaylistTitle(currentPlaylist);
             startDisplayCycle();
-            
-            // Mark active
             document.querySelectorAll('.dropdown-option').forEach(el => el.classList.remove('active'));
             div.classList.add('active');
         };
@@ -113,31 +148,16 @@ async function fetchAndTransition(direction = 1) {
     try {
         const params = new URLSearchParams({ playlist_name: currentPlaylist, direction: direction, shuffle: 'false' });
         if (currentImageIndex !== null && currentImageIndex !== undefined) params.append('current_index', currentImageIndex);
-
         const response = await fetch(`${API_BASE}/next-image?${params.toString()}`);
         if (!response.ok) throw new Error('No approved images');
-        
         const data = await response.json();
         currentImageIndex = data.index;
         currentImageUrl = `${API_BASE}${data.image_url}`;
         currentCropData = data.crop;
         if (data.display_time) currentDisplayTime = data.display_time * 1000;
-        
         updatePlacard(data.metadata);
         performCrossfade(currentImageUrl, data.crop);
     } catch (error) { console.error('[Client] Transition Error:', error.message); }
-}
-
-function showUI(duration) {
-    const uiWrapper = document.getElementById('ui-wrapper');
-    uiWrapper.classList.add('visible');
-    if (controlsTimeout) clearTimeout(controlsTimeout);
-    controlsTimeout = setTimeout(() => {
-        const options = document.getElementById('playlist-options');
-        const isOptionsOpen = !options.classList.contains('hidden');
-        if (!isOptionsOpen) uiWrapper.classList.remove('visible');
-        else showUI(2000);
-    }, duration);
 }
 
 function updatePlacard(metadata) {
@@ -179,7 +199,14 @@ function performCrossfade(imageUrl, cropData) {
         activeLayer.classList.remove('active');
         activeLayerId = targetLayerId;
         firstLoad = false;
-        setTimeout(() => { showUI(15000); }, 5000);
+
+        // Force hide controls on transition
+        document.body.classList.remove('controls-visible');
+        
+        // Show ONLY placard after 5s
+        setTimeout(() => { 
+            showPlacard(15000); 
+        }, 5000);
     };
 }
 
@@ -214,11 +241,7 @@ async function startDisplayCycleManually(direction) {
 function initModeToggles() {
     const modeButtons = { 'ken-burns': document.getElementById('mode-a'), 'static-crop': document.getElementById('mode-b'), 'contain-matte': document.getElementById('mode-c') };
     Object.entries(modeButtons).forEach(([mode, btn]) => {
-        btn.addEventListener('click', () => {
-            setMode(mode);
-            Object.values(modeButtons).forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        });
+        btn.addEventListener('click', () => { setMode(mode); Object.values(modeButtons).forEach(b => b.classList.remove('active')); btn.classList.add('active'); });
     });
 }
 
@@ -239,11 +262,6 @@ function setMode(mode) {
     } else {
         matteLayer.classList.add('hidden');
     }
-}
-
-function setupControlVisibility() {
-    document.addEventListener('mousemove', () => { showUI(10000); });
-    document.addEventListener('mousedown', () => { showUI(10000); });
 }
 
 function showPlaylistTitle(title) {

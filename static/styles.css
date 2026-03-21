@@ -1,45 +1,35 @@
 /* Root full-screen setup */
 html, body {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
+    margin: 0; padding: 0;
+    width: 100vw; height: 100vh;
     overflow: hidden;
     background-color: #000;
 }
 
 #display-container {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex; justify-content: center; align-items: center;
 }
 
 /* Base Artwork layer styling */
 .artwork-item {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     background-position: center;
     background-repeat: no-repeat;
     transition: opacity 2s ease-in-out;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     z-index: 2;
     opacity: 0;
 }
 
-.artwork-item.active {
-    opacity: 1;
-}
+.artwork-item.active { opacity: 1; }
 
 /* --------------------------------------------------------------------------
-   Rendering Modes (PRD Section 4)
+   Rendering Modes
    -------------------------------------------------------------------------- */
 
-/* Mode A: Ken Burns Pan & Zoom */
 .ken-burns .artwork-item {
     background-size: cover;
     animation: kenburns 45s linear infinite alternate;
@@ -50,62 +40,48 @@ html, body {
     100% { transform: scale(1.15) translate(-2%, -2%); }
 }
 
-/* Mode B: Static User-Defined Crop (Centered Cover) */
 .static-crop .artwork-item {
     background-size: cover;
     animation: none;
 }
 
-/* Mode C: Contain (Fallback with Matte Effect) */
 .contain-matte .artwork-item {
     background-size: contain;
     animation: none;
 }
 
 .matte-effect {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     background-size: cover;
     background-position: center;
     filter: blur(40px) brightness(0.5);
     z-index: 1;
 }
 
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
 /* --------------------------------------------------------------------------
-   UI Overlay Wrapper (Museum Placard & Controls)
+   UI Overlay Components
    -------------------------------------------------------------------------- */
 
 .ui-overlay-wrapper {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* Let clicks pass through empty space to the art */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
     z-index: 100;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
 }
 
-.ui-overlay-wrapper.visible {
-    opacity: 1;
-}
-
-/* Museum Placard (Phase 3) */
+/* Museum Placard */
 .museum-placard {
     position: absolute;
     left: 40px;
     top: 50%;
     transform: translateY(-50%);
     width: 320px;
-    max-height: 80vh; /* Prevent it from covering the bottom controls */
+    max-height: 80vh;
     overflow-y: auto;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(15px);
@@ -117,7 +93,43 @@ html, body {
     flex-direction: column;
     gap: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    pointer-events: auto; /* Catch clicks for the placard */
+    
+    /* Default hidden */
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+}
+
+/* Show placard when class is on BODY */
+body.placard-visible .museum-placard {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Controls Overlay */
+.controls-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 40px;
+    padding: 10px 25px;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 110;
+    
+    /* Default hidden */
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+}
+
+/* Show controls when class is on BODY */
+body.controls-visible .controls-overlay {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .placard-content h1 {
@@ -144,9 +156,7 @@ html, body {
 }
 
 .tags-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: flex; flex-wrap: wrap; gap: 8px;
 }
 
 .tags-container span {
@@ -159,10 +169,7 @@ html, body {
 }
 
 .qrcode-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
     padding-top: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -174,37 +181,9 @@ html, body {
     letter-spacing: 0.1rem;
 }
 
-#qrcode img {
-    border: 4px solid white;
-    border-radius: 4px;
-}
+#qrcode img { border: 4px solid white; border-radius: 4px; }
 
-/* --------------------------------------------------------------------------
-   Control Overlay (Minimalist Design)
-   -------------------------------------------------------------------------- */
-
-.controls-overlay {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 40px;
-    padding: 10px 25px;
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    pointer-events: auto; /* Catch clicks for the controls */
-    z-index: 110; /* Ensure it's above the placard if they overlap */
-}
-
-.control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+.control-group { display: flex; flex-direction: column; gap: 4px; }
 
 .control-group label {
     font-size: 0.65rem;
@@ -215,10 +194,7 @@ html, body {
 }
 
 /* Custom Dropdown Styling */
-.custom-dropdown {
-    position: relative;
-    display: inline-block;
-}
+.custom-dropdown { position: relative; display: inline-block; }
 
 .dropdown-trigger {
     background: rgba(255, 255, 255, 0.1);
@@ -242,9 +218,7 @@ html, body {
 
 .dropdown-options {
     position: absolute;
-    bottom: 100%; /* Open upwards */
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 100%; left: 50%; transform: translateX(-50%);
     margin-bottom: 10px;
     background: rgba(20, 20, 20, 0.95);
     backdrop-filter: blur(10px);
@@ -266,14 +240,9 @@ html, body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.dropdown-option:last-child {
-    border-bottom: none;
-}
+.dropdown-option:last-child { border-bottom: none; }
 
-.dropdown-option:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-}
+.dropdown-option:hover { background: rgba(255, 255, 255, 0.1); color: white; }
 
 .dropdown-option.active {
     color: white;
@@ -281,46 +250,29 @@ html, body {
     font-weight: bold;
 }
 
-/* Mode Toggles & Nav Controls */
-.mode-toggles, .nav-controls {
-    display: flex;
-    gap: 8px;
-}
+.mode-toggles, .nav-controls { display: flex; gap: 8px; }
 
 .mode-toggles button, .nav-controls button {
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: rgba(255, 255, 255, 0.6);
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 0.75rem;
-    font-weight: bold;
+    font-size: 0.75rem; font-weight: bold;
     transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
 }
 
-.mode-toggles button.active, .nav-controls button:active {
-    background: white;
-    color: black;
-}
+.mode-toggles button.active, .nav-controls button:active { background: white; color: black; }
 
 .mode-toggles button:hover:not(.active), .nav-controls button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+    background: rgba(255, 255, 255, 0.2); color: white;
 }
-
-/* --------------------------------------------------------------------------
-   General Overlays
-   -------------------------------------------------------------------------- */
 
 .fade-overlay {
     position: absolute;
-    top: 40px;
-    left: 40px;
+    top: 40px; left: 40px;
     color: rgba(255, 255, 255, 0.7);
     font-family: 'Segoe UI', sans-serif;
     text-transform: uppercase;
@@ -331,6 +283,4 @@ html, body {
     transition: opacity 1.5s ease-out;
 }
 
-.fade-overlay.show {
-    opacity: 1;
-}
+.fade-overlay.show { opacity: 1; }
