@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Art Engine Remote</title>
+    <title>Screen Docent Remote</title>
     
     <!-- Apple Web App Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Art Remote">
+    <meta name="apple-mobile-web-app-title" content="Screen Docent">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="apple-touch-icon" href="/logo.svg">
 
     <style>
         :root {
@@ -81,11 +83,26 @@
 
         .remote-btn:active { transform: scale(0.95); background: var(--accent-color); }
         .remote-btn span { font-size: 0.7rem; font-weight: normal; opacity: 0.6; }
-        .footer { margin-top: auto; padding-top: 40px; font-size: 0.7rem; opacity: 0.4; }
+        .footer { 
+            margin-top: auto; 
+            padding: 40px 20px 20px; 
+            font-size: 0.7rem; 
+            opacity: 0.6; 
+            display: flex; 
+            justify-content: space-between; 
+            width: 100%; 
+            max-width: 500px;
+            box-sizing: border-box;
+            color: #94a3b8;
+        }
+        .footer a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
-    <h1>Art Engine Control</h1>
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+        <img src="/logo.svg" alt="Logo" style="height: 32px;">
+        <h1 style="margin: 0; font-size: 1.5rem;">Screen Docent Remote</h1>
+    </div>
     
     <div class="control-panel">
         <div style="display:flex; flex-direction:column; gap:10px;">
@@ -124,7 +141,10 @@
 
     <div id="playlist-grid" class="playlist-grid"></div>
 
-    <div class="footer">Smart Discovery Remote V2.1</div>
+    <div class="footer">
+        <span>Smart Discovery Remote V2.2</span>
+        <a href="/help">Help & Documentation</a>
+    </div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);

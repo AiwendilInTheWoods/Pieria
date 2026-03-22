@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Docent Help</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --text-color: #f1f5f9;
+            --border-color: #334155;
+            --card-bg: #1e293b;
+            --code-bg: #000;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 40px 20px;
+            position: fixed;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        aside h1 { font-size: 1.25rem; color: var(--accent-color); margin-top: 0; }
+        aside nav { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
+        aside a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; padding: 10px; border-radius: 8px; transition: 0.2s; }
+        aside a:hover { background: rgba(255,255,255,0.05); color: white; }
+        aside a.back { color: var(--accent-color); border: 1px solid var(--accent-color); text-align: center; margin-bottom: 20px; }
+
+        main { flex-grow: 1; padding: 60px 80px; margin-left: 280px; max-width: 900px; }
+
+        section { margin-bottom: 60px; }
+        h2 { font-size: 1.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; color: var(--accent-color); }
+        h3 { font-size: 1.2rem; color: #f8fafc; margin-top: 30px; }
+
+        p, li { color: #cbd5e1; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+
+        .hierarchy-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .hierarchy-step { flex: 1; }
+        .hierarchy-step span { display: block; font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; }
+        .hierarchy-step strong { font-size: 1.1rem; color: var(--accent-color); }
+        .hierarchy-arrow { color: #475569; font-size: 1.5rem; }
+
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+        th { background: rgba(255,255,255,0.05); text-align: left; padding: 15px; font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; border-bottom: 1px solid var(--border-color); }
+        td { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-family: 'Monaco', monospace; font-size: 0.85rem; color: #ec4899; }
+
+        .tip { background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent-color); padding: 20px; border-radius: 0 12px 12px 0; margin: 20px 0; }
+        .tip strong { color: var(--accent-color); display: block; margin-bottom: 5px; }
+
+        pre {
+            background: var(--code-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre code { background: none; padding: 0; color: #f1f5f9; }
+    </style>
+</head>
+<body>
+    <aside>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+            <img src="/logo.svg" alt="Logo" style="height: 32px;">
+            <h1 style="margin: 0; font-size: 1.25rem; color: var(--accent-color);">Screen Docent</h1>
+        </div>
+        <nav>
+            <a href="/admin" class="back">← Back to Dashboard</a>
+            <a href="#quickstart">Quickstart Deployment</a>
+            <a href="#ai-curator">AI Curator & Workflow</a>
+            <a href="#hierarchy">Configuration Hierarchy</a>
+            <a href="#params">URL Parameters Reference</a>
+            <a href="#remote">Mobile Remote Control</a>
+            <a href="#hardware">Hardware & Kiosk Tips</a>
+        </nav>
+    </aside>
+
+    <main>
+        <section id="quickstart">
+            <h2>Quickstart Deployment Guide</h2>
+            <p>Get your artwork display engine running in minutes using Docker. This is the recommended method for most users as it bundles all dependencies (Python, Database, and Web Server) into a single, isolated container.</p>
+            
+            <h3>Prerequisites</h3>
+            <ul>
+                <li><strong>Docker:</strong> Installed and running on your host machine.</li>
+                <li><strong>Docker Compose:</strong> (Included with Docker Desktop on Windows/Mac, may need separate install on Linux).</li>
+            </ul>
+
+            <h3>Installation Commands</h3>
+            <p>Open your terminal and run the following sequence to clone the repository and start the engine:</p>
+            <pre><code># 1. Clone the repository
+git clone https://github.com/your-repo/art-engine.git
+
+# 2. Enter the directory
+cd art-engine
+
+# 3. Build and start the container in detached mode
+docker compose up -d --build</code></pre>
+
+            <h3>First Steps</h3>
+            <p>Once the container is healthy, you can access the different parts of the system via your browser:</p>
+            <ul>
+                <li><strong>Admin Dashboard:</strong> <code>http://localhost:8000/admin</code> &mdash; Start here to create your first playlist and upload high-resolution images.</li>
+                <li><strong>Main Display:</strong> <code>http://localhost:8000/</code> &mdash; Point your TV or monitor browser here to begin the artwork loop.</li>
+                <li><strong>Mobile Remote:</strong> <code>http://localhost:8000/remote</code> &mdash; Access this on your phone to control the playback from your couch.</li>
+            </ul>
+        </section>
+
+        <section id="ai-curator">
+            <h2>AI Curator Agent & Review Workflow</h2>
+            <p>The engine features an autonomous AI pipeline that acts as a digital curator, analyzing your artwork and generating high-quality metadata for the "Museum Placard" display.</p>
+
+            <h3>The .env File & API Keys</h3>
+            <p>Before running the system via Docker, you must create a <code>.env</code> file in the project root to store your credentials. This file is ignored by version control to keep your keys secure.</p>
+            <pre><code># Required for the AI Curator Agent
+GEMINI_API_KEY=your_free_key_here</code></pre>
+            <p><strong>Get a Key:</strong> You can obtain a free API key from <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-color);">Google AI Studio</a>. The free tier is more than sufficient for standard personal use.</p>
+
+            <h3>The AI Curator Pipeline</h3>
+            <p>When you upload an image via the Admin Dashboard, the following automated workflow is triggered in the background:</p>
+            <ul>
+                <li><strong>Visual Analysis:</strong> The backend agent sends an optimized version of the image to the Vision model.</li>
+                <li><strong>Metadata Generation:</strong> The AI generates a museum-grade <strong>Title</strong>, a <strong>Contextual Description</strong> (2-sentence historical or artistic blurb), and a set of <strong>Descriptive Tags</strong>.</li>
+                <li><strong>Database Entry:</strong> This information is saved alongside your image, awaiting your final approval.</li>
+            </ul>
+
+            <h3>The 'Pending Review' State</h3>
+            <p>To ensure accuracy and prevent AI "hallucinations" from appearing on your displays, all newly ingested art is placed in a <strong>Pending Review</strong> state. This acts as a human-in-the-loop safety mechanism.</p>
+            <ul>
+                <li>Navigate to the <strong>Review Queue</strong> tab in the Admin Console.</li>
+                <li>Review the AI-generated titles and descriptions. You can edit any field to correct historical facts or artistic interpretations.</li>
+                <li>Click <strong>"Approve & Publish"</strong> to move the artwork into the live display rotation.</li>
+            </ul>
+
+            <div class="tip">
+                <strong>Developer Note: Swapping Models</strong><br>
+                While the system uses Gemini by default for its high performance-to-cost ratio, the backend is designed to be modular. Advanced users can swap to <strong>OpenAI (GPT-4o)</strong>, <strong>Anthropic (Claude 3.5 Sonnet)</strong>, or local models by modifying the <code>agents.py</code> logic and adding the respective API keys to your <code>.env</code> file.
+            </div>
+        </section>
+
+        <section id="hierarchy">
+            <h2>The Configuration Hierarchy</h2>
+            <p>To ensure maximum flexibility across different hardware deployments, the engine uses a <strong>strict priority hierarchy</strong> for all display settings. Settings defined at higher levels always override those at lower levels.</p>
+            
+            <div class="hierarchy-box">
+                <div class="hierarchy-step">
+                    <span>Priority 1</span>
+                    <strong>URL Parameters</strong>
+                </div>
+                <div class="hierarchy-arrow">→</div>
+                <div class="hierarchy-step">
+                    <span>Priority 2</span>
+                    <strong>Playlist Defaults</strong>
+                </div>
+                <div class="hierarchy-arrow">→</div>
+                <div class="hierarchy-step">
+                    <span>Priority 3</span>
+                    <strong>Global Defaults</strong>
+                </div>
+            </div>
+
+            <p><strong>Note:</strong> All time-based configurations (Cycle Time, Wait/Show timers) are measured in <strong>seconds</strong> in the database and Admin UI, and converted to milliseconds only by the rendering engine.</p>
+        </section>
+
+        <section id="params">
+            <h2>URL Parameters Reference</h2>
+            <p>Append these parameters to your display URL (e.g., <code>http://SERVER:8000/?display=tv_01&rotate=true</code>) to override localized behavior.</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Parameter</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>rotate</code></td>
+                        <td>Forcefully rotates the entire DOM by -90 degrees. Useful for TVs mounted vertically where the OS remains in landscape mode.</td>
+                        <td><code>rotate=true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>display</code></td>
+                        <td>Assigns a unique ID to the display. This ID allows the Mobile Remote to target this specific screen. Defaults to <code>default</code>.</td>
+                        <td><code>display=living_room</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>cycle_time</code></td>
+                        <td>The number of seconds between artwork transitions.</td>
+                        <td><code>cycle_time=60</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>mode</code></td>
+                        <td>Overrides the visual rendering mode. Options: <code>ken-burns</code>, <code>static-crop</code>, <code>contain-matte</code>.</td>
+                        <td><code>mode=contain-matte</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>placard_wait</code></td>
+                        <td>Seconds to wait after a new image loads before the info placard slides in.</td>
+                        <td><code>placard_wait=5</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>placard_show</code></td>
+                        <td>Seconds to keep the placard visible during its initial entrance.</td>
+                        <td><code>placard_show=20</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>placard_manual</code></td>
+                        <td>Seconds to display the placard when manually triggered by the remote or user interaction.</td>
+                        <td><code>placard_manual=15</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="remote">
+            <h2>The Mobile Remote Control</h2>
+            <p>The remote console is accessible at <code>/remote</code> from any mobile browser on the same network.</p>
+            <ul>
+                <li><strong>WebSocket Routing:</strong> The remote uses WebSockets for instant control. When you change a playlist or mode on the remote, the targeted TV updates immediately without a page refresh.</li>
+                <li><strong>Target Selection:</strong> Use the "Target Display" dropdown at the top of the remote to select which screen you want to control. Displays appear in this list as soon as they are opened in a browser.</li>
+                <li><strong>Instant Actions:</strong> The remote provides dedicated buttons for Next/Previous artwork and a "Show Placard" button to quickly identify pieces.</li>
+            </ul>
+        </section>
+
+        <section id="hardware">
+            <h2>Hardware & Kiosk Best Practices</h2>
+            <p>For a seamless "Museum" experience, your display should behave like a native appliance rather than a browser window.</p>
+            
+            <h3>Recommended Browsers</h3>
+            <ul>
+                <li><strong>Android / Fire OS:</strong> We highly recommend <a href="https://www.fully-kiosk.com/" target="_blank" style="color:var(--accent-color);">Fully Kiosk Browser</a>. It allows you to lock the TV to a specific URL, hide all toolbars, and prevent the screen from sleeping.</li>
+                <li><strong>Android TV:</strong> <strong>TV Bro</strong> is a great open-source alternative that handles full-screen web apps well on leanback devices.</li>
+            </ul>
+
+            <div class="tip">
+                <strong>Pro Tip:</strong> Most smart TVs have an "Auto Power Off" setting. Ensure this is disabled to prevent the artwork from stopping after a few hours of "inactivity."
+            </div>
+        </section>
+    </main>
+</body>
+</html>

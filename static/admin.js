@@ -259,10 +259,31 @@ function renderSidebar() {
                 <button onclick="event.stopPropagation(); deletePlaylist(${p.id}, '${p.name}')" style="background:none; border:none; color:#ef4444;">×</button>
             </div>
             <div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">${p.artworks?.length || 0} images</div>
-            <div class="playlist-meta" onclick="event.stopPropagation()">
-                <label>Cycle (s):</label>
-                <input type="number" value="${p.display_time}" min="1" max="14400" 
-                    onchange="updatePlaylistTime(${p.id}, this.value)">
+            <div class="playlist-meta" onclick="event.stopPropagation()" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px;">
+                <div style="grid-column: span 2; margin-bottom: 5px;">
+                    <label style="display:block;">Default Mode:</label>
+                    <select onchange="updatePlaylistSetting(${p.id}, {default_mode: this.value})" style="width:100%; background:#0f172a; color:white; border:1px solid var(--border-color); border-radius:4px; font-size:0.7rem;">
+                        <option value="ken-burns" ${p.default_mode === 'ken-burns' ? 'selected' : ''}>Ken Burns</option>
+                        <option value="static-crop" ${p.default_mode === 'static-crop' ? 'selected' : ''}>Static Crop</option>
+                        <option value="contain-matte" ${p.default_mode === 'contain-matte' ? 'selected' : ''}>Contain Matte</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Cycle (s):</label>
+                    <input type="number" value="${p.display_time}" min="1" onchange="updatePlaylistSetting(${p.id}, {display_time: parseInt(this.value)})" style="width:100%;">
+                </div>
+                <div>
+                    <label>Wait (s):</label>
+                    <input type="number" value="${p.placard_initial_wait_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_initial_wait_sec: parseInt(this.value)})" style="width:100%;">
+                </div>
+                <div>
+                    <label>Show (s):</label>
+                    <input type="number" value="${p.placard_initial_show_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_initial_show_sec: parseInt(this.value)})" style="width:100%;">
+                </div>
+                <div>
+                    <label>Manual (s):</label>
+                    <input type="number" value="${p.placard_interaction_show_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_interaction_show_sec: parseInt(this.value)})" style="width:100%;">
+                </div>
             </div>
         `;
         li.onclick = () => selectPlaylist(p.id);
@@ -320,22 +341,18 @@ async function uploadFiles(files, playlistId) {
     await refreshData();
 }
 
-async function updatePlaylistTime(id, seconds) {
+async function updatePlaylistSetting(id, settings) {
     try {
-        // Temporarily pause polling
         if (pollInterval) clearInterval(pollInterval);
-        
         await fetch(`${API_BASE}/playlists/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ display_time: parseInt(seconds) })
+            body: JSON.stringify(settings)
         });
-        
-        // Refresh local state and restart polling
         await refreshData();
         startPolling();
     } catch (error) { 
-        console.error('[Admin] Timing update failed:', error); 
+        console.error('[Admin] Update failed:', error); 
         startPolling();
     }
 }

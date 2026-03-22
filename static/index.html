@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Artwork Display Engine</title>
+    <title>Screen Docent</title>
     <link rel="stylesheet" href="styles.css">
     <!-- QRCode.js CDN for Phase 3 Museum Placard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -28,6 +28,9 @@
 
             <!-- Museum Placard (Phase 3) -->
             <div id="placard" class="museum-placard">
+                <div class="placard-brand">
+                    <img src="/logo.svg" alt="Screen Docent Logo" class="placard-logo">
+                </div>
                 <div class="placard-content">
                     <h1 id="art-title"></h1>
                     <h2 id="art-artist-year"></h2>
@@ -42,6 +45,9 @@
 
             <!-- Minimalist Control Overlay -->
             <div id="controls" class="controls-overlay">
+                <div class="controls-brand">
+                    <img src="/logo.svg" alt="Logo" class="controls-logo">
+                </div>
                 <div class="control-group">
                     <label>Navigate</label>
                     <div class="nav-controls">

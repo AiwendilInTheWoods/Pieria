@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artwork Admin Console</title>
+    <title>Screen Docent Admin</title>
     <!-- Cropper.js CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
@@ -199,7 +199,10 @@
 </head>
 <body>
     <aside>
-        <h1>Art Engine Admin</h1>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+            <img src="/logo.svg" alt="Logo" style="height: 32px;">
+            <h1 style="margin: 0; font-size: 1.25rem; color: var(--accent-color);">Screen Docent</h1>
+        </div>
         
         <div class="nav-tabs">
             <button id="nav-library" class="nav-btn" onclick="switchView('library')">
@@ -211,6 +214,9 @@
             <button id="nav-review" class="nav-btn" onclick="switchView('review')">
                 Review Queue <span id="review-count" class="badge">0</span>
             </button>
+            <a href="/help" class="nav-btn" style="text-decoration: none; margin-top: auto; border-style: dashed; opacity: 0.7;">
+                Help & Docs
+            </a>
         </div>
 
         <div id="sidebar-playlists">

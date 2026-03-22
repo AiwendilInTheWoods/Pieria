@@ -137,9 +137,9 @@ body.placard-visible .museum-placard {
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(15px);
     border-radius: 6vmin;
-    padding: 1.5vmin 4vmin;
+    padding: 1vmin 3vmin; /* Reduced from 1.5vmin 4vmin */
     display: flex;
-    gap: 4vmin;
+    gap: 2.5vmin; /* Reduced from 4vmin */
     align-items: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 110;
@@ -328,3 +328,33 @@ body.controls-visible .controls-overlay {
 }
 
 .fade-overlay.show { opacity: 1; }
+
+/* --------------------------------------------------------------------------
+   Branding (Placard & Controls)
+   -------------------------------------------------------------------------- */
+
+.placard-brand {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2vmin;
+    opacity: 0.6;
+}
+
+.placard-logo {
+    height: 3vmin;
+    width: auto;
+}
+
+.controls-brand {
+    display: flex;
+    align-items: center;
+    margin-right: 2vmin; /* Reduced from 3vmin */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding-right: 2vmin; /* Reduced from 3vmin */
+    opacity: 0.5;
+}
+
+.controls-logo {
+    height: 2vmin; /* Significantly smaller */
+    width: auto;
+}

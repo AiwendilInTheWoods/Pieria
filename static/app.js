@@ -27,6 +27,23 @@ const API_BASE = (window.location.origin === 'null' || window.location.protocol 
 const DISPLAY_ID = urlParams.get('display') || 'default';
 const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/${DISPLAY_ID}`;
 
+// Global Defaults & URL Overrides
+const globalConfig = {
+    cycle_time: parseInt(urlParams.get('cycle_time')) || null,
+    mode: urlParams.get('mode') || null,
+    placard_wait: parseInt(urlParams.get('placard_wait')) || null,
+    placard_show: parseInt(urlParams.get('placard_show')) || null,
+    placard_manual: parseInt(urlParams.get('placard_manual')) || null
+};
+
+const DEFAULT_SETTINGS = {
+    cycle_time: 30,
+    mode: 'ken-burns',
+    placard_wait: 5,
+    placard_show: 15,
+    placard_manual: 10
+};
+
 let currentPlaylist = '';
 let currentImageIndex = null;
 let activeLayerId = 1;
@@ -89,7 +106,9 @@ function connectWS() {
                     startDisplayCycleManually(-1);
                     break;
                 case 'show_placard':
-                    showPlacard(10000);
+                    if (placardTimeout) clearTimeout(placardTimeout);
+                    const manualShowTime = globalConfig.placard_manual !== null ? globalConfig.placard_manual : (currentPlaylistData?.placard_manual !== undefined ? currentPlaylistData.placard_manual : DEFAULT_SETTINGS.placard_manual);
+                    showPlacard(manualShowTime * 1000);
                     break;
                 default:
                     console.warn('[Client] Unknown action:', msg.action);
@@ -123,8 +142,12 @@ async function handleRemotePlaylistSwitch(name) {
  * UI & Interaction Logic
  */
 function setupUIInteraction() {
+    const getManualTime = () => {
+        return (globalConfig.placard_manual !== null ? globalConfig.placard_manual : (currentPlaylistData?.placard_manual !== undefined ? currentPlaylistData.placard_manual : DEFAULT_SETTINGS.placard_manual)) * 1000;
+    };
+
     document.addEventListener('mousemove', (e) => {
-        showPlacard(10000);
+        showPlacard(getManualTime());
         const isRotated = document.body.classList.contains('force-portrait');
         if (isRotated) {
             const threshold = window.innerWidth * 0.7; 
@@ -136,7 +159,7 @@ function setupUIInteraction() {
     });
 
     document.addEventListener('mousedown', (e) => {
-        showPlacard(10000);
+        showPlacard(getManualTime());
         const isRotated = document.body.classList.contains('force-portrait');
         if (isRotated) {
             const threshold = window.innerWidth * 0.7;
@@ -243,6 +266,8 @@ async function startDisplayCycle() {
     cycleTimeout = setTimeout(startDisplayCycle, currentDisplayTime);
 }
 
+let currentPlaylistData = null;
+
 async function fetchAndTransition(direction = 1) {
     if (!currentPlaylist) return;
     try {
@@ -251,13 +276,44 @@ async function fetchAndTransition(direction = 1) {
         const response = await fetch(`${API_BASE}/next-image?${params.toString()}`);
         if (!response.ok) throw new Error('No approved images');
         const data = await response.json();
+        
+        currentPlaylistData = data;
         currentImageIndex = data.index;
         currentImageUrl = `${API_BASE}${data.image_url}`;
         currentCropData = data.crop;
-        if (data.display_time) currentDisplayTime = data.display_time * 1000;
+        
+        // Resolve Settings Hierarchy (URL > Playlist > Global Default)
+        const cycleTime = globalConfig.cycle_time || data.display_time || DEFAULT_SETTINGS.cycle_time;
+        const resolvedMode = globalConfig.mode || data.default_mode || DEFAULT_SETTINGS.mode;
+        
+        currentDisplayTime = cycleTime * 1000;
+        if (displayMode !== resolvedMode) {
+            setMode(resolvedMode);
+            updateModeButtonUI();
+        }
+
         updatePlacard(data.metadata);
         performCrossfade(currentImageUrl, data.crop);
+
+        // Automatic Placard Flow
+        const waitTime = globalConfig.placard_wait !== null ? globalConfig.placard_wait : (data.placard_wait !== undefined ? data.placard_wait : DEFAULT_SETTINGS.placard_wait);
+        const showTime = globalConfig.placard_show !== null ? globalConfig.placard_show : (data.placard_show !== undefined ? data.placard_show : DEFAULT_SETTINGS.placard_show);
+        
+        showPlacardFlow(waitTime, showTime);
+
     } catch (error) { console.error('[Client] Transition Error:', error.message); }
+}
+
+function showPlacardFlow(waitSec, showSec) {
+    if (placardTimeout) clearTimeout(placardTimeout);
+    document.body.classList.remove('placard-visible');
+    
+    placardTimeout = setTimeout(() => {
+        document.body.classList.add('placard-visible');
+        placardTimeout = setTimeout(() => {
+            document.body.classList.remove('placard-visible');
+        }, showSec * 1000);
+    }, waitSec * 1000);
 }
 
 function updatePlacard(metadata) {
@@ -300,7 +356,6 @@ function performCrossfade(imageUrl, cropData) {
         activeLayerId = targetLayerId;
         firstLoad = false;
         document.body.classList.remove('controls-visible');
-        setTimeout(() => { if (activeLayerId === targetLayerId) showPlacard(15000); }, 5000);
     };
 }
 
