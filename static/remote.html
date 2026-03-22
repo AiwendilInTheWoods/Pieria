@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Art Engine Remote</title>
+    
+    <!-- Apple Web App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Art Remote">
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --accent-color: #3b82f6;
+            --text-color: #f1f5f9;
+            --card-bg: #1e293b;
+            --border-color: rgba(255,255,255,0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        body.force-portrait {
+            width: 100vh; height: 100vw;
+            transform: rotate(-90deg); transform-origin: top left;
+            position: absolute; top: 100%; left: 0;
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 10px; text-align: center; }
+
+        .control-panel {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1rem; color: #94a3b8; }
+
+        select {
+            background: #0f172a; border: 1px solid var(--border-color);
+            color: white; padding: 12px; border-radius: 10px; font-size: 1rem;
+            outline: none; width: 100%;
+        }
+
+        .playlist-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .remote-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: white; padding: 25px 15px; border-radius: 16px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .remote-btn:active { transform: scale(0.95); background: var(--accent-color); }
+        .remote-btn span { font-size: 0.7rem; font-weight: normal; opacity: 0.6; }
+        .footer { margin-top: auto; padding-top: 40px; font-size: 0.7rem; opacity: 0.4; }
+    </style>
+</head>
+<body>
+    <h1>Art Engine Control</h1>
+    
+    <div class="control-panel">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <label>Target Display (Active)</label>
+            <select id="display-select">
+                <!-- Populated dynamically -->
+                <option value="">Searching for displays...</option>
+            </select>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label>Display Mode</label>
+                <select id="mode-select" onchange="sendRemoteCommand('set_mode', {mode: this.value})">
+                    <option value="ken-burns">Ken Burns</option>
+                    <option value="static-crop">Static Crop</option>
+                    <option value="contain-matte">Contain Matte</option>
+                </select>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px; justify-content: flex-end;">
+                <button class="remote-btn" style="padding: 12px; font-size: 0.8rem;" onclick="sendRemoteCommand('show_placard')">
+                    Show Placard
+                </button>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button class="remote-btn" style="padding: 15px;" onclick="sendRemoteCommand('prev_image')">
+                ◀ Previous
+            </button>
+            <button class="remote-btn" style="padding: 15px;" onclick="sendRemoteCommand('next_image')">
+                Next ▶
+            </button>
+        </div>
+    </div>
+
+    <div id="playlist-grid" class="playlist-grid"></div>
+
+    <div class="footer">Smart Discovery Remote V2.1</div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('rotate') === 'true') document.body.classList.add('force-portrait');
+
+        const API_BASE = window.location.origin;
+        let lastKnownDisplays = [];
+
+        async function init() {
+            await fetchPlaylists();
+            await refreshActiveDisplays();
+            // Poll for new displays every 5 seconds
+            setInterval(refreshActiveDisplays, 5000);
+        }
+
+        /**
+         * Dynamically discovers connected displays from the server.
+         */
+        async function refreshActiveDisplays() {
+            try {
+                const response = await fetch(`${API_BASE}/api/remote/displays`);
+                const displays = await response.json();
+                
+                // Only re-render if the list has changed to preserve selection
+                if (JSON.stringify(displays) !== JSON.stringify(lastKnownDisplays)) {
+                    lastKnownDisplays = displays;
+                    populateDisplaySelect(displays);
+                }
+            } catch (err) { console.error('Discovery failed', err); }
+        }
+
+        function populateDisplaySelect(displays) {
+            const select = document.getElementById('display-select');
+            const currentVal = select.value;
+            select.innerHTML = '';
+
+            if (displays.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.textContent = "No active displays found";
+                select.appendChild(opt);
+                return;
+            }
+
+            displays.forEach(id => {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = id === 'default' ? "Default Display" : `Display: ${id}`;
+                select.appendChild(opt);
+            });
+
+            // Restore selection if it still exists
+            if (displays.includes(currentVal)) {
+                select.value = currentVal;
+            }
+        }
+
+        async function fetchPlaylists() {
+            try {
+                const response = await fetch(`${API_BASE}/playlists`);
+                const playlists = await response.json();
+                renderGrid(playlists);
+            } catch (err) { console.error('Fetch failed', err); }
+        }
+
+        function renderGrid(playlists) {
+            const grid = document.getElementById('playlist-grid');
+            grid.innerHTML = '';
+            playlists.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = 'remote-btn';
+                btn.innerHTML = `${p.name} <span>${p.artworks?.length || 0} pieces</span>`;
+                btn.onclick = () => setPlaylist(p.name);
+                grid.appendChild(btn);
+            });
+        }
+
+        async function setPlaylist(playlistName) {
+            await sendRemoteCommand('set_playlist', { playlist: playlistName });
+        }
+
+        async function sendRemoteCommand(action, data = {}) {
+            const targetDisplay = document.getElementById('display-select').value;
+            if (!targetDisplay) return alert("Select an active display first");
+
+            try {
+                const response = await fetch(`${API_BASE}/api/remote/change`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        target_display: targetDisplay,
+                        action: action,
+                        ...data
+                    })
+                });
+                if (response.ok && window.navigator.vibrate) window.navigator.vibrate(50);
+            } catch (err) { console.error('Remote command failed', err); }
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,7 +1,6 @@
 /**
  * Artwork Display Engine - Frontend Client (app.js)
- * Phase 3: Dynamic Timing, Static Crop, Manual Navigation, Museum Placard, and Custom Dropdown.
- * V3.5: Support for Playlist and Mode selection via URL Parameters.
+ * Phase 4: Targeted WebSocket Routing for Multiple Displays.
  */
 
 // 1. Digital Signage Rotation Logic
@@ -23,11 +22,16 @@ const API_BASE = (window.location.origin === 'null' || window.location.protocol 
     ? 'http://localhost:8000' 
     : window.location.origin;
 
+// 3. Targeted WebSocket Endpoint
+// Connects to /ws/[display_id] based on ?display= URL parameter
+const DISPLAY_ID = urlParams.get('display') || 'default';
+const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/${DISPLAY_ID}`;
+
 let currentPlaylist = '';
 let currentImageIndex = null;
 let activeLayerId = 1;
 let firstLoad = true;
-let displayMode = 'ken-burns'; // Default
+let displayMode = 'ken-burns'; 
 let placardTimeout = null;
 let controlsTimeout = null;
 let currentImageUrl = '';
@@ -35,29 +39,88 @@ let currentDisplayTime = 30000;
 let currentCropData = null;
 let cycleTimeout = null;
 let currentPlaylists = [];
+let socket = null;
 
 async function init() {
-    console.log(`[Client] Initializing Engine V3.5. API: ${API_BASE}`);
+    console.log(`[Client] Initializing Display: ${DISPLAY_ID}. API: ${API_BASE}`);
     
-    // Check for display mode override in URL
     const requestedMode = urlParams.get('mode');
     const validModes = ['ken-burns', 'static-crop', 'contain-matte'];
     if (requestedMode && validModes.includes(requestedMode)) {
         displayMode = requestedMode;
-        console.log(`[Client] URL Mode Override: ${displayMode}`);
     }
 
     setupUIInteraction();
     initModeToggles();
     initNavButtons();
     initCustomDropdown();
+    connectWS(); 
 
     await refreshPlaylists(true);
     setInterval(() => refreshPlaylists(false), 15000);
 }
 
 /**
- * Robust UI Trigger Logic
+ * Initializes Targeted WebSocket connection.
+ */
+function connectWS() {
+    console.log(`[Client] Connecting to Remote Hub at: ${WS_URL}`);
+    socket = new WebSocket(WS_URL);
+
+    socket.onmessage = async (event) => {
+        try {
+            const msg = JSON.parse(event.data);
+            console.log('[Client] Command Received:', msg);
+
+            switch (msg.action) {
+                case 'set_playlist':
+                    handleRemotePlaylistSwitch(msg.playlist);
+                    break;
+                case 'set_mode':
+                    if (msg.mode) {
+                        setMode(msg.mode);
+                        updateModeButtonUI();
+                    }
+                    break;
+                case 'next_image':
+                    startDisplayCycleManually(1);
+                    break;
+                case 'prev_image':
+                    startDisplayCycleManually(-1);
+                    break;
+                case 'show_placard':
+                    showPlacard(10000);
+                    break;
+                default:
+                    console.warn('[Client] Unknown action:', msg.action);
+            }
+        } catch (err) {
+            console.error('[Client] Message Parse Error:', err);
+        }
+    };
+
+    socket.onclose = () => {
+        console.warn('[Client] Hub connection lost. Retrying in 5s...');
+        setTimeout(connectWS, 5000);
+    };
+}
+
+async function handleRemotePlaylistSwitch(name) {
+    const p = currentPlaylists.find(pl => pl.name === name);
+    if (!p) return;
+
+    console.log(`[Client] Targeted Switch: ${name}`);
+    currentPlaylist = name;
+    currentDisplayTime = p.display_time * 1000;
+    currentImageIndex = null; 
+    
+    updateDropdownLabel(p.name, p.artworks?.length || 0);
+    showPlaylistTitle(currentPlaylist);
+    startDisplayCycle();
+}
+
+/**
+ * UI & Interaction Logic
  */
 function setupUIInteraction() {
     document.addEventListener('mousemove', (e) => {
@@ -88,9 +151,7 @@ function setupUIInteraction() {
 function showPlacard(duration) {
     document.body.classList.add('placard-visible');
     if (placardTimeout) clearTimeout(placardTimeout);
-    placardTimeout = setTimeout(() => {
-        document.body.classList.remove('placard-visible');
-    }, duration);
+    placardTimeout = setTimeout(() => { document.body.classList.remove('placard-visible'); }, duration);
 }
 
 function showControls(duration) {
@@ -123,27 +184,16 @@ async function refreshPlaylists(isInitial = false) {
         if (playlists.length > 0) {
             currentPlaylists = playlists;
             populatePlaylistSelect(playlists);
-            
             if (isInitial) {
-                // Check for URL Playlist Override
                 const requestedPlaylistName = urlParams.get('playlist');
                 let activePlaylist = playlists.find(p => p.name === requestedPlaylistName);
-                
-                // Fallback to logic if no override or not found
                 if (!activePlaylist) {
                     activePlaylist = playlists.find(p => (p.artworks?.length || 0) > 0) || playlists[0];
-                } else {
-                    console.log(`[Client] URL Playlist Override: ${activePlaylist.name}`);
                 }
-
                 currentPlaylist = activePlaylist.name;
                 currentDisplayTime = activePlaylist.display_time * 1000;
-                
                 updateDropdownLabel(activePlaylist.name, activePlaylist.artworks?.length || 0);
-                
-                // Ensure correct mode button is highlighted
                 updateModeButtonUI();
-                
                 showPlaylistTitle(currentPlaylist);
                 startDisplayCycle();
             }
@@ -157,8 +207,6 @@ function updateModeButtonUI() {
     document.querySelectorAll('.mode-toggles button').forEach(btn => btn.classList.remove('active'));
     const btn = document.getElementById(activeBtnId);
     if (btn) btn.classList.add('active');
-    
-    // Apply class to container immediately
     document.getElementById('display-container').className = displayMode;
 }
 
@@ -252,7 +300,7 @@ function performCrossfade(imageUrl, cropData) {
         activeLayerId = targetLayerId;
         firstLoad = false;
         document.body.classList.remove('controls-visible');
-        setTimeout(() => { showPlacard(15000); }, 5000);
+        setTimeout(() => { if (activeLayerId === targetLayerId) showPlacard(15000); }, 5000);
     };
 }
 

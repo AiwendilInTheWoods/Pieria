@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 FastAPI Backend for the Artwork Display Engine.
-Phase 3: Many-to-Many Playlists, AI Pipeline, and Centralized Library.
+Phase 4: Targeted WebSocket Routing for Multiple Displays.
 """
 
 import os
@@ -15,31 +15,72 @@ from pathlib import Path
 from urllib.parse import quote
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Query, Depends, UploadFile, File, Form, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Query, Depends, UploadFile, File, Form, BackgroundTasks, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import select, delete, update
 from PIL import Image
+from pydantic import BaseModel
 
 # Load environment variables
 load_dotenv()
 
-# Local imports
-from database import init_db, get_db, SessionLocal
-from models import PlaylistModel, ArtworkModel, playlist_artwork
-from agents import process_artwork
-from pydantic import BaseModel
-
 # -----------------------------------------------------------------------------
-# 1. Configuration & Logging
+# 1. Configuration, Logging & Targeted WebSocket Manager
 # -----------------------------------------------------------------------------
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger("artwork-display-api")
+
+class ConnectionManager:
+    """Manages targeted WebSocket connections grouped by display_id."""
+    def __init__(self):
+        # Maps display_id -> list of active WebSocket connections
+        self.active_connections: Dict[str, List[WebSocket]] = {}
+
+    async def connect(self, websocket: WebSocket, display_id: str):
+        await websocket.accept()
+        if display_id not in self.active_connections:
+            self.active_connections[display_id] = []
+        self.active_connections[display_id].append(websocket)
+        logger.info(f"New connection to display '{display_id}'. Total for ID: {len(self.active_connections[display_id])}")
+
+    def disconnect(self, websocket: WebSocket, display_id: str):
+        if display_id in self.active_connections:
+            if websocket in self.active_connections[display_id]:
+                self.active_connections[display_id].remove(websocket)
+                if not self.active_connections[display_id]:
+                    del self.active_connections[display_id]
+            logger.info(f"Disconnected from display '{display_id}'.")
+
+    async def send_personal_message(self, message: dict, display_id: str):
+        """Sends a JSON message only to sockets registered under a specific display_id."""
+        if display_id in self.active_connections:
+            for connection in self.active_connections[display_id]:
+                try:
+                    await connection.send_json(message)
+                except Exception:
+                    pass
+
+    async def broadcast(self, message: dict):
+        """Sends a JSON message to absolutely all connected clients."""
+        for display_id in self.active_connections:
+            for connection in self.active_connections[display_id]:
+                try:
+                    await connection.send_json(message)
+                except Exception:
+                    pass
+
+manager = ConnectionManager()
+
+# Local imports
+from database import init_db, get_db, SessionLocal
+from models import PlaylistModel, ArtworkModel, playlist_artwork
+from agents import process_artwork
 
 ARTWORK_ROOT = Path(os.getenv("ARTWORK_ROOT", "Artwork"))
 LIBRARY_DIR = ARTWORK_ROOT / "_Library"
@@ -52,19 +93,12 @@ async def run_ai_pipeline(artwork_id: int):
         db.close()
 
 def sync_db_with_filesystem(db: Session) -> None:
-    """
-    Migration Logic: Scans the existing filesystem structure and populates the DB.
-    Legacy folders become Playlists, files move to _Library.
-    """
     if not ARTWORK_ROOT.exists():
         ARTWORK_ROOT.mkdir(parents=True, exist_ok=True)
-    
     if not LIBRARY_DIR.exists():
         LIBRARY_DIR.mkdir(parents=True, exist_ok=True)
 
     valid_extensions = {".jpg", ".jpeg", ".png", ".webp"}
-    
-    # Process the root Artwork directory for legacy folders
     for item in ARTWORK_ROOT.iterdir():
         if item.is_dir() and item.name != "_Library":
             playlist = db.query(PlaylistModel).filter(PlaylistModel.name == item.name).first()
@@ -72,14 +106,12 @@ def sync_db_with_filesystem(db: Session) -> None:
                 playlist = PlaylistModel(name=item.name)
                 db.add(playlist); db.commit(); db.refresh(playlist)
 
-            # Move files to library and link to this playlist
             for file_path in item.iterdir():
                 if file_path.suffix.lower() in valid_extensions:
                     dest_path = LIBRARY_DIR / file_path.name
                     if not dest_path.exists():
                         shutil.move(file_path, dest_path)
                     
-                    # Create or find artwork record
                     artwork = db.query(ArtworkModel).filter(ArtworkModel.filename == file_path.name).first()
                     if not artwork:
                         with Image.open(dest_path) as img:
@@ -91,7 +123,6 @@ def sync_db_with_filesystem(db: Session) -> None:
                         )
                         db.add(artwork); db.commit(); db.refresh(artwork)
                     
-                    # Link to playlist if not already linked
                     existing_link = db.execute(
                         select(playlist_artwork).where(
                             playlist_artwork.c.playlist_id == playlist.id,
@@ -117,7 +148,7 @@ async def lifespan(app: FastAPI):
         db.close()
     yield
 
-app = FastAPI(title="Artwork Display Engine API", version="0.3.5", lifespan=lifespan)
+app = FastAPI(title="Artwork Display Engine API", version="0.4.5", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -128,7 +159,7 @@ app.add_middleware(
 )
 
 # -----------------------------------------------------------------------------
-# 2. Data Models (Schemas)
+# 2. Data Models
 # -----------------------------------------------------------------------------
 class ArtworkSchema(BaseModel):
     id: int
@@ -145,7 +176,6 @@ class ArtworkSchema(BaseModel):
     crop_y: float
     crop_width: float
     crop_height: float
-    
     model_config = {"from_attributes": True}
 
 class PlaylistSchema(BaseModel):
@@ -153,11 +183,9 @@ class PlaylistSchema(BaseModel):
     name: str
     display_time: int
     artworks: List[ArtworkSchema] = []
-    
     @property
     def image_count(self) -> int:
         return len(self.artworks)
-    
     model_config = {"from_attributes": True}
 
 class ArtworkApproval(BaseModel):
@@ -172,25 +200,18 @@ class PlaylistUpdate(BaseModel):
 class ReorderRequest(BaseModel):
     artwork_ids: List[int]
 
-# -----------------------------------------------------------------------------
-# 3. Optimization Logic
-# -----------------------------------------------------------------------------
-def get_optimized_image(file_path: Path, max_size: tuple[int, int], quality: int = 80) -> bytes:
-    from PIL import Image
-    with Image.open(file_path) as img:
-        if img.mode in ("RGBA", "P"): img = img.convert("RGB")
-        img.thumbnail(max_size, Image.Resampling.LANCZOS)
-        img_byte_arr = io.BytesIO()
-        img.save(img_byte_arr, format='JPEG', quality=quality, optimize=True)
-        return img_byte_arr.getvalue()
+class RemoteChangeRequest(BaseModel):
+    target_display: str
+    action: str
+    playlist: Optional[str] = None
+    mode: Optional[str] = None
 
 # -----------------------------------------------------------------------------
-# 4. API Endpoints
+# 3. API Endpoints
 # -----------------------------------------------------------------------------
 
 @app.get("/artworks", response_model=List[ArtworkSchema])
 async def get_full_library(db: Session = Depends(get_db)):
-    """Retrieves all artworks in the centralized library."""
     return db.query(ArtworkModel).all()
 
 @app.get("/playlists", response_model=List[PlaylistSchema])
@@ -207,16 +228,9 @@ async def create_playlist(name: str = Form(...), db: Session = Depends(get_db)):
 @app.patch("/playlists/{playlist_id}", response_model=PlaylistSchema)
 async def update_playlist(playlist_id: int, data: PlaylistUpdate, db: Session = Depends(get_db)):
     p = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first()
-    if not p:
-        raise HTTPException(status_code=404, detail="Playlist not found.")
-    
-    if data.display_time is not None:
-        p.display_time = data.display_time
-        logger.info(f"Updating display_time for playlist {playlist_id} to {data.display_time}")
-    
-    db.commit()
-    db.refresh(p)
-    return p
+    if not p: raise HTTPException(status_code=404)
+    if data.display_time is not None: p.display_time = data.display_time
+    db.commit(); db.refresh(p); return p
 
 @app.delete("/playlists/{playlist_id}")
 async def delete_playlist(playlist_id: int, db: Session = Depends(get_db)):
@@ -226,13 +240,11 @@ async def delete_playlist(playlist_id: int, db: Session = Depends(get_db)):
 
 @app.post("/playlists/{playlist_id}/artworks/{artwork_id}")
 async def link_artwork_to_playlist(playlist_id: int, artwork_id: int, db: Session = Depends(get_db)):
-    """Links an existing library artwork to a playlist."""
     db.execute(playlist_artwork.insert().values(playlist_id=playlist_id, artwork_id=artwork_id))
     db.commit(); return {"status": "linked"}
 
 @app.delete("/playlists/{playlist_id}/artworks/{artwork_id}")
 async def unlink_artwork_from_playlist(playlist_id: int, artwork_id: int, db: Session = Depends(get_db)):
-    """Removes an artwork from a playlist without deleting the file."""
     db.execute(delete(playlist_artwork).where(
         playlist_artwork.c.playlist_id == playlist_id,
         playlist_artwork.c.artwork_id == artwork_id
@@ -249,29 +261,16 @@ async def reorder_playlist(playlist_id: int, request: ReorderRequest, db: Sessio
     db.commit(); return {"status": "success"}
 
 @app.post("/upload", response_model=ArtworkSchema)
-async def upload_artwork(
-    background_tasks: BackgroundTasks,
-    file: UploadFile = File(...), 
-    playlist_id: Optional[int] = Form(None),
-    db: Session = Depends(get_db)
-):
-    """Centralized upload to library, with optional playlist linking."""
+async def upload_artwork(background_tasks: BackgroundTasks, file: UploadFile = File(...), playlist_id: Optional[int] = Form(None), db: Session = Depends(get_db)):
     if not LIBRARY_DIR.exists(): LIBRARY_DIR.mkdir(parents=True)
     f_path = LIBRARY_DIR / file.filename
     with open(f_path, "wb") as b: shutil.copyfileobj(file.file, b)
-    
-    from PIL import Image
     with Image.open(f_path) as img: w, h = img.size
-    
-    new_a = ArtworkModel(
-        filename=file.filename, original_width=w, original_height=h, status='pending_review'
-    )
+    new_a = ArtworkModel(filename=file.filename, original_width=w, original_height=h, status='pending_review')
     db.add(new_a); db.commit(); db.refresh(new_a)
-    
     if playlist_id:
         db.execute(playlist_artwork.insert().values(playlist_id=playlist_id, artwork_id=new_a.id))
         db.commit()
-
     background_tasks.add_task(run_ai_pipeline, new_a.id)
     return new_a
 
@@ -302,7 +301,6 @@ async def get_artwork_preview(artwork_id: int, db: Session = Depends(get_db)):
 
 @app.delete("/artworks/{artwork_id}")
 async def permanent_delete_artwork(artwork_id: int, db: Session = Depends(get_db)):
-    """Wipes artwork from DB and filesystem."""
     art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
     if not art: raise HTTPException(404)
     f_path = LIBRARY_DIR / art.filename
@@ -310,43 +308,68 @@ async def permanent_delete_artwork(artwork_id: int, db: Session = Depends(get_db
     db.delete(art); db.commit(); return {"status": "wiped"}
 
 @app.get("/next-image")
-async def get_next_image(
-    playlist_name: str, 
-    shuffle: bool = Query(True), 
-    current_index: Optional[int] = Query(None), 
-    direction: int = Query(1), 
-    db: Session = Depends(get_db)
-):
+async def get_next_image(playlist_name: str, shuffle: bool = Query(True), current_index: Optional[int] = Query(None), direction: int = Query(1), db: Session = Depends(get_db)):
     p = db.query(PlaylistModel).filter(PlaylistModel.name == playlist_name).first()
     if not p: raise HTTPException(404)
-    
-    # Query using the association table to honor per-playlist ordering
-    artworks = db.query(ArtworkModel).join(playlist_artwork).filter(
-        playlist_artwork.c.playlist_id == p.id,
-        ArtworkModel.status == 'approved'
-    ).order_by(playlist_artwork.c.display_order).all()
-    
-    if not artworks: raise HTTPException(404, detail="No approved images in playlist")
+    artworks = db.query(ArtworkModel).join(playlist_artwork).filter(playlist_artwork.c.playlist_id == p.id, ArtworkModel.status == 'approved').order_by(playlist_artwork.c.display_order).all()
+    if not artworks: raise HTTPException(404, detail="No approved images")
     count = len(artworks)
-    
-    # Logic fix: Handle 'shuffle' correctly and calculate index based on count
     if shuffle:
         idx = random.randint(0, count - 1)
         if count > 1 and current_index == idx:
-            while idx == current_index:
-                idx = random.randint(0, count - 1)
+            while idx == current_index: idx = random.randint(0, count - 1)
     else:
-        # Step through in the given direction
         base_idx = current_index if current_index is not None else -1
         idx = (base_idx + direction) % count
-    
     art = artworks[idx]
+    image_path = f"{p.name}/{art.filename}"
     return {
         "index": idx, "image_url": f"/media/_Library/{quote(art.filename)}",
         "playlist": playlist_name, "display_time": p.display_time,
         "crop": {"x": art.crop_x, "y": art.crop_y, "width": art.crop_width, "height": art.crop_height},
         "metadata": {"title": art.title, "artist": art.artist, "year": art.year, "description": art.description, "tags": art.tags}
     }
+
+# -----------------------------------------------------------------------------
+# 4. WebSocket & Remote Control
+# -----------------------------------------------------------------------------
+@app.get("/remote")
+async def get_remote_page(): 
+    return FileResponse(STATIC_DIR / "remote.html")
+
+@app.get("/api/remote/displays")
+async def get_active_displays():
+    """Returns a list of all display IDs currently connected via WebSocket."""
+    return list(manager.active_connections.keys())
+
+@app.post("/api/remote/change")
+async def remote_change_playlist(request: RemoteChangeRequest):
+    """Targeted command to change a playlist, mode, or trigger navigation on a specific display."""
+    logger.info(f"Targeted Remote Command: {request.target_display} -> {request.action}")
+    
+    payload = {"action": request.action}
+    if request.playlist:
+        payload["playlist"] = request.playlist
+    if request.mode:
+        payload["mode"] = request.mode
+        
+    await manager.send_personal_message(payload, request.target_display)
+    return {"status": "command_sent"}
+
+@app.websocket("/ws/{display_id}")
+async def websocket_endpoint(websocket: WebSocket, display_id: str):
+    """Handles targeted display connections."""
+    await manager.connect(websocket, display_id)
+    try:
+        while True:
+            # We mostly broadcast from the API, but remotes can still talk directly here if needed
+            data = await websocket.receive_json()
+            await manager.broadcast(data)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, display_id)
+    except Exception as e:
+        logger.error(f"WebSocket error on '{display_id}': {e}")
+        manager.disconnect(websocket, display_id)
 
 # -----------------------------------------------------------------------------
 # 5. Static File Serving
