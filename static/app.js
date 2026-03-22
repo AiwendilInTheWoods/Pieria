@@ -1,7 +1,7 @@
 /**
  * Artwork Display Engine - Frontend Client (app.js)
  * Phase 3: Dynamic Timing, Static Crop, Manual Navigation, Museum Placard, and Custom Dropdown.
- * V3.4: Support for Digital Signage Rotation and True Fullscreen Mode.
+ * V3.5: Support for Playlist and Mode selection via URL Parameters.
  */
 
 // 1. Digital Signage Rotation Logic
@@ -11,14 +11,13 @@ if (urlParams.get('rotate') === 'true') {
 }
 
 // 2. True Fullscreen Trigger
-// Requirement: Hide address bar on TVs by forcing full-screen on first interaction.
 document.addEventListener('click', () => {
     if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(err => {
-            console.warn(`[Client] Fullscreen request failed: ${err.message}`);
+            console.warn(`[Client] Fullscreen failed: ${err.message}`);
         });
     }
-}, { once: false }); // We keep it active in case it exits
+}, { once: false });
 
 const API_BASE = (window.location.origin === 'null' || window.location.protocol === 'file:') 
     ? 'http://localhost:8000' 
@@ -28,7 +27,7 @@ let currentPlaylist = '';
 let currentImageIndex = null;
 let activeLayerId = 1;
 let firstLoad = true;
-let displayMode = 'ken-burns'; 
+let displayMode = 'ken-burns'; // Default
 let placardTimeout = null;
 let controlsTimeout = null;
 let currentImageUrl = '';
@@ -38,7 +37,16 @@ let cycleTimeout = null;
 let currentPlaylists = [];
 
 async function init() {
-    console.log(`[Client] Initializing Engine V3.4. API: ${API_BASE}`);
+    console.log(`[Client] Initializing Engine V3.5. API: ${API_BASE}`);
+    
+    // Check for display mode override in URL
+    const requestedMode = urlParams.get('mode');
+    const validModes = ['ken-burns', 'static-crop', 'contain-matte'];
+    if (requestedMode && validModes.includes(requestedMode)) {
+        displayMode = requestedMode;
+        console.log(`[Client] URL Mode Override: ${displayMode}`);
+    }
+
     setupUIInteraction();
     initModeToggles();
     initNavButtons();
@@ -54,26 +62,19 @@ async function init() {
 function setupUIInteraction() {
     document.addEventListener('mousemove', (e) => {
         showPlacard(10000);
-
         const isRotated = document.body.classList.contains('force-portrait');
-        
         if (isRotated) {
             const threshold = window.innerWidth * 0.7; 
-            if (e.clientX > threshold) {
-                showControls(10000);
-            }
+            if (e.clientX > threshold) showControls(10000);
         } else {
             const threshold = window.innerHeight * 0.7;
-            if (e.clientY > threshold) {
-                showControls(10000);
-            }
+            if (e.clientY > threshold) showControls(10000);
         }
     });
 
     document.addEventListener('mousedown', (e) => {
         showPlacard(10000);
         const isRotated = document.body.classList.contains('force-portrait');
-        
         if (isRotated) {
             const threshold = window.innerWidth * 0.7;
             if (e.clientX > threshold) showControls(10000);
@@ -100,7 +101,6 @@ function showControls(duration) {
         const isOptionsOpen = !options.classList.contains('hidden');
         const controls = document.getElementById('controls');
         const isHovering = controls.matches(':hover');
-
         if (!isOptionsOpen && !isHovering) {
             document.body.classList.remove('controls-visible');
         } else {
@@ -123,16 +123,43 @@ async function refreshPlaylists(isInitial = false) {
         if (playlists.length > 0) {
             currentPlaylists = playlists;
             populatePlaylistSelect(playlists);
+            
             if (isInitial) {
-                const activePlaylist = playlists.find(p => (p.artworks?.length || 0) > 0) || playlists[0];
+                // Check for URL Playlist Override
+                const requestedPlaylistName = urlParams.get('playlist');
+                let activePlaylist = playlists.find(p => p.name === requestedPlaylistName);
+                
+                // Fallback to logic if no override or not found
+                if (!activePlaylist) {
+                    activePlaylist = playlists.find(p => (p.artworks?.length || 0) > 0) || playlists[0];
+                } else {
+                    console.log(`[Client] URL Playlist Override: ${activePlaylist.name}`);
+                }
+
                 currentPlaylist = activePlaylist.name;
                 currentDisplayTime = activePlaylist.display_time * 1000;
+                
                 updateDropdownLabel(activePlaylist.name, activePlaylist.artworks?.length || 0);
+                
+                // Ensure correct mode button is highlighted
+                updateModeButtonUI();
+                
                 showPlaylistTitle(currentPlaylist);
                 startDisplayCycle();
             }
         }
     } catch (error) { console.error('[Client] Sync Failed:', error); }
+}
+
+function updateModeButtonUI() {
+    const modeMap = { 'ken-burns': 'mode-a', 'static-crop': 'mode-b', 'contain-matte': 'mode-c' };
+    const activeBtnId = modeMap[displayMode];
+    document.querySelectorAll('.mode-toggles button').forEach(btn => btn.classList.remove('active'));
+    const btn = document.getElementById(activeBtnId);
+    if (btn) btn.classList.add('active');
+    
+    // Apply class to container immediately
+    document.getElementById('display-container').className = displayMode;
 }
 
 function updateDropdownLabel(name, count) {
