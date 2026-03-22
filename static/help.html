@@ -126,6 +126,10 @@ cd art-engine
 # 3. Build and start the container in detached mode
 docker compose up -d --build</code></pre>
 
+            <div class="tip">
+                <strong>Data Persistence:</strong> Your database and artwork library are stored in persistent Docker volumes (mapped to the <code>./Artwork</code> and <code>./artwork.db</code> files on your host). This means you can safely update the application via <code>git pull</code> and a rebuild without losing your settings or uploaded images.
+            </div>
+
             <h3>First Steps</h3>
             <p>Once the container is healthy, you can access the different parts of the system via your browser:</p>
             <ul>
@@ -158,6 +162,7 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
             <ul>
                 <li>Navigate to the <strong>Review Queue</strong> tab in the Admin Console.</li>
                 <li>Review the AI-generated titles and descriptions. You can edit any field to correct historical facts or artistic interpretations.</li>
+                <li><strong>AI Guidance & Regeneration:</strong> If the AI completely misses the mark, you can provide context in the "AI Guidance" field (e.g., "This is actually a family photo from 1995") and click <strong>Regenerate</strong>. The agent will rebuild the metadata using your specific facts.</li>
                 <li>Click <strong>"Approve & Publish"</strong> to move the artwork into the live display rotation.</li>
             </ul>
 
@@ -223,6 +228,11 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
                         <td><code>mode</code></td>
                         <td>Overrides the visual rendering mode. Options: <code>ken-burns</code>, <code>static-crop</code>, <code>contain-matte</code>.</td>
                         <td><code>mode=contain-matte</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>shuffle</code></td>
+                        <td>Randomizes the playback order of the current playlist. Options: <code>true</code>, <code>false</code>.</td>
+                        <td><code>shuffle=true</code></td>
                     </tr>
                     <tr>
                         <td><code>placard_wait</code></td>

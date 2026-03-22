@@ -15,11 +15,11 @@ let cropper = null;
 let currentArtworkId = null;
 let currentView = 'playlists';
 let pollInterval = null;
+let sortableInstance = null;
 
 async function init() {
     console.log('[Admin] Initializing Refactored Console...');
     setupUploadZone();
-    setupSortable();
     setupPlaylistInput(); // Add key listener
     await refreshData();
     
@@ -197,6 +197,7 @@ function renderArtworkGrid(artworks) {
         `;
         grid.appendChild(card);
     });
+    setupSortable();
 }
 
 async function removeArtworkFromPlaylist(artworkId) {
@@ -267,6 +268,12 @@ function renderSidebar() {
                         <option value="static-crop" ${p.default_mode === 'static-crop' ? 'selected' : ''}>Static Crop</option>
                         <option value="contain-matte" ${p.default_mode === 'contain-matte' ? 'selected' : ''}>Contain Matte</option>
                     </select>
+                </div>
+                <div style="grid-column: span 2; margin-bottom: 5px; display: flex; align-items: center; gap: 10px;">
+                    <label style="display:flex; align-items:center; gap:5px; cursor:pointer;">
+                        <input type="checkbox" ${p.shuffle ? 'checked' : ''} onchange="updatePlaylistSetting(${p.id}, {shuffle: this.checked})" style="width:auto; margin:0;">
+                        Randomize Order
+                    </label>
                 </div>
                 <div>
                     <label>Cycle (s):</label>
@@ -359,7 +366,8 @@ async function updatePlaylistSetting(id, settings) {
 
 function setupSortable() {
     const grid = document.getElementById('artwork-grid');
-    new Sortable(grid, {
+    if (sortableInstance) sortableInstance.destroy();
+    sortableInstance = new Sortable(grid, {
         animation: 150, ghostClass: 'sortable-ghost',
         onEnd: async () => {
             const ids = Array.from(grid.children).map(el => parseInt(el.dataset.id));
@@ -394,6 +402,15 @@ function renderReviewQueue(artworks) {
                 <div class="form-group"><label>Year</label><input type="text" id="year-${art.id}" value="${art.year || ''}"></div>
                 <div class="form-group"><label>Tags</label><input type="text" id="tags-${art.id}" value="${art.tags || ''}"></div>
                 <div class="form-group full"><label>Description</label><textarea id="desc-${art.id}" rows="3">${art.description || ''}</textarea></div>
+                <div class="form-group full" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 5px;">
+                    <label>AI Guidance (Optional)</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="hint-${art.id}" placeholder="e.g., 'This is my dog Buster in 2021'" style="flex-grow: 1;">
+                        <button class="primary" id="regen-btn-${art.id}" onclick="regenerateArtworkMetadata(${art.id})" style="padding: 10px 20px;">
+                            <span id="regen-text-${art.id}">Regenerate</span>
+                        </button>
+                    </div>
+                </div>
                 <div class="review-actions">
                     <button class="secondary" onclick="deleteArtworkPermanently(${art.id})">Delete</button>
                     <button class="success" onclick="approveArtwork(${art.id})">Approve & Publish</button>
@@ -402,6 +419,46 @@ function renderReviewQueue(artworks) {
         `;
         list.appendChild(card);
     });
+}
+
+async function regenerateArtworkMetadata(id) {
+    const hint = document.getElementById(`hint-${id}`).value;
+    const btn = document.getElementById(`regen-btn-${id}`);
+    const textSpan = document.getElementById(`regen-text-${id}`);
+    
+    // UI Feedback
+    btn.disabled = true;
+    const originalText = textSpan.textContent;
+    textSpan.textContent = "Processing...";
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/curate/regenerate/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hint: hint })
+        });
+        
+        if (!response.ok) throw new Error("Regeneration failed");
+        
+        const updatedArt = await response.json();
+        
+        // Dynamically update fields
+        document.getElementById(`title-${id}`).value = updatedArt.title || '';
+        document.getElementById(`artist-${id}`).value = updatedArt.artist || '';
+        document.getElementById(`year-${id}`).value = updatedArt.year || '';
+        document.getElementById(`tags-${id}`).value = updatedArt.tags || '';
+        document.getElementById(`desc-${id}`).value = updatedArt.description || '';
+        
+        // Clear hint
+        document.getElementById(`hint-${id}`).value = '';
+        
+    } catch (error) {
+        console.error('[Admin] Regen failed:', error);
+        alert("AI Regeneration failed. Check logs.");
+    } finally {
+        btn.disabled = false;
+        textSpan.textContent = originalText;
+    }
 }
 
 async function approveArtwork(id) {

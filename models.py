@@ -4,7 +4,7 @@ Phase 3: Many-to-Many relationship between Playlists and Artworks.
 """
 
 from typing import List, Optional
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Table
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Table, Boolean
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from database import Base
@@ -28,12 +28,20 @@ class PlaylistModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String, unique=True, index=True)
     display_time: Mapped[int] = mapped_column(Integer, default=30)
+    default_mode: Mapped[str] = mapped_column(String, default="ken-burns")
+    shuffle: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    # Placard Timers (stored in seconds)
+    placard_initial_wait_sec: Mapped[int] = mapped_column(Integer, default=5)
+    placard_initial_show_sec: Mapped[int] = mapped_column(Integer, default=15)
+    placard_interaction_show_sec: Mapped[int] = mapped_column(Integer, default=10)
     
     # Many-to-Many relationship
     artworks: Mapped[List["ArtworkModel"]] = relationship(
         secondary=playlist_artwork,
         back_populates="playlists",
-        lazy="selectin"
+        lazy="selectin",
+        order_by="playlist_artwork.c.display_order"
     )
 
     def __repr__(self) -> str:

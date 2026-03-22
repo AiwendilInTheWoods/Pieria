@@ -1,62 +1,59 @@
-# Multithreaded SYN Scanner with Scapy
+# 🖼️ Screen Docent
 
-This project provides a Python script using the Scapy library to perform a multithreaded SYN scan across a specified subnet or IP address.
+**Screen Docent** is an open-source, AI-powered digital art curator and signage platform. It transforms any TV or monitor into a high-end museum display, complete with autonomous artwork analysis, intelligent metadata generation, and instant mobile remote control.
 
-## What is a SYN Scan?
+![Screen Docent Logo](static/logo.svg)
 
-A SYN scan, also known as a "half-open" scan, is a technique used in network security to identify open ports on a target host. It involves the following steps:
+## ✨ Features
 
-1. **SYN Packet**: The scanner sends a TCP packet with the SYN (Synchronize) flag set to a target port.
-2. **Analysis**:
-   - **OPEN**: If the target responds with a **SYN-ACK** (Synchronize-Acknowledge) packet, the port is open. The scanner then sends an **RST** (Reset) packet to close the connection before it's fully established.
-   - **CLOSED**: If the target responds with an **RST** packet, the port is closed.
-   - **FILTERED**: If there is no response (timeout), the port is likely filtered by a firewall or dropped by the host.
+*   **🤖 AI Curator Agent:** Automatically generates museum-grade titles, descriptions, and tags for uploaded images using Gemini 2.5 Flash.
+*   **📱 WebSocket Remote:** A mobile-first, no-refresh PWA remote to switch playlists, change modes, and trigger placards instantly.
+*   **📺 Multi-Display Support:** Targeted routing using unique display IDs allows a single server to manage different artwork streams across multiple TVs.
+*   **🎨 Advanced Rendering:** Choose between cinematic Ken Burns pans, static user-defined crops, or blurred matte effects.
+*   **⚖️ Hierarchical Config:** Precise control via URL parameters that override playlist and global defaults.
+*   **🔒 Human-in-the-Loop:** A dedicated Review Queue to audit and refine AI-generated content before it goes live.
+*   **💾 Persistent & Safe:** SQLite-backed state with automatic migrations and Docker volume persistence.
 
-## Multithreading and Performance
+## 🚀 Quickstart Deployment
 
-The script uses `concurrent.futures.ThreadPoolExecutor` to perform scans concurrently. This significantly increases scanning speed over a large subnet by allowing multiple host checks to happen in parallel.
+The fastest way to get Screen Docent running is using Docker.
 
-## Packet Construction with Scapy
+### 1. Prerequisites
+*   [Docker](https://docs.docker.com/get-docker/)
+*   [Docker Compose](https://docs.docker.com/compose/install/)
 
-The script uses Scapy's domain-specific language for packet construction:
-
-```python
-IP(dst=target_ip) / TCP(dport=target_port, flags="S")
+### 2. Configure Environment
+Create a `.env` file in the project root:
+```bash
+# Get your free key at https://aistudio.google.com/
+GEMINI_API_KEY=your_api_key_here
 ```
 
-- **`IP(dst=target_ip)`**: Creates an IP header with the destination set to the target.
-- **`TCP(dport=target_port, flags="S")`**: Creates a TCP header targeting a specific port with the **SYN** flag (`"S"`) set.
+### 3. Launch
+```bash
+# Clone and enter the repo
+git clone https://github.com/your-username/screen-docent.git
+cd screen-docent
 
-## Requirements
+# Build and start
+docker compose up -d --build
+```
 
-- Python 3
-- Scapy (`pip install -r requirements.txt`)
-- Root/Sudo privileges (Required for sending raw packets on Linux/Unix systems)
+### 4. Access the System
+*   **Admin Dashboard:** `http://localhost:8000/admin` (Upload and manage art)
+*   **Main Display:** `http://localhost:8000/` (Point your TV browser here)
+*   **Mobile Remote:** `http://localhost:8000/remote` (Control from your phone)
 
-## Execution Instructions
+## 🛠️ Configuration Hierarchy
 
-1. **Install Scapy**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+Screen Docent uses a strict priority system for settings like `cycle_time`, `mode`, and `shuffle`:
 
-2. **Run the Script**:
-   To scan a specific host:
-   ```bash
-   sudo python3 syn_scan.py 192.168.1.10 -p 80
-   ```
+1.  **URL Parameters:** `?mode=static-crop&cycle_time=60` (Highest Priority)
+2.  **Playlist Defaults:** Configured per collection in the Admin UI.
+3.  **Global Defaults:** System-wide fallbacks.
 
-   To scan a subnet with 20 threads and a 1-second timeout:
-   ```bash
-   sudo python3 syn_scan.py 192.168.1.0/24 -p 443 -T 20 -t 1.0
-   ```
+## 📖 Documentation
+For a full list of URL parameters and hardware optimization tips (like using Fully Kiosk Browser), visit the internal **Help & Docs** page at `http://localhost:8000/help`.
 
-### Arguments:
-- `target`: Target IP or subnet (e.g., `192.168.1.1` or `192.168.1.0/24`).
-- `-p`, `--port`: Target port (default: `80`).
-- `-t`, `--timeout`: Timeout in seconds for each packet (default: `2.0`).
-- `-T`, `--threads`: Number of concurrent threads (default: `10`).
-
-## Legal and Ethical Warning
-
-**Important**: Unauthorized network scanning can be considered a malicious activity. Ensure you have explicit permission from the owner of the network and systems you are scanning. Use this script only for educational purposes or on networks you own and have authorization to test.
+---
+*Built for art lovers, powered by AI.*

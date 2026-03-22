@@ -33,12 +33,14 @@ const globalConfig = {
     mode: urlParams.get('mode') || null,
     placard_wait: parseInt(urlParams.get('placard_wait')) || null,
     placard_show: parseInt(urlParams.get('placard_show')) || null,
-    placard_manual: parseInt(urlParams.get('placard_manual')) || null
+    placard_manual: parseInt(urlParams.get('placard_manual')) || null,
+    shuffle: urlParams.get('shuffle') !== null ? urlParams.get('shuffle') === 'true' : null
 };
 
 const DEFAULT_SETTINGS = {
     cycle_time: 30,
     mode: 'ken-burns',
+    shuffle: false,
     placard_wait: 5,
     placard_show: 15,
     placard_manual: 10
@@ -271,7 +273,17 @@ let currentPlaylistData = null;
 async function fetchAndTransition(direction = 1) {
     if (!currentPlaylist) return;
     try {
-        const params = new URLSearchParams({ playlist_name: currentPlaylist, direction: direction, shuffle: 'false' });
+        // Resolve Shuffle Hierarchy (URL > Playlist > Global Default)
+        // We need to fetch once without shuffle to get the playlist default if URL is null
+        // But the API already handles current_index and shuffle logic.
+        // We'll peek at currentPlaylistData if we have it, or just use globalConfig.
+        const resolvedShuffle = globalConfig.shuffle !== null ? globalConfig.shuffle : (currentPlaylistData?.shuffle !== undefined ? currentPlaylistData.shuffle : DEFAULT_SETTINGS.shuffle);
+
+        const params = new URLSearchParams({ 
+            playlist_name: currentPlaylist, 
+            direction: direction, 
+            shuffle: resolvedShuffle.toString() 
+        });
         if (currentImageIndex !== null && currentImageIndex !== undefined) params.append('current_index', currentImageIndex);
         const response = await fetch(`${API_BASE}/next-image?${params.toString()}`);
         if (!response.ok) throw new Error('No approved images');

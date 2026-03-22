@@ -85,6 +85,17 @@ from agents import process_artwork
 ARTWORK_ROOT = Path(os.getenv("ARTWORK_ROOT", "Artwork"))
 LIBRARY_DIR = ARTWORK_ROOT / "_Library"
 
+def get_optimized_image(image_path: Path, size: tuple, quality: int = 85) -> bytes:
+    """Resizes and compresses an image for web delivery."""
+    logger.info(f"[Image Processor] Optimizing: {image_path.name}")
+    with Image.open(image_path) as img:
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        img.thumbnail(size, Image.Resampling.LANCZOS)
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=quality)
+        return buf.getvalue()
+
 async def run_ai_pipeline(artwork_id: int):
     db = SessionLocal()
     try:
@@ -182,6 +193,11 @@ class PlaylistSchema(BaseModel):
     id: int
     name: str
     display_time: int
+    default_mode: str
+    shuffle: bool
+    placard_initial_wait_sec: int
+    placard_initial_show_sec: int
+    placard_interaction_show_sec: int
     artworks: List[ArtworkSchema] = []
     @property
     def image_count(self) -> int:
@@ -196,6 +212,11 @@ class CropMetadataUpdate(BaseModel):
 
 class PlaylistUpdate(BaseModel):
     display_time: Optional[int] = None
+    default_mode: Optional[str] = None
+    shuffle: Optional[bool] = None
+    placard_initial_wait_sec: Optional[int] = None
+    placard_initial_show_sec: Optional[int] = None
+    placard_interaction_show_sec: Optional[int] = None
 
 class ReorderRequest(BaseModel):
     artwork_ids: List[int]
@@ -205,6 +226,9 @@ class RemoteChangeRequest(BaseModel):
     action: str
     playlist: Optional[str] = None
     mode: Optional[str] = None
+
+class RegenerationRequest(BaseModel):
+    hint: Optional[str] = None
 
 # -----------------------------------------------------------------------------
 # 3. API Endpoints
@@ -230,6 +254,11 @@ async def update_playlist(playlist_id: int, data: PlaylistUpdate, db: Session = 
     p = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first()
     if not p: raise HTTPException(status_code=404)
     if data.display_time is not None: p.display_time = data.display_time
+    if data.default_mode is not None: p.default_mode = data.default_mode
+    if data.shuffle is not None: p.shuffle = data.shuffle
+    if data.placard_initial_wait_sec is not None: p.placard_initial_wait_sec = data.placard_initial_wait_sec
+    if data.placard_initial_show_sec is not None: p.placard_initial_show_sec = data.placard_initial_show_sec
+    if data.placard_interaction_show_sec is not None: p.placard_interaction_show_sec = data.placard_interaction_show_sec
     db.commit(); db.refresh(p); return p
 
 @app.delete("/playlists/{playlist_id}")
@@ -285,6 +314,14 @@ async def approve_artwork(artwork_id: int, data: ArtworkApproval, db: Session = 
     art.title, art.artist, art.year, art.description, art.tags, art.status = data.title, data.artist, data.year, data.description, data.tags, 'approved'
     db.commit(); db.refresh(art); return art
 
+@app.post("/api/curate/regenerate/{artwork_id}", response_model=ArtworkSchema)
+async def regenerate_artwork_metadata(artwork_id: int, request: RegenerationRequest, db: Session = Depends(get_db)):
+    """Manually triggers the AI pipeline with an optional human-in-the-loop hint."""
+    updated_art = await process_artwork(artwork_id, db, user_hint=request.hint)
+    if not updated_art:
+        raise HTTPException(status_code=500, detail="AI Regeneration failed")
+    return updated_art
+
 @app.get("/artworks/{artwork_id}/thumbnail")
 async def get_artwork_thumbnail(artwork_id: int, db: Session = Depends(get_db)):
     art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
@@ -326,6 +363,10 @@ async def get_next_image(playlist_name: str, shuffle: bool = Query(True), curren
     return {
         "index": idx, "image_url": f"/media/_Library/{quote(art.filename)}",
         "playlist": playlist_name, "display_time": p.display_time,
+        "default_mode": p.default_mode, "shuffle": p.shuffle,
+        "placard_wait": p.placard_initial_wait_sec,
+        "placard_show": p.placard_initial_show_sec,
+        "placard_manual": p.placard_interaction_show_sec,
         "crop": {"x": art.crop_x, "y": art.crop_y, "width": art.crop_width, "height": art.crop_height},
         "metadata": {"title": art.title, "artist": art.artist, "year": art.year, "description": art.description, "tags": art.tags}
     }
@@ -379,6 +420,10 @@ if ARTWORK_ROOT.exists():
 STATIC_DIR = Path("static")
 @app.get("/admin")
 async def get_admin_page(): return FileResponse(STATIC_DIR / "admin.html")
+
+@app.get("/help")
+async def get_help_page(): return FileResponse(STATIC_DIR / "help.html")
+
 if STATIC_DIR.exists():
     app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
 
