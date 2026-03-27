@@ -84,3 +84,17 @@ class ArtworkModel(Base):
 
     def __repr__(self) -> str:
         return f"<Artwork(filename='{self.filename}', status='{self.status}')>"
+
+class DiscoveryQueueModel(Base):
+    """
+    Table for new art recommendations found by Art Scouts.
+    """
+    __tablename__ = "discovery_queue"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    source_url: Mapped[str] = mapped_column(String)
+    thumbnail_url: Mapped[str] = mapped_column(String)
+    proposed_title: Mapped[Optional[str]] = mapped_column(String)
+    proposed_artist: Mapped[Optional[str]] = mapped_column(String)
+    source_api: Mapped[str] = mapped_column(String)
+    status: Mapped[str] = mapped_column(String, default='pending') # pending, approved, rejected

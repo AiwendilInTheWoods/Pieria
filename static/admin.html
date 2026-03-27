@@ -214,12 +214,16 @@
             <button id="nav-review" class="nav-btn" onclick="switchView('review')">
                 Review Queue <span id="review-count" class="badge">0</span>
             </button>
+            <button id="nav-discover" class="nav-btn" onclick="switchView('discover')">
+                Discover <span id="discover-count" class="badge">0</span>
+            </button>
             <a href="/help" class="nav-btn" style="text-decoration: none; margin-top: auto; border-style: dashed; opacity: 0.7;">
                 Help & Docs
             </a>
         </div>
 
         <div id="sidebar-playlists">
+            <button class="secondary" style="width:100%; margin-bottom:20px; font-size:0.7rem;" onclick="batchEnrich()">Batch Enrich Library (RAG)</button>
             <h2>Playlists</h2>
             <ul id="playlist-list" class="playlist-list"></ul>
             <div class="new-playlist">
@@ -256,6 +260,52 @@
         <!-- Review Queue View -->
         <div id="view-review" class="hidden">
             <div id="review-list"></div>
+        </div>
+
+        <!-- Discover View -->
+        <div id="view-discover" class="hidden">
+            <div class="mission-control" style="background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px;">
+                <h3 style="margin-top: 0; color: var(--accent-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1rem;">Art Scout Mission Control</h3>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;">
+                    <div style="flex-grow: 1;">
+                        <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Search Query (Optional)</label>
+                        <input type="text" id="scout-search" placeholder="e.g. 'Van Gogh', 'Impressionism', 'Japan'..." style="width: 100%; box-sizing: border-box;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Target Repositories</label>
+                        <div style="display: flex; gap: 15px; background: #0f172a; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                <input type="checkbox" name="scout-source" value="chicago" checked style="width: auto; margin: 0;"> Chicago
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                <input type="checkbox" name="scout-source" value="met" checked style="width: auto; margin: 0;"> The Met
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                <input type="checkbox" name="scout-source" value="cleveland" checked style="width: auto; margin: 0;"> Cleveland
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                <input type="checkbox" name="scout-source" value="rijksmuseum" checked style="width: auto; margin: 0;"> Rijksmuseum
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                <input type="checkbox" name="scout-source" value="smk" checked style="width: auto; margin: 0;"> SMK
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="primary" id="deploy-scout-btn" onclick="dispatchScouts()" style="padding: 12px 25px; font-weight: 600;">
+                        Deploy Scout
+                    </button>
+                </div>
+                
+                <div id="scout-status" style="margin-top: 15px; font-size: 0.75rem; color: #94a3b8; display: none;">
+                    <span class="spinner" style="display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(59, 130, 246, 0.3); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px;"></span>
+                    <span id="scout-status-text">Scout is hunting for masterpieces...</span>
+                </div>
+            </div>
+
+            <div id="discover-grid" class="artwork-grid"></div>
         </div>
     </main>
 

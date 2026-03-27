@@ -11,6 +11,7 @@ const API_BASE = (window.location.origin === 'null' || window.location.protocol 
 let currentPlaylistId = null;
 let currentPlaylists = [];
 let fullLibrary = [];
+let discoveryQueue = [];
 let cropper = null;
 let currentArtworkId = null;
 let currentView = 'playlists';
@@ -84,7 +85,8 @@ async function refreshData() {
     await Promise.all([
         fetchPlaylists(),
         fetchLibrary(),
-        fetchReviewQueue()
+        fetchReviewQueue(),
+        fetchDiscoveryQueue()
     ]);
 }
 
@@ -93,10 +95,12 @@ function switchView(view) {
     document.getElementById('nav-playlists').classList.toggle('active', view === 'playlists');
     document.getElementById('nav-library').classList.toggle('active', view === 'library');
     document.getElementById('nav-review').classList.toggle('active', view === 'review');
+    document.getElementById('nav-discover').classList.toggle('active', view === 'discover');
     
     document.getElementById('view-playlists').classList.toggle('hidden', view !== 'playlists');
     document.getElementById('view-library').classList.toggle('hidden', view !== 'library');
     document.getElementById('view-review').classList.toggle('hidden', view !== 'review');
+    document.getElementById('view-discover').classList.toggle('hidden', view !== 'discover');
     
     document.getElementById('sidebar-playlists').classList.toggle('hidden', view !== 'playlists');
 }
@@ -156,6 +160,134 @@ async function fetchReviewQueue() {
     } catch (error) { console.error('[Admin] Fetch queue failed:', error); }
 }
 
+async function fetchDiscoveryQueue() {
+    try {
+        const response = await fetch(`${API_BASE}/api/discover/queue`);
+        const data = await response.json();
+        document.getElementById('discover-count').textContent = data.length;
+        if (data.length !== discoveryQueue.length) {
+            discoveryQueue = data;
+            renderDiscoveryGrid();
+        }
+    } catch (error) { console.error('[Admin] Fetch discovery failed:', error); }
+}
+
+function renderDiscoveryGrid() {
+    const grid = document.getElementById('discover-grid');
+    grid.innerHTML = '';
+    discoveryQueue.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'artwork-card';
+        card.innerHTML = `
+            <img src="${item.thumbnail_url}" alt="${item.proposed_title}">
+            <div class="info">
+                <strong>${item.proposed_title}</strong><br>
+                <small>${item.proposed_artist}</small><br>
+                <small style="opacity:0.6">${item.source_api}</small>
+            </div>
+            <div class="actions" style="grid-template-columns: 1fr 1fr;">
+                <button onclick="approveDiscovery(${item.id}, this)" class="success">Approve</button>
+                <button onclick="rejectDiscovery(${item.id}, this)" style="color: #ef4444;">Reject</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+async function dispatchScouts() {
+    const searchInput = document.getElementById('scout-search');
+    const query = searchInput.value.trim();
+    const btn = document.getElementById('deploy-scout-btn');
+    const statusArea = document.getElementById('scout-status');
+    const statusText = document.getElementById('scout-status-text');
+    
+    // Get selected sources
+    const selectedSources = Array.from(document.querySelectorAll('input[name="scout-source"]:checked'))
+                                 .map(cb => cb.value);
+    
+    if (selectedSources.length === 0) return alert("Please select at least one source.");
+
+    // UI Feedback
+    btn.disabled = true;
+    statusArea.style.display = 'block';
+    statusText.textContent = `Scout is hunting in ${selectedSources.length} museum archives...`;
+
+    try {
+        const response = await fetch(`${API_BASE}/api/discover/dispatch`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                search: query,
+                sources: selectedSources
+            })
+        });
+        
+        if (response.ok) {
+            statusText.textContent = "Scout returned! Masterpieces added to queue.";
+            searchInput.value = '';
+            setTimeout(() => {
+                statusArea.style.display = 'none';
+                btn.disabled = false;
+            }, 3000);
+            await refreshData();
+        } else {
+            throw new Error("Dispatch failed");
+        }
+    } catch (error) { 
+        console.error('[Admin] Scout dispatch failed:', error); 
+        statusText.textContent = "Scout lost contact with the museums. Try again.";
+        setTimeout(() => {
+            statusArea.style.display = 'none';
+            btn.disabled = false;
+        }, 5000);
+    }
+}
+
+async function approveDiscovery(id, btn) {
+    btn.disabled = true;
+    btn.textContent = "Downloading...";
+    try {
+        const res = await fetch(`${API_BASE}/api/discover/approve/${id}`, { method: 'POST' });
+        if (res.ok) {
+            await refreshData();
+        } else {
+            alert("Download failed. The museum server might be busy.");
+            btn.disabled = false;
+            btn.textContent = "Approve";
+        }
+    } catch (error) { console.error('[Admin] Approval failed:', error); btn.disabled = false; }
+}
+
+async function rejectDiscovery(id, btn) {
+    try {
+        await fetch(`${API_BASE}/api/discover/reject/${id}`, { method: 'POST' });
+        await refreshData();
+    } catch (error) { console.error('[Admin] Rejection failed:', error); }
+}
+
+async function batchEnrich() {
+    if (!confirm("Run RAG enrichment on the entire approved library? This uses AI and takes time.")) return;
+    try {
+        await fetch(`${API_BASE}/api/curate/batch-enrich`, { method: 'POST' });
+        alert("Batch enrichment started in the background.");
+    } catch (error) { console.error('[Admin] Batch enrich failed:', error); }
+}
+
+async function reenrichArtwork(id) {
+    const hint = prompt("AI Guidance (Optional):", "");
+    if (hint === null) return; // Cancelled
+    
+    try {
+        await fetch(`${API_BASE}/api/curate/reenrich/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hint: hint })
+        });
+        alert("Artwork sent back to Review Queue for re-enrichment.");
+        await refreshData();
+    } catch (error) { console.error('[Admin] Re-enrich failed:', error); }
+}
+
 function renderLibraryGrid() {
     const grid = document.getElementById('library-grid');
     grid.innerHTML = '';
@@ -168,9 +300,10 @@ function renderLibraryGrid() {
                 <strong>${art.title || art.filename}</strong><br>
                 <small>${art.artist || 'Unknown'}</small>
             </div>
-            <div class="actions">
+            <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
                 <button onclick="openCropModal(${art.id})">Crop</button>
-                <button onclick="deleteArtworkPermanently(${art.id})" style="color: #ef4444;">Delete Permanently</button>
+                <button onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
+                <button onclick="deleteArtworkPermanently(${art.id})" style="color: #ef4444;">Delete</button>
             </div>
         `;
         grid.appendChild(card);
@@ -190,8 +323,9 @@ function renderArtworkGrid(artworks) {
                 <strong>${art.title || art.filename}</strong><br>
                 <small>${art.artist || 'Unknown'}</small>
             </div>
-            <div class="actions">
+            <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
                 <button onclick="openCropModal(${art.id})">Crop</button>
+                <button onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
                 <button onclick="removeArtworkFromPlaylist(${art.id})" style="color: #f59e0b;">Remove</button>
             </div>
         `;

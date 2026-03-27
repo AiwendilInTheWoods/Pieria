@@ -79,8 +79,11 @@ manager = ConnectionManager()
 
 # Local imports
 from database import init_db, get_db, SessionLocal
-from models import PlaylistModel, ArtworkModel, playlist_artwork
+from models import PlaylistModel, ArtworkModel, playlist_artwork, DiscoveryQueueModel
 from agents import process_artwork
+import curator
+import scout
+import httpx
 
 ARTWORK_ROOT = Path(os.getenv("ARTWORK_ROOT", "Artwork"))
 LIBRARY_DIR = ARTWORK_ROOT / "_Library"
@@ -230,6 +233,20 @@ class RemoteChangeRequest(BaseModel):
 class RegenerationRequest(BaseModel):
     hint: Optional[str] = None
 
+class DispatchRequest(BaseModel):
+    sources: List[str]
+    search: Optional[str] = None
+
+class DiscoveryQueueSchema(BaseModel):
+    id: int
+    source_url: str
+    thumbnail_url: str
+    proposed_title: str
+    proposed_artist: str
+    source_api: str
+    status: str
+    model_config = {"from_attributes": True}
+
 # -----------------------------------------------------------------------------
 # 3. API Endpoints
 # -----------------------------------------------------------------------------
@@ -321,6 +338,91 @@ async def regenerate_artwork_metadata(artwork_id: int, request: RegenerationRequ
     if not updated_art:
         raise HTTPException(status_code=500, detail="AI Regeneration failed")
     return updated_art
+
+@app.post("/api/curate/reenrich/{artwork_id}", response_model=ArtworkSchema)
+async def reenrich_artwork(artwork_id: int, request: RegenerationRequest, db: Session = Depends(get_db)):
+    """Sets artwork status back to pending and triggers AI re-enrichment."""
+    art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
+    if not art: raise HTTPException(404)
+    
+    art.status = 'pending_review'
+    db.commit()
+    
+    updated_art = await process_artwork(artwork_id, db, user_hint=request.hint)
+    return updated_art
+
+@app.post("/api/curate/batch-enrich")
+async def batch_enrich(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """Triggers RAG enrichment for all approved artworks."""
+    background_tasks.add_task(curator.batch_enrich_all, db)
+    return {"status": "Batch enrichment started in background"}
+
+@app.get("/api/discover/queue", response_model=List[DiscoveryQueueSchema])
+async def get_discovery_queue(db: Session = Depends(get_db)):
+    """Returns the list of pending art discoveries."""
+    return db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.status == 'pending').all()
+
+@app.post("/api/discover/refresh")
+async def trigger_discovery(search: Optional[str] = Query(None), background_tasks: BackgroundTasks = None, db: Session = Depends(get_db)):
+    """Triggers scouts to find new art, optionally guided by a search term."""
+    background_tasks.add_task(scout.run_scouts, db, query=search)
+    return {"status": "Art scouts dispatched", "search": search}
+
+@app.post("/api/discover/dispatch")
+async def dispatch_discovery(request: DispatchRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """Multi-source art discovery dispatch."""
+    background_tasks.add_task(scout.run_scouts, db, query=request.search, sources=request.sources)
+    return {"status": "Art scouts dispatched", "sources": request.sources, "search": request.search}
+
+@app.post("/api/discover/approve/{item_id}")
+async def approve_discovery(item_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """Downloads approved discovery and adds to library."""
+    item = db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.id == item_id).first()
+    if not item: raise HTTPException(404)
+    
+    # 1. Download full-res image
+    filename = f"scouted_{item_id}_{item.proposed_title.replace(' ', '_')[:50]}.jpg"
+    filepath = LIBRARY_DIR / filename
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(item.source_url, timeout=30.0)
+            if resp.status_code == 200:
+                with open(filepath, "wb") as f:
+                    f.write(resp.content)
+            else:
+                raise Exception(f"Download failed: {resp.status_code}")
+    except Exception as e:
+        logger.error(f"[Discovery] Download failed: {e}")
+        raise HTTPException(500, detail=str(e))
+
+    # 2. Add to database
+    with Image.open(filepath) as img: w, h = img.size
+    new_art = ArtworkModel(
+        filename=filename, 
+        original_width=w, original_height=h,
+        title=item.proposed_title,
+        artist=item.proposed_artist,
+        status='pending_review'
+    )
+    db.add(new_art)
+    item.status = 'approved'
+    db.commit()
+    db.refresh(new_art)
+
+    # 3. Enrich with RAG Curator
+    background_tasks.add_task(curator.enrich_artwork, new_art.id, db)
+    
+    return {"status": "Art added to library and enrichment started", "artwork_id": new_art.id}
+
+@app.post("/api/discover/reject/{item_id}")
+async def reject_discovery(item_id: int, db: Session = Depends(get_db)):
+    """Removes a discovery from the queue."""
+    item = db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.id == item_id).first()
+    if not item: raise HTTPException(404)
+    item.status = 'rejected'
+    db.commit()
+    return {"status": "Rejected"}
 
 @app.get("/artworks/{artwork_id}/thumbnail")
 async def get_artwork_thumbnail(artwork_id: int, db: Session = Depends(get_db)):
