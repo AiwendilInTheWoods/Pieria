@@ -68,10 +68,13 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
             system_instruction += f"If a User Hint is provided: \"{user_hint}\", treat it as absolute fact and build your description around it. "
         
         system_instruction += (
-            "If you cannot confidently identify the artist or location from the visual data or hints, explicitly state \"Unknown Artist\" or \"Unknown Origin\" rather than guessing. "
-            "Return ONLY a valid JSON object with the following keys: "
-            "'title', 'artist', 'year', 'description' (a 2-sentence museum-style blurb), "
-            "and 'tags' (a flat array of 5-10 descriptive strings covering medium, mood, subject, style, "
+            "If you cannot confidently identify the creator from the visual data or hints, explicitly state \"Unknown Artist\" rather than guessing. "
+            "Return ONLY a valid JSON object strictly using these keys: "
+            "'title', 'agent_name', 'agent_role' (e.g., 'Painter', 'Attributed to'), 'creation_date', 'cultural_context' (e.g., 'Dutch', 'Post-Impressionist'), "
+            "'medium' (e.g., 'Oil on canvas'), 'physical_dimensions', 'current_repository' (museum location if known, else 'Unknown'), "
+            "'date_display' (a formatted string like 'c. 1890', or '19th century'), "
+            "'description_narrative' (a 2-sentence museum-style blurb), "
+            "and 'tags' (a flat array of 5-10 descriptive strings covering mood, subject, style, "
             "and season if applicable)."
         )
 
@@ -84,9 +87,16 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
         logger.info(f"[AI Agent] Metadata generated for {artwork.filename}")
 
         artwork.title = metadata.get('title', 'Untitled')
-        artwork.artist = metadata.get('artist', 'Unknown Artist')
-        artwork.year = metadata.get('year', 'Unknown')
-        artwork.description = metadata.get('description', '')
+        artwork.agent_name = metadata.get('agent_name', 'Unknown Artist')
+        artwork.agent_role = metadata.get('agent_role', 'Artist')
+        artwork.creation_date = metadata.get('creation_date', 'Unknown')
+        artwork.cultural_context = metadata.get('cultural_context', '')
+        artwork.medium = metadata.get('medium', '')
+        artwork.physical_dimensions = metadata.get('physical_dimensions', '')
+        artwork.current_repository = metadata.get('current_repository', '')
+        artwork.date_display = metadata.get('date_display', '')
+        
+        artwork.description_narrative = metadata.get('description_narrative', '')
         
         tags = metadata.get('tags', [])
         artwork.tags = ", ".join(tags) if isinstance(tags, list) else str(tags)

@@ -18,10 +18,35 @@ let currentView = 'playlists';
 let pollInterval = null;
 let sortableInstance = null;
 
+// Serialization Queue for API Actions
+let actionQueue = [];
+let isProcessingQueue = false;
+
+function enqueueAction(actionFn) {
+    actionQueue.push(actionFn);
+    processQueue();
+}
+
+async function processQueue() {
+    if (isProcessingQueue || actionQueue.length === 0) return;
+    isProcessingQueue = true;
+    while (actionQueue.length > 0) {
+        const action = actionQueue.shift();
+        try {
+            await action();
+        } catch (e) {
+            console.error("[Admin] Queue action failed:", e);
+        }
+    }
+    isProcessingQueue = false;
+    await refreshData();
+}
+
 async function init() {
     console.log('[Admin] Initializing Refactored Console...');
     setupUploadZone();
     setupPlaylistInput(); // Add key listener
+    await loadPremiumSettings();
     await refreshData();
     
     // Start background polling every 5 seconds for live updates
@@ -243,26 +268,55 @@ async function dispatchScouts() {
     }
 }
 
-async function approveDiscovery(id, btn) {
+function approveDiscovery(id, btn) {
     btn.disabled = true;
-    btn.textContent = "Downloading...";
-    try {
+    btn.textContent = "Queued...";
+    btn.style.opacity = "0.7";
+    enqueueAction(async () => {
+        btn.textContent = "Downloading...";
         const res = await fetch(`${API_BASE}/api/discover/approve/${id}`, { method: 'POST' });
-        if (res.ok) {
-            await refreshData();
-        } else {
+        if (!res.ok) {
             alert("Download failed. The museum server might be busy.");
-            btn.disabled = false;
-            btn.textContent = "Approve";
         }
-    } catch (error) { console.error('[Admin] Approval failed:', error); btn.disabled = false; }
+    });
 }
 
-async function rejectDiscovery(id, btn) {
-    try {
+function rejectDiscovery(id, btn) {
+    btn.disabled = true;
+    btn.textContent = "Queued...";
+    btn.style.opacity = "0.7";
+    enqueueAction(async () => {
         await fetch(`${API_BASE}/api/discover/reject/${id}`, { method: 'POST' });
-        await refreshData();
-    } catch (error) { console.error('[Admin] Rejection failed:', error); }
+    });
+}
+
+function clearRejectedHistory() {
+    if (!confirm('Are you sure you want to clear your rejected history? Scouts will be able to recommend previously denied artwork again.')) return;
+    
+    enqueueAction(async () => {
+        try {
+            await fetch(`${API_BASE}/api/discover/history`, { method: 'DELETE' });
+            alert("Rejected history successfully cleared! Scouts will now rediscover previously skipped artwork.");
+        } catch (error) { 
+            console.error('[Admin] Clear history failed:', error); 
+            alert("Failed to clear history. Check console.");
+        }
+    });
+}
+
+function clearOrphanedHistory() {
+    if (!confirm('Clear history for artworks you approved but later deleted? This allows scouts to recommend them again.')) return;
+    
+    enqueueAction(async () => {
+        try {
+            const res = await fetch(`${API_BASE}/api/discover/orphans`, { method: 'DELETE' });
+            const data = await res.json();
+            alert(data.status + ". Scouts will now rediscover them!");
+        } catch (error) { 
+            console.error('[Admin] Clear orphans failed:', error); 
+            alert("Failed to clear orphaned history. Check console.");
+        }
+    });
 }
 
 async function batchEnrich() {
@@ -298,7 +352,7 @@ function renderLibraryGrid() {
             <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
             <div class="info">
                 <strong>${art.title || art.filename}</strong><br>
-                <small>${art.artist || 'Unknown'}</small>
+                <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
             </div>
             <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
                 <button onclick="openCropModal(${art.id})">Crop</button>
@@ -321,7 +375,7 @@ function renderArtworkGrid(artworks) {
             <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
             <div class="info">
                 <strong>${art.title || art.filename}</strong><br>
-                <small>${art.artist || 'Unknown'}</small>
+                <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
             </div>
             <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
                 <button onclick="openCropModal(${art.id})">Crop</button>
@@ -342,12 +396,13 @@ async function removeArtworkFromPlaylist(artworkId) {
     } catch (error) { console.error('[Admin] Unlink failed:', error); }
 }
 
-async function deleteArtworkPermanently(id) {
+function deleteArtworkPermanently(id) {
     if (!confirm('PERMANENTLY delete this artwork from the library and all playlists? This wipes the file.')) return;
-    try {
-        await fetch(`${API_BASE}/artworks/${id}`, { method: 'DELETE' });
-        await refreshData();
-    } catch (error) { console.error('[Admin] Delete failed:', error); }
+    enqueueAction(async () => {
+        try {
+            await fetch(`${API_BASE}/artworks/${id}`, { method: 'DELETE' });
+        } catch (error) { console.error('[Admin] Delete failed:', error); }
+    });
 }
 
 function openLibraryPicker() {
@@ -532,10 +587,14 @@ function renderReviewQueue(artworks) {
             <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail"></div>
             <div class="review-form">
                 <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
-                <div class="form-group"><label>Artist</label><input type="text" id="artist-${art.id}" value="${art.artist || ''}"></div>
-                <div class="form-group"><label>Year</label><input type="text" id="year-${art.id}" value="${art.year || ''}"></div>
+                <div class="form-group"><label>Agent/Artist</label><input type="text" id="agent-${art.id}" value="${art.agent_name || ''}"></div>
+                <div class="form-group"><label>Role</label><input type="text" id="role-${art.id}" value="${art.agent_role || ''}"></div>
+                <div class="form-group"><label>Date/Year</label><input type="text" id="date-${art.id}" value="${art.creation_date || ''}"></div>
+                <div class="form-group"><label>Context</label><input type="text" id="context-${art.id}" value="${art.cultural_context || ''}"></div>
+                <div class="form-group"><label>Medium</label><input type="text" id="medium-${art.id}" value="${art.medium || ''}"></div>
+                <div class="form-group"><label>Display Date</label><input type="text" id="date-display-${art.id}" value="${art.date_display || ''}"></div>
                 <div class="form-group"><label>Tags</label><input type="text" id="tags-${art.id}" value="${art.tags || ''}"></div>
-                <div class="form-group full"><label>Description</label><textarea id="desc-${art.id}" rows="3">${art.description || ''}</textarea></div>
+                <div class="form-group full"><label>Narrative Description</label><textarea id="desc-${art.id}" rows="3">${art.description_narrative || ''}</textarea></div>
                 <div class="form-group full" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 5px;">
                     <label>AI Guidance (Optional)</label>
                     <div style="display: flex; gap: 10px;">
@@ -555,62 +614,85 @@ function renderReviewQueue(artworks) {
     });
 }
 
-async function regenerateArtworkMetadata(id) {
+function regenerateArtworkMetadata(id) {
     const hint = document.getElementById(`hint-${id}`).value;
     const btn = document.getElementById(`regen-btn-${id}`);
     const textSpan = document.getElementById(`regen-text-${id}`);
     
     // UI Feedback
     btn.disabled = true;
+    btn.style.opacity = "0.7";
     const originalText = textSpan.textContent;
-    textSpan.textContent = "Processing...";
+    textSpan.textContent = "Queued...";
     
-    try {
-        const response = await fetch(`${API_BASE}/api/curate/regenerate/${id}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ hint: hint })
-        });
-        
-        if (!response.ok) throw new Error("Regeneration failed");
-        
-        const updatedArt = await response.json();
-        
-        // Dynamically update fields
-        document.getElementById(`title-${id}`).value = updatedArt.title || '';
-        document.getElementById(`artist-${id}`).value = updatedArt.artist || '';
-        document.getElementById(`year-${id}`).value = updatedArt.year || '';
-        document.getElementById(`tags-${id}`).value = updatedArt.tags || '';
-        document.getElementById(`desc-${id}`).value = updatedArt.description || '';
-        
-        // Clear hint
-        document.getElementById(`hint-${id}`).value = '';
-        
-    } catch (error) {
-        console.error('[Admin] Regen failed:', error);
-        alert("AI Regeneration failed. Check logs.");
-    } finally {
-        btn.disabled = false;
-        textSpan.textContent = originalText;
-    }
+    enqueueAction(async () => {
+        textSpan.textContent = "Processing...";
+        try {
+            const response = await fetch(`${API_BASE}/api/curate/regenerate/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hint: hint })
+            });
+            
+            if (!response.ok) throw new Error("Regeneration failed");
+            
+            const updatedArt = await response.json();
+            
+            // Dynamically update fields
+            document.getElementById(`title-${id}`).value = updatedArt.title || '';
+            document.getElementById(`agent-${id}`).value = updatedArt.agent_name || '';
+            document.getElementById(`role-${id}`).value = updatedArt.agent_role || '';
+            document.getElementById(`date-${id}`).value = updatedArt.creation_date || '';
+            document.getElementById(`context-${id}`).value = updatedArt.cultural_context || '';
+            document.getElementById(`medium-${id}`).value = updatedArt.medium || '';
+            document.getElementById(`date-display-${id}`).value = updatedArt.date_display || '';
+            document.getElementById(`tags-${id}`).value = updatedArt.tags || '';
+            document.getElementById(`desc-${id}`).value = updatedArt.description_narrative || '';
+            
+            // Clear hint
+            document.getElementById(`hint-${id}`).value = '';
+            
+        } catch (error) {
+            console.error('[Admin] Regen failed:', error);
+            alert("AI Regeneration failed. Check logs.");
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                if(textSpan) textSpan.textContent = originalText;
+            }
+        }
+    });
 }
 
-async function approveArtwork(id) {
+function approveArtwork(id) {
+    const btn = document.querySelector(`#title-${id}`).closest('.review-form').querySelector('.success');
+    btn.disabled = true;
+    btn.textContent = "Queued...";
+    btn.style.opacity = "0.7";
+    
     const metadata = {
         title: document.getElementById(`title-${id}`).value,
-        artist: document.getElementById(`artist-${id}`).value,
-        year: document.getElementById(`year-${id}`).value,
+        agent_name: document.getElementById(`agent-${id}`).value,
+        agent_role: document.getElementById(`role-${id}`).value,
+        creation_date: document.getElementById(`date-${id}`).value,
+        cultural_context: document.getElementById(`context-${id}`).value,
+        medium: document.getElementById(`medium-${id}`).value,
+        date_display: document.getElementById(`date-display-${id}`).value,
         tags: document.getElementById(`tags-${id}`).value,
-        description: document.getElementById(`desc-${id}`).value
+        description_narrative: document.getElementById(`desc-${id}`).value
     };
-    try {
-        await fetch(`${API_BASE}/artworks/${id}/approve`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(metadata)
-        });
-        await refreshData();
-    } catch (error) { console.error('[Admin] Approval failed:', error); }
+    
+    enqueueAction(async () => {
+        btn.textContent = "Approving...";
+        try {
+            await fetch(`${API_BASE}/artworks/${id}/approve`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(metadata)
+            });
+        } catch (error) { console.error('[Admin] Approval failed:', error); }
+    });
 }
 
 function openCropModal(id) {
@@ -690,3 +772,71 @@ function closeModal() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// -----------------------------------------------------------------------------
+// Freemium API Configuration (Tier-2 Scouts)
+// -----------------------------------------------------------------------------
+async function loadPremiumSettings() {
+    try {
+        const response = await fetch(`${API_BASE}/api/settings/keys`);
+        const keys = await response.json();
+        
+        if (keys.harvard) unlockPremiumScout('harvard', 'Harvard Art Museums');
+        if (keys.smithsonian) unlockPremiumScout('smithsonian', 'Smithsonian');
+        if (keys.europeana) unlockPremiumScout('europeana', 'Europeana');
+        if (keys.rijksmuseum) unlockPremiumScout('rijksmuseum', 'Rijksmuseum');
+    } catch (e) {
+        console.error("Failed to load settings:", e);
+    }
+}
+
+async function promptApiKey(source, name, registerUrl) {
+    const key = prompt(`Unlock ${name}?\n\nPlease enter your free developer API key.\nYou can generate one instantly at:\n${registerUrl}`);
+    if (!key) return; // User cancelled
+
+    const label = document.getElementById(`premium-${source}`);
+    const originalContent = label.innerHTML;
+    label.innerHTML = "⏳ Validating...";
+    label.style.pointerEvents = "none";
+
+    try {
+        const response = await fetch(`${API_BASE}/api/settings/keys/${source}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ api_key: key })
+        });
+        
+        const data = await response.json();
+        if (!response.ok) {
+            alert(data.detail || "Invalid Key");
+            label.innerHTML = originalContent;
+            label.style.pointerEvents = "auto";
+            return;
+        }
+
+        // Success! Convert to standard checkbox
+        alert(`Success! ${name} is now unlocked and available for scouting!`);
+        unlockPremiumScout(source, name);
+    } catch (e) {
+        alert("Network error occurred validating API key.");
+        label.innerHTML = originalContent;
+        label.style.pointerEvents = "auto";
+    }
+}
+
+function unlockPremiumScout(source, name) {
+    const label = document.getElementById(`premium-${source}`);
+    if (label) label.remove();
+    
+    // Add to standard checkboxes if it doesn't already exist
+    const scoutsContainer = document.getElementById('scout-sources');
+    if (!scoutsContainer) return;
+
+    // Check if exists
+    if (scoutsContainer.querySelector(`input[value="${source}"]`)) return;
+
+    const newCb = document.createElement('label');
+    newCb.style.cssText = "display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;";
+    newCb.innerHTML = `<input type="checkbox" name="scout-source" value="${source}" checked style="width: auto; margin: 0;"> ${name}`;
+    scoutsContainer.appendChild(newCb);
+}

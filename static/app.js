@@ -333,7 +333,10 @@ function updatePlacard(metadata) {
     if (!metadata || !metadata.title) { placard.classList.add('hidden'); return; }
     placard.classList.remove('hidden');
     document.getElementById('art-title').textContent = metadata.title;
-    document.getElementById('art-artist-year').textContent = `${metadata.artist || 'Unknown Artist'} ${metadata.year ? '• ' + metadata.year : ''}`;
+    document.getElementById('art-agent-date').textContent = `${metadata.agent_name || 'Unknown Artist'} ${metadata.agent_role && metadata.agent_role !== 'Artist' ? '(' + metadata.agent_role + ')' : ''} ${metadata.creation_date ? '• ' + metadata.creation_date : ''}`;
+    
+    const details = [metadata.cultural_context, metadata.medium, metadata.date_display].filter(Boolean).join(' | ');
+    document.getElementById('art-museum-details').textContent = details;
     document.getElementById('art-description').textContent = metadata.description || '';
     const tagsContainer = document.getElementById('art-tags');
     tagsContainer.innerHTML = '';
@@ -347,7 +350,7 @@ function updatePlacard(metadata) {
     const qrEl = document.getElementById('qrcode');
     qrEl.innerHTML = '';
     new QRCode(qrEl, {
-        text: `https://www.google.com/search?q=${encodeURIComponent(metadata.artist + " " + metadata.title)}`,
+        text: `https://www.google.com/search?q=${encodeURIComponent(metadata.agent_name + " " + metadata.title)}`,
         width: 80, height: 80, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
     });
 }

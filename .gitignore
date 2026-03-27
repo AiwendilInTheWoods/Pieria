@@ -19,3 +19,4 @@ __pycache__/
 # System
 .DS_Store
 .thumbs.db
+.coverage

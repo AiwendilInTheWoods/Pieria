@@ -9,6 +9,7 @@ import logging
 import random
 import shutil
 import io
+import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Dict, Any, Optional
 from pathlib import Path
@@ -79,7 +80,7 @@ manager = ConnectionManager()
 
 # Local imports
 from database import init_db, get_db, SessionLocal
-from models import PlaylistModel, ArtworkModel, playlist_artwork, DiscoveryQueueModel
+from models import PlaylistModel, ArtworkModel, playlist_artwork, DiscoveryQueueModel, SettingsModel
 from agents import process_artwork
 import curator
 import scout
@@ -103,6 +104,27 @@ async def run_ai_pipeline(artwork_id: int):
     db = SessionLocal()
     try:
         await process_artwork(artwork_id, db)
+    finally:
+        db.close()
+
+async def run_rag_pipeline(artwork_id: int, context_hints: str = None):
+    db = SessionLocal()
+    try:
+        await curator.enrich_artwork(artwork_id, db, context_hints=context_hints)
+    finally:
+        db.close()
+
+async def run_scouts_bg(query: str = None, sources: List[str] = None):
+    db = SessionLocal()
+    try:
+        await scout.run_scouts(db, query=query, sources=sources)
+    finally:
+        db.close()
+
+async def run_batch_enrich_bg():
+    db = SessionLocal()
+    try:
+        await curator.batch_enrich_all(db)
     finally:
         db.close()
 
@@ -152,12 +174,87 @@ def sync_db_with_filesystem(db: Session) -> None:
                         ))
             db.commit()
 
+async def run_factory_seed(db: Session):
+    """Parses factory_seed.json and injects masterpieces if library is empty."""
+    seed_file = Path("static/factory_seed.json")
+    if not seed_file.exists(): return
+        
+    existing = db.query(ArtworkModel).filter(ArtworkModel.is_seed == True).first()
+    if existing: return
+        
+    try:
+        import json
+        with open(seed_file, "r") as f:
+            seeds = json.load(f)
+            
+        logger.info(f"[Bootstrapper] Injecting {len(seeds)} Masterpieces from Factory Seed...")
+        
+        async def perform_downloads(seed_items: list):
+            db_local = SessionLocal()
+            try:
+                await asyncio.sleep(2)
+                async with httpx.AsyncClient(headers={"User-Agent": "ScreenDocent/1.0"}) as client:
+                    for idx, item in enumerate(seed_items):
+                        await asyncio.sleep(1.5)
+                        try:
+                            pl_name = item.get("playlist", "The Masterpieces")
+                            playlist = db_local.query(PlaylistModel).filter(PlaylistModel.name == pl_name).first()
+                            if not playlist:
+                                playlist = PlaylistModel(name=pl_name)
+                                db_local.add(playlist); db_local.commit(); db_local.refresh(playlist)
+                                (ARTWORK_ROOT / pl_name).mkdir(parents=True, exist_ok=True)
+                            
+                            safe_name = f"seed_{idx}_{item.get('title', 'art').replace(' ','_').lower()[:15]}.jpg"
+                            safe_name = "".join(x for x in safe_name if x.isalnum() or x in '_-.')
+                            
+                            logger.info(f"[Bootstrapper] Downloading '{safe_name}'...")
+                            resp = await client.get(item.get("source_url"), timeout=30.0, follow_redirects=True)
+                            if resp.status_code == 200:
+                                dest_path = LIBRARY_DIR / safe_name
+                                with open(dest_path, "wb") as f:
+                                    f.write(resp.content)
+                                
+                                pl_path = ARTWORK_ROOT / pl_name / safe_name
+                                if not pl_path.exists():
+                                    try: os.symlink(dest_path.resolve(), pl_path)
+                                    except: shutil.copy(dest_path, pl_path)
+                                    
+                                with Image.open(dest_path) as img: w, h = img.size
+                                    
+                                artwork = ArtworkModel(
+                                    filename=safe_name, original_width=w, original_height=h,
+                                    crop_width=float(w), crop_height=float(h),
+                                    status='approved',
+                                    title=item.get("title"), agent_name=item.get("agent_name"),
+                                    agent_role=item.get("agent_role"), creation_date=item.get("creation_date"),
+                                    cultural_context=item.get("cultural_context"), medium=item.get("medium"),
+                                    date_display=item.get("date_display"), description_narrative=item.get("description_narrative"),
+                                    tags=item.get("tags"), is_seed=True
+                                )
+                                db_local.add(artwork); db_local.commit(); db_local.refresh(artwork)
+                                
+                                db_local.execute(playlist_artwork.insert().values(
+                                    playlist_id=playlist.id, artwork_id=artwork.id, display_order=0
+                                ))
+                                db_local.commit()
+                                
+                            else: logger.error(f"[Bootstrapper] Failed download {safe_name}: HTTP {resp.status_code}")
+                                
+                        except Exception as inner_e: logger.error(f"[Bootstrapper] Item error: {inner_e}")
+            finally: db_local.close()
+
+        asyncio.create_task(perform_downloads(seeds))
+
+    except Exception as e:
+        logger.error(f"[Bootstrapper] Failed to parse factory_seed.json: {e}")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
     db = SessionLocal()
     try:
         sync_db_with_filesystem(db)
+        await run_factory_seed(db)
     finally:
         db.close()
     yield
@@ -172,6 +269,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def add_no_cache_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 # -----------------------------------------------------------------------------
 # 2. Data Models
 # -----------------------------------------------------------------------------
@@ -181,10 +286,11 @@ class ArtworkSchema(BaseModel):
     original_width: int
     original_height: int
     title: Optional[str] = None
-    artist: Optional[str] = None
-    year: Optional[str] = None
-    description: Optional[str] = None
-    tags: Optional[str] = None
+    agent_name: Optional[str] = None
+    agent_role: Optional[str] = None
+    creation_date: Optional[str] = None; cultural_context: Optional[str] = None
+    medium: Optional[str] = None; date_display: Optional[str] = None
+    description_narrative: Optional[str] = None; tags: Optional[str] = None
     status: str
     crop_x: float
     crop_y: float
@@ -208,7 +314,7 @@ class PlaylistSchema(BaseModel):
     model_config = {"from_attributes": True}
 
 class ArtworkApproval(BaseModel):
-    title: str; artist: str; year: str; description: str; tags: str
+    title: str; agent_name: str; agent_role: str; creation_date: str; cultural_context: str; medium: str; date_display: str; description_narrative: str; tags: str
 
 class CropMetadataUpdate(BaseModel):
     crop_x: float; crop_y: float; crop_width: float; crop_height: float
@@ -328,7 +434,7 @@ async def get_pending_artworks(db: Session = Depends(get_db)):
 async def approve_artwork(artwork_id: int, data: ArtworkApproval, db: Session = Depends(get_db)):
     art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
     if not art: raise HTTPException(404)
-    art.title, art.artist, art.year, art.description, art.tags, art.status = data.title, data.artist, data.year, data.description, data.tags, 'approved'
+    art.title, art.agent_name, art.agent_role, art.creation_date, art.cultural_context, art.medium, art.date_display, art.description_narrative, art.tags, art.status = data.title, data.agent_name, data.agent_role, data.creation_date, data.cultural_context, data.medium, data.date_display, data.description_narrative, data.tags, 'approved'
     db.commit(); db.refresh(art); return art
 
 @app.post("/api/curate/regenerate/{artwork_id}", response_model=ArtworkSchema)
@@ -354,7 +460,7 @@ async def reenrich_artwork(artwork_id: int, request: RegenerationRequest, db: Se
 @app.post("/api/curate/batch-enrich")
 async def batch_enrich(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """Triggers RAG enrichment for all approved artworks."""
-    background_tasks.add_task(curator.batch_enrich_all, db)
+    background_tasks.add_task(run_batch_enrich_bg)
     return {"status": "Batch enrichment started in background"}
 
 @app.get("/api/discover/queue", response_model=List[DiscoveryQueueSchema])
@@ -365,13 +471,13 @@ async def get_discovery_queue(db: Session = Depends(get_db)):
 @app.post("/api/discover/refresh")
 async def trigger_discovery(search: Optional[str] = Query(None), background_tasks: BackgroundTasks = None, db: Session = Depends(get_db)):
     """Triggers scouts to find new art, optionally guided by a search term."""
-    background_tasks.add_task(scout.run_scouts, db, query=search)
+    background_tasks.add_task(run_scouts_bg, query=search)
     return {"status": "Art scouts dispatched", "search": search}
 
 @app.post("/api/discover/dispatch")
 async def dispatch_discovery(request: DispatchRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """Multi-source art discovery dispatch."""
-    background_tasks.add_task(scout.run_scouts, db, query=request.search, sources=request.sources)
+    background_tasks.add_task(run_scouts_bg, query=request.search, sources=request.sources)
     return {"status": "Art scouts dispatched", "sources": request.sources, "search": request.search}
 
 @app.post("/api/discover/approve/{item_id}")
@@ -386,7 +492,7 @@ async def approve_discovery(item_id: int, background_tasks: BackgroundTasks, db:
     
     try:
         async with httpx.AsyncClient() as client:
-            resp = await client.get(item.source_url, timeout=30.0)
+            resp = await client.get(item.source_url, timeout=30.0, follow_redirects=True)
             if resp.status_code == 200:
                 with open(filepath, "wb") as f:
                     f.write(resp.content)
@@ -402,8 +508,8 @@ async def approve_discovery(item_id: int, background_tasks: BackgroundTasks, db:
         filename=filename, 
         original_width=w, original_height=h,
         title=item.proposed_title,
-        artist=item.proposed_artist,
-        status='pending_review'
+        agent_name=item.proposed_artist,
+        status='processing'
     )
     db.add(new_art)
     item.status = 'approved'
@@ -411,9 +517,9 @@ async def approve_discovery(item_id: int, background_tasks: BackgroundTasks, db:
     db.refresh(new_art)
 
     # 3. Enrich with RAG Curator
-    background_tasks.add_task(curator.enrich_artwork, new_art.id, db)
+    background_tasks.add_task(run_rag_pipeline, new_art.id, item.context_hints)
     
-    return {"status": "Art added to library and enrichment started", "artwork_id": new_art.id}
+    return {"status": "Art added and fully enriched", "artwork_id": new_art.id}
 
 @app.post("/api/discover/reject/{item_id}")
 async def reject_discovery(item_id: int, db: Session = Depends(get_db)):
@@ -423,6 +529,34 @@ async def reject_discovery(item_id: int, db: Session = Depends(get_db)):
     item.status = 'rejected'
     db.commit()
     return {"status": "Rejected"}
+
+@app.delete("/api/discover/history")
+async def clear_rejected_history(db: Session = Depends(get_db)):
+    """Deletes all rejected items from the discovery queue to free up the cache."""
+    db.execute(delete(DiscoveryQueueModel).where(DiscoveryQueueModel.status == 'rejected'))
+    db.commit()
+    return {"status": "History cleared"}
+
+@app.delete("/api/discover/orphans")
+async def clear_orphaned_approvals(db: Session = Depends(get_db)):
+    """Deletes discovery queue items that were 'approved' but have no active artwork entry."""
+    approved_items = db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.status == 'approved').all()
+    artworks = db.query(ArtworkModel.filename).filter(ArtworkModel.filename.like('scouted_%')).all()
+    
+    active_scout_ids = set()
+    for (fname,) in artworks:
+        parts = fname.split('_')
+        if len(parts) >= 2 and parts[1].isdigit():
+            active_scout_ids.add(int(parts[1]))
+            
+    orphans_deleted = 0
+    for item in approved_items:
+        if item.id not in active_scout_ids:
+            db.delete(item)
+            orphans_deleted += 1
+            
+    db.commit()
+    return {"status": f"Successfully cleared {orphans_deleted} orphaned approvals"}
 
 @app.get("/artworks/{artwork_id}/thumbnail")
 async def get_artwork_thumbnail(artwork_id: int, db: Session = Depends(get_db)):
@@ -470,7 +604,12 @@ async def get_next_image(playlist_name: str, shuffle: bool = Query(True), curren
         "placard_show": p.placard_initial_show_sec,
         "placard_manual": p.placard_interaction_show_sec,
         "crop": {"x": art.crop_x, "y": art.crop_y, "width": art.crop_width, "height": art.crop_height},
-        "metadata": {"title": art.title, "artist": art.artist, "year": art.year, "description": art.description, "tags": art.tags}
+        "metadata": {
+            "title": art.title, "agent_name": art.agent_name, "agent_role": art.agent_role, 
+            "creation_date": art.creation_date, "cultural_context": art.cultural_context,
+            "medium": art.medium, "date_display": art.date_display,
+            "description": art.description_narrative, "tags": art.tags
+        }
     }
 
 # -----------------------------------------------------------------------------
@@ -513,6 +652,54 @@ async def websocket_endpoint(websocket: WebSocket, display_id: str):
     except Exception as e:
         logger.error(f"WebSocket error on '{display_id}': {e}")
         manager.disconnect(websocket, display_id)
+
+# -----------------------------------------------------------------------------
+# 4.5 Settings (API Keys)
+# -----------------------------------------------------------------------------
+@app.get("/api/settings/keys")
+async def get_api_keys(db: Session = Depends(get_db)):
+    """Returns a map of which API keys are unlocked."""
+    settings = db.query(SettingsModel).all()
+    # Check for presence of keys
+    return {
+        "harvard": any(s.setting_key == "harvard_api_key" for s in settings),
+        "smithsonian": any(s.setting_key == "smithsonian_api_key" for s in settings),
+        "europeana": any(s.setting_key == "europeana_api_key" for s in settings)
+    }
+
+@app.post("/api/settings/keys/{source}")
+async def verify_and_save_api_key(source: str, payload: dict, db: Session = Depends(get_db)):
+    """Validates an API key against the source museum backend and persists it."""
+    key = payload.get("api_key")
+    if not key: raise HTTPException(400, "api_key payload is required.")
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            if source == "harvard":
+                resp = await client.get(f"https://api.harvardartmuseums.org/object?apikey={key}&size=1", timeout=15)
+                if resp.status_code != 200: raise Exception("Harvard API rejected the key.")
+                db_key = "harvard_api_key"
+            elif source == "smithsonian":
+                resp = await client.get(f"https://api.si.edu/openaccess/api/v1.0/search?q=art&api_key={key}&rows=1", timeout=15)
+                if resp.status_code != 200: raise Exception("Smithsonian API rejected the key.")
+                db_key = "smithsonian_api_key"
+            elif source == "europeana":
+                resp = await client.get(f"https://api.europeana.eu/record/v2/search.json?wskey={key}&query=*&rows=1", timeout=15)
+                if resp.status_code != 200: raise Exception("Europeana API rejected the key.")
+                db_key = "europeana_api_key"
+            else:
+                raise HTTPException(400, f"Unsupported museum target: {source}")
+    except Exception as e:
+        raise HTTPException(401, detail=f"Validation Failed: {str(e)}")
+
+    setting = db.query(SettingsModel).filter(SettingsModel.setting_key == db_key).first()
+    if setting:
+        setting.setting_value = key
+    else:
+        setting = SettingsModel(setting_key=db_key, setting_value=key)
+        db.add(setting)
+    db.commit()
+    return {"status": "success", "source": source}
 
 # -----------------------------------------------------------------------------
 # 5. Static File Serving

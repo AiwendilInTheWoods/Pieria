@@ -67,12 +67,17 @@ class ArtworkModel(Base):
         back_populates="artworks"
     )
 
-    # Metadata
+    # VRA Core Metadata
     title: Mapped[Optional[str]] = mapped_column(String, index=True)
-    artist: Mapped[Optional[str]] = mapped_column(String, index=True)
-    year: Mapped[Optional[str]] = mapped_column(String)
-    description: Mapped[Optional[str]] = mapped_column(Text)
-    tags: Mapped[Optional[str]] = mapped_column(Text)
+    agent_name: Mapped[Optional[str]] = mapped_column(String, index=True)
+    agent_role: Mapped[Optional[str]] = mapped_column(String, default="Artist")
+    creation_date: Mapped[Optional[str]] = mapped_column(String)
+    cultural_context: Mapped[Optional[str]] = mapped_column(String)
+    medium: Mapped[Optional[str]] = mapped_column(String)
+    date_display: Mapped[Optional[str]] = mapped_column(String)
+    description_narrative: Mapped[Optional[str]] = mapped_column(Text)
+    tags: Mapped[Optional[str]] = mapped_column(String)   # comma-separated
+    is_seed: Mapped[bool] = mapped_column(Boolean, default=False)
     
     status: Mapped[str] = mapped_column(String, default='pending_review', index=True)
 
@@ -98,3 +103,14 @@ class DiscoveryQueueModel(Base):
     proposed_artist: Mapped[Optional[str]] = mapped_column(String)
     source_api: Mapped[str] = mapped_column(String)
     status: Mapped[str] = mapped_column(String, default='pending') # pending, approved, rejected
+    context_hints: Mapped[Optional[str]] = mapped_column(Text)
+
+class SettingsModel(Base):
+    """
+    Table for dynamic configuration, secrets, and API keys.
+    """
+    __tablename__ = "settings"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    setting_key: Mapped[str] = mapped_column(String, unique=True, index=True)
+    setting_value: Mapped[str] = mapped_column(String)

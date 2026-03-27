@@ -10,6 +10,8 @@ import json
 import os
 import asyncio
 from sqlalchemy.orm import Session
+from pathlib import Path
+from PIL import Image
 from models import ArtworkModel
 
 logger = logging.getLogger("artwork-display-api.curator")
@@ -18,7 +20,7 @@ logger = logging.getLogger("artwork-display-api.curator")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
-async def enrich_artwork(artwork_id: int, db: Session):
+async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None):
     """
     Fact-checks and enriches artwork metadata using Wikipedia RAG.
     """
@@ -26,7 +28,7 @@ async def enrich_artwork(artwork_id: int, db: Session):
     if not artwork:
         return None
 
-    search_query = f"{artwork.title} {artwork.artist}"
+    search_query = f"{artwork.title} {artwork.agent_name}"
     logger.info(f"[RAG Curator] Enriching: {search_query}")
 
     fact_context = ""
@@ -44,25 +46,60 @@ async def enrich_artwork(artwork_id: int, db: Session):
         
         prompt = (
             f"You are a strict museum curator performing RAG (Retrieval-Augmented Generation). "
-            f"Current Data: Title: {artwork.title}, Artist: {artwork.artist}. "
+            f"Current Data: Title: {artwork.title}, Agent: {artwork.agent_name}. "
             f"Factual Context from Wikipedia: \"{fact_context}\" "
-            "Task: Rewrite the museum placard metadata using the Factual Context as the primary source of truth. "
-            "If the Wikipedia context contradicts the Current Data, prioritize Wikipedia. "
-            "Return ONLY a valid JSON object with: 'title', 'artist', 'year', 'description' (2 sentences), and 'tags' (array)."
+        )
+        if context_hints:
+            prompt += f"Raw JSON Metadata from Museum API: {context_hints} "
+            
+        prompt += (
+            "Task: Rewrite the museum placard metadata using the Factual Context and Museum API Metadata as the primary source of truth. "
+            "If the Wikipedia context contradicts the Museum metadata, prioritize the Museum metadata. "
+            "Return ONLY a valid JSON object strictly using these keys: "
+            "'title', 'agent_name', 'agent_role' (e.g., 'Painter'), 'creation_date', 'cultural_context' (e.g., 'Dutch'), "
+            "'medium' (e.g., 'Oil on canvas'), 'physical_dimensions', 'current_repository', "
+            "'date_display' (a formatted string like 'c. 1890', or '19th century'), "
+            "'description_narrative' (a 2-sentence blurb), and 'tags' (a flat array of descriptive strings)."
         )
 
-        response = await asyncio.to_thread(model.generate_content, prompt, generation_config={"response_mime_type": "application/json"})
+        contents = [prompt]
+        if artwork.filename:
+            img_path = Path("Artwork/.library") / artwork.filename
+            if img_path.exists():
+                try:
+                    import io
+                    with Image.open(img_path) as img:
+                        if img.mode in ("RGBA", "P"): img = img.convert("RGB")
+                        img.thumbnail((2048, 2048), Image.Resampling.LANCZOS)
+                        b_arr = io.BytesIO()
+                        img.save(b_arr, format='JPEG', quality=85)
+                    
+                    contents.append({
+                        'mime_type': 'image/jpeg',
+                        'data': b_arr.getvalue()
+                    })
+                    logger.info(f"[RAG Curator] Attached {artwork.filename} to Vision RAG payload.")
+                except Exception as ie:
+                    logger.warning(f"[RAG Curator] Image parsing failed: {ie}")
+
+        response = await asyncio.to_thread(model.generate_content, contents, generation_config={"response_mime_type": "application/json"})
         metadata = json.loads(response.text)
 
         artwork.title = metadata.get('title', artwork.title)
-        artwork.artist = metadata.get('artist', artwork.artist)
-        artwork.year = metadata.get('year', artwork.year)
-        artwork.description = metadata.get('description', artwork.description)
+        artwork.agent_name = metadata.get('agent_name', artwork.agent_name)
+        artwork.agent_role = metadata.get('agent_role', artwork.agent_role)
+        artwork.creation_date = metadata.get('creation_date', artwork.creation_date)
+        artwork.cultural_context = metadata.get('cultural_context', artwork.cultural_context)
+        artwork.medium = metadata.get('medium', artwork.medium)
+        artwork.date_display = metadata.get('date_display', getattr(artwork, 'date_display', ''))
+        
+        artwork.description_narrative = metadata.get('description_narrative', getattr(artwork, 'description_narrative', ''))
         
         tags = metadata.get('tags', [])
         if tags:
             artwork.tags = ", ".join(tags) if isinstance(tags, list) else str(tags)
 
+        artwork.status = 'pending_review'
         db.commit()
         logger.info(f"[RAG Curator] Successfully enriched {artwork.title}")
         return artwork
@@ -70,6 +107,9 @@ async def enrich_artwork(artwork_id: int, db: Session):
     except Exception as e:
         logger.error(f"[RAG Curator] Gemini enrichment failed: {e}")
         db.rollback()
+        artwork.status = 'pending_review'
+        db.add(artwork)
+        db.commit()
         return None
 
 async def batch_enrich_all(db: Session):

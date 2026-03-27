@@ -275,7 +275,7 @@
                     
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Target Repositories</label>
-                        <div style="display: flex; gap: 15px; background: #0f172a; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div id="scout-sources" style="display: flex; flex-wrap: wrap; gap: 15px; background: #0f172a; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                             <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
                                 <input type="checkbox" name="scout-source" value="chicago" checked style="width: auto; margin: 0;"> Chicago
                             </label>
@@ -286,16 +286,38 @@
                                 <input type="checkbox" name="scout-source" value="cleveland" checked style="width: auto; margin: 0;"> Cleveland
                             </label>
                             <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="rijksmuseum" checked style="width: auto; margin: 0;"> Rijksmuseum
+                                <input type="checkbox" name="scout-source" value="smk" checked style="width: auto; margin: 0;"> SMK
                             </label>
                             <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="smk" checked style="width: auto; margin: 0;"> SMK
+                                <input type="checkbox" name="scout-source" value="vam" checked style="width: auto; margin: 0;"> V&A
+                            </label>
+                        </div>
+                        
+                        <label style="display: block; margin-top: 15px; margin-bottom: 8px; font-size: 0.8rem; color: #f59e0b;">Premium Collections (Require Free API Key)</label>
+                        <div id="premium-scouts" style="display: flex; flex-wrap: wrap; gap: 15px; background: #0f172a; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <label id="premium-harvard" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('harvard', 'Harvard Art Museums', 'https://harvardartmuseums.org/collections/api')">
+                                🔒 Harvard Art Museums
+                            </label>
+                            <label id="premium-smithsonian" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('smithsonian', 'Smithsonian', 'https://api.data.gov/signup/')">
+                                🔒 Smithsonian
+                            </label>
+                            <label id="premium-europeana" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('europeana', 'Europeana', 'https://pro.europeana.eu/page/get-api')">
+                                🔒 Europeana
+                            </label>
+                            <label id="premium-rijksmuseum" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('rijksmuseum', 'Rijksmuseum', 'https://data.rijksmuseum.nl/object-metadata/api/')">
+                                🔒 Rijksmuseum
                             </label>
                         </div>
                     </div>
                     
                     <button class="primary" id="deploy-scout-btn" onclick="dispatchScouts()" style="padding: 12px 25px; font-weight: 600;">
                         Deploy Scout
+                    </button>
+                    <button class="secondary" title="Permanently delete all previously rejected images so scouts can recommend them again." onclick="clearRejectedHistory()" style="padding: 12px 20px; border-color: #ef4444; color: #ef4444;">
+                        Clear Rejected History
+                    </button>
+                    <button class="secondary" title="Permanently delete history for art you approved but later removed from your library." onclick="clearOrphanedHistory()" style="padding: 12px 20px; border-color: #f59e0b; color: #f59e0b;">
+                        Clear Orphaned Approvals
                     </button>
                 </div>
                 
