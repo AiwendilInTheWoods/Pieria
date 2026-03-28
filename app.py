@@ -12,6 +12,7 @@ import io
 import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Dict, Any, Optional
+import traceback
 from pathlib import Path
 from urllib.parse import quote
 
@@ -347,8 +348,8 @@ class DiscoveryQueueSchema(BaseModel):
     id: int
     source_url: str
     thumbnail_url: str
-    proposed_title: str
-    proposed_artist: str
+    proposed_title: Optional[str] = None
+    proposed_artist: Optional[str] = None
     source_api: str
     status: str
     model_config = {"from_attributes": True}

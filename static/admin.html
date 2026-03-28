@@ -291,6 +291,9 @@
                             <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
                                 <input type="checkbox" name="scout-source" value="vam" checked style="width: auto; margin: 0;"> V&A
                             </label>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                <input type="checkbox" name="scout-source" value="rijks" checked style="width: auto; margin: 0;"> Rijksmuseum
+                            </label>
                         </div>
                         
                         <label style="display: block; margin-top: 15px; margin-bottom: 8px; font-size: 0.8rem; color: #f59e0b;">Premium Collections (Require Free API Key)</label>
@@ -303,9 +306,6 @@
                             </label>
                             <label id="premium-europeana" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('europeana', 'Europeana', 'https://pro.europeana.eu/page/get-api')">
                                 🔒 Europeana
-                            </label>
-                            <label id="premium-rijksmuseum" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('rijksmuseum', 'Rijksmuseum', 'https://data.rijksmuseum.nl/object-metadata/api/')">
-                                🔒 Rijksmuseum
                             </label>
                         </div>
                     </div>

@@ -784,7 +784,7 @@ async function loadPremiumSettings() {
         if (keys.harvard) unlockPremiumScout('harvard', 'Harvard Art Museums');
         if (keys.smithsonian) unlockPremiumScout('smithsonian', 'Smithsonian');
         if (keys.europeana) unlockPremiumScout('europeana', 'Europeana');
-        if (keys.rijksmuseum) unlockPremiumScout('rijksmuseum', 'Rijksmuseum');
+
     } catch (e) {
         console.error("Failed to load settings:", e);
     }

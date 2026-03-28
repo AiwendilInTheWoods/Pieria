@@ -6,9 +6,9 @@
 
 ## ✨ Features
 
-*   **🕵️ Museum Art Scouts:** Effortlessly search and pull high-res masterpieces directly from world-class APIs (The Met, Art Institute of Chicago, SMK, Cleveland) straight into your discovery queue. Supports premium integrations for Rijksmuseum, Harvard Art Museums, Smithsonian, and Europeana.
-*   **🧠 Vision RAG Curator:** Automatically generates museum-grade VRA Core metadata (titles, narrative descriptions, display dates, cultural contexts, tags) for all uploaded or scouted images using the Gemini 2.5 Flash Vision pipeline and Wikipedia grounding.
-*   **🏛 VRA Core Database:** Built on the established Visual Resources Association schema, securely housing rich metadata alongside dynamic crop data and playlists.
+*   **🕵️ Museum Art Scouts:** Effortlessly search and pull high-res masterpieces directly from world-class APIs (The Met, Art Institute of Chicago, SMK, Cleveland, Rijksmuseum) straight into your discovery queue. Supports premium integrations for Harvard Art Museums, Smithsonian, and Europeana.
+*   **🧠 Vision RAG Curator:** Automatically generates museum-grade VRA Core metadata for all artworks. The system features a built-in multilingual translation pipeline that automatically converts foreign metadata (e.g., Dutch Open Data from the Rijksmuseum) into fluent English using Gemini's visual grounding.
+*   **🏛 Phase 3 VRA Core Database:** Built on the established Visual Resources Association schema, securely housing rich metadata alongside dynamic crop data and playlists. Supports Many-to-Many relationships for flexible artwork-to-playlist mapping and custom sequencing.
 *   **📱 WebSocket Remote:** A mobile-first, no-refresh PWA remote to switch playlists, change modes, and trigger placards instantly.
 *   **📺 Multi-Display Support:** Targeted routing using unique display IDs allows a single server to manage different artwork streams across multiple TVs.
 *   **🎨 Advanced Rendering:** Choose between cinematic Ken Burns pans, static user-defined crops, or blurred matte effects.
