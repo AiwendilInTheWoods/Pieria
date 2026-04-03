@@ -206,18 +206,30 @@ async function fetchDiscoveryQueue() {
 function renderDiscoveryGrid() {
     const grid = document.getElementById('discover-grid');
     
+    // Prune obsolete cards BEFORE indexing to prevent 'leapfrog' detaching
+    const newIds = new Set(discoveryQueue.map(item => String(item.id)));
+    Array.from(grid.children).forEach(card => {
+        if (card.dataset.id && !newIds.has(card.dataset.id)) card.remove();
+    });
+
     const existingCards = {};
     Array.from(grid.children).forEach(card => {
         if (card.dataset.id) existingCards[card.dataset.id] = card;
     });
 
+    let currentDOMIndex = 0;
+
     discoveryQueue.forEach(item => {
         const idStr = String(item.id);
-        if (existingCards[idStr]) {
-            grid.appendChild(existingCards[idStr]);
+        let card = existingCards[idStr];
+        
+        if (card) {
             delete existingCards[idStr];
+            if (grid.children[currentDOMIndex] !== card) {
+                grid.insertBefore(card, grid.children[currentDOMIndex]);
+            }
         } else {
-            const card = document.createElement('div');
+            card = document.createElement('div');
             card.className = 'artwork-card';
             card.dataset.id = item.id;
             card.innerHTML = `
@@ -232,11 +244,14 @@ function renderDiscoveryGrid() {
                     <button onclick="rejectDiscovery(${item.id}, this)" style="color: #ef4444;">Reject</button>
                 </div>
             `;
-            grid.appendChild(card);
+            if (currentDOMIndex < grid.children.length) {
+                grid.insertBefore(card, grid.children[currentDOMIndex]);
+            } else {
+                grid.appendChild(card);
+            }
         }
+        currentDOMIndex++;
     });
-
-    Object.values(existingCards).forEach(card => card.remove());
 }
 
 async function dispatchScouts() {
@@ -365,18 +380,30 @@ async function reenrichArtwork(id) {
 function renderLibraryGrid() {
     const grid = document.getElementById('library-grid');
     
+    // Prune obsolete cards BEFORE indexing to prevent 'leapfrog' detaching
+    const newIds = new Set(fullLibrary.map(art => String(art.id)));
+    Array.from(grid.children).forEach(card => {
+        if (card.dataset.id && !newIds.has(card.dataset.id)) card.remove();
+    });
+
     const existingCards = {};
     Array.from(grid.children).forEach(card => {
         if (card.dataset.id) existingCards[card.dataset.id] = card;
     });
 
+    let currentDOMIndex = 0;
+
     fullLibrary.forEach(art => {
         const idStr = String(art.id);
-        if (existingCards[idStr]) {
-            grid.appendChild(existingCards[idStr]);
+        let card = existingCards[idStr];
+        
+        if (card) {
             delete existingCards[idStr];
+            if (grid.children[currentDOMIndex] !== card) {
+                grid.insertBefore(card, grid.children[currentDOMIndex]);
+            }
         } else {
-            const card = document.createElement('div');
+            card = document.createElement('div');
             card.className = 'artwork-card';
             card.dataset.id = art.id;
             card.innerHTML = `
@@ -391,28 +418,43 @@ function renderLibraryGrid() {
                     <button onclick="deleteArtworkPermanently(${art.id})" style="color: #ef4444;">Delete</button>
                 </div>
             `;
-            grid.appendChild(card);
+            if (currentDOMIndex < grid.children.length) {
+                grid.insertBefore(card, grid.children[currentDOMIndex]);
+            } else {
+                grid.appendChild(card);
+            }
         }
+        currentDOMIndex++;
     });
-
-    Object.values(existingCards).forEach(card => card.remove());
 }
 
 function renderArtworkGrid(artworks) {
     const grid = document.getElementById('artwork-grid');
     
+    // Prune obsolete cards BEFORE indexing to prevent 'leapfrog' detaching
+    const newIds = new Set(artworks.map(art => String(art.id)));
+    Array.from(grid.children).forEach(card => {
+        if (card.dataset.id && !newIds.has(card.dataset.id)) card.remove();
+    });
+
     const existingCards = {};
     Array.from(grid.children).forEach(card => {
         if (card.dataset.id) existingCards[card.dataset.id] = card;
     });
 
+    let currentDOMIndex = 0;
+
     artworks.forEach(art => {
         const idStr = String(art.id);
-        if (existingCards[idStr]) {
-            grid.appendChild(existingCards[idStr]);
+        let card = existingCards[idStr];
+        
+        if (card) {
             delete existingCards[idStr];
+            if (grid.children[currentDOMIndex] !== card) {
+                grid.insertBefore(card, grid.children[currentDOMIndex]);
+            }
         } else {
-            const card = document.createElement('div');
+            card = document.createElement('div');
             card.className = 'artwork-card';
             card.dataset.id = art.id;
             card.innerHTML = `
@@ -427,11 +469,15 @@ function renderArtworkGrid(artworks) {
                     <button onclick="removeArtworkFromPlaylist(${art.id})" style="color: #f59e0b;">Remove</button>
                 </div>
             `;
-            grid.appendChild(card);
+            if (currentDOMIndex < grid.children.length) {
+                grid.insertBefore(card, grid.children[currentDOMIndex]);
+            } else {
+                grid.appendChild(card);
+            }
         }
+        currentDOMIndex++;
     });
 
-    Object.values(existingCards).forEach(card => card.remove());
     setupSortable();
 }
 
@@ -626,7 +672,21 @@ async function saveOrder(ids) {
 
 function renderReviewQueue(artworks) {
     const list = document.getElementById('review-list');
-    list.innerHTML = artworks.length === 0 ? '<p style="text-align:center; color:#94a3b8; margin-top:40px;">Queue is empty.</p>' : '';
+    
+    // Clear any empty message if artworks exist
+    if (artworks.length > 0 && list.innerHTML.includes('Queue is empty')) {
+        list.innerHTML = '';
+    } else if (artworks.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:40px;">Queue is empty.</p>';
+        return;
+    }
+    
+    // Prune obsolete cards BEFORE indexing to prevent 'leapfrog' detaching
+    const newIds = new Set(artworks.map(a => String(a.id)));
+    Array.from(list.children).forEach(card => {
+        if (card.dataset.id && !newIds.has(card.dataset.id)) card.remove();
+    });
+
     const existingCards = {};
     Array.from(list.children).forEach(card => {
         if (card.dataset.id) existingCards[card.dataset.id] = card;
@@ -640,8 +700,7 @@ function renderReviewQueue(artworks) {
         
         if (card) {
             delete existingCards[idStr];
-            // Only move the card if its physical DOM index is incorrect 
-            // Ensures cursor focus and img tags never detach during approvals
+            // Since obsolete siblings are already removed, if the index diverges, it's a genuine reorder
             if (list.children[currentDOMIndex] !== card) {
                 list.insertBefore(card, list.children[currentDOMIndex]);
             }
@@ -684,8 +743,6 @@ function renderReviewQueue(artworks) {
         }
         currentDOMIndex++;
     });
-
-    Object.values(existingCards).forEach(card => card.remove());
 }
 
 function regenerateArtworkMetadata(id) {
