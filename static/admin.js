@@ -627,38 +627,65 @@ async function saveOrder(ids) {
 function renderReviewQueue(artworks) {
     const list = document.getElementById('review-list');
     list.innerHTML = artworks.length === 0 ? '<p style="text-align:center; color:#94a3b8; margin-top:40px;">Queue is empty.</p>' : '';
+    const existingCards = {};
+    Array.from(list.children).forEach(card => {
+        if (card.dataset.id) existingCards[card.dataset.id] = card;
+    });
+
+    let currentDOMIndex = 0;
+
     artworks.forEach(art => {
-        const card = document.createElement('div');
-        card.className = 'review-card';
-        card.innerHTML = `
-            <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail"></div>
-            <div class="review-form">
-                <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
-                <div class="form-group"><label>Agent/Artist</label><input type="text" id="agent-${art.id}" value="${art.agent_name || ''}"></div>
-                <div class="form-group"><label>Role</label><input type="text" id="role-${art.id}" value="${art.agent_role || ''}"></div>
-                <div class="form-group"><label>Date/Year</label><input type="text" id="date-${art.id}" value="${art.creation_date || ''}"></div>
-                <div class="form-group"><label>Context</label><input type="text" id="context-${art.id}" value="${art.cultural_context || ''}"></div>
-                <div class="form-group"><label>Medium</label><input type="text" id="medium-${art.id}" value="${art.medium || ''}"></div>
-                <div class="form-group"><label>Display Date</label><input type="text" id="date-display-${art.id}" value="${art.date_display || ''}"></div>
-                <div class="form-group"><label>Tags</label><input type="text" id="tags-${art.id}" value="${art.tags || ''}"></div>
-                <div class="form-group full"><label>Narrative Description</label><textarea id="desc-${art.id}" rows="3">${art.description_narrative || ''}</textarea></div>
-                <div class="form-group full" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 5px;">
-                    <label>AI Guidance (Optional)</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="hint-${art.id}" placeholder="e.g., 'This is my dog Buster in 2021'" style="flex-grow: 1;">
-                        <button class="primary" id="regen-btn-${art.id}" onclick="regenerateArtworkMetadata(${art.id})" style="padding: 10px 20px;">
-                            <span id="regen-text-${art.id}">Regenerate</span>
-                        </button>
+        const idStr = String(art.id);
+        let card = existingCards[idStr];
+        
+        if (card) {
+            delete existingCards[idStr];
+            // Only move the card if its physical DOM index is incorrect 
+            // Ensures cursor focus and img tags never detach during approvals
+            if (list.children[currentDOMIndex] !== card) {
+                list.insertBefore(card, list.children[currentDOMIndex]);
+            }
+        } else {
+            card = document.createElement('div');
+            card.className = 'review-card';
+            card.dataset.id = art.id;
+            card.innerHTML = `
+                <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail"></div>
+                <div class="review-form">
+                    <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
+                    <div class="form-group"><label>Agent/Artist</label><input type="text" id="agent-${art.id}" value="${art.agent_name || ''}"></div>
+                    <div class="form-group"><label>Role</label><input type="text" id="role-${art.id}" value="${art.agent_role || ''}"></div>
+                    <div class="form-group"><label>Date/Year</label><input type="text" id="date-${art.id}" value="${art.creation_date || ''}"></div>
+                    <div class="form-group"><label>Context</label><input type="text" id="context-${art.id}" value="${art.cultural_context || ''}"></div>
+                    <div class="form-group"><label>Medium</label><input type="text" id="medium-${art.id}" value="${art.medium || ''}"></div>
+                    <div class="form-group"><label>Display Date</label><input type="text" id="date-display-${art.id}" value="${art.date_display || ''}"></div>
+                    <div class="form-group"><label>Tags</label><input type="text" id="tags-${art.id}" value="${art.tags || ''}"></div>
+                    <div class="form-group full"><label>Narrative Description</label><textarea id="desc-${art.id}" rows="3">${art.description_narrative || ''}</textarea></div>
+                    <div class="form-group full" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 5px;">
+                        <label>AI Guidance (Optional)</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="hint-${art.id}" placeholder="e.g., 'This is my dog Buster in 2021'" style="flex-grow: 1;">
+                            <button class="primary" id="regen-btn-${art.id}" onclick="regenerateArtworkMetadata(${art.id})" style="padding: 10px 20px;">
+                                <span id="regen-text-${art.id}">Regenerate</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="review-actions">
+                        <button class="secondary" onclick="deleteArtworkPermanently(${art.id})">Delete</button>
+                        <button class="success" onclick="approveArtwork(${art.id})">Approve & Publish</button>
                     </div>
                 </div>
-                <div class="review-actions">
-                    <button class="secondary" onclick="deleteArtworkPermanently(${art.id})">Delete</button>
-                    <button class="success" onclick="approveArtwork(${art.id})">Approve & Publish</button>
-                </div>
-            </div>
-        `;
-        list.appendChild(card);
+            `;
+            if (currentDOMIndex < list.children.length) {
+                list.insertBefore(card, list.children[currentDOMIndex]);
+            } else {
+                list.appendChild(card);
+            }
+        }
+        currentDOMIndex++;
     });
+
+    Object.values(existingCards).forEach(card => card.remove());
 }
 
 function regenerateArtworkMetadata(id) {

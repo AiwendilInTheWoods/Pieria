@@ -194,9 +194,10 @@ async def run_factory_seed(db: Session):
             db_local = SessionLocal()
             try:
                 await asyncio.sleep(2)
-                async with httpx.AsyncClient(headers={"User-Agent": "ScreenDocent/1.0"}) as client:
+                headers = {"User-Agent": "ScreenDocent/1.0 (https://github.com/AiwendilInTheWoods/Screen-Docent; admin@local) httpx/0.24"}
+                async with httpx.AsyncClient(headers=headers) as client:
                     for idx, item in enumerate(seed_items):
-                        await asyncio.sleep(1.5)
+                        await asyncio.sleep(2.0)
                         try:
                             pl_name = item.get("playlist", "The Masterpieces")
                             playlist = db_local.query(PlaylistModel).filter(PlaylistModel.name == pl_name).first()
@@ -209,7 +210,17 @@ async def run_factory_seed(db: Session):
                             safe_name = "".join(x for x in safe_name if x.isalnum() or x in '_-.')
                             
                             logger.info(f"[Bootstrapper] Downloading '{safe_name}'...")
-                            resp = await client.get(item.get("source_url"), timeout=30.0, follow_redirects=True)
+                            
+                            max_retries = 3
+                            for attempt in range(max_retries):
+                                resp = await client.get(item.get("source_url"), timeout=30.0, follow_redirects=True)
+                                if resp.status_code == 429:
+                                    backoff = 5 * (attempt + 1)
+                                    logger.warning(f"[Bootstrapper] 429 Rate Limit hit for {safe_name}. Backing off {backoff}s...")
+                                    await asyncio.sleep(backoff)
+                                    continue
+                                break
+
                             if resp.status_code == 200:
                                 dest_path = LIBRARY_DIR / safe_name
                                 with open(dest_path, "wb") as f:
