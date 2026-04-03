@@ -7,9 +7,8 @@ services:
     volumes:
       # Map the local artwork library for persistence
       - ./Artwork:/app/Artwork
-      # Map the SQLite database file for state persistence
-      # Note: Mapping artwork.db as per app logic
-      - ./artwork.db:/app/artwork.db
+      # Map the data directory for SQLite database persistence
+      - ./data:/app/data
     env_file:
       - .env
     restart: unless-stopped

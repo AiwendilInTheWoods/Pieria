@@ -127,7 +127,7 @@ cd art-engine
 docker compose up -d --build</code></pre>
 
             <div class="tip">
-                <strong>Data Persistence:</strong> Your database and artwork library are stored in persistent Docker volumes (mapped to the <code>./Artwork</code> and <code>./artwork.db</code> files on your host). This means you can safely update the application via <code>git pull</code> and a rebuild without losing your settings or uploaded images.
+                <strong>Data Persistence:</strong> Your database and artwork library are stored in persistent Docker volumes (mapped to the <code>./Artwork</code> and <code>./data</code> directories on your host). This means you can safely update the application via <code>git pull</code> and a rebuild without losing your settings or uploaded images.
             </div>
 
             <h3>First Steps</h3>

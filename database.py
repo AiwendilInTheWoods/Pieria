@@ -4,6 +4,7 @@ Phase 2: Transitioning from filesystem-only to SQLite-backed state.
 """
 
 import logging
+import os
 from typing import Generator
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
@@ -11,8 +12,12 @@ from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
 # Configure logger as per GEMINI.md
 logger = logging.getLogger("artwork-display-api.database")
 
+# Pre-flight setup: Ensure data directories exist for zero-touch deployments
+os.makedirs("./data", exist_ok=True)
+os.makedirs("./Artwork", exist_ok=True)
+
 # Architectural Choice: SQLite for local, single-user performance and simplicity.
-SQLALCHEMY_DATABASE_URL = "sqlite:///./artwork.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./data/artwork.db"
 
 # Explanation: connect_args={"check_same_thread": False} is required for SQLite in FastAPI.
 engine = create_engine(
