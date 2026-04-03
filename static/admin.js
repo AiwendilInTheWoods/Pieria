@@ -149,6 +149,12 @@ async function fetchPlaylists() {
         const response = await fetch(`${API_BASE}/playlists`);
         const data = await response.json();
         
+        // Comprehensive optimization check to prevent 5-second blinking/wiping of the grid.
+        // It checks the stringified deeply-nested data to ensure ANY external artwork addition triggers a fresh render.
+        const newDataStr = JSON.stringify(data);
+        if (window._lastPlaylistsJSON === newDataStr) return;
+        window._lastPlaylistsJSON = newDataStr;
+        
         // Check if any playlist input is currently focused to avoid overwriting user edits
         const focusedEl = document.activeElement;
         const isEditingSidebar = focusedEl && focusedEl.tagName === 'INPUT' && focusedEl.closest('.playlist-item');
@@ -199,24 +205,38 @@ async function fetchDiscoveryQueue() {
 
 function renderDiscoveryGrid() {
     const grid = document.getElementById('discover-grid');
-    grid.innerHTML = '';
-    discoveryQueue.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'artwork-card';
-        card.innerHTML = `
-            <img src="${item.thumbnail_url}" alt="${item.proposed_title}">
-            <div class="info">
-                <strong>${item.proposed_title}</strong><br>
-                <small>${item.proposed_artist}</small><br>
-                <small style="opacity:0.6">${item.source_api}</small>
-            </div>
-            <div class="actions" style="grid-template-columns: 1fr 1fr;">
-                <button onclick="approveDiscovery(${item.id}, this)" class="success">Approve</button>
-                <button onclick="rejectDiscovery(${item.id}, this)" style="color: #ef4444;">Reject</button>
-            </div>
-        `;
-        grid.appendChild(card);
+    
+    const existingCards = {};
+    Array.from(grid.children).forEach(card => {
+        if (card.dataset.id) existingCards[card.dataset.id] = card;
     });
+
+    discoveryQueue.forEach(item => {
+        const idStr = String(item.id);
+        if (existingCards[idStr]) {
+            grid.appendChild(existingCards[idStr]);
+            delete existingCards[idStr];
+        } else {
+            const card = document.createElement('div');
+            card.className = 'artwork-card';
+            card.dataset.id = item.id;
+            card.innerHTML = `
+                <img src="${item.thumbnail_url}" alt="${item.proposed_title}">
+                <div class="info">
+                    <strong>${item.proposed_title}</strong><br>
+                    <small>${item.proposed_artist}</small><br>
+                    <small style="opacity:0.6">${item.source_api}</small>
+                </div>
+                <div class="actions" style="grid-template-columns: 1fr 1fr;">
+                    <button onclick="approveDiscovery(${item.id}, this)" class="success">Approve</button>
+                    <button onclick="rejectDiscovery(${item.id}, this)" style="color: #ef4444;">Reject</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        }
+    });
+
+    Object.values(existingCards).forEach(card => card.remove());
 }
 
 async function dispatchScouts() {
@@ -344,47 +364,74 @@ async function reenrichArtwork(id) {
 
 function renderLibraryGrid() {
     const grid = document.getElementById('library-grid');
-    grid.innerHTML = '';
-    fullLibrary.forEach(art => {
-        const card = document.createElement('div');
-        card.className = 'artwork-card';
-        card.innerHTML = `
-            <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
-            <div class="info">
-                <strong>${art.title || art.filename}</strong><br>
-                <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
-            </div>
-            <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
-                <button onclick="openCropModal(${art.id})">Crop</button>
-                <button onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
-                <button onclick="deleteArtworkPermanently(${art.id})" style="color: #ef4444;">Delete</button>
-            </div>
-        `;
-        grid.appendChild(card);
+    
+    const existingCards = {};
+    Array.from(grid.children).forEach(card => {
+        if (card.dataset.id) existingCards[card.dataset.id] = card;
     });
+
+    fullLibrary.forEach(art => {
+        const idStr = String(art.id);
+        if (existingCards[idStr]) {
+            grid.appendChild(existingCards[idStr]);
+            delete existingCards[idStr];
+        } else {
+            const card = document.createElement('div');
+            card.className = 'artwork-card';
+            card.dataset.id = art.id;
+            card.innerHTML = `
+                <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
+                <div class="info">
+                    <strong>${art.title || art.filename}</strong><br>
+                    <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
+                </div>
+                <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <button onclick="openCropModal(${art.id})">Crop</button>
+                    <button onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
+                    <button onclick="deleteArtworkPermanently(${art.id})" style="color: #ef4444;">Delete</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        }
+    });
+
+    Object.values(existingCards).forEach(card => card.remove());
 }
 
 function renderArtworkGrid(artworks) {
     const grid = document.getElementById('artwork-grid');
-    grid.innerHTML = '';
-    artworks.forEach(art => {
-        const card = document.createElement('div');
-        card.className = 'artwork-card';
-        card.dataset.id = art.id;
-        card.innerHTML = `
-            <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
-            <div class="info">
-                <strong>${art.title || art.filename}</strong><br>
-                <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
-            </div>
-            <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
-                <button onclick="openCropModal(${art.id})">Crop</button>
-                <button onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
-                <button onclick="removeArtworkFromPlaylist(${art.id})" style="color: #f59e0b;">Remove</button>
-            </div>
-        `;
-        grid.appendChild(card);
+    
+    const existingCards = {};
+    Array.from(grid.children).forEach(card => {
+        if (card.dataset.id) existingCards[card.dataset.id] = card;
     });
+
+    artworks.forEach(art => {
+        const idStr = String(art.id);
+        if (existingCards[idStr]) {
+            grid.appendChild(existingCards[idStr]);
+            delete existingCards[idStr];
+        } else {
+            const card = document.createElement('div');
+            card.className = 'artwork-card';
+            card.dataset.id = art.id;
+            card.innerHTML = `
+                <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
+                <div class="info">
+                    <strong>${art.title || art.filename}</strong><br>
+                    <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
+                </div>
+                <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <button onclick="openCropModal(${art.id})">Crop</button>
+                    <button onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
+                    <button onclick="removeArtworkFromPlaylist(${art.id})" style="color: #f59e0b;">Remove</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        }
+    });
+
+    Object.values(existingCards).forEach(card => card.remove());
     setupSortable();
 }
 
