@@ -12,12 +12,13 @@ import io
 import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Dict, Any, Optional
+from functools import lru_cache
 import traceback
 from pathlib import Path
 from urllib.parse import quote
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Query, Depends, UploadFile, File, Form, BackgroundTasks, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Query, Depends, UploadFile, File, Form, BackgroundTasks, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -90,6 +91,7 @@ import httpx
 ARTWORK_ROOT = Path(os.getenv("ARTWORK_ROOT", "Artwork"))
 LIBRARY_DIR = ARTWORK_ROOT / "_Library"
 
+@lru_cache(maxsize=256)
 def get_optimized_image(image_path: Path, size: tuple, quality: int = 85) -> bytes:
     """Resizes and compresses an image for web delivery."""
     logger.info(f"[Image Processor] Optimizing: {image_path.name}")
@@ -272,6 +274,15 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Artwork Display Engine API", version="0.4.5", lifespan=lifespan)
+
+@app.middleware("http")
+async def inject_aggressive_cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    # Target our dynamic Pillow rendering routes and static assets for aggressive caching
+    path = request.url.path
+    if (path.startswith("/artworks/") and ("thumbnail" in path or "preview" in path)) or path.startswith("/static/"):
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response
 
 app.add_middleware(
     CORSMiddleware,
