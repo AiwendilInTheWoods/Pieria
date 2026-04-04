@@ -104,6 +104,8 @@ class DiscoveryQueueModel(Base):
     source_api: Mapped[str] = mapped_column(String)
     status: Mapped[str] = mapped_column(String, default='pending') # pending, approved, rejected
     context_hints: Mapped[Optional[str]] = mapped_column(Text)
+    relevance_score: Mapped[Optional[float]] = mapped_column(Float, default=0.0)
+    search_session_id: Mapped[Optional[str]] = mapped_column(String, default=None)
 
 class SettingsModel(Base):
     """

@@ -64,7 +64,8 @@ async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None
 
         contents = [prompt]
         if artwork.filename:
-            img_path = Path("Artwork/.library") / artwork.filename
+            from config import LIBRARY_DIR
+            img_path = LIBRARY_DIR / artwork.filename
             if img_path.exists():
                 try:
                     import io

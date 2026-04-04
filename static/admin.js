@@ -17,6 +17,7 @@ let currentArtworkId = null;
 let currentView = 'playlists';
 let pollInterval = null;
 let sortableInstance = null;
+let currentSessionId = null;
 
 // Serialization Queue for API Actions
 let actionQueue = [];
@@ -232,8 +233,9 @@ function renderDiscoveryGrid() {
             card = document.createElement('div');
             card.className = 'artwork-card';
             card.dataset.id = item.id;
-            card.innerHTML = `
-                <img src="${item.thumbnail_url}" alt="${item.proposed_title}">
+                const thumbUrl = item.thumbnail_url + (item.thumbnail_url.includes('?') ? '&' : '?') + '_cb=' + item.id;
+                card.innerHTML = `
+                <img src="${thumbUrl}" alt="${item.proposed_title}">
                 <div class="info">
                     <strong>${item.proposed_title}</strong><br>
                     <small>${item.proposed_artist}</small><br>
@@ -260,6 +262,8 @@ async function dispatchScouts() {
     const btn = document.getElementById('deploy-scout-btn');
     const statusArea = document.getElementById('scout-status');
     const statusText = document.getElementById('scout-status-text');
+    const limitSelect = document.getElementById('scout-limit');
+    const limit = parseInt(limitSelect.value) || 10;
     
     // Get selected sources
     const selectedSources = Array.from(document.querySelectorAll('input[name="scout-source"]:checked'))
@@ -278,17 +282,33 @@ async function dispatchScouts() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 search: query,
-                sources: selectedSources
+                sources: selectedSources,
+                limit: limit
             })
         });
         
         if (response.ok) {
-            statusText.textContent = "Scout returned! Masterpieces added to queue.";
-            searchInput.value = '';
+            const data = await response.json();
+            currentSessionId = data.session_id;
+            
+            // Show classification feedback
+            const intentType = data.intent?.type || 'freetext';
+            const intentName = data.intent?.canonical || query;
+            const intentLabel = intentType === 'artist' ? `🎨 Artist: ${intentName}`
+                              : intentType === 'genre' ? `🖼️ Genre: ${intentName}`
+                              : intentType === 'subject' ? `🔍 Subject: ${intentName}`
+                              : `📝 Search: ${intentName}`;
+            
+            statusText.textContent = `Scout deployed! Classified as ${intentLabel}. Results incoming...`;
+            
+            // Show Load More button
+            document.getElementById('load-more-btn').style.display = 'block';
+            
+            // Don't clear input — user might want to tweak and re-search
             setTimeout(() => {
                 statusArea.style.display = 'none';
                 btn.disabled = false;
-            }, 3000);
+            }, 4000);
             await refreshData();
         } else {
             throw new Error("Dispatch failed");
@@ -300,6 +320,52 @@ async function dispatchScouts() {
             statusArea.style.display = 'none';
             btn.disabled = false;
         }, 5000);
+    }
+}
+
+async function loadMoreDiscoveries() {
+    if (!currentSessionId) {
+        alert('No active search session. Please run a new search first.');
+        return;
+    }
+    
+    const btn = document.getElementById('load-more-btn');
+    const statusArea = document.getElementById('scout-status');
+    const statusText = document.getElementById('scout-status-text');
+    
+    btn.disabled = true;
+    btn.textContent = 'Loading...';
+    statusArea.style.display = 'block';
+    statusText.textContent = 'Fetching next batch of results...';
+    
+    try {
+        const response = await fetch(`${API_BASE}/api/discover/more`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: currentSessionId })
+        });
+        
+        if (response.ok) {
+            statusText.textContent = 'More masterpieces loaded!';
+            setTimeout(() => {
+                statusArea.style.display = 'none';
+            }, 3000);
+            // Wait a moment for background task to complete, then refresh
+            setTimeout(async () => {
+                await refreshData();
+            }, 2000);
+        } else {
+            const err = await response.json();
+            statusText.textContent = err.detail || 'Failed to load more results.';
+            currentSessionId = null;
+            document.getElementById('load-more-btn').style.display = 'none';
+        }
+    } catch (error) {
+        console.error('[Admin] Load more failed:', error);
+        statusText.textContent = 'Failed to load more. Try a new search.';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Load More Results';
     }
 }
 
@@ -350,6 +416,49 @@ function clearOrphanedHistory() {
         } catch (error) { 
             console.error('[Admin] Clear orphans failed:', error); 
             alert("Failed to clear orphaned history. Check console.");
+        }
+    });
+}
+
+function clearPendingDiscoveries() {
+    if (!confirm('Clear ALL pending discover items? This gives you a clean slate for testing.')) return;
+    
+    enqueueAction(async () => {
+        try {
+            const res = await fetch(`${API_BASE}/api/discover/clear-pending`, { method: 'DELETE' });
+            const data = await res.json();
+            alert(data.status);
+            // Clear the discover grid UI
+            document.getElementById('discover-grid').innerHTML = '';
+            document.getElementById('load-more-btn').style.display = 'none';
+            currentSessionId = null;
+            loadDiscoverQueueThrottled();
+        } catch (error) { 
+            console.error('[Admin] Clear pending failed:', error); 
+            alert("Failed to clear pending items. Check console.");
+        }
+    });
+}
+
+function factoryReset() {
+    if (!confirm('⚠️ FACTORY RESET: This will delete ALL artwork except the original seed masterpieces, clear the entire discover queue, and remove playlist associations. This CANNOT be undone. Are you sure?')) return;
+    
+    const typed = prompt('Type RESET to confirm factory reset:');
+    if (typed !== 'RESET') {
+        alert('Factory reset cancelled.');
+        return;
+    }
+    
+    enqueueAction(async () => {
+        try {
+            const res = await fetch(`${API_BASE}/api/admin/factory-reset`, { method: 'POST' });
+            const data = await res.json();
+            alert(`${data.status}\n\nArtworks removed: ${data.artworks_removed}\nFiles deleted: ${data.files_deleted}\nQueue items cleared: ${data.queue_items_cleared}\nSeed artworks preserved: ${data.seed_artworks_preserved}`);
+            // Full page reload to reflect the reset state
+            window.location.reload();
+        } catch (error) { 
+            console.error('[Admin] Factory reset failed:', error); 
+            alert("Factory reset failed. Check console.");
         }
     });
 }

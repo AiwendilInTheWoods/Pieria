@@ -33,7 +33,7 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
     artwork = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
     if not artwork: return
 
-    from app import LIBRARY_DIR
+    from config import LIBRARY_DIR
     image_path = LIBRARY_DIR / artwork.filename
     
     if not image_path.exists(): return
@@ -92,8 +92,6 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
         artwork.creation_date = metadata.get('creation_date', 'Unknown')
         artwork.cultural_context = metadata.get('cultural_context', '')
         artwork.medium = metadata.get('medium', '')
-        artwork.physical_dimensions = metadata.get('physical_dimensions', '')
-        artwork.current_repository = metadata.get('current_repository', '')
         artwork.date_display = metadata.get('date_display', '')
         
         artwork.description_narrative = metadata.get('description_narrative', '')

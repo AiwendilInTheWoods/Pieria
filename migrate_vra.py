@@ -6,7 +6,7 @@ import logging
 import google.generativeai as genai
 from PIL import Image
 from sqlalchemy import text
-from app import LIBRARY_DIR
+from config import LIBRARY_DIR
 from database import SessionLocal, init_db
 from models import ArtworkModel
 

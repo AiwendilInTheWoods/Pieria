@@ -272,6 +272,13 @@
                         <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Search Query (Optional)</label>
                         <input type="text" id="scout-search" placeholder="e.g. 'Van Gogh', 'Impressionism', 'Japan'..." style="width: 100%; box-sizing: border-box;">
                     </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Results</label>
+                        <select id="scout-limit" style="background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem;">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                        </select>
+                    </div>
                     
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Target Repositories</label>
@@ -287,9 +294,6 @@
                             </label>
                             <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
                                 <input type="checkbox" name="scout-source" value="smk" checked style="width: auto; margin: 0;"> SMK
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="vam" checked style="width: auto; margin: 0;"> V&A
                             </label>
                             <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
                                 <input type="checkbox" name="scout-source" value="rijks" checked style="width: auto; margin: 0;"> Rijksmuseum
@@ -319,6 +323,12 @@
                     <button class="secondary" title="Permanently delete history for art you approved but later removed from your library." onclick="clearOrphanedHistory()" style="padding: 12px 20px; border-color: #f59e0b; color: #f59e0b;">
                         Clear Orphaned Approvals
                     </button>
+                    <button class="secondary" title="Remove all pending discover items for a fresh start." onclick="clearPendingDiscoveries()" style="padding: 12px 20px; border-color: #8b5cf6; color: #8b5cf6;">
+                        Clear All Pending
+                    </button>
+                    <button class="secondary" title="Reset to factory: keeps only seed art, removes everything else." onclick="factoryReset()" style="padding: 12px 20px; border-color: #dc2626; color: #dc2626; font-weight: 600;">
+                        ⚠️ Factory Reset
+                    </button>
                 </div>
                 
                 <div id="scout-status" style="margin-top: 15px; font-size: 0.75rem; color: #94a3b8; display: none;">
@@ -328,6 +338,9 @@
             </div>
 
             <div id="discover-grid" class="artwork-grid"></div>
+            <button id="load-more-btn" class="secondary" onclick="loadMoreDiscoveries()" style="display:none; width:100%; margin-top:20px; padding: 14px; font-size: 0.9rem; border-color: var(--accent-color); color: var(--accent-color);">
+                Load More Results
+            </button>
         </div>
     </main>
 

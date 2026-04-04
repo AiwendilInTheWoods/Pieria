@@ -11,9 +11,8 @@ import shutil
 import io
 import asyncio
 from contextlib import asynccontextmanager
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 from functools import lru_cache
-import traceback
 from pathlib import Path
 from urllib.parse import quote
 
@@ -86,10 +85,16 @@ from models import PlaylistModel, ArtworkModel, playlist_artwork, DiscoveryQueue
 from agents import process_artwork
 import curator
 import scout
+from scout import create_search_session, get_search_session
 import httpx
+from query_classifier import QueryClassifier
+from result_ranker import ResultRanker
 
-ARTWORK_ROOT = Path(os.getenv("ARTWORK_ROOT", "Artwork"))
-LIBRARY_DIR = ARTWORK_ROOT / "_Library"
+# Shared instances for smart search
+_query_classifier = QueryClassifier()
+_result_ranker = ResultRanker()
+
+from config import ARTWORK_ROOT, LIBRARY_DIR
 
 @lru_cache(maxsize=256)
 def get_optimized_image(image_path: Path, size: tuple, quality: int = 85) -> bytes:
@@ -117,10 +122,53 @@ async def run_rag_pipeline(artwork_id: int, context_hints: str = None):
     finally:
         db.close()
 
-async def run_scouts_bg(query: str = None, sources: List[str] = None):
+async def run_scouts_bg(query: str = None, sources: List[str] = None,
+                       session_id: str = None, limit: int = 10):
+    """Background task: classifies query, runs scouts, ranks results, inserts into DB."""
     db = SessionLocal()
     try:
-        await scout.run_scouts(db, query=query, sources=sources)
+        # Retrieve or create search session
+        session = get_search_session(session_id) if session_id else None
+        if session:
+            intent = session.intent
+            offset = session.offset
+        else:
+            intent = _query_classifier.classify(query) if query else None
+            offset = 0
+
+        logger.info(f"[Scout BG] Starting scouts: query='{query}', sources={sources}, "
+                    f"intent={intent.query_type if intent else 'none'}, "
+                    f"canonical='{intent.canonical_name if intent else 'n/a'}', "
+                    f"offset={offset}, limit={limit}")
+
+        # Run scouts with classified intent
+        raw_results = await scout.run_scouts(
+            db, query=query, sources=sources,
+            intent=intent, offset=offset, limit=limit
+        )
+        logger.info(f"[Scout BG] Scouts returned {len(raw_results)} raw results")
+
+        # Rank and deduplicate
+        ranked_results = _result_ranker.rank_and_deduplicate(raw_results, intent)
+        logger.info(f"[Scout BG] After ranking: {len(ranked_results)} results")
+
+        # Insert into DiscoveryQueue, skipping duplicates
+        total_new = 0
+        for item in ranked_results:
+            existing = db.query(DiscoveryQueueModel).filter(
+                DiscoveryQueueModel.source_url == item['source_url']
+            ).first()
+            if not existing:
+                new_entry = DiscoveryQueueModel(
+                    **item,
+                    search_session_id=session_id
+                )
+                db.add(new_entry)
+                total_new += 1
+        db.commit()
+        logger.info(f"[Scout BG] DiscoveryQueue updated with {total_new} new items.")
+    except Exception as e:
+        logger.error(f"[Scout BG] BACKGROUND TASK FAILED: {e}", exc_info=True)
     finally:
         db.close()
 
@@ -231,7 +279,7 @@ async def run_factory_seed(db: Session):
                                 pl_path = ARTWORK_ROOT / pl_name / safe_name
                                 if not pl_path.exists():
                                     try: os.symlink(dest_path.resolve(), pl_path)
-                                    except: shutil.copy(dest_path, pl_path)
+                                    except OSError: shutil.copy(dest_path, pl_path)
                                     
                                 with Image.open(dest_path) as img: w, h = img.size
                                     
@@ -278,10 +326,24 @@ app = FastAPI(title="Artwork Display Engine API", version="0.4.5", lifespan=life
 @app.middleware("http")
 async def inject_aggressive_cache_headers(request: Request, call_next):
     response = await call_next(request)
-    # Target our dynamic Pillow rendering routes and static assets for aggressive caching
+    # Target Pillow rendering routes, media library, and static assets
     path = request.url.path
-    if (path.startswith("/artworks/") and ("thumbnail" in path or "preview" in path)) or path.startswith("/static/"):
+    is_media_cacheable = (
+        (path.startswith("/artworks/") and ("thumbnail" in path or "preview" in path))
+        or path.startswith("/media/")
+        or path.endswith((".svg", ".png", ".jpg", ".webp"))
+    )
+    is_code_asset = path.endswith((".css", ".js", ".json"))
+    
+    if path.startswith("/api/"):
+        # API responses must never be cached — data changes constantly
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    elif is_media_cacheable:
+        # Images/media rarely change — cache aggressively
         response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif is_code_asset:
+        # JS/CSS/JSON change during development — short cache + revalidate
+        response.headers["Cache-Control"] = "public, max-age=60, must-revalidate"
     return response
 
 app.add_middleware(
@@ -292,13 +354,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.middleware("http")
-async def add_no_cache_headers(request, call_next):
-    response = await call_next(request)
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    return response
+
 
 # -----------------------------------------------------------------------------
 # 2. Data Models
@@ -365,6 +421,10 @@ class RegenerationRequest(BaseModel):
 class DispatchRequest(BaseModel):
     sources: List[str]
     search: Optional[str] = None
+    limit: int = 10
+
+class LoadMoreRequest(BaseModel):
+    session_id: str
 
 class DiscoveryQueueSchema(BaseModel):
     id: int
@@ -374,6 +434,8 @@ class DiscoveryQueueSchema(BaseModel):
     proposed_artist: Optional[str] = None
     source_api: str
     status: str
+    relevance_score: Optional[float] = 0.0
+    search_session_id: Optional[str] = None
     model_config = {"from_attributes": True}
 
 # -----------------------------------------------------------------------------
@@ -487,9 +549,15 @@ async def batch_enrich(background_tasks: BackgroundTasks, db: Session = Depends(
     return {"status": "Batch enrichment started in background"}
 
 @app.get("/api/discover/queue", response_model=List[DiscoveryQueueSchema])
-async def get_discovery_queue(db: Session = Depends(get_db)):
-    """Returns the list of pending art discoveries."""
-    return db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.status == 'pending').all()
+async def get_discovery_queue(
+    session_id: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """Returns the list of pending art discoveries, optionally filtered by session."""
+    query = db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.status == 'pending')
+    if session_id:
+        query = query.filter(DiscoveryQueueModel.search_session_id == session_id)
+    return query.order_by(DiscoveryQueueModel.relevance_score.desc()).all()
 
 @app.post("/api/discover/refresh")
 async def trigger_discovery(search: Optional[str] = Query(None), background_tasks: BackgroundTasks = None, db: Session = Depends(get_db)):
@@ -499,9 +567,59 @@ async def trigger_discovery(search: Optional[str] = Query(None), background_task
 
 @app.post("/api/discover/dispatch")
 async def dispatch_discovery(request: DispatchRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    """Multi-source art discovery dispatch."""
-    background_tasks.add_task(run_scouts_bg, query=request.search, sources=request.sources)
-    return {"status": "Art scouts dispatched", "sources": request.sources, "search": request.search}
+    """Smart multi-source art discovery dispatch with query classification."""
+    # Classify the query upfront to create a session with the right intent
+    intent = _query_classifier.classify(request.search) if request.search else None
+    limit = max(1, min(request.limit, 10))  # Clamp to 1–10
+
+    # Create a search session for Load More support
+    session = create_search_session(
+        query=request.search or "",
+        intent=intent,
+        sources=request.sources,
+        limit=limit
+    )
+
+    background_tasks.add_task(
+        run_scouts_bg,
+        query=request.search,
+        sources=request.sources,
+        session_id=session.session_id,
+        limit=limit
+    )
+    return {
+        "status": "Art scouts dispatched",
+        "sources": request.sources,
+        "search": request.search,
+        "session_id": session.session_id,
+        "intent": {
+            "type": intent.query_type if intent else "freetext",
+            "canonical": intent.canonical_name if intent else request.search,
+        }
+    }
+
+@app.post("/api/discover/more")
+async def load_more_discoveries(request: LoadMoreRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """Fetches the next batch of results from an existing search session."""
+    session = get_search_session(request.session_id)
+    if not session:
+        raise HTTPException(404, detail="Search session expired or not found. Please start a new search.")
+
+    # Advance the offset
+    session.offset += session.limit
+
+    background_tasks.add_task(
+        run_scouts_bg,
+        query=session.query,
+        sources=session.sources,
+        session_id=session.session_id,
+        limit=session.limit
+    )
+    return {
+        "status": "Loading more results",
+        "session_id": session.session_id,
+        "offset": session.offset
+    }
 
 @app.post("/api/discover/approve/{item_id}")
 async def approve_discovery(item_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
@@ -580,6 +698,68 @@ async def clear_orphaned_approvals(db: Session = Depends(get_db)):
             
     db.commit()
     return {"status": f"Successfully cleared {orphans_deleted} orphaned approvals"}
+
+@app.delete("/api/discover/clear-pending")
+async def clear_pending_discoveries(db: Session = Depends(get_db)):
+    """Deletes all pending items from the discovery queue. Useful for fresh test runs."""
+    result = db.execute(delete(DiscoveryQueueModel).where(DiscoveryQueueModel.status == 'pending'))
+    db.commit()
+    # Clear any active search sessions
+    from scout import _search_sessions
+    _search_sessions.clear()
+    return {"status": f"Cleared {result.rowcount} pending discoveries"}
+
+@app.post("/api/admin/factory-reset")
+async def factory_reset(db: Session = Depends(get_db)):
+    """
+    Resets the app to factory state:
+    - Keeps only seed artworks (is_seed=True)
+    - Removes all non-seed artworks from DB and disk
+    - Clears entire discovery queue (all statuses)
+    - Clears playlist-artwork associations for deleted art
+    - Clears search sessions
+    """
+    import shutil
+    
+    # 1. Delete all discovery queue items (all statuses)
+    discover_count = db.execute(delete(DiscoveryQueueModel)).rowcount
+    
+    # 2. Get non-seed artworks to delete their files
+    non_seed_art = db.query(ArtworkModel).filter(ArtworkModel.is_seed != True).all()
+    files_deleted = 0
+    for art in non_seed_art:
+        filepath = LIBRARY_DIR / art.filename
+        if filepath.exists():
+            try:
+                filepath.unlink()
+                files_deleted += 1
+            except Exception as e:
+                logger.warning(f"[Factory Reset] Could not delete {filepath}: {e}")
+    
+    # 3. Remove non-seed artwork-playlist associations
+    non_seed_ids = [a.id for a in non_seed_art]
+    if non_seed_ids:
+        db.execute(playlist_artwork.delete().where(playlist_artwork.c.artwork_id.in_(non_seed_ids)))
+    
+    # 4. Delete non-seed artwork records from DB
+    art_count = db.query(ArtworkModel).filter(ArtworkModel.is_seed != True).delete(synchronize_session='fetch')
+    
+    # 5. Clear search sessions
+    from scout import _search_sessions
+    _search_sessions.clear()
+    
+    db.commit()
+    
+    seed_remaining = db.query(ArtworkModel).filter(ArtworkModel.is_seed == True).count()
+    
+    logger.info(f"[Factory Reset] Removed {art_count} artworks, {files_deleted} files, {discover_count} queue items. {seed_remaining} seed artworks preserved.")
+    return {
+        "status": "Factory reset complete",
+        "artworks_removed": art_count,
+        "files_deleted": files_deleted, 
+        "queue_items_cleared": discover_count,
+        "seed_artworks_preserved": seed_remaining
+    }
 
 @app.get("/artworks/{artwork_id}/thumbnail")
 async def get_artwork_thumbnail(artwork_id: int, db: Session = Depends(get_db)):
