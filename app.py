@@ -273,13 +273,18 @@ async def run_factory_seed(db: Session):
 
                             if resp.status_code == 200:
                                 dest_path = LIBRARY_DIR / safe_name
+                                # Remove stale symlinks/files before writing
+                                if dest_path.is_symlink() or dest_path.exists():
+                                    dest_path.unlink()
                                 with open(dest_path, "wb") as f:
                                     f.write(resp.content)
                                 
                                 pl_path = ARTWORK_ROOT / pl_name / safe_name
-                                if not pl_path.exists():
-                                    try: os.symlink(dest_path.resolve(), pl_path)
-                                    except OSError: shutil.copy(dest_path, pl_path)
+                                # Remove stale symlink before creating new one
+                                if pl_path.is_symlink() or pl_path.exists():
+                                    pl_path.unlink()
+                                try: os.symlink(dest_path.resolve(), pl_path)
+                                except OSError: shutil.copy(dest_path, pl_path)
                                     
                                 with Image.open(dest_path) as img: w, h = img.size
                                     
@@ -295,10 +300,15 @@ async def run_factory_seed(db: Session):
                                 )
                                 db_local.add(artwork); db_local.commit(); db_local.refresh(artwork)
                                 
-                                db_local.execute(playlist_artwork.insert().values(
-                                    playlist_id=playlist.id, artwork_id=artwork.id, display_order=0
-                                ))
-                                db_local.commit()
+                                try:
+                                    db_local.execute(playlist_artwork.insert().values(
+                                        playlist_id=playlist.id, artwork_id=artwork.id, display_order=idx
+                                    ))
+                                    db_local.commit()
+                                except Exception:
+                                    db_local.rollback()  # playlist_artwork may already exist
+                                
+                                logger.info(f"[Bootstrapper] ✓ Seeded '{item.get('title')}' → {pl_name}")
                                 
                             else: logger.error(f"[Bootstrapper] Failed download {safe_name}: HTTP {resp.status_code}")
                                 
@@ -729,36 +739,56 @@ async def factory_reset(db: Session = Depends(get_db)):
     files_deleted = 0
     for art in non_seed_art:
         filepath = LIBRARY_DIR / art.filename
-        if filepath.exists():
+        # Handle both real files and symlinks
+        if filepath.is_symlink() or filepath.exists():
             try:
                 filepath.unlink()
                 files_deleted += 1
             except Exception as e:
                 logger.warning(f"[Factory Reset] Could not delete {filepath}: {e}")
+        # Also clean up any playlist symlinks pointing to this file
+        for pl_dir in ARTWORK_ROOT.iterdir():
+            if pl_dir.is_dir() and pl_dir.name != '_Library':
+                pl_link = pl_dir / art.filename
+                if pl_link.is_symlink() or pl_link.exists():
+                    try: pl_link.unlink()
+                    except Exception: pass
     
-    # 3. Remove non-seed artwork-playlist associations
-    non_seed_ids = [a.id for a in non_seed_art]
-    if non_seed_ids:
-        db.execute(playlist_artwork.delete().where(playlist_artwork.c.artwork_id.in_(non_seed_ids)))
+    # 3. Remove ALL artwork-playlist associations (both seed and non-seed)
+    db.execute(playlist_artwork.delete())
     
     # 4. Delete non-seed artwork records from DB
     art_count = db.query(ArtworkModel).filter(ArtworkModel.is_seed != True).delete(synchronize_session='fetch')
     
-    # 5. Clear search sessions
+    # 5. Delete seed artworks too so bootstrapper re-downloads on next start
+    seed_art = db.query(ArtworkModel).filter(ArtworkModel.is_seed == True).all()
+    for art in seed_art:
+        filepath = LIBRARY_DIR / art.filename
+        if filepath.is_symlink() or filepath.exists():
+            try: filepath.unlink()
+            except Exception: pass
+        # Clean playlist symlinks for seed art too
+        for pl_dir in ARTWORK_ROOT.iterdir():
+            if pl_dir.is_dir() and pl_dir.name != '_Library':
+                pl_link = pl_dir / art.filename
+                if pl_link.is_symlink() or pl_link.exists():
+                    try: pl_link.unlink()
+                    except Exception: pass
+    seed_count = db.query(ArtworkModel).filter(ArtworkModel.is_seed == True).delete(synchronize_session='fetch')
+    
+    # 6. Clear search sessions
     from scout import _search_sessions
     _search_sessions.clear()
     
     db.commit()
     
-    seed_remaining = db.query(ArtworkModel).filter(ArtworkModel.is_seed == True).count()
-    
-    logger.info(f"[Factory Reset] Removed {art_count} artworks, {files_deleted} files, {discover_count} queue items. {seed_remaining} seed artworks preserved.")
+    logger.info(f"[Factory Reset] Removed {art_count} + {seed_count} seed artworks, {files_deleted} files, {discover_count} queue items. Seeds will re-download on restart.")
     return {
-        "status": "Factory reset complete",
+        "status": "Factory reset complete. Restart the server to re-seed masterpieces.",
         "artworks_removed": art_count,
+        "seed_artworks_removed": seed_count,
         "files_deleted": files_deleted, 
         "queue_items_cleared": discover_count,
-        "seed_artworks_preserved": seed_remaining
     }
 
 @app.get("/artworks/{artwork_id}/thumbnail")

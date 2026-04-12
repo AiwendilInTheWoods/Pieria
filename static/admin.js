@@ -122,11 +122,13 @@ function switchView(view) {
     document.getElementById('nav-library').classList.toggle('active', view === 'library');
     document.getElementById('nav-review').classList.toggle('active', view === 'review');
     document.getElementById('nav-discover').classList.toggle('active', view === 'discover');
+    document.getElementById('nav-settings').classList.toggle('active', view === 'settings');
     
     document.getElementById('view-playlists').classList.toggle('hidden', view !== 'playlists');
     document.getElementById('view-library').classList.toggle('hidden', view !== 'library');
     document.getElementById('view-review').classList.toggle('hidden', view !== 'review');
     document.getElementById('view-discover').classList.toggle('hidden', view !== 'discover');
+    document.getElementById('view-settings').classList.toggle('hidden', view !== 'settings');
     
     document.getElementById('sidebar-playlists').classList.toggle('hidden', view !== 'playlists');
 }

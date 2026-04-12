@@ -341,7 +341,7 @@ body.controls-visible .controls-overlay {
 }
 
 .placard-logo {
-    height: 3vmin;
+    height: 5vmin;
     width: auto;
 }
 
@@ -355,6 +355,6 @@ body.controls-visible .controls-overlay {
 }
 
 .controls-logo {
-    height: 2vmin; /* Significantly smaller */
+    height: 5vmin;
     width: auto;
 }
