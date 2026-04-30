@@ -10,6 +10,9 @@ import random
 import shutil
 import io
 import asyncio
+import json
+import fcntl
+from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
 from typing import List, Dict, Optional
 from functools import lru_cache
@@ -81,7 +84,7 @@ manager = ConnectionManager()
 
 # Local imports
 from database import init_db, get_db, SessionLocal
-from models import PlaylistModel, ArtworkModel, playlist_artwork, DiscoveryQueueModel, SettingsModel
+from models import PlaylistModel, ArtworkModel, playlist_artwork, DiscoveryQueueModel, SettingsModel, ActiveDisplayModel, RemoteCommandModel, DisplayPlaybackSessionModel
 from agents import process_artwork
 import curator
 import scout
@@ -320,16 +323,50 @@ async def run_factory_seed(db: Session):
     except Exception as e:
         logger.error(f"[Bootstrapper] Failed to parse factory_seed.json: {e}")
 
+from alembic import command
+from alembic.config import Config
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
-    db = SessionLocal()
+    """Lifecycle events for FastAPI application with multi-worker concurrency locks."""
+    
+    lock_file = None
     try:
-        sync_db_with_filesystem(db)
-        await run_factory_seed(db)
+        # Leader Election using fcntl
+        # The first worker grabs the exclusive non-blocking lock.
+        # The other 3 workers will throw a BlockingIOError and skip initialization.
+        lock_file = open("/tmp/screen_docent_startup.lock", "w")
+        fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        
+        logger.info("[Startup] Leader elected. Running exclusive boot tasks (migrations, filesystem sync)...")
+        
+        # Run Alembic migrations on startup
+        alembic_cfg = Config("alembic.ini")
+        logger.info("Running Alembic migrations...")
+        try:
+            command.upgrade(alembic_cfg, "head")
+            logger.info("Alembic migrations complete.")
+        except Exception as e:
+            logger.error(f"Failed to run Alembic migrations: {e}")
+            
+        init_db()
+        db = SessionLocal()
+        try:
+            sync_db_with_filesystem(db)
+            await run_factory_seed(db)
+        finally:
+            db.close()
+            
+    except BlockingIOError:
+        logger.info("[Startup] Follower worker initialized. Skipping exclusive boot tasks.")
+    except Exception as e:
+        logger.error(f"[Startup] Unexpected error during initialization: {e}")
     finally:
-        db.close()
-    yield
+        # We deliberately do NOT unlock the file here. 
+        # If we unlock it while the leader is still finishing startup tasks, 
+        # a slightly delayed follower worker could grab the lock and run migrations concurrently.
+        # The OS will naturally release the lock when the Uvicorn worker process terminates on server shutdown.
+        yield
 
 app = FastAPI(title="Artwork Display Engine API", version="0.4.5", lifespan=lifespan)
 
@@ -344,9 +381,10 @@ async def inject_aggressive_cache_headers(request: Request, call_next):
         or path.endswith((".svg", ".png", ".jpg", ".webp"))
     )
     is_code_asset = path.endswith((".css", ".js", ".json"))
+    is_html_asset = path.endswith(".html") or path == "/admin" or path == "/remote" or path == "/"
     
-    if path.startswith("/api/"):
-        # API responses must never be cached — data changes constantly
+    if path.startswith("/api/") or is_html_asset:
+        # API responses and HTML pages must never be cached — data/structure changes constantly
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
     elif is_media_cacheable:
         # Images/media rarely change — cache aggressively
@@ -814,34 +852,105 @@ async def permanent_delete_artwork(artwork_id: int, db: Session = Depends(get_db
     db.delete(art); db.commit(); return {"status": "wiped"}
 
 @app.get("/next-image")
-async def get_next_image(playlist_name: str, shuffle: bool = Query(True), current_index: Optional[int] = Query(None), direction: int = Query(1), db: Session = Depends(get_db)):
+async def get_next_image(
+    playlist_name: str, 
+    shuffle: Optional[bool] = Query(None), 
+    display_id: str = Query("default"),
+    direction: int = Query(1), 
+    db: Session = Depends(get_db)
+):
+    """
+    Phase 6: Stateful next-image selection.
+    Uses 'bag shuffle' for variety and persists state per display.
+    """
     p = db.query(PlaylistModel).filter(PlaylistModel.name == playlist_name).first()
     if not p: raise HTTPException(404)
-    artworks = db.query(ArtworkModel).join(playlist_artwork).filter(playlist_artwork.c.playlist_id == p.id, ArtworkModel.status == 'approved').order_by(playlist_artwork.c.display_order).all()
+    
+    # Resolve Shuffle Hierarchy (URL override > Playlist setting)
+    resolved_shuffle = shuffle if shuffle is not None else p.shuffle
+
+    # Fetch all approved artworks in this playlist
+    artworks = db.query(ArtworkModel).join(playlist_artwork).filter(
+        playlist_artwork.c.playlist_id == p.id, 
+        ArtworkModel.status == 'approved'
+    ).order_by(playlist_artwork.c.display_order).all()
+    
     if not artworks: raise HTTPException(404, detail="No approved images")
     count = len(artworks)
-    if shuffle:
-        idx = random.randint(0, count - 1)
-        if count > 1 and current_index == idx:
-            while idx == current_index: idx = random.randint(0, count - 1)
+
+    # Get or create playback session
+    session = db.query(DisplayPlaybackSessionModel).filter(
+        DisplayPlaybackSessionModel.display_id == display_id,
+        DisplayPlaybackSessionModel.playlist_id == p.id
+    ).first()
+    
+    if not session:
+        session = DisplayPlaybackSessionModel(display_id=display_id, playlist_id=p.id)
+        db.add(session)
+        db.commit()
+
+    selected_art = None
+    selected_idx = -1
+
+    if resolved_shuffle:
+        # Bag Shuffle Logic
+        unplayed_ids = json.loads(session.unplayed_artworks_json)
+        
+        # Valid approved IDs in this playlist
+        valid_ids = [a.id for a in artworks]
+        
+        # Filter unplayed to only include currently valid/approved IDs
+        bag = [aid for aid in unplayed_ids if aid in valid_ids]
+        
+        # If bag is empty, refill it
+        if not bag:
+            bag = valid_ids
+            logger.info(f"[Director] Refilling bag for display '{display_id}' / playlist '{playlist_name}'")
+
+        # Phase 6 Bonus: Weighted random draw based on affinity_score
+        # Get actual artwork objects for the IDs in the bag to access affinity scores
+        bag_artworks = [a for a in artworks if a.id in bag]
+        
+        if bag_artworks:
+            # random.choices uses weights. affinity_score defaults to 1.0.
+            weights = [max(0.1, a.affinity_score) for a in bag_artworks]
+            selected_art = random.choices(bag_artworks, weights=weights, k=1)[0]
+            
+            # Remove from bag
+            bag.remove(selected_art.id)
+            session.unplayed_artworks_json = json.dumps(bag)
+            
+            # Find its index in the ordered list for the frontend (optional but helpful)
+            for i, a in enumerate(artworks):
+                if a.id == selected_art.id:
+                    selected_idx = i
+                    break
     else:
-        base_idx = current_index if current_index is not None else -1
-        idx = (base_idx + direction) % count
-    art = artworks[idx]
-    image_path = f"{p.name}/{art.filename}"
+        # Stateful Sequential Logic
+        base_idx = session.last_sequential_index
+        selected_idx = (base_idx + direction) % count
+        selected_art = artworks[selected_idx]
+        session.last_sequential_index = selected_idx
+
+    db.commit()
+
     return {
-        "index": idx, "image_url": f"/media/_Library/{quote(art.filename)}",
-        "playlist": playlist_name, "display_time": p.display_time,
-        "default_mode": p.default_mode, "shuffle": p.shuffle,
+        "index": selected_idx, 
+        "image_url": f"/media/_Library/{quote(selected_art.filename)}",
+        "playlist": playlist_name, 
+        "display_time": p.display_time,
+        "default_mode": p.default_mode, 
+        "shuffle": resolved_shuffle,
         "placard_wait": p.placard_initial_wait_sec,
         "placard_show": p.placard_initial_show_sec,
         "placard_manual": p.placard_interaction_show_sec,
-        "crop": {"x": art.crop_x, "y": art.crop_y, "width": art.crop_width, "height": art.crop_height},
+        "crop": {"x": selected_art.crop_x, "y": selected_art.crop_y, "width": selected_art.crop_width, "height": selected_art.crop_height},
         "metadata": {
-            "title": art.title, "agent_name": art.agent_name, "agent_role": art.agent_role, 
-            "creation_date": art.creation_date, "cultural_context": art.cultural_context,
-            "medium": art.medium, "date_display": art.date_display,
-            "description": art.description_narrative, "tags": art.tags
+            "id": selected_art.id,
+            "title": selected_art.title, "agent_name": selected_art.agent_name, "agent_role": selected_art.agent_role, 
+            "creation_date": selected_art.creation_date, "cultural_context": selected_art.cultural_context,
+            "medium": selected_art.medium, "date_display": selected_art.date_display,
+            "description": selected_art.description_narrative, "tags": selected_art.tags
         }
     }
 
@@ -853,12 +962,15 @@ async def get_remote_page():
     return FileResponse(STATIC_DIR / "remote.html")
 
 @app.get("/api/remote/displays")
-async def get_active_displays():
-    """Returns a list of all display IDs currently connected via WebSocket."""
-    return list(manager.active_connections.keys())
+async def get_active_displays(db: Session = Depends(get_db)):
+    """Returns a list of all display IDs currently connected via WebSocket across all workers."""
+    # Consider a display active if seen in the last 15 seconds
+    cutoff = datetime.now(timezone.utc) - timedelta(seconds=15)
+    displays = db.query(ActiveDisplayModel).filter(ActiveDisplayModel.last_seen_at > cutoff).all()
+    return [d.display_id for d in displays]
 
 @app.post("/api/remote/change")
-async def remote_change_playlist(request: RemoteChangeRequest):
+async def remote_change_playlist(request: RemoteChangeRequest, db: Session = Depends(get_db)):
     """Targeted command to change a playlist, mode, or trigger navigation on a specific display."""
     logger.info(f"Targeted Remote Command: {request.target_display} -> {request.action}")
     
@@ -868,13 +980,57 @@ async def remote_change_playlist(request: RemoteChangeRequest):
     if request.mode:
         payload["mode"] = request.mode
         
-    await manager.send_personal_message(payload, request.target_display)
-    return {"status": "command_sent"}
+    # Phase 5: Persist command to DB to bridge across worker processes
+    cmd = RemoteCommandModel(
+        target_display=request.target_display,
+        action=request.action,
+        payload=json.dumps(payload)
+    )
+    db.add(cmd)
+    db.commit()
+    
+    return {"status": "command_queued"}
 
 @app.websocket("/ws/{display_id}")
 async def websocket_endpoint(websocket: WebSocket, display_id: str):
-    """Handles targeted display connections."""
+    """Handles targeted display connections with multi-worker synchronization."""
     await manager.connect(websocket, display_id)
+    
+    async def heartbeat():
+        """Updates the active_displays table to signify this display is alive on this worker."""
+        while True:
+            try:
+                with SessionLocal() as db:
+                    display = db.query(ActiveDisplayModel).filter(ActiveDisplayModel.display_id == display_id).first()
+                    if display:
+                        display.last_seen_at = datetime.now(timezone.utc)
+                    else:
+                        display = ActiveDisplayModel(display_id=display_id)
+                        db.add(display)
+                    db.commit()
+            except Exception as e:
+                logger.error(f"Heartbeat error for {display_id}: {e}")
+            await asyncio.sleep(5)
+
+    async def command_poller():
+        """Polls the remote_commands table for actions targeting this specific display."""
+        while True:
+            try:
+                with SessionLocal() as db:
+                    cmds = db.query(RemoteCommandModel).filter(RemoteCommandModel.target_display == display_id).all()
+                    for cmd in cmds:
+                        logger.info(f"Relaying remote command to {display_id}: {cmd.action}")
+                        await manager.send_personal_message(json.loads(cmd.payload), display_id)
+                        db.delete(cmd)
+                    db.commit()
+            except Exception as e:
+                logger.error(f"Command poller error for {display_id}: {e}")
+            await asyncio.sleep(1)
+
+    # Start sync workers
+    heartbeat_task = asyncio.create_task(heartbeat())
+    poller_task = asyncio.create_task(command_poller())
+
     try:
         while True:
             # We mostly broadcast from the API, but remotes can still talk directly here if needed
@@ -885,6 +1041,13 @@ async def websocket_endpoint(websocket: WebSocket, display_id: str):
     except Exception as e:
         logger.error(f"WebSocket error on '{display_id}': {e}")
         manager.disconnect(websocket, display_id)
+    finally:
+        heartbeat_task.cancel()
+        poller_task.cancel()
+        # Clean up heartbeat from DB immediately on clean disconnect
+        with SessionLocal() as db:
+            db.query(ActiveDisplayModel).filter(ActiveDisplayModel.display_id == display_id).delete()
+            db.commit()
 
 # -----------------------------------------------------------------------------
 # 4.5 Settings (API Keys)
@@ -899,6 +1062,39 @@ async def get_api_keys(db: Session = Depends(get_db)):
         "smithsonian": any(s.setting_key == "smithsonian_api_key" for s in settings),
         "europeana": any(s.setting_key == "europeana_api_key" for s in settings)
     }
+
+class TelemetryHeartbeat(BaseModel):
+    artwork_id: int
+    display_time_sec: int
+    skipped: bool
+
+@app.post("/api/telemetry/heartbeat")
+def record_telemetry(payload: TelemetryHeartbeat, db: Session = Depends(get_db)):
+    """
+    Phase 6: Ingests display metrics from Canvas clients.
+    """
+    artwork = db.query(ArtworkModel).filter(ArtworkModel.id == payload.artwork_id).first()
+    if not artwork:
+        raise HTTPException(status_code=404, detail="Artwork not found")
+        
+    # Update raw telemetry
+    artwork.total_display_time += payload.display_time_sec
+    if payload.skipped:
+        artwork.skip_count += 1
+        
+    # Phase 6 Director Affinity Calculation (v1)
+    # This is a naive calculation that will be evolved.
+    # Base is 1.0. 
+    # Skipping heavily penalizes (-0.1).
+    # Natural display slightly rewards (+0.05 per 30s).
+    if payload.skipped:
+        artwork.affinity_score = max(0.1, artwork.affinity_score - 0.1)
+    else:
+        intervals = payload.display_time_sec / 30.0
+        artwork.affinity_score = min(5.0, artwork.affinity_score + (0.05 * intervals))
+        
+    db.commit()
+    return {"status": "ok", "affinity": artwork.affinity_score}
 
 @app.post("/api/settings/keys/{source}")
 async def verify_and_save_api_key(source: str, payload: dict, db: Session = Depends(get_db)):

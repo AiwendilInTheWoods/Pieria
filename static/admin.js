@@ -235,7 +235,7 @@ function renderDiscoveryGrid() {
             card = document.createElement('div');
             card.className = 'artwork-card';
             card.dataset.id = item.id;
-                const thumbUrl = item.thumbnail_url + (item.thumbnail_url.includes('?') ? '&' : '?') + '_cb=' + item.id;
+                const thumbUrl = item.thumbnail_url + (item.thumbnail_url.includes('?') ? '&' : '?') + '_cb=' + encodeURIComponent(item.source_url);
                 card.innerHTML = `
                 <img src="${thumbUrl}" alt="${item.proposed_title}">
                 <div class="info">
@@ -518,7 +518,7 @@ function renderLibraryGrid() {
             card.className = 'artwork-card';
             card.dataset.id = art.id;
             card.innerHTML = `
-                <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
+                <img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}" alt="${art.filename}">
                 <div class="info">
                     <strong>${art.title || art.filename}</strong><br>
                     <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
@@ -569,7 +569,7 @@ function renderArtworkGrid(artworks) {
             card.className = 'artwork-card';
             card.dataset.id = art.id;
             card.innerHTML = `
-                <img src="${API_BASE}/artworks/${art.id}/thumbnail" alt="${art.filename}">
+                <img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}" alt="${art.filename}">
                 <div class="info">
                     <strong>${art.title || art.filename}</strong><br>
                     <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
@@ -622,7 +622,7 @@ function openLibraryPicker() {
         card.className = 'picker-card';
         card.onclick = () => addExistingToPlaylist(art.id);
         card.innerHTML = `
-            <img src="${API_BASE}/artworks/${art.id}/thumbnail">
+            <img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}">
             <p>${art.title || art.filename}</p>
         `;
         grid.appendChild(card);
@@ -820,7 +820,7 @@ function renderReviewQueue(artworks) {
             card.className = 'review-card';
             card.dataset.id = art.id;
             card.innerHTML = `
-                <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail"></div>
+                <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}"></div>
                 <div class="review-form">
                     <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
                     <div class="form-group"><label>Agent/Artist</label><input type="text" id="agent-${art.id}" value="${art.agent_name || ''}"></div>
@@ -948,7 +948,7 @@ function openCropModal(id) {
             if (artwork) break;
         }
     }
-    image.src = `${API_BASE}/artworks/${id}/preview`;
+    image.src = `${API_BASE}/artworks/${id}/preview?f=${encodeURIComponent(artwork.filename)}`;
     modal.style.display = 'flex';
     if (cropper) cropper.destroy();
     cropper = new Cropper(image, {

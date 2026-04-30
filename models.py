@@ -4,7 +4,8 @@ Phase 3: Many-to-Many relationship between Playlists and Artworks.
 """
 
 from typing import List, Optional
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Table, Boolean
+from datetime import datetime, timezone
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Table, Boolean, DateTime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from database import Base
@@ -18,6 +19,39 @@ playlist_artwork = Table(
     Column("artwork_id", Integer, ForeignKey("artworks.id"), primary_key=True),
     Column("display_order", Integer, default=0)
 )
+
+class ActiveDisplayModel(Base):
+    """
+    Tracks which displays are currently active across multiple Uvicorn workers.
+    """
+    __tablename__ = "active_displays"
+
+    display_id: Mapped[str] = mapped_column(String, primary_key=True)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class RemoteCommandModel(Base):
+    """
+    A persistent command queue to bridge remote commands to targeted displays.
+    """
+    __tablename__ = "remote_commands"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    target_display: Mapped[str] = mapped_column(String, index=True)
+    action: Mapped[str] = mapped_column(String)
+    payload: Mapped[Optional[str]] = mapped_column(Text) # JSON string
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class DisplayPlaybackSessionModel(Base):
+    """
+    Tracks playback state per display to ensure variety and resume capability.
+    """
+    __tablename__ = "display_playback_sessions"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    display_id: Mapped[str] = mapped_column(String, index=True)
+    playlist_id: Mapped[int] = mapped_column(Integer, ForeignKey("playlists.id"), index=True)
+    unplayed_artworks_json: Mapped[str] = mapped_column(Text, default="[]")
+    last_sequential_index: Mapped[int] = mapped_column(Integer, default=-1)
 
 class PlaylistModel(Base):
     """
@@ -66,6 +100,11 @@ class ArtworkModel(Base):
         secondary=playlist_artwork,
         back_populates="artworks"
     )
+
+    # Phase 6: Telemetry & Director Data
+    affinity_score: Mapped[float] = mapped_column(Float, default=1.0)
+    skip_count: Mapped[int] = mapped_column(Integer, default=0)
+    total_display_time: Mapped[int] = mapped_column(Integer, default=0)
 
     # VRA Core Metadata
     title: Mapped[Optional[str]] = mapped_column(String, index=True)

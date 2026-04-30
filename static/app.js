@@ -60,6 +60,10 @@ let cycleTimeout = null;
 let currentPlaylists = [];
 let socket = null;
 
+// Telemetry State
+let activeArtworkId = null;
+let activeImageStartTime = 0;
+
 async function init() {
     console.log(`[Client] Initializing Display: ${DISPLAY_ID}. API: ${API_BASE}`);
     
@@ -262,29 +266,54 @@ function populatePlaylistSelect(playlists) {
     });
 }
 
+async function sendTelemetry(artworkId, startTime, skipped) {
+    if (!artworkId || !startTime) return;
+    const displayTimeSec = Math.round((Date.now() - startTime) / 1000);
+    if (displayTimeSec < 1) return; // Ignore extreme rapid skipping or double-fires
+    
+    try {
+        await fetch(`${API_BASE}/api/telemetry/heartbeat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                artwork_id: artworkId,
+                display_time_sec: displayTimeSec,
+                skipped: skipped
+            })
+        });
+    } catch (e) {
+        console.warn('[Telemetry] Failed to send heartbeat:', e.message);
+    }
+}
+
 async function startDisplayCycle() {
     if (cycleTimeout) clearTimeout(cycleTimeout);
-    await fetchAndTransition(1); 
+    await fetchAndTransition(1, false); 
     cycleTimeout = setTimeout(startDisplayCycle, currentDisplayTime);
 }
 
 let currentPlaylistData = null;
 
-async function fetchAndTransition(direction = 1) {
+async function fetchAndTransition(direction = 1, isSkipped = false) {
     if (!currentPlaylist) return;
-    try {
-        // Resolve Shuffle Hierarchy (URL > Playlist > Global Default)
-        // We need to fetch once without shuffle to get the playlist default if URL is null
-        // But the API already handles current_index and shuffle logic.
-        // We'll peek at currentPlaylistData if we have it, or just use globalConfig.
-        const resolvedShuffle = globalConfig.shuffle !== null ? globalConfig.shuffle : (currentPlaylistData?.shuffle !== undefined ? currentPlaylistData.shuffle : DEFAULT_SETTINGS.shuffle);
+    
+    // Telemetry: Record completion of previous image before fetching next
+    if (activeArtworkId) {
+        sendTelemetry(activeArtworkId, activeImageStartTime, isSkipped);
+    }
 
+    try {
         const params = new URLSearchParams({ 
             playlist_name: currentPlaylist, 
-            direction: direction, 
-            shuffle: resolvedShuffle.toString() 
+            display_id: DISPLAY_ID,
+            direction: direction
         });
-        if (currentImageIndex !== null && currentImageIndex !== undefined) params.append('current_index', currentImageIndex);
+        
+        // Only append shuffle if it was explicitly overridden in the URL
+        if (globalConfig.shuffle !== null) {
+            params.append('shuffle', globalConfig.shuffle.toString());
+        }
+
         const response = await fetch(`${API_BASE}/next-image?${params.toString()}`);
         if (!response.ok) throw new Error('No approved images');
         const data = await response.json();
@@ -294,9 +323,14 @@ async function fetchAndTransition(direction = 1) {
         currentImageUrl = `${API_BASE}${data.image_url}`;
         currentCropData = data.crop;
         
+        // Update Telemetry state for the newly fetched image
+        activeArtworkId = data.metadata.id;
+        activeImageStartTime = Date.now();
+        
         // Resolve Settings Hierarchy (URL > Playlist > Global Default)
         const cycleTime = globalConfig.cycle_time || data.display_time || DEFAULT_SETTINGS.cycle_time;
         const resolvedMode = globalConfig.mode || data.default_mode || DEFAULT_SETTINGS.mode;
+        const resolvedShuffle = data.shuffle; // Use the truth from the backend
         
         currentDisplayTime = cycleTime * 1000;
         if (displayMode !== resolvedMode) {
@@ -398,7 +432,7 @@ function initNavButtons() {
 
 async function startDisplayCycleManually(direction) {
     if (cycleTimeout) clearTimeout(cycleTimeout);
-    await fetchAndTransition(direction);
+    await fetchAndTransition(direction, true); // true = user skipped
     cycleTimeout = setTimeout(startDisplayCycle, currentDisplayTime);
 }
 
