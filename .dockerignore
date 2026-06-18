@@ -1,8 +1,30 @@
+# Version control / CI
+.git/
+.github/
+
+# Secrets & local env (never bake into the image)
+.env
+
+# Python runtime cruft
 venv/
 .venv/
 __pycache__/
-.git/
-.env
+*.py[cod]
+
+# Data & media (provided via volumes at runtime, not baked in)
 *.db
 artwork.db
+data/
 Artwork/
+
+# Dev tooling, tests, coverage
+tests/
+requirements-dev.txt
+.coverage
+.pytest_cache/
+.playwright-mcp/
+
+# Editor / assistant local state & internal docs (not needed at runtime)
+.claude/
+.ai/
+PRD.md

@@ -25,3 +25,8 @@ __pycache__/
 # Test/verification artifacts
 .playwright-mcp/
 .pytest_cache/
+
+# Local-only dev docs (kept on disk, not published)
+PRD.md
+.ai/active_context.md
+.ai/decision_log.md

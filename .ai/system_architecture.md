@@ -1,6 +1,6 @@
 # Screen Docent — System Architecture
 
-> **Version:** 0.5.0 · **Last Updated:** 2026-04-04
+> **Version:** 0.6.0 · **Last Updated:** 2026-06-18
 
 ---
 
@@ -12,6 +12,7 @@
 | **Web Framework** | FastAPI 0.111 | ASGI backend, REST API, WebSocket hub |
 | **ASGI Server** | Uvicorn 0.30 (4 workers) | Multi-process HTTP/WS serving |
 | **Database** | SQLite 3 via SQLAlchemy 2.0 | Local, file-based relational store (`./data/artwork.db`) |
+| **Migrations** | Alembic 1.13 | Versioned schema migrations (`migrations/versions/`) |
 | **AI / Vision** | Google Gemini 2.5 Flash (`google-generativeai`) | Artwork identification, VRA metadata generation, RAG enrichment |
 | **RAG Context** | Wikipedia API (`wikipedia` 1.4) | Fact-checking ground truth for curator pipeline |
 | **Image Processing** | Pillow 10.3 | Thumbnail generation, image optimisation, format conversion |
@@ -32,22 +33,24 @@ Screen Docent is a **single FastAPI server** that exposes two fundamentally diff
 │                      MS-01 Server (Docker)                          │
 │                                                                     │
 │  ┌───────────────────────────────────────────────────────────────┐  │
-│  │                    FastAPI / Uvicorn (×4)                      │  │
+│  │                    FastAPI / Uvicorn (×4)                     │  │
 │  │                                                               │  │
 │  │  REST API ◄──────────────── Admin Dashboard (admin.html)      │  │
 │  │     │                              ▲                          │  │
 │  │     ▼                              │                          │  │
-│  │  SQLite DB ◄── SQLAlchemy ──► Models (playlist, artwork,      │  │
-│  │  (./data/)                    discovery_queue, settings)       │  │
+│  │  SQLite DB ◄─ SQLAlchemy + Alembic ─► Models (artwork,        │  │
+│  │  (./data/)        playlist, discovery_queue, settings,        │  │
+│  │                   active_displays, remote_commands,           │  │
+│  │                   display_playback_sessions)                  │  │
 │  │     │                                                         │  │
 │  │     ▼                                                         │  │
 │  │  AI Pipeline ──► agents.py (Gemini Vision)                    │  │
 │  │     │            curator.py (RAG + Wikipedia)                 │  │
-│  │     │            scout.py (6 Museum API Scouts)               │  │
+│  │     │            scout.py (8 Museum API Scouts)               │  │
 │  │     │            query_classifier.py (Intent Classification)  │  │
-│  │     │            result_ranker.py (Scoring + Deduplication)    │  │
+│  │     │            result_ranker.py (Scoring + Deduplication)   │  │
 │  │     │                                                         │  │
-│  │  WebSocket Hub ──► ConnectionManager (display_id routing)     │  │
+│  │  WebSocket Hub ──► ConnectionManager + DB cross-worker sync   │  │
 │  │     │       │                                                 │  │
 │  │     ▼       ▼                                                 │  │
 │  │  Canvas     Remote                                            │  │
@@ -76,15 +79,31 @@ Screen Docent is a **single FastAPI server** that exposes two fundamentally diff
 
 - **Remote Route:** `/remote` → `static/remote.html`
   - A mobile-optimised PWA for switching playlists, navigating images, changing display modes, and triggering placard display on **specific** connected Canvas displays.
-  - Polls `/api/remote/displays` every 5 seconds for active WebSocket clients.
-  - Sends targeted commands via `POST /api/remote/change`.
+  - Polls `/api/remote/displays` every 5 seconds; live displays are read from the `active_displays` table (heartbeat-backed), so the list is correct regardless of which worker owns each WebSocket.
+  - Sends targeted commands via `POST /api/remote/change`, which enqueues a row in `remote_commands` for the owning worker to deliver (see Multi-Worker Concurrency Model below).
 
 - **Admin Route:** `/admin` → `static/admin.html` + `static/admin.js`
   - Full library management dashboard: upload, delete, re-order, crop editing (Cropper.js), playlist CRUD.
   - AI Review Queue: inspect AI-generated metadata, edit fields, approve/reject.
-  - Art Scout Discovery: dispatch scouts to 6 tuned museum APIs, preview thumbnails, approve for download + RAG enrichment.
+  - Art Scout Discovery: dispatch scouts to 8 tuned museum APIs, preview thumbnails, approve for download + RAG enrichment.
   - Admin utilities: Factory Reset (wipe non-seed data), Clear All Pending (clean test slate).
-  - API Key management for Tier-2 museum sources (Europeana).
+  - API Key management for Tier-2 (key-gated) museum sources: Harvard, Smithsonian, Europeana.
+
+### Multi-Worker Concurrency Model (Phase 6)
+
+Uvicorn runs **4 worker processes**, each with its own memory space — so in-process state
+(`ConnectionManager`'s WebSocket dict) is **not shared across workers**. Cross-worker coordination
+is therefore done through the SQLite database:
+
+- **`active_displays`** — on each WebSocket connection, that worker runs a `heartbeat()` task that
+  upserts a row with `last_seen_at`. `/api/remote/displays` lists displays seen within a recent cutoff.
+- **`remote_commands`** — the remote enqueues a command targeting a `display_id`; the worker that owns
+  that socket runs a `command_poller()` task which polls the table and delivers via its **local**
+  `manager.send_personal_message(...)`, then deletes the row.
+- **`display_playback_sessions`** — persists per-display "bag shuffle" next-image state so playback
+  variety/sequence survives reconnects and is consistent no matter which worker serves `/next-image`.
+- **First-run seeding** uses a file-lock so only one of the 4 workers performs the factory seed; the
+  others skip with a `BlockingIOError`.
 
 ---
 
@@ -93,14 +112,19 @@ Screen Docent is a **single FastAPI server** that exposes two fundamentally diff
 ```
 Screen-Docent/
 ├── app.py                  # FastAPI application: routes, WebSocket hub, middleware, lifespan
-├── database.py             # SQLAlchemy engine, session factory, lightweight migration helper
-├── models.py               # ORM models: PlaylistModel, ArtworkModel, DiscoveryQueueModel, SettingsModel
+├── config.py               # Shared constants (ARTWORK_ROOT, LIBRARY_DIR); breaks circular imports
+├── database.py             # SQLAlchemy engine, session factory, table bootstrap (create_all)
+├── models.py               # ORM models: Playlist, Artwork, DiscoveryQueue, Settings, ActiveDisplay, RemoteCommand, DisplayPlaybackSession
 ├── agents.py               # Gemini Vision Agent: image analysis → VRA metadata JSON
 ├── curator.py              # RAG Curator: Wikipedia lookup → Gemini re-enrichment
-├── scout.py                # 6 Museum API Scouts (Chicago, Met, Cleveland, Rijks, SMK, Europeana)
+├── scout.py                # 8 Museum API Scouts — keyless: Chicago, Met, Cleveland, Rijks, SMK; key-gated: Harvard, Smithsonian, Europeana
 ├── query_classifier.py     # Hybrid intent classifier: dictionary (~200 artists) + Gemini Flash fallback
 ├── result_ranker.py        # Multi-factor scoring (artist match, title, highlight, image quality, metadata)
-├── migrate_vra.py          # One-shot migration: old (title/artist/year) → VRA Core schema
+│
+├── migrations/             # Alembic migration environment
+│   ├── env.py              # Alembic runtime config
+│   └── versions/           # Versioned schema migration scripts
+├── alembic.ini             # Alembic configuration
 │
 ├── static/
 │   ├── index.html          # Canvas TV display (full-screen artwork viewer)
@@ -128,12 +152,15 @@ Screen-Docent/
 │
 ├── tests/
 │   ├── conftest.py         # Pytest fixtures (in-memory SQLite)
+│   ├── __init__.py
 │   └── test_scout.py       # Scout module unit tests
+├── requirements-dev.txt    # Dev/test dependencies (pytest, coverage)
 │
-├── GEMINI.md               # Workspace coding standards for AI assistants
-├── PRD.md                  # Product Requirements Document (Phases 1–5)
 ├── README.md               # Project overview and setup guide
-└── LICENSE                 # Project license
+├── LICENSE                 # Project license
+│
+└── .ai/                    # Developer/AI context (system_architecture.md tracked;
+                            #   active_context.md + decision_log.md are local-only / gitignored)
 ```
 
 ---
@@ -161,11 +188,19 @@ All AI processing (`agents.py`, `curator.py`, `scout.py`) must run via FastAPI `
 ### 6. Image Optimisation Before AI Submission
 Before sending images to Gemini, always resize to a maximum of 2048×2048 pixels using Pillow's `thumbnail()` with `LANCZOS` resampling, and convert to JPEG at 85% quality. This prevents API timeouts and reduces token costs.
 
-### 7. Database Migrations Are Additive Only
-The `apply_migrations()` function in `database.py` uses `ALTER TABLE ADD COLUMN` to non-destructively add new columns. **Never drop or rename columns** — SQLite's ALTER TABLE is limited. For complex schema changes, use Alembic (planned for Phase 6).
+### 7. Schema Changes Go Through Alembic
+Schema is now versioned with **Alembic** (`migrations/versions/`); `database.py` only bootstraps tables
+via `Base.metadata.create_all` on startup. New columns/tables must be added with an Alembic revision —
+prefer **additive** changes (add column/table) because SQLite's `ALTER TABLE` cannot drop or rename
+columns in place. **Never** hand-edit the live `artwork.db` schema or drop/rename columns ad hoc.
 
-### 8. WebSocket Commands Are Targeted by `display_id`
-The `ConnectionManager` routes messages to specific displays using `send_personal_message(message, display_id)`. The `broadcast()` method exists but should only be used for system-wide announcements. All remote control actions must be targeted.
+### 8. WebSocket Commands Are Targeted by `display_id` — Across Workers via the DB
+With 4 Uvicorn workers, each worker's in-memory `ConnectionManager` only knows its **own** sockets, so
+targeting cannot rely on a shared dict. Remote actions are enqueued in the **`remote_commands`** table;
+the worker owning the target socket polls that table (`command_poller()`) and delivers locally via
+`send_personal_message(message, display_id)`. Live displays are tracked in **`active_displays`** via
+per-connection heartbeats. `broadcast()` exists but is for system-wide announcements only — all remote
+control actions must be targeted. Never assume in-process state is visible to other workers.
 
 ### 9. All Artwork Lives in `Artwork/_Library/`
 Regardless of playlist membership, the canonical copy of every image file lives in `Artwork/_Library/`. Playlist subdirectories (`Artwork/{PlaylistName}/`) are used only during initial filesystem ingestion and are then treated as symlink/organisation artifacts.
