@@ -9,7 +9,6 @@ from typing import Generator
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
 
-# Configure logger as per GEMINI.md
 logger = logging.getLogger("artwork-display-api.database")
 
 # Pre-flight setup: Ensure data directories exist for zero-touch deployments

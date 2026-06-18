@@ -118,10 +118,10 @@
             <h3>Installation Commands</h3>
             <p>Open your terminal and run the following sequence to clone the repository and start the engine:</p>
             <pre><code># 1. Clone the repository
-git clone https://github.com/your-repo/art-engine.git
+git clone https://github.com/AiwendilInTheWoods/Screen-Docent.git
 
 # 2. Enter the directory
-cd art-engine
+cd Screen-Docent
 
 # 3. Build and start the container in detached mode
 docker compose up -d --build</code></pre>
@@ -167,7 +167,7 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
             </ul>
 
             <div class="tip">
-                <strong>Phase 5 - RAG & Discovery:</strong>
+                <strong>RAG Enrichment & Discovery:</strong>
                 <ul>
                     <li><strong>RAG Enrichment:</strong> Use the "Batch Enrich" button to cross-reference your collection with Wikipedia. The AI will fact-check existing metadata and rewrite descriptions using verified historical context.</li>
                     <li><strong>Art Scouts:</strong> Use the "Discover" tab to find new high-resolution, public-domain masterpieces from world-class museums like the Art Institute of Chicago.</li>
@@ -176,7 +176,7 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
 
             <div class="tip">
                 <strong>Developer Note: Swapping Models</strong><br>
-                While the system uses Gemini by default for its high performance-to-cost ratio, the backend is designed to be modular. Advanced users can swap to <strong>OpenAI (GPT-4o)</strong>, <strong>Anthropic (Claude 3.5 Sonnet)</strong>, or local models by modifying the <code>agents.py</code> logic and adding the respective API keys to your <code>.env</code> file.
+                While the system uses Gemini by default for its high performance-to-cost ratio, the backend is designed to be modular. Advanced users can swap to <strong>OpenAI (GPT-4o)</strong>, <strong>Anthropic (Claude)</strong>, or local models by modifying the <code>agents.py</code> logic and adding the respective API keys to your <code>.env</code> file.
             </div>
         </section>
 
