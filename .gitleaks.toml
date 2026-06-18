@@ -1,0 +1,25 @@
+# gitleaks config — lab canonical ruleset (INFRA-D007)
+# Canonical copy. `install.sh` drops this into a target repo as `.gitleaks.toml`.
+# Real secrets must NEVER appear in any lab repo — this is the structural backstop.
+
+title = "lab-gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Templates and obvious placeholders only — not a place to hide real secrets."
+paths = [
+  '''.*\.example$''',
+  '''.*\.example\..*$''',
+  '''\.gitleaks\.toml$''',
+  '''templates/gitleaks/.*''',
+]
+regexTarget = "line"
+regexes = [
+  '''(?i)(your|example|placeholder|changeme|replace[-_]?me|dummy|test|fake|redacted)''',
+  '''AI-WORKSTATION-IP''',
+  '''[A-Z_]+-HOST''',
+  '''xxxx+''',
+  '''<[^>]+>''',
+]

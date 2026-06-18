@@ -1,0 +1,8 @@
+# Add this block to a repo's .pre-commit-config.yaml (or let install.sh create the file).
+# Then run:  pre-commit install
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0          # bump to current release periodically (pre-commit autoupdate)
+    hooks:
+      - id: gitleaks
+        name: gitleaks (block committed secrets)
