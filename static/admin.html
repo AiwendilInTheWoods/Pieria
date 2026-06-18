@@ -27,6 +27,10 @@
             margin: 0;
             display: flex;
             height: 100vh;
+            /* Fixed app-shell: the document never scrolls. Each pane (sidebar, main)
+               scrolls internally instead, so there is only ever one scrollbar per pane
+               (prevents the stacked document + main scrollbars on the right). */
+            overflow: hidden;
         }
 
         /* Sidebar Styling */
@@ -37,6 +41,9 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
+            /* Scroll the sidebar internally when its content (playlist list + settings)
+               exceeds the viewport, instead of overflowing and forcing a document scrollbar. */
+            overflow-y: auto;
         }
 
         h1 { font-size: 1.25rem; margin-bottom: 30px; color: var(--accent-color); }
@@ -85,9 +92,22 @@
         }
 
         /* Main Content */
-        main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        main { flex-grow: 1; padding: 0 40px; overflow-y: auto; }
 
-        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        /* Sticky header: keeps the drop zone + Add buttons pinned to the top of the
+           right pane while the artwork grid scrolls beneath it. Single scroll (main). */
+        .action-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 20;
+            background: var(--bg-color);
+            padding: 40px 0 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Bottom breathing room so the last grid row isn't flush to the viewport edge */
+        #artwork-grid, #library-grid, #discover-grid { padding-bottom: 40px; }
+        /* Views without a sticky header keep the original top spacing main used to provide */
+        #view-review, #view-settings { padding-top: 40px; }
 
         .upload-zone {
             border: 2px dashed var(--border-color);
@@ -267,7 +287,7 @@
 
         <!-- Discover View -->
         <div id="view-discover" class="hidden">
-            <div class="mission-control" style="background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px;">
+            <div class="mission-control" style="position: sticky; top: 0; z-index: 20; background: var(--sidebar-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin: 40px 0 20px;">
                 <h3 style="margin-top: 0; color: var(--accent-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1rem;">Art Scout Mission Control</h3>
                 
                 <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;">

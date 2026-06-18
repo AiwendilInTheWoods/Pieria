@@ -1,6 +1,31 @@
 # Screen Docent — Active Context
 
-> **Last Updated:** 2026-04-04
+> **Last Updated:** 2026-06-18
+
+---
+
+## Recently Completed: Admin Layout — Fixed App-Shell & Sticky Headers (2026-06-18)
+
+Resolved a long-standing admin UI inconsistency between the **Full Library** and **Collections** views.
+
+- **Root cause of the "extra scrollbar":** In Collections, the left `aside` (playlist list + expanded
+  playlist settings) exceeded the viewport height but had `overflow: visible`, so it spilled past the
+  bottom and stretched the whole document — producing a **document-level scrollbar stacked alongside
+  `main`'s scrollbar**. In Full Library the sidebar's playlist section is hidden, so nothing overflowed
+  and only one scrollbar appeared. That was the entire difference between the two views.
+- **Fix (CSS-only, `static/admin.html`):**
+  - `body { overflow: hidden }` — fixed app-shell; the document never scrolls.
+  - `aside { overflow-y: auto }` — the sidebar scrolls internally only when too tall.
+  - `.action-bar` and the Discover Mission Control panel are now `position: sticky; top: 0` so the
+    drop zone + Add buttons stay pinned while the grid scrolls. `main` padding reworked accordingly.
+- **Result:** one scrollbar per pane, header pinned, identical behaviour across Library and Collections.
+- Verified live in-browser (headless Chrome over CDP) against the rebuilt container at all viewports.
+- See [[ADR-010]] in the decision log.
+
+> [!NOTE]
+> **Deploy reminder:** `static/` is **not** volume-mounted (only `./Artwork` and `./data` are). UI changes
+> are baked into the image at build time and require `docker compose build && up -d` to appear. This
+> preserves the self-contained "the image *is* the version" upgrade story (pull → rebuild → boom).
 
 ---
 

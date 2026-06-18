@@ -330,3 +330,35 @@ Implement an OS-level file lock (`fcntl.flock` with `LOCK_EX | LOCK_NB`) in the 
 - **Positive:** Guarantees migrations and seed downloads only happen exactly once, preventing duplicate rows and corrupted states.
 - **Positive:** Extremely lightweight compared to using a Redis lock.
 - **Negative:** Relies on UNIX/Linux specific `fcntl`. This is acceptable as the deployment target (Docker/MS-01) is strictly Linux.
+
+---
+
+## ADR-010: Fixed App-Shell Layout for the Admin Dashboard
+
+**Date:** 2026-06-18
+**Status:** ✅ Accepted & Implemented
+**Deciders:** Josh
+
+### Context
+
+The admin dashboard exhibited two stacked vertical scrollbars on the right in the **Collections** view but only one in the **Full Library** view. Investigation (headless Chrome over the DevTools Protocol against the running container) showed:
+
+- The outer scrollbar was the **document/`<html>`** scrollbar; the inner was `main`'s content scroll.
+- In Collections, the left `aside` (playlist list + the expanded playlist settings panel) is taller than the viewport, but `aside` had `overflow: visible`. The overflow spilled below the body and stretched the whole document, creating the document-level scrollbar.
+- In Full Library, `#sidebar-playlists` is hidden, so the sidebar was short, nothing overflowed, and only `main`'s scrollbar appeared. This asymmetry was the user-visible inconsistency.
+- Separately, the `.action-bar` (drop zone + Add buttons) scrolled away with the grid in both views.
+
+### Decision
+
+Treat the admin as a **fixed app-shell**: the document itself never scrolls; each pane scrolls internally.
+
+1. `body { overflow: hidden }` — clip the document so the spilled sidebar can never create a document scrollbar.
+2. `aside { overflow-y: auto }` — the sidebar scrolls within its own pane when its content exceeds the viewport (keeps the New Playlist input reachable).
+3. `.action-bar` and the Discover Mission Control panel use `position: sticky; top: 0` (with a solid background), and `main`'s padding was moved so the headers pin flush to the top. The drop zone + Add buttons now stay visible while the grid scrolls.
+
+### Consequences
+
+- **Positive:** Exactly one scrollbar per pane; headers stay pinned; Library and Collections behave identically.
+- **Positive:** CSS-only change in `static/admin.html` — no JS or structural markup changes.
+- **Note:** `static/` is not volume-mounted (only `./Artwork` and `./data`), so this — like any UI change — requires `docker compose build && up -d` to appear. Deliberately kept this way to preserve the self-contained image / "pull → rebuild" upgrade model from [ADR-001](#adr-001-git-based-docker-pipeline-for-zero-touch-deployments).
+- **Future pattern:** New full-height admin panes should rely on internal pane scrolling, never document scroll.
