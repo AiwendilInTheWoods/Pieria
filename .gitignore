@@ -21,3 +21,7 @@ __pycache__/
 .DS_Store
 .thumbs.db
 .coverage
+
+# Test/verification artifacts
+.playwright-mcp/
+.pytest_cache/
