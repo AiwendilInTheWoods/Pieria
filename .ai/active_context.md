@@ -4,6 +4,39 @@
 
 ---
 
+## Recently Completed: Review Queue Live-Enrichment + View Persistence (2026-06-18)
+
+Two admin UX bugs fixed (CSS/JS-only, `static/admin.js` + `static/admin.html`):
+
+1. **Review Queue didn't show enrichment live.** Newly-uploaded cards render blank, then background
+   enrichment lands a few seconds later — but `fetchReviewQueue()` only re-rendered when the item
+   **count** changed, and `renderReviewQueue()`'s id-reconciler only *repositioned* existing cards
+   (never updated their field values). So blank cards stayed blank until a full page reload.
+   - **Fix:** `fetchReviewQueue()` now re-renders on any **content** change (JSON diff vs
+     `window._lastReviewJSON`), and a new `syncReviewCardFields()` pushes server values onto each
+     card's inputs. It preserves manual edits via a per-input `data-server` baseline (only overwrites
+     a field whose value still equals the last server value, and never the focused element).
+
+2. **Browser refresh snapped back to Collections.** `currentView` defaulted to `'playlists'` with no
+   persistence. `switchView()` now writes the active view to `localStorage['sd_admin_view']` and
+   `init()` restores it on load. Additionally, the **selected collection** was lost on refresh
+   (`currentPlaylistId` reset to null → `fetchPlaylists()` fell back to the first collection):
+   `selectPlaylist()` now persists `localStorage['sd_admin_playlist']`, `init()` restores it before
+   `refreshData()`, and `fetchPlaylists()` falls back to the first collection only if the saved one
+   no longer exists.
+
+- **Cache-bust:** bumped `admin.js?v=20260429` → `?v=20260618` in `admin.html` so browsers fetch the
+  new JS after rebuild.
+- Verified live in a real browser (Playwright over the running container, patched via `docker cp`):
+  a blanked card repopulated from the live backend with no reload, a simulated manual edit survived
+  the sync, and a reload restored the Review Queue view.
+
+> [!NOTE]
+> The running container was patched ephemerally via `docker cp` for verification. Run
+> `docker compose build && docker compose up -d` to bake both files into the image permanently.
+
+---
+
 ## Recently Completed: Admin Layout — Fixed App-Shell & Sticky Headers (2026-06-18)
 
 Resolved a long-standing admin UI inconsistency between the **Full Library** and **Collections** views.

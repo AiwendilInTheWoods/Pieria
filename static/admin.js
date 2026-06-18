@@ -48,8 +48,23 @@ async function init() {
     setupUploadZone();
     setupPlaylistInput(); // Add key listener
     await loadPremiumSettings();
+
+    // Restore the view the user was last on (survives a browser refresh).
+    const savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
+    const validViews = ['playlists', 'library', 'review', 'discover', 'settings'];
+    if (savedView && validViews.includes(savedView)) {
+        switchView(savedView);
+    }
+
+    // Restore the collection that was open, so refresh returns to it (not the first one).
+    // fetchPlaylists() (inside refreshData) reads currentPlaylistId to re-select it.
+    const savedPlaylist = (() => { try { return localStorage.getItem('sd_admin_playlist'); } catch (e) { return null; } })();
+    if (savedPlaylist && !isNaN(parseInt(savedPlaylist, 10))) {
+        currentPlaylistId = parseInt(savedPlaylist, 10);
+    }
+
     await refreshData();
-    
+
     // Start background polling every 5 seconds for live updates
     startPolling();
 }
@@ -118,6 +133,9 @@ async function refreshData() {
 
 function switchView(view) {
     currentView = view;
+    // Remember the active view so a browser refresh returns here instead of
+    // snapping back to the default Collections screen.
+    try { localStorage.setItem('sd_admin_view', view); } catch (e) {}
     document.getElementById('nav-playlists').classList.toggle('active', view === 'playlists');
     document.getElementById('nav-library').classList.toggle('active', view === 'library');
     document.getElementById('nav-review').classList.toggle('active', view === 'review');
@@ -171,7 +189,12 @@ async function fetchPlaylists() {
         
         if (currentPlaylistId) {
             const active = currentPlaylists.find(p => p.id === currentPlaylistId);
-            if (active) selectPlaylist(active.id);
+            if (active) {
+                selectPlaylist(active.id);
+            } else if (currentPlaylists.length > 0) {
+                // Saved collection no longer exists (e.g. deleted) — fall back to the first.
+                selectPlaylist(currentPlaylists[0].id);
+            }
         } else if (currentPlaylists.length > 0) {
             selectPlaylist(currentPlaylists[0].id);
         }
@@ -185,10 +208,16 @@ async function fetchReviewQueue() {
         
         // Always update count
         document.getElementById('review-count').textContent = data.length;
-        
-        // Only re-render list if count changed to preserve scroll/input state if user is looking
-        const list = document.getElementById('review-list');
-        if (data.length !== list.children.length || (data.length > 0 && list.innerHTML.includes('Queue is empty'))) {
+
+        // Re-render whenever the server data changes in ANY way — not just when the
+        // count changes. Freshly-uploaded cards arrive blank and get their AI metadata
+        // filled in by background enrichment a few seconds later; that's a content
+        // change with no count change, so a length-only guard would leave the cards
+        // blank until a manual page reload. renderReviewQueue reconciles by id and
+        // preserves any field the user is actively editing.
+        const dataStr = JSON.stringify(data);
+        if (dataStr !== window._lastReviewJSON) {
+            window._lastReviewJSON = dataStr;
             renderReviewQueue(data);
         }
     } catch (error) { console.error('[Admin] Fetch queue failed:', error); }
@@ -702,6 +731,9 @@ async function deletePlaylist(id, name) {
 
 function selectPlaylist(id) {
     currentPlaylistId = id;
+    // Remember the open collection so a browser refresh returns to it instead of
+    // resetting to the first collection in the list.
+    try { localStorage.setItem('sd_admin_playlist', String(id)); } catch (e) {}
     const playlist = currentPlaylists.find(p => p.id === id);
     if (!playlist) return;
     document.querySelectorAll('.playlist-item').forEach(el => el.classList.toggle('active', parseInt(el.dataset.id) === id));
@@ -781,6 +813,40 @@ async function saveOrder(ids) {
     } catch (error) { console.error('[Admin] Reorder failed:', error); }
 }
 
+// Review-card input id prefix -> artwork property. Used to live-sync enrichment
+// data onto already-rendered cards without clobbering manual edits.
+const REVIEW_FIELDS = [
+    ['title', 'title'],
+    ['agent', 'agent_name'],
+    ['role', 'agent_role'],
+    ['date', 'creation_date'],
+    ['context', 'cultural_context'],
+    ['medium', 'medium'],
+    ['date-display', 'date_display'],
+    ['tags', 'tags'],
+    ['desc', 'description_narrative'],
+];
+
+/**
+ * Pushes the latest server values onto a card's inputs, but only where the user
+ * hasn't diverged. Each input remembers the last server value in data-server; if
+ * the current value still matches it (and the field isn't focused), we overwrite
+ * with the new server value. This fills in blank cards as enrichment lands while
+ * leaving any field the user has typed into untouched.
+ */
+function syncReviewCardFields(art) {
+    REVIEW_FIELDS.forEach(([prefix, key]) => {
+        const el = document.getElementById(`${prefix}-${art.id}`);
+        if (!el) return;
+        const serverVal = art[key] || '';
+        if (document.activeElement === el) return; // never yank text from under the cursor
+        if (el.value === (el.dataset.server || '')) {
+            el.value = serverVal;
+        }
+        el.dataset.server = serverVal;
+    });
+}
+
 function renderReviewQueue(artworks) {
     const list = document.getElementById('review-list');
     
@@ -852,6 +918,9 @@ function renderReviewQueue(artworks) {
                 list.appendChild(card);
             }
         }
+        // For new cards this just records the server baseline; for existing cards it
+        // fills in any enrichment that has arrived since the card was first rendered.
+        syncReviewCardFields(art);
         currentDOMIndex++;
     });
 }
