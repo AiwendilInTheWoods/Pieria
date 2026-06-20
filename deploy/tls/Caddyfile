@@ -1,0 +1,19 @@
+# Screen Docent — optional HTTPS reverse proxy.
+# Opt-in only:  docker compose --profile tls up -d
+# The app itself stays on plain http://:8000 (kiosks/displays keep using that).
+#
+# Set SD_TLS_HOST to the address you'll open in a browser (default: localhost).
+#
+#   • LAN / local (default): `tls internal` issues a certificate from Caddy's own local CA.
+#     Browsers will warn until you install that root CA on each viewing device
+#     (phone, laptop). See the repo README → "Enabling HTTPS" for the trust steps.
+#
+#   • Public domain (lock icon everywhere, no manual trust): point a real domain's DNS at
+#     this host, set SD_TLS_HOST=art.example.com, and DELETE the `tls internal` line below.
+#     Caddy then fetches a trusted Let's Encrypt certificate automatically (ports 80+443
+#     must be reachable from the internet).
+
+{$SD_TLS_HOST:localhost} {
+	tls internal
+	reverse_proxy art-curator:8000
+}

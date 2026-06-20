@@ -245,6 +245,9 @@
             <button id="nav-discover" class="nav-btn" onclick="switchView('discover')">
                 Discover <span id="discover-count" class="badge">0</span>
             </button>
+            <button id="nav-catalog" class="nav-btn" onclick="switchView('catalog')">
+                Browse Catalog <span id="catalog-count" class="badge">0</span>
+            </button>
             <button id="nav-settings" class="nav-btn" onclick="switchView('settings')">
                 ⚙ Settings
             </button>
@@ -369,6 +372,15 @@
             </button>
         </div>
 
+        <!-- Browse Catalog View -->
+        <div id="view-catalog" class="hidden">
+            <div style="margin: 30px 0 10px;">
+                <h2 style="color: var(--accent-color); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1rem; margin: 0;">Browse Catalog</h2>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 8px 0 0;">Curated public-domain art with ready-made placards. Browsing is free &amp; instant — the full-resolution image only downloads when you <strong>Add</strong> a piece to your library.</p>
+            </div>
+            <div id="catalog-container"></div>
+        </div>
+
         <!-- Settings View -->
         <div id="view-settings" class="hidden">
             <h2 style="color: var(--accent-color); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1rem; margin-bottom: 30px;">Settings & Maintenance</h2>
@@ -400,6 +412,9 @@
                         <div id="ai-oauth-row" style="display:none;">
                             <button class="primary" onclick="startOpenRouterOAuth()" style="padding:12px 20px; font-weight:600;">🔐 Sign in with OpenRouter</button>
                             <span style="font-size:0.72rem; color:#94a3b8; margin-left:10px;">One click — no key to copy. You'll be returned here.</span>
+                        </div>
+                        <div id="ai-oauth-note" style="display:none; font-size:0.74rem; color:#f59e0b;">
+                            One-click sign-in needs HTTPS or <code>localhost</code>. Paste an OpenRouter key above, or open this page at <code>http://localhost:8000/admin</code> (or over HTTPS) to enable it.
                         </div>
 
                         <div>
@@ -492,6 +507,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260620b"></script>
+    <script src="admin.js?v=20260620c"></script>
 </body>
 </html>

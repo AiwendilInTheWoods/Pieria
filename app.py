@@ -1346,6 +1346,165 @@ async def ai_oauth_exchange(payload: OAuthExchangePayload, db: Session = Depends
     return {"status": "success", "provider": provider}
 
 # -----------------------------------------------------------------------------
+# 4.7 Catalog (browseable curated public-domain art; lazy high-res on add)
+# -----------------------------------------------------------------------------
+CATALOG_FILE = Path("static/catalog.json")
+# Wikimedia (and most sources) require a descriptive User-Agent; the default httpx UA is rejected.
+SD_USER_AGENT = "ScreenDocent/1.0 (https://github.com/AiwendilInTheWoods/Screen-Docent; art display) httpx"
+
+async def _resolve_catalog(db: Session) -> dict:
+    """Return the catalog manifest: an optional remote static URL (catalog_url setting) with a
+    fallback to the bundled static/catalog.json. No server required — 'remote' is just a static file."""
+    setting = db.query(SettingsModel).filter(SettingsModel.setting_key == "catalog_url").first()
+    if setting and setting.setting_value:
+        try:
+            async with httpx.AsyncClient(headers={"User-Agent": SD_USER_AGENT}) as client:
+                r = await client.get(setting.setting_value, timeout=15.0, follow_redirects=True)
+                if r.status_code == 200:
+                    return r.json()
+                logger.warning(f"[Catalog] remote manifest HTTP {r.status_code}; using bundled.")
+        except Exception as e:
+            logger.warning(f"[Catalog] remote manifest fetch failed ({e}); using bundled.")
+    if not CATALOG_FILE.exists():
+        return {"version": 1, "collections": []}
+    with open(CATALOG_FILE, "r") as f:
+        return json.load(f)
+
+async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnail_url: str,
+                                       metadata: dict, playlist_id: Optional[int] = None,
+                                       filename_prefix: str = "catalog") -> ArtworkModel:
+    """Download a remote image once and create an *approved* ArtworkModel with prefilled metadata.
+    Mirrors the factory-seed path (UA + 429 backoff, sanitized unique filename, optional playlist
+    symlink + link). Dedups on source_url — returns the existing row if already added."""
+    existing = db.query(ArtworkModel).filter(ArtworkModel.source_url == source_url).first()
+    if existing:
+        return existing
+
+    title = (metadata.get("title") or "art")
+    def _safe(suffix=""):
+        base = f"{filename_prefix}_{title.replace(' ', '_').lower()[:18]}{suffix}.jpg"
+        return "".join(x for x in base if x.isalnum() or x in "_-.")
+    safe_name = _safe()
+    dest_path = LIBRARY_DIR / safe_name
+    n = 1
+    while dest_path.exists():
+        safe_name = _safe(f"_{n}"); dest_path = LIBRARY_DIR / safe_name; n += 1
+
+    resp = None
+    async with httpx.AsyncClient(headers={"User-Agent": SD_USER_AGENT}) as client:
+        for attempt in range(3):
+            resp = await client.get(source_url, timeout=45.0, follow_redirects=True)
+            if resp.status_code == 429:
+                await asyncio.sleep(3 * (attempt + 1))
+                continue
+            break
+    if not resp or resp.status_code != 200:
+        raise HTTPException(502, detail=f"Could not download image (HTTP {resp.status_code if resp else 'none'}).")
+
+    with open(dest_path, "wb") as f:
+        f.write(resp.content)
+    try:
+        with Image.open(dest_path) as img:
+            w, h = img.size
+    except Exception:
+        dest_path.unlink(missing_ok=True)
+        raise HTTPException(502, detail="Downloaded file was not a valid image.")
+
+    artwork = ArtworkModel(
+        filename=safe_name, original_width=w, original_height=h,
+        crop_width=float(w), crop_height=float(h),
+        status='approved',
+        title=metadata.get("title"), agent_name=metadata.get("agent_name"),
+        agent_role=metadata.get("agent_role", "Artist"), creation_date=metadata.get("creation_date"),
+        cultural_context=metadata.get("cultural_context"), medium=metadata.get("medium"),
+        date_display=metadata.get("date_display"), description_narrative=metadata.get("description_narrative"),
+        tags=metadata.get("tags"), source_url=source_url, thumbnail_url=thumbnail_url, is_seed=False,
+    )
+    db.add(artwork); db.commit(); db.refresh(artwork)
+
+    if playlist_id:
+        playlist = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first()
+        if playlist:
+            try:
+                (ARTWORK_ROOT / playlist.name).mkdir(parents=True, exist_ok=True)
+                pl_path = ARTWORK_ROOT / playlist.name / safe_name
+                if pl_path.is_symlink() or pl_path.exists():
+                    pl_path.unlink()
+                try: os.symlink(dest_path.resolve(), pl_path)
+                except OSError: shutil.copy(dest_path, pl_path)
+            except Exception as e:
+                logger.warning(f"[Catalog] playlist symlink failed: {e}")
+            order = len(db.execute(select(playlist_artwork.c.artwork_id).where(
+                playlist_artwork.c.playlist_id == playlist.id)).all())
+            try:
+                db.execute(playlist_artwork.insert().values(
+                    playlist_id=playlist.id, artwork_id=artwork.id, display_order=order))
+                db.commit()
+            except Exception:
+                db.rollback()
+    return artwork
+
+@app.get("/api/catalog")
+async def get_catalog(db: Session = Depends(get_db)):
+    """Browseable manifest of curated public-domain collections. Items carry prefilled placard
+    metadata + a hotlinked thumbnail_url; high-res is fetched only on add. `added` flags items
+    already in the library (matched by source_url)."""
+    manifest = await _resolve_catalog(db)
+    added = {row[0] for row in db.query(ArtworkModel.source_url).filter(ArtworkModel.source_url.isnot(None)).all()}
+    for col in manifest.get("collections", []):
+        for it in col.get("items", []):
+            it["added"] = it.get("source_url") in added
+    return manifest
+
+class CatalogAddPayload(BaseModel):
+    collection_id: str
+    item_index: int
+    playlist_id: Optional[int] = None
+
+def _catalog_item(manifest: dict, collection_id: str, item_index: int):
+    col = next((c for c in manifest.get("collections", []) if c.get("id") == collection_id), None)
+    if not col:
+        raise HTTPException(404, detail=f"Unknown collection: {collection_id}")
+    items = col.get("items", [])
+    if item_index < 0 or item_index >= len(items):
+        raise HTTPException(404, detail="Unknown catalog item")
+    return items[item_index]
+
+@app.post("/api/catalog/add")
+async def add_catalog_item(payload: CatalogAddPayload, db: Session = Depends(get_db)):
+    """Lazily download one catalog item's high-res image and add it to the library (approved,
+    metadata prefilled — no AI needed). Optionally links it to a playlist. Idempotent per source_url."""
+    manifest = await _resolve_catalog(db)
+    item = _catalog_item(manifest, payload.collection_id, payload.item_index)
+    art = await _download_and_create_artwork(
+        db, source_url=item["source_url"], thumbnail_url=item.get("thumbnail_url"),
+        metadata=item, playlist_id=payload.playlist_id)
+    return {"status": "added", "artwork_id": art.id, "title": art.title}
+
+class CatalogAddCollectionPayload(BaseModel):
+    collection_id: str
+    playlist_id: Optional[int] = None
+
+@app.post("/api/catalog/add-collection")
+async def add_catalog_collection(payload: CatalogAddCollectionPayload, db: Session = Depends(get_db)):
+    """Best-effort add of every item in a collection (continues past individual failures)."""
+    manifest = await _resolve_catalog(db)
+    col = next((c for c in manifest.get("collections", []) if c.get("id") == payload.collection_id), None)
+    if not col:
+        raise HTTPException(404, detail=f"Unknown collection: {payload.collection_id}")
+    added, failed = 0, 0
+    for item in col.get("items", []):
+        try:
+            await _download_and_create_artwork(
+                db, source_url=item["source_url"], thumbnail_url=item.get("thumbnail_url"),
+                metadata=item, playlist_id=payload.playlist_id)
+            added += 1
+        except Exception as e:
+            failed += 1
+            logger.warning(f"[Catalog] add-collection item failed: {e}")
+    return {"status": "done", "added": added, "failed": failed}
+
+# -----------------------------------------------------------------------------
 # 5. Static File Serving
 # -----------------------------------------------------------------------------
 if ARTWORK_ROOT.exists():

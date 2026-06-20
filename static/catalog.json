@@ -1,0 +1,240 @@
+{
+  "version": 1,
+  "collections": [
+    {
+      "id": "masterpieces",
+      "title": "The Masterpieces",
+      "description": "Iconic paintings from across art history — ready to display with full museum placards.",
+      "source": "Wikimedia Commons",
+      "license": "Public Domain",
+      "items": [
+        {
+          "title": "The Starry Night",
+          "agent_name": "Vincent van Gogh",
+          "agent_role": "Painter",
+          "creation_date": "1889",
+          "cultural_context": "Post-Impressionism, Dutch",
+          "medium": "Oil on canvas",
+          "date_display": "1889",
+          "description_narrative": "A swirling, dynamic night sky over a quiet village, painted during Van Gogh's stay at the Saint-Paul-de-Mausole asylum in Saint-Rémy-de-Provence. It is one of the most recognized masterpieces in the history of Western art.",
+          "tags": "night, sky, stars, village, post-impressionism, landscape",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/2000px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/500px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg"
+        },
+        {
+          "title": "The Great Wave off Kanagawa",
+          "agent_name": "Katsushika Hokusai",
+          "agent_role": "Printmaker",
+          "creation_date": "1831",
+          "cultural_context": "Edo Period, Ukiyo-e, Japanese",
+          "medium": "Polychrome woodblock print; ink and color on paper",
+          "date_display": "c. 1830–32",
+          "description_narrative": "An enormous rogue wave threatening three boats off the coast of the town of Kanagawa, while Mount Fuji rises in the background. It is Hokusai's most famous work and one of the most recognizable works of Japanese art in the world.",
+          "tags": "wave, ocean, boats, mount fuji, ukiyo-e, landscape",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Great_Wave_off_Kanagawa.jpg/2000px-The_Great_Wave_off_Kanagawa.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Great_Wave_off_Kanagawa.jpg/500px-The_Great_Wave_off_Kanagawa.jpg"
+        },
+        {
+          "title": "The Kiss",
+          "agent_name": "Gustav Klimt",
+          "agent_role": "Painter",
+          "creation_date": "1907-1908",
+          "cultural_context": "Art Nouveau, Vienna Secession, Austrian",
+          "medium": "Oil and gold leaf on canvas",
+          "date_display": "1907–08",
+          "description_narrative": "A couple locked in an intimate embrace, cloaked in elaborate gold-patterned robes, kneeling in a flower-strewn meadow. Klimt's masterful use of gold leaf and ornamental motifs epitomizes his 'Golden Phase' and the height of the Vienna Secession movement.",
+          "tags": "love, gold, art nouveau, couple, embrace, ornamental",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/2000px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/500px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg"
+        },
+        {
+          "title": "The Birth of Venus",
+          "agent_name": "Sandro Botticelli",
+          "agent_role": "Painter",
+          "creation_date": "1485",
+          "cultural_context": "Italian Renaissance, Florentine",
+          "medium": "Tempera on canvas",
+          "date_display": "c. 1484–86",
+          "description_narrative": "The goddess Venus emerges from the sea as a fully grown woman, arriving at the shore on a giant scallop shell. One of the world's most famous and appreciated works of art, it has become a landmark of Italian Renaissance painting.",
+          "tags": "mythology, venus, renaissance, goddess, shell, classical",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/2000px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/500px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg"
+        },
+        {
+          "title": "Nighthawks",
+          "agent_name": "Edward Hopper",
+          "agent_role": "Painter",
+          "creation_date": "1942",
+          "cultural_context": "American Realism",
+          "medium": "Oil on canvas",
+          "date_display": "1942",
+          "description_narrative": "Four figures sit in a brightly lit diner at night on a desolate city corner. The painting captures the loneliness and alienation of modern urban life with cinematic intensity. It has become one of the most reproduced paintings in American art.",
+          "tags": "diner, night, urban, loneliness, realism, american",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Nighthawks_by_Edward_Hopper_1942.jpg/2000px-Nighthawks_by_Edward_Hopper_1942.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Nighthawks_by_Edward_Hopper_1942.jpg/500px-Nighthawks_by_Edward_Hopper_1942.jpg"
+        },
+        {
+          "title": "Water Lilies",
+          "agent_name": "Claude Monet",
+          "agent_role": "Painter",
+          "creation_date": "1906",
+          "cultural_context": "Impressionism, French",
+          "medium": "Oil on canvas",
+          "date_display": "1906",
+          "description_narrative": "Part of Monet's iconic series of approximately 250 oil paintings depicting his flower garden at Giverny. The water lily paintings collectively represent Monet's greatest artistic achievement, capturing the fleeting effects of light on water with unmatched mastery.",
+          "tags": "water lilies, pond, impressionism, flowers, nature, reflections",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/2000px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/500px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg"
+        }
+      ]
+    },
+    {
+      "id": "faces",
+      "title": "Faces of Antiquity",
+      "description": "Portraits that have stared back at us across the centuries.",
+      "source": "Wikimedia Commons",
+      "license": "Public Domain",
+      "items": [
+        {
+          "title": "Mona Lisa",
+          "agent_name": "Leonardo da Vinci",
+          "agent_role": "Painter",
+          "creation_date": "1503-1519",
+          "cultural_context": "High Renaissance, Italian",
+          "medium": "Oil on poplar panel",
+          "date_display": "1503–1519",
+          "description_narrative": "The most famous painting in the world. It depicts Lisa Gherardini, wife of Francesco del Giocondo, sitting in front of an imaginary landscape. Her enigmatic expression and the masterful use of sfumato make it a masterpiece of the Renaissance.",
+          "tags": "portrait, renaissance, sfumato, enigmatic, female",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/2000px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/400px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg"
+        },
+        {
+          "title": "Girl with a Pearl Earring",
+          "agent_name": "Johannes Vermeer",
+          "agent_role": "Painter",
+          "creation_date": "1665",
+          "cultural_context": "Dutch Golden Age",
+          "medium": "Oil on canvas",
+          "date_display": "c. 1665",
+          "description_narrative": "Often referred to as the 'Mona Lisa of the North', this tronie depicts a European girl wearing an exotic dress, an oriental turban, and what appears to be a very large pearl as an earring. It is a masterclass in the use of light.",
+          "tags": "portrait, dutch golden age, pearl, turban, female",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/2000px-1665_Girl_with_a_Pearl_Earring.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/400px-1665_Girl_with_a_Pearl_Earring.jpg"
+        },
+        {
+          "title": "American Gothic",
+          "agent_name": "Grant Wood",
+          "agent_role": "Painter",
+          "creation_date": "1930",
+          "cultural_context": "Regionalism, American",
+          "medium": "Oil on beaverboard",
+          "date_display": "1930",
+          "description_narrative": "A stern-faced farmer standing beside his spinster daughter in front of a house with a distinctive Gothic window. One of the most familiar images in 20th-century American art, it is an ambiguous statement about rural American character.",
+          "tags": "portrait, american, gothic, rural, farmer, pitchfork",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/2000px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/500px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg"
+        },
+        {
+          "title": "Whistler's Mother",
+          "agent_name": "James McNeill Whistler",
+          "agent_role": "Painter",
+          "creation_date": "1871",
+          "cultural_context": "Tonalism, American",
+          "medium": "Oil on canvas",
+          "date_display": "1871",
+          "description_narrative": "Formally titled 'Arrangement in Grey and Black No.1', this austere portrait of Whistler's mother seated in profile has become an American cultural icon and symbol of motherhood. Its restrained palette and compositional harmony exemplify Whistler's belief in art for art's sake.",
+          "tags": "portrait, mother, seated, profile, tonalism, grey",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Whistlers_Mother_high_res.jpg/2000px-Whistlers_Mother_high_res.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Whistlers_Mother_high_res.jpg/500px-Whistlers_Mother_high_res.jpg"
+        },
+        {
+          "title": "Self-Portrait with Straw Hat",
+          "agent_name": "Vincent van Gogh",
+          "agent_role": "Painter",
+          "creation_date": "1887",
+          "cultural_context": "Post-Impressionism, Dutch",
+          "medium": "Oil on canvas",
+          "date_display": "1887",
+          "description_narrative": "One of over thirty self-portraits by Van Gogh, painted during his time in Paris. The vibrant, short brushstrokes and complementary colors show the influence of the Impressionists and Neo-Impressionists he encountered in the French capital.",
+          "tags": "self-portrait, hat, post-impressionism, portrait, paris",
+          "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Van_Gogh_Self-Portrait_with_Straw_Hat_1887-Metropolitan.jpg/2000px-Van_Gogh_Self-Portrait_with_Straw_Hat_1887-Metropolitan.jpg",
+          "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Van_Gogh_Self-Portrait_with_Straw_Hat_1887-Metropolitan.jpg/500px-Van_Gogh_Self-Portrait_with_Straw_Hat_1887-Metropolitan.jpg"
+        }
+      ]
+    },
+    {
+      "id": "cosmos",
+      "title": "The Cosmos",
+      "description": "Public-domain views of Earth and deep space from NASA, Hubble, and the James Webb Space Telescope — photography as fine art.",
+      "source": "NASA / Wikimedia Commons",
+      "license": "Public Domain (NASA, U.S. Government work); Hubble/Webb composites credit NASA/ESA",
+      "items": [
+        {
+          "title": "The Blue Marble",
+          "agent_name": "The Crew of Apollo 17 (NASA)",
+          "agent_role": "Photograph",
+          "creation_date": "1972",
+          "cultural_context": "Spaceflight Photography",
+          "medium": "Photograph",
+          "date_display": "December 7, 1972",
+          "description_narrative": "One of the most reproduced photographs in history, captured by the crew of Apollo 17 on their way to the Moon. A fully illuminated Earth — Africa, Antarctica, and the Arabian Peninsula clearly visible — hangs against the black of space, a portrait of our entire world.",
+          "tags": "earth, space, apollo, nasa, photography, planet",
+          "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Earth%20seen%20from%20Apollo%2017.jpg?width=2000",
+          "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Earth%20seen%20from%20Apollo%2017.jpg?width=500"
+        },
+        {
+          "title": "Earthrise",
+          "agent_name": "William Anders (NASA, Apollo 8)",
+          "agent_role": "Photograph",
+          "creation_date": "1968",
+          "cultural_context": "Spaceflight Photography",
+          "medium": "Photograph",
+          "date_display": "December 24, 1968",
+          "description_narrative": "Taken by astronaut William Anders during Apollo 8, the first crewed voyage to orbit the Moon. The sight of Earth rising over the desolate lunar horizon became an enduring symbol of the fragility and unity of our home planet.",
+          "tags": "earth, moon, apollo, nasa, photography, horizon",
+          "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/NASA-Apollo8-Dec24-Earthrise.jpg?width=2000",
+          "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/NASA-Apollo8-Dec24-Earthrise.jpg?width=500"
+        },
+        {
+          "title": "Webb's First Deep Field (SMACS 0723)",
+          "agent_name": "NASA, ESA, CSA, STScI",
+          "agent_role": "James Webb Space Telescope",
+          "creation_date": "2022",
+          "cultural_context": "Infrared Astronomy",
+          "medium": "Infrared composite image",
+          "date_display": "July 11, 2022",
+          "description_narrative": "The first full-color image from the James Webb Space Telescope, revealing thousands of galaxies in a sliver of sky. The galaxy cluster SMACS 0723 bends spacetime as a gravitational lens, magnifying far more distant galaxies behind it — among the faintest objects ever observed.",
+          "tags": "galaxies, deep field, jwst, webb, infrared, cosmos",
+          "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Webb%27s%20First%20Deep%20Field.jpg?width=2000",
+          "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Webb%27s%20First%20Deep%20Field.jpg?width=500"
+        },
+        {
+          "title": "Pillars of Creation",
+          "agent_name": "NASA, ESA, Hubble",
+          "agent_role": "Hubble Space Telescope",
+          "creation_date": "1995",
+          "cultural_context": "Astrophotography",
+          "medium": "Composite telescope image",
+          "date_display": "1995",
+          "description_narrative": "Towering columns of interstellar gas and dust in the Eagle Nebula, where new stars are being born. Captured by the Hubble Space Telescope, this image became one of the most iconic astronomical photographs ever made.",
+          "tags": "nebula, stars, hubble, eagle nebula, space, gas",
+          "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pillars%20of%20Creation.jpg?width=2000",
+          "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pillars%20of%20Creation.jpg?width=500"
+        },
+        {
+          "title": "The Hubble Ultra Deep Field",
+          "agent_name": "NASA, ESA, Hubble",
+          "agent_role": "Hubble Space Telescope",
+          "creation_date": "2004",
+          "cultural_context": "Deep Field Astronomy",
+          "medium": "Composite telescope image",
+          "date_display": "2004",
+          "description_narrative": "A view of a seemingly empty patch of sky that, after a million-second exposure, revealed nearly 10,000 galaxies stretching back to within a few hundred million years of the Big Bang. It remains among the deepest images of the universe ever taken.",
+          "tags": "galaxies, deep field, hubble, universe, cosmos, telescope",
+          "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble%20ultra%20deep%20field%20high%20rez%20edit1.jpg?width=2000",
+          "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble%20ultra%20deep%20field%20high%20rez%20edit1.jpg?width=500"
+        }
+      ]
+    }
+  ]
+}

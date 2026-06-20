@@ -53,7 +53,7 @@ async function init() {
 
     // Restore the view the user was last on (survives a browser refresh).
     const savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
-    const validViews = ['playlists', 'library', 'review', 'discover', 'settings'];
+    const validViews = ['playlists', 'library', 'review', 'discover', 'catalog', 'settings'];
     if (savedView && validViews.includes(savedView)) {
         switchView(savedView);
     }
@@ -142,15 +142,19 @@ function switchView(view) {
     document.getElementById('nav-library').classList.toggle('active', view === 'library');
     document.getElementById('nav-review').classList.toggle('active', view === 'review');
     document.getElementById('nav-discover').classList.toggle('active', view === 'discover');
+    document.getElementById('nav-catalog').classList.toggle('active', view === 'catalog');
     document.getElementById('nav-settings').classList.toggle('active', view === 'settings');
-    
+
     document.getElementById('view-playlists').classList.toggle('hidden', view !== 'playlists');
     document.getElementById('view-library').classList.toggle('hidden', view !== 'library');
     document.getElementById('view-review').classList.toggle('hidden', view !== 'review');
     document.getElementById('view-discover').classList.toggle('hidden', view !== 'discover');
+    document.getElementById('view-catalog').classList.toggle('hidden', view !== 'catalog');
     document.getElementById('view-settings').classList.toggle('hidden', view !== 'settings');
-    
+
     document.getElementById('sidebar-playlists').classList.toggle('hidden', view !== 'playlists');
+
+    if (view === 'catalog') renderCatalog();
 }
 
 async function fetchLibrary() {
@@ -1308,9 +1312,14 @@ function applyProviderUI(provider) {
     const p = aiPresets[provider] || {};
     const keyRow = document.getElementById('ai-key-row');
     const oauthRow = document.getElementById('ai-oauth-row');
+    const note = document.getElementById('ai-oauth-note');
     const link = document.getElementById('ai-key-link');
-    if (keyRow) keyRow.style.display = p.oauth ? 'none' : 'block';
-    if (oauthRow) oauthRow.style.display = p.oauth ? 'block' : 'none';
+    // crypto.subtle (used by the OAuth PKCE flow) only works in a secure context
+    // (HTTPS or localhost). Over http://<LAN-IP> it's unavailable, so fall back to paste-a-key.
+    const oauthUsable = p.oauth && window.isSecureContext;
+    if (keyRow) keyRow.style.display = oauthUsable ? 'none' : 'block';
+    if (oauthRow) oauthRow.style.display = oauthUsable ? 'block' : 'none';
+    if (note) note.style.display = (p.oauth && !window.isSecureContext) ? 'block' : 'none';
     if (link) {
         if (p.key_url) { link.style.display = 'inline'; link.href = p.key_url; }
         else { link.style.display = 'none'; }
@@ -1386,6 +1395,10 @@ async function _pkceChallenge(verifier) {
     return _b64url(digest);
 }
 async function startOpenRouterOAuth() {
+    if (!window.isSecureContext) {
+        alert('One-click sign-in needs HTTPS or localhost (the browser blocks the required crypto on plain http://IP). Paste an OpenRouter key instead, or open this admin page at http://localhost:8000/admin or over HTTPS.');
+        return;
+    }
     try {
         const verifier = _randomVerifier();
         const challenge = await _pkceChallenge(verifier);
@@ -1418,5 +1431,91 @@ async function handleOAuthCallback() {
         alert('OpenRouter exchange error: ' + e);
     } finally {
         sessionStorage.removeItem('sd_or_verifier');
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Browse Catalog (curated public-domain art; lazy high-res on add)
+// -----------------------------------------------------------------------------
+function _esc(s) {
+    return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+async function renderCatalog() {
+    const container = document.getElementById('catalog-container');
+    if (!container) return;
+    if (!container.dataset.loaded) container.innerHTML = '<p style="color:#94a3b8;">Loading catalog…</p>';
+    try {
+        const resp = await fetch(`${API_BASE}/api/catalog`);
+        const manifest = await resp.json();
+        const collections = manifest.collections || [];
+        const total = collections.reduce((n, c) => n + (c.items || []).length, 0);
+        const countEl = document.getElementById('catalog-count');
+        if (countEl) countEl.textContent = total;
+
+        container.innerHTML = '';
+        container.dataset.loaded = '1';
+        if (!collections.length) {
+            container.innerHTML = '<p style="color:#94a3b8;">No catalog available.</p>';
+            return;
+        }
+        collections.forEach(col => {
+            const items = col.items || [];
+            const section = document.createElement('div');
+            section.style.cssText = 'margin-bottom: 36px;';
+            section.innerHTML = `
+                <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; border-bottom:1px solid var(--border-color); padding-bottom:8px; margin-bottom:16px;">
+                    <h3 style="margin:0; color:var(--text-color); font-size:1rem;">${_esc(col.title)}</h3>
+                    <span style="font-size:0.75rem; color:#94a3b8;">${_esc(col.description || '')}</span>
+                    <span style="font-size:0.68rem; color:#64748b; margin-left:auto;">${_esc(col.source || '')}${col.license ? ' · ' + _esc(col.license) : ''}</span>
+                </div>`;
+            const grid = document.createElement('div');
+            grid.className = 'artwork-grid';
+            items.forEach((it, idx) => {
+                const card = document.createElement('div');
+                card.className = 'artwork-card';
+                const added = !!it.added;
+                card.innerHTML = `
+                    <img loading="lazy" src="${_esc(it.thumbnail_url)}" alt="${_esc(it.title)}" style="background:#0f172a;">
+                    <div class="info">
+                        <strong>${_esc(it.title || 'Untitled')}</strong><br>
+                        <small>${_esc(it.agent_name || 'Unknown')}</small><br>
+                        <small style="opacity:0.6">${_esc(it.date_display || '')}</small>
+                    </div>
+                    <div class="actions">
+                        <button class="success" ${added ? 'disabled' : ''} onclick="addCatalogItem('${_esc(col.id)}', ${idx}, this)">${added ? 'Added ✓' : 'Add to Library'}</button>
+                    </div>`;
+                grid.appendChild(card);
+            });
+            section.appendChild(grid);
+            container.appendChild(section);
+        });
+    } catch (e) {
+        console.error('[Catalog] load failed:', e);
+        container.innerHTML = '<p style="color:#ef4444;">Failed to load catalog.</p>';
+    }
+}
+
+async function addCatalogItem(collectionId, itemIndex, btn) {
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = '⏳ Adding…';
+    try {
+        const resp = await fetch(`${API_BASE}/api/catalog/add`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ collection_id: collectionId, item_index: itemIndex })
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            alert(data.detail || 'Add failed');
+            btn.disabled = false; btn.textContent = orig;
+            return;
+        }
+        btn.textContent = 'Added ✓';
+        fetchLibrary(); // refresh the Full Library count in the background
+    } catch (e) {
+        alert('Network error adding artwork.');
+        btn.disabled = false; btn.textContent = orig;
     }
 }

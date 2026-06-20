@@ -34,11 +34,12 @@ for d in /boot/firmware /boot /etc; do
   fi
 done
 
-echo "==> Installing packages (cage, seatd, chromium, curl)"
+echo "==> Installing packages (cage, seatd, chromium, curl, avahi)"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 # chromium-browser is the Raspberry Pi OS package; plain `chromium` on others.
-apt-get install -y --no-install-recommends cage seatd curl \
+# avahi-daemon powers <hostname>.local (mDNS) so users reach the box by name, not IP.
+apt-get install -y --no-install-recommends cage seatd curl avahi-daemon \
   || { echo "package install failed" >&2; exit 1; }
 if ! apt-get install -y --no-install-recommends chromium-browser; then
   apt-get install -y --no-install-recommends chromium
@@ -46,6 +47,9 @@ fi
 
 echo "==> Enabling seatd"
 systemctl enable --now seatd || true
+
+echo "==> Enabling avahi-daemon (mDNS / <hostname>.local discovery)"
+systemctl enable --now avahi-daemon || true
 
 echo "==> Creating kiosk user: $KIOSK_USER"
 if ! id "$KIOSK_USER" >/dev/null 2>&1; then
