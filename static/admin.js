@@ -497,6 +497,7 @@ function factoryReset() {
 }
 
 async function batchEnrich() {
+    if (!aiConfigured) { nudgeConnectModel(); return; }
     if (!confirm("Run RAG enrichment on the entire approved library? This uses AI and takes time.")) return;
     try {
         await fetch(`${API_BASE}/api/curate/batch-enrich`, { method: 'POST' });
@@ -505,6 +506,7 @@ async function batchEnrich() {
 }
 
 async function reenrichArtwork(id) {
+    if (!aiConfigured) { nudgeConnectModel(); return; }
     const hint = prompt("AI Guidance (Optional):", "");
     if (hint === null) return; // Cancelled
     
@@ -556,7 +558,7 @@ function renderLibraryGrid() {
                 </div>
                 <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
                     <button onclick="openCropModal(${art.id})">Crop</button>
-                    <button onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
+                    <button data-ai-action="1" onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
                     <button onclick="deleteArtworkPermanently(${art.id})" style="color: #ef4444;">Delete</button>
                 </div>
             `;
@@ -607,7 +609,7 @@ function renderArtworkGrid(artworks) {
                 </div>
                 <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
                     <button onclick="openCropModal(${art.id})">Crop</button>
-                    <button onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
+                    <button data-ai-action="1" onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
                     <button onclick="removeArtworkFromPlaylist(${art.id})" style="color: #f59e0b;">Remove</button>
                 </div>
             `;
@@ -773,6 +775,37 @@ async function uploadFiles(files, playlistId) {
     }
     // Immediate refresh after upload completes
     await refreshData();
+
+    // No model connected → auto-analysis didn't run. Tell the user (no silent empty metadata),
+    // and un-dismiss the Review Queue banner so the manual path is obvious.
+    if (!aiConfigured) {
+        const banner = document.getElementById('ai-offline-banner');
+        if (banner) delete banner.dataset.dismissed;
+        applyAiGating();
+        showTransientNotice('Uploaded to the Review Queue. Auto-analysis is off — add details there, or connect a model.', nudgeConnectModel);
+    }
+}
+
+// Minimal non-blocking toast (no framework). Optional action label jumps to the AI Engine panel.
+function showTransientNotice(message, onAction) {
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:9999; ' +
+        'background:#1e293b; border:1px solid #f59e0b; color:#fcd34d; padding:12px 18px; border-radius:10px; ' +
+        'font-size:0.82rem; max-width:520px; box-shadow:0 8px 24px rgba(0,0,0,0.4); display:flex; gap:14px; align-items:center;';
+    const span = document.createElement('span');
+    span.textContent = message;
+    span.style.flexGrow = '1';
+    t.appendChild(span);
+    if (onAction) {
+        const a = document.createElement('button');
+        a.className = 'secondary';
+        a.textContent = 'Connect a model';
+        a.style.cssText = 'padding:5px 12px; font-size:0.75rem; white-space:nowrap;';
+        a.onclick = () => { t.remove(); onAction(); };
+        t.appendChild(a);
+    }
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.transition = 'opacity 0.5s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 6000);
 }
 
 async function updatePlaylistSetting(id, settings) {
@@ -903,7 +936,7 @@ function renderReviewQueue(artworks) {
                         <label>AI Guidance (Optional)</label>
                         <div style="display: flex; gap: 10px;">
                             <input type="text" id="hint-${art.id}" placeholder="e.g., 'This is my dog Buster in 2021'" style="flex-grow: 1;">
-                            <button class="primary" id="regen-btn-${art.id}" onclick="regenerateArtworkMetadata(${art.id})" style="padding: 10px 20px;">
+                            <button class="primary" data-ai-action="1" id="regen-btn-${art.id}" onclick="regenerateArtworkMetadata(${art.id})" style="padding: 10px 20px;">
                                 <span id="regen-text-${art.id}">Regenerate</span>
                             </button>
                         </div>
@@ -925,9 +958,12 @@ function renderReviewQueue(artworks) {
         syncReviewCardFields(art);
         currentDOMIndex++;
     });
+
+    applyAiGating(); // re-gate freshly rendered Regenerate buttons + toggle the no-AI banner
 }
 
 function regenerateArtworkMetadata(id) {
+    if (!aiConfigured) { nudgeConnectModel(); return; }
     const hint = document.getElementById(`hint-${id}`).value;
     const btn = document.getElementById(`regen-btn-${id}`);
     const textSpan = document.getElementById(`regen-text-${id}`);
@@ -1158,14 +1194,44 @@ function unlockPremiumScout(source, name) {
 // AI Engine (model provider configuration)
 // -----------------------------------------------------------------------------
 let aiPresets = {};
+let aiConfigured = false;   // mirrors /api/settings/ai has_key; gates AI-only controls
 
 function _setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v || ''; }
+
+// Soft-disable AI-only controls (Batch Enrich / Enrich / Regenerate) when no model is connected.
+// Visual cue only; the handlers themselves enforce the block via nudgeConnectModel().
+function applyAiGating() {
+    document.querySelectorAll('[data-ai-action]').forEach(el => {
+        el.classList.toggle('ai-gated', !aiConfigured);
+        el.title = aiConfigured ? '' : 'Connect a model in Settings → AI Engine to use this';
+    });
+    // Review Queue banner: show only when there are pending items and no model is connected.
+    const banner = document.getElementById('ai-offline-banner');
+    if (banner && !banner.dataset.dismissed) {
+        const hasPending = !!document.querySelector('#review-list .review-card');
+        banner.style.display = (!aiConfigured && hasPending) ? 'flex' : 'none';
+    }
+}
+
+// Send the user to the AI Engine panel and flash it (used when they trigger a gated action).
+function nudgeConnectModel() {
+    switchView('settings');
+    const card = document.getElementById('ai-engine-card');
+    if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.remove('ai-flash');
+        void card.offsetWidth; // restart the animation
+        card.classList.add('ai-flash');
+    }
+}
 
 async function loadAiSettings() {
     try {
         const resp = await fetch(`${API_BASE}/api/settings/ai`);
         const cfg = await resp.json();
         aiPresets = cfg.presets || {};
+        aiConfigured = !!cfg.has_key;
+        applyAiGating();
 
         const provSel = document.getElementById('ai-provider');
         if (!provSel) return; // panel not present

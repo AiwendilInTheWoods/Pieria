@@ -10,5 +10,9 @@ services:
       # Map the data directory for SQLite database persistence
       - ./data:/app/data
     env_file:
-      - .env
+      # Optional: pre-seed env vars (e.g. a default GEMINI_API_KEY). The app runs fine
+      # without it — configure the AI model in-app via Admin → Settings → AI Engine.
+      # required:false lets a fresh clone `docker compose up` with no .env (Compose >= v2.24).
+      - path: .env
+        required: false
     restart: unless-stopped

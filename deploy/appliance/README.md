@@ -87,8 +87,13 @@ server on the same Pi. In `screen-docent.conf` set:
 ```ini
 ALL_IN_ONE=1
 SERVER_URL=http://localhost:8000
-GEMINI_API_KEY=your-key-here
+GEMINI_API_KEY=your-key-here   # optional — see note below
 ```
+
+> **`GEMINI_API_KEY` here is just an optional pre-seed.** The primary way to connect a model is the
+> in-app panel (**Admin → ⚙ Settings → 🧠 AI Engine**), which supports Gemini/OpenAI/Anthropic/
+> OpenRouter/local and **overrides** this value when set. Leave it blank to configure everything from
+> the GUI after first boot.
 
 then run `sudo install.sh` (re-run it if you flip this on after the first install). The installer
 installs Docker, writes the server's `.env`, and brings up the stack with
