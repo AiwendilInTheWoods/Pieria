@@ -98,6 +98,7 @@ _query_classifier = QueryClassifier()
 _result_ranker = ResultRanker()
 
 from config import ARTWORK_ROOT, LIBRARY_DIR
+from epaper import render_for_epaper, PALETTES, VALID_FORMATS, media_type_for
 
 @lru_cache(maxsize=256)
 def get_optimized_image(image_path: Path, size: tuple, quality: int = 85) -> bytes:
@@ -383,8 +384,9 @@ async def inject_aggressive_cache_headers(request: Request, call_next):
     is_code_asset = path.endswith((".css", ".js", ".json"))
     is_html_asset = path.endswith(".html") or path == "/admin" or path == "/remote" or path == "/"
     
-    if path.startswith("/api/") or is_html_asset:
-        # API responses and HTML pages must never be cached — data/structure changes constantly
+    if path.startswith("/api/") or is_html_asset or path.startswith("/display/"):
+        # API/HTML and the per-display e-ink endpoint must never be cached.
+        # (/display/*.png must beat the is_media_cacheable .png rule below.)
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
     elif is_media_cacheable:
         # Images/media rarely change — cache aggressively
@@ -953,6 +955,84 @@ async def get_next_image(
             "description": selected_art.description_narrative, "tags": selected_art.tags
         }
     }
+
+
+def touch_active_display(db: Session, display_id: str):
+    """Upsert last_seen_at so pull-on-wake e-ink frames show up in the remote/
+    admin just like WebSocket-connected Canvas displays."""
+    try:
+        d = db.query(ActiveDisplayModel).filter(ActiveDisplayModel.display_id == display_id).first()
+        if d:
+            d.last_seen_at = datetime.now(timezone.utc)
+        else:
+            db.add(ActiveDisplayModel(display_id=display_id))
+        db.commit()
+    except Exception as e:
+        logger.error(f"touch_active_display error for {display_id}: {e}")
+        db.rollback()
+
+
+@app.get("/display/{display_id}/current.{ext}")
+async def get_display_image(
+    display_id: str,
+    ext: str,
+    playlist: Optional[str] = Query(None),
+    w: int = Query(1600, ge=16, le=4096),
+    h: int = Query(1200, ge=16, le=4096),
+    palette: str = Query("spectra6"),
+    fit: str = Query("cover"),
+    shuffle: Optional[bool] = Query(None),
+    db: Session = Depends(get_db),
+):
+    """
+    Track B: stateless pull-on-wake image for e-ink / BYOS frames.
+
+    Reuses /next-image's selection (advancing the same bag-shuffle), then renders
+    the chosen artwork cropped to w x h and Floyd–Steinberg-dithered to the device
+    palette. Returns the bytes plus an `X-Refresh-After` header (the playlist's
+    display_time) so the frame knows how long to deep-sleep. No WebSocket, no JS.
+    """
+    ext = ext.lower()
+    if ext not in VALID_FORMATS:
+        raise HTTPException(404, detail="Use .png or .bmp")
+    if palette not in PALETTES:
+        raise HTTPException(400, detail=f"Unknown palette. Options: {', '.join(PALETTES)}")
+
+    # Playlist binding is stateless (v1): explicit ?playlist=, else the first one.
+    if not playlist:
+        first = db.query(PlaylistModel).order_by(PlaylistModel.id).first()
+        if not first:
+            raise HTTPException(404, detail="No playlists exist")
+        playlist = first.name
+
+    # Reuse the canonical selection brain (advances state once per fetch).
+    info = await get_next_image(
+        playlist_name=playlist, shuffle=shuffle, display_id=display_id, direction=1, db=db
+    )
+
+    art = db.query(ArtworkModel).filter(ArtworkModel.id == info["metadata"]["id"]).first()
+    if not art:
+        raise HTTPException(404, detail="Selected artwork not found")
+    path = LIBRARY_DIR / art.filename
+    if not path.exists():
+        raise HTTPException(404, detail="Artwork file missing")
+
+    try:
+        data = render_for_epaper(path, w, h, palette=palette, fit=fit, fmt=ext)
+    except Exception as e:
+        logger.error(f"[epaper] render failed for {path.name}: {e}", exc_info=True)
+        raise HTTPException(500, detail="Render failed")
+
+    touch_active_display(db, display_id)
+
+    return Response(
+        content=data,
+        media_type=media_type_for(ext),
+        headers={
+            "X-Refresh-After": str(info["display_time"]),
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+        },
+    )
 
 # -----------------------------------------------------------------------------
 # 4. WebSocket & Remote Control

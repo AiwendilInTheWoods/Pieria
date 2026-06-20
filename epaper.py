@@ -1,0 +1,129 @@
+"""
+E-paper rendering for the stateless per-display image endpoint (Track B).
+
+Crops/fits a source image to an exact panel size and quantizes it to a fixed
+device palette with Floyd–Steinberg dithering, so a "dumb" frame (DIY ESP32 +
+Waveshare, Inky Impression, a TRMNL in BYOS mode, etc.) can fetch a ready-to-blit
+image over HTTP without running the JS Canvas app.
+
+No dithering existed in the app before this; see ROADMAP.md (Track B).
+"""
+
+import io
+from functools import lru_cache
+from pathlib import Path
+
+from PIL import Image, ImageEnhance, ImageOps
+
+# --- Palettes -----------------------------------------------------------------
+# Nominal sRGB anchors per device family. Per-panel colour tuning is deferred
+# (the same task for every palette and best done against real hardware).
+PALETTES = {
+    # E Ink Spectra 6 (E6): black, white, red, yellow, blue, green.
+    "spectra6": [
+        (0, 0, 0), (255, 255, 255), (191, 0, 0),
+        (255, 243, 56), (0, 0, 178), (0, 156, 72),
+    ],
+    # E Ink ACeP / Gallery 7-colour: Spectra 6 set + orange.
+    "acep7": [
+        (0, 0, 0), (255, 255, 255), (191, 0, 0), (255, 243, 56),
+        (0, 0, 178), (0, 156, 72), (228, 120, 0),
+    ],
+    # 2-bit greyscale (4 levels) — common small mono panels.
+    "gray4": [(0, 0, 0), (85, 85, 85), (170, 170, 170), (255, 255, 255)],
+    # 4-bit greyscale (16 levels).
+    "gray16": [(i * 17, i * 17, i * 17) for i in range(16)],
+}
+
+# Colour palettes get a saturation pre-boost; greyscale ones don't.
+_COLOR_PALETTES = {"spectra6", "acep7"}
+
+# Requested extension -> (PIL format, media type).
+VALID_FORMATS = {
+    "png": ("PNG", "image/png"),
+    "bmp": ("BMP", "image/bmp"),
+}
+VALID_FITS = ("cover", "contain")
+
+_PALETTE_IMAGE_CACHE: dict = {}
+
+
+def _palette_image(name: str) -> Image.Image:
+    """Build (once) a Pillow 'P' image carrying the palette, for quantize()."""
+    if name not in _PALETTE_IMAGE_CACHE:
+        colors = PALETTES[name]
+        flat: list = []
+        for rgb in colors:
+            flat.extend(rgb)
+        # Pad to a full 256-entry palette (repeat black; harmless duplicate).
+        flat += [0, 0, 0] * (256 - len(colors))
+        pal = Image.new("P", (1, 1))
+        pal.putpalette(flat)
+        _PALETTE_IMAGE_CACHE[name] = pal
+    return _PALETTE_IMAGE_CACHE[name]
+
+
+@lru_cache(maxsize=128)
+def render_for_epaper(
+    image_path: Path,
+    w: int,
+    h: int,
+    palette: str = "spectra6",
+    fit: str = "cover",
+    fmt: str = "png",
+    enhance: bool = True,
+) -> bytes:
+    """Render a source image to a palette-dithered bitmap sized exactly w x h.
+
+    Cached on its arguments like get_optimized_image(); images in _Library are
+    content-stable so path is a sufficient key.
+    """
+    if palette not in PALETTES:
+        raise ValueError(f"Unknown palette '{palette}'. Options: {', '.join(PALETTES)}")
+    fmt = fmt.lower()
+    if fmt not in VALID_FORMATS:
+        raise ValueError(f"Unknown format '{fmt}'. Options: {', '.join(VALID_FORMATS)}")
+    if fit not in VALID_FITS:
+        fit = "cover"
+
+    with Image.open(image_path) as src:
+        # Honour EXIF orientation, then normalise ANY input mode (JPEG/PNG/WebP,
+        # incl. CMYK / RGBA / palette / greyscale) to RGB before processing.
+        img = ImageOps.exif_transpose(src)
+        img = img.convert("RGB")
+
+        if fit == "cover":
+            fitted = ImageOps.fit(
+                img, (w, h), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5)
+            )
+        else:  # contain — letterbox onto white "paper"
+            scaled = img.copy()
+            scaled.thumbnail((w, h), Image.Resampling.LANCZOS)
+            fitted = Image.new("RGB", (w, h), (255, 255, 255))
+            fitted.paste(scaled, ((w - scaled.width) // 2, (h - scaled.height) // 2))
+
+        if enhance:
+            # Gentle pre-boost so the tiny palette doesn't read as muddy.
+            fitted = ImageEnhance.Contrast(fitted).enhance(1.12)
+            if palette in _COLOR_PALETTES:
+                fitted = ImageEnhance.Color(fitted).enhance(1.25)
+
+        quantized = fitted.quantize(
+            palette=_palette_image(palette), dither=Image.Dither.FLOYDSTEINBERG
+        )
+
+        buf = io.BytesIO()
+        pil_format, _media = VALID_FORMATS[fmt]
+        if pil_format == "BMP":
+            # 24-bit RGB BMP is the broadest common denominator for firmware
+            # that reads pixels and maps to its own palette. Packed/raw 1-bit
+            # device buffers are deferred (v2).
+            quantized.convert("RGB").save(buf, format="BMP")
+        else:
+            quantized.save(buf, format="PNG", optimize=True)
+        return buf.getvalue()
+
+
+def media_type_for(ext: str) -> str:
+    """image/png or image/bmp for a requested extension."""
+    return VALID_FORMATS[ext.lower()][1]
