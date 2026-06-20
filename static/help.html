@@ -100,6 +100,8 @@
             <a href="#hierarchy">Configuration Hierarchy</a>
             <a href="#params">URL Parameters Reference</a>
             <a href="#remote">Mobile Remote Control</a>
+            <a href="#appliance">Raspberry Pi Appliance</a>
+            <a href="#eink">e-ink & "Dumb" Frames</a>
             <a href="#hardware">Hardware & Kiosk Tips</a>
         </nav>
     </aside>
@@ -271,13 +273,119 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
             </ul>
         </section>
 
+        <section id="appliance">
+            <h2>Raspberry Pi Appliance (Recommended for TVs)</h2>
+            <p>The easiest way to drive a TV or monitor is a dedicated Raspberry Pi that boots straight into
+               the full-screen display &mdash; no browser chrome, no manual URL entry, and no third-party kiosk
+               app. Flash a card, point it at your server, and forget it. (A Pi 4 is plenty for display-only;
+               a Pi 5 with 8&nbsp;GB is recommended if you also run the server on it.)</p>
+
+            <h3>1. Flash Raspberry Pi OS Lite</h3>
+            <p>Use <strong>Raspberry Pi Imager</strong> to write <strong>Raspberry Pi OS Lite (64-bit)</strong>
+               to a microSD card. Before writing, open <em>Edit Settings</em> and set:</p>
+            <ul>
+                <li><strong>Hostname</strong> (e.g. <code>docent-living-room</code>)</li>
+                <li><strong>Enable SSH</strong> (password or public key)</li>
+                <li><strong>Username + password</strong> (your one-time login)</li>
+                <li><strong>Wi-Fi SSID + password + country</strong> (so it joins the network headless)</li>
+                <li><strong>Locale / timezone</strong></li>
+            </ul>
+
+            <h3>2. Run the installer</h3>
+            <p>Boot the Pi (no keyboard or monitor needed), SSH in, and run:</p>
+            <pre><code>git clone https://github.com/AiwendilInTheWoods/Screen-Docent.git
+sudo Screen-Docent/deploy/appliance/install.sh</code></pre>
+            <p>This installs <code>cage</code> + Chromium as a kiosk, sets it to launch on boot, disables screen
+               blanking, and writes a config file to the SD card's boot partition.</p>
+
+            <h3>3. Configure the display</h3>
+            <p>Edit <code>screen-docent.conf</code> on the card's <strong>boot partition</strong> (visible on any
+               computer &mdash; no SSH needed), then reboot:</p>
+            <pre><code>SERVER_URL=http://192.168.1.50:8000   # your Screen Docent server
+DISPLAY_ID=living_room                # unique name shown in the remote
+MODE=                                 # optional: ken-burns|static-crop|contain-matte
+CYCLE_TIME=                           # optional: seconds per image</code></pre>
+            <p>The Pi comes up full-screen on the Canvas. If the server isn't reachable yet, the screen stays
+               black and paints automatically once it is.</p>
+
+            <h3>All-in-one (server + display on one box)</h3>
+            <p>For a single-frame setup with no separate server, set <code>ALL_IN_ONE=1</code>,
+               <code>SERVER_URL=http://localhost:8000</code>, and your <code>GEMINI_API_KEY</code> in the config,
+               then re-run the installer. It installs Docker and runs the server on the same Pi.</p>
+
+            <div class="tip">
+                <strong>Full reference:</strong> <code>deploy/appliance/README.md</code> in the repository covers
+                everything, including the X11 fallback and on-device troubleshooting.
+            </div>
+        </section>
+
+        <section id="eink">
+            <h2>e-ink &amp; "Dumb" Frames (Image API)</h2>
+            <p>Low-power e-ink and "bring-your-own-server" frames don't run the browser display at all &mdash; they
+               just fetch a server-rendered image on a wake schedule. This covers DIY ESP32 + Waveshare panels,
+               Pimoroni Inky Impression, a <strong>TRMNL</strong> in BYOS mode, or any device (even a tiny script)
+               that can perform an HTTP GET on a timer. The server crops to your panel size and
+               Floyd&ndash;Steinberg-dithers to the device palette.</p>
+
+            <h3>The endpoint</h3>
+            <pre><code>GET /display/{display_id}/current.png?playlist=Masterpieces&amp;w=1600&amp;h=1200&amp;palette=spectra6</code></pre>
+            <table>
+                <thead><tr><th>Parameter</th><th>Values</th></tr></thead>
+                <tbody>
+                    <tr><td><code>display_id</code></td><td>A unique name for this frame (path segment)</td></tr>
+                    <tr><td><code>playlist</code></td><td>Collection name (defaults to the first playlist)</td></tr>
+                    <tr><td><code>w</code> / <code>h</code></td><td>Your panel's pixel dimensions</td></tr>
+                    <tr><td><code>palette</code></td><td><code>spectra6</code>, <code>acep7</code>, <code>gray4</code>, <code>gray16</code></td></tr>
+                    <tr><td><code>fit</code></td><td><code>cover</code> (fill, default) or <code>contain</code> (letterbox)</td></tr>
+                    <tr><td>format</td><td>End the path in <code>.png</code> (default) or <code>.bmp</code> (firmware without a PNG decoder)</td></tr>
+                </tbody>
+            </table>
+            <p>Each request <strong>advances to the next image</strong>, so the frame's wake interval becomes its
+               rotation. The response's <code>X-Refresh-After</code> header tells the frame how many seconds to
+               deep-sleep before fetching again.</p>
+
+            <h3>How to set up a generic "dumb terminal" frame</h3>
+            <p>Any device that can GET a URL on a timer works. The pattern is always the same:
+               <strong>wake &rarr; GET the image sized for your panel &rarr; display it &rarr; sleep for
+               <code>X-Refresh-After</code> seconds</strong>. A Raspberry Pi driving any panel from the
+               framebuffer can do it in a few lines:</p>
+            <pre><code>#!/bin/sh
+SERVER=http://192.168.1.50:8000
+DISPLAY_ID=hallway
+PALETTE=spectra6          # spectra6 | acep7 | gray4 | gray16
+W=1600; H=1200            # your panel size
+
+while true; do
+  # Fetch the next image (headers -> /tmp/h, body -> /tmp/art.png)
+  curl -s -D /tmp/h -o /tmp/art.png \
+    "$SERVER/display/$DISPLAY_ID/current.png?w=$W&amp;h=$H&amp;palette=$PALETTE"
+
+  # Show it (framebuffer example; swap in your panel's render command)
+  fbi -T 1 -noverbose -a /tmp/art.png
+
+  # Sleep for the server-suggested interval (fallback 300s)
+  SECS=$(awk -F': *' 'tolower($1)=="x-refresh-after"{print $2+0}' /tmp/h)
+  sleep "${SECS:-300}"
+done</code></pre>
+            <p>On a true e-ink microcontroller (ESP32 + Waveshare, Inky, etc.) the same flow runs once per wake:
+               connect Wi-Fi &rarr; <code>GET .../current.bmp?...</code> &rarr; push the bytes to the panel &rarr;
+               read <code>X-Refresh-After</code> &rarr; <code>deep_sleep()</code> for that many seconds. Request
+               <code>.bmp</code> if your firmware can't decode PNG.</p>
+
+            <div class="tip">
+                <strong>Already-shipping example:</strong> a <a href="https://usetrmnl.com/" target="_blank" style="color:var(--accent-color);">TRMNL</a>
+                in BYOS mode already polls a server, downloads an image, and deep-sleeps for a refresh interval &mdash;
+                point its server URL at this endpoint and it works as-is.
+            </div>
+        </section>
+
         <section id="hardware">
             <h2>Hardware & Kiosk Best Practices</h2>
-            <p>For a seamless "Museum" experience, your display should behave like a native appliance rather than a browser window.</p>
-            
-            <h3>Recommended Browsers</h3>
+            <p>For a seamless "Museum" experience, your display should behave like a native appliance rather than a browser window. The recommended way to get there is the <a href="#appliance" style="color:var(--accent-color);">Raspberry Pi Appliance</a> above &mdash; the options below are for reusing an existing TV stick instead.</p>
+
+            <h3>Bring-your-own TV stick (fallback)</h3>
             <ul>
-                <li><strong>Android / Fire OS:</strong> We highly recommend <a href="https://www.fully-kiosk.com/" target="_blank" style="color:var(--accent-color);">Fully Kiosk Browser</a>. It allows you to lock the TV to a specific URL, hide all toolbars, and prevent the screen from sleeping.</li>
+                <li><strong>Android / Fire OS:</strong> <a href="https://www.fully-kiosk.com/" target="_blank" style="color:var(--accent-color);">Fully Kiosk Browser</a> lets you lock the TV to a specific URL, hide all toolbars, and prevent the screen from sleeping. (A dedicated Pi appliance avoids needing this third-party app.)</li>
                 <li><strong>Android TV:</strong> <strong>TV Bro</strong> is a great open-source alternative that handles full-screen web apps well on leanback devices.</li>
             </ul>
 

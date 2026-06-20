@@ -94,7 +94,7 @@ Screen Docent uses a strict priority system for settings like `cycle_time`, `mod
 3.  **Global Defaults:** System-wide fallbacks.
 
 ## 📖 Documentation
-For a full list of URL parameters and hardware optimization tips (like using Fully Kiosk Browser), visit the internal **Help & Docs** page at `http://localhost:8000/help` from your running server.
+For URL parameters, the **Raspberry Pi appliance** how-to, **e-ink / "dumb" frame** setup, and hardware tips, visit the internal **Help & Docs** page at `http://localhost:8000/help` from your running server.
 
 ## 🔐 Advanced: Enabling HTTPS (SSL Secure Contexts)
 If you intend to host the Admin UI on a semi-public LAN or want strict clipboard/PWA integration, **HTTPS is strongly recommended.**
