@@ -1443,58 +1443,89 @@ function _esc(s) {
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// Level 1: the collections grid (covers + counts). Items load only when a collection is opened.
 async function renderCatalog() {
     const container = document.getElementById('catalog-container');
     if (!container) return;
-    if (!container.dataset.loaded) container.innerHTML = '<p style="color:#94a3b8;">Loading catalog…</p>';
+    container.innerHTML = '<p style="color:#94a3b8;">Loading catalog…</p>';
     try {
-        const resp = await fetch(`${API_BASE}/api/catalog`);
-        const manifest = await resp.json();
-        const collections = manifest.collections || [];
-        const total = collections.reduce((n, c) => n + (c.items || []).length, 0);
+        const index = await (await fetch(`${API_BASE}/api/catalog`)).json();
+        const collections = index.collections || [];
+        const total = collections.reduce((n, c) => n + (c.count || 0), 0);
         const countEl = document.getElementById('catalog-count');
         if (countEl) countEl.textContent = total;
 
-        container.innerHTML = '';
-        container.dataset.loaded = '1';
         if (!collections.length) {
-            container.innerHTML = '<p style="color:#94a3b8;">No catalog available.</p>';
+            container.innerHTML = '<p style="color:#94a3b8;">No catalog available yet. Run <code>python -m tools.build_catalog</code> to generate one.</p>';
             return;
         }
+        const grid = document.createElement('div');
+        grid.className = 'artwork-grid';
         collections.forEach(col => {
-            const items = col.items || [];
-            const section = document.createElement('div');
-            section.style.cssText = 'margin-bottom: 36px;';
-            section.innerHTML = `
-                <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; border-bottom:1px solid var(--border-color); padding-bottom:8px; margin-bottom:16px;">
-                    <h3 style="margin:0; color:var(--text-color); font-size:1rem;">${_esc(col.title)}</h3>
-                    <span style="font-size:0.75rem; color:#94a3b8;">${_esc(col.description || '')}</span>
-                    <span style="font-size:0.68rem; color:#64748b; margin-left:auto;">${_esc(col.source || '')}${col.license ? ' · ' + _esc(col.license) : ''}</span>
+            const card = document.createElement('div');
+            card.className = 'artwork-card';
+            card.style.cursor = 'pointer';
+            card.onclick = () => openCatalogCollection(col.id);
+            card.innerHTML = `
+                <img loading="lazy" src="${_esc(col.cover_thumbnail)}" alt="${_esc(col.title)}" style="background:#0f172a;">
+                <div class="info">
+                    <strong>${_esc(col.title)}</strong><br>
+                    <small style="opacity:0.7">${_esc(col.description || '')}</small><br>
+                    <small style="color:var(--accent-color)">${col.count} works →</small>
                 </div>`;
-            const grid = document.createElement('div');
-            grid.className = 'artwork-grid';
-            items.forEach((it, idx) => {
-                const card = document.createElement('div');
-                card.className = 'artwork-card';
-                const added = !!it.added;
-                card.innerHTML = `
-                    <img loading="lazy" src="${_esc(it.thumbnail_url)}" alt="${_esc(it.title)}" style="background:#0f172a;">
-                    <div class="info">
-                        <strong>${_esc(it.title || 'Untitled')}</strong><br>
-                        <small>${_esc(it.agent_name || 'Unknown')}</small><br>
-                        <small style="opacity:0.6">${_esc(it.date_display || '')}</small>
-                    </div>
-                    <div class="actions">
-                        <button class="success" ${added ? 'disabled' : ''} onclick="addCatalogItem('${_esc(col.id)}', ${idx}, this)">${added ? 'Added ✓' : 'Add to Library'}</button>
-                    </div>`;
-                grid.appendChild(card);
-            });
-            section.appendChild(grid);
-            container.appendChild(section);
+            grid.appendChild(card);
         });
+        container.innerHTML = '';
+        container.appendChild(grid);
     } catch (e) {
-        console.error('[Catalog] load failed:', e);
+        console.error('[Catalog] index load failed:', e);
         container.innerHTML = '<p style="color:#ef4444;">Failed to load catalog.</p>';
+    }
+}
+
+// Level 2: one collection's items (lazy — only this collection's thumbnails load).
+async function openCatalogCollection(collectionId) {
+    const container = document.getElementById('catalog-container');
+    if (!container) return;
+    container.innerHTML = '<p style="color:#94a3b8;">Loading…</p>';
+    try {
+        const resp = await fetch(`${API_BASE}/api/catalog/${encodeURIComponent(collectionId)}`);
+        if (!resp.ok) { container.innerHTML = '<p style="color:#ef4444;">Collection not found.</p>'; return; }
+        const col = await resp.json();
+        const items = col.items || [];
+
+        const head = document.createElement('div');
+        head.style.cssText = 'margin-bottom:16px;';
+        head.innerHTML = `
+            <button class="secondary" onclick="renderCatalog()" style="font-size:0.75rem; padding:6px 12px; margin-bottom:10px;">← All collections</button>
+            <h3 style="margin:6px 0 2px; color:var(--text-color); font-size:1.05rem;">${_esc(col.title)}</h3>
+            <span style="font-size:0.78rem; color:#94a3b8;">${_esc(col.description || '')}</span>
+            <span style="display:block; font-size:0.68rem; color:#64748b; margin-top:4px;">${_esc(col.source || '')}${col.license ? ' · ' + _esc(col.license) : ''}</span>`;
+
+        const grid = document.createElement('div');
+        grid.className = 'artwork-grid';
+        items.forEach((it, idx) => {
+            const card = document.createElement('div');
+            card.className = 'artwork-card';
+            const added = !!it.added;
+            card.innerHTML = `
+                <img loading="lazy" src="${_esc(it.thumbnail_url)}" alt="${_esc(it.title)}" style="background:#0f172a;">
+                <div class="info">
+                    <strong>${_esc(it.title || 'Untitled')}</strong><br>
+                    <small>${_esc(it.agent_name || 'Unknown')}</small><br>
+                    <small style="opacity:0.6">${_esc(it.date_display || '')}</small>
+                </div>
+                <div class="actions">
+                    <button class="success" ${added ? 'disabled' : ''} onclick="addCatalogItem('${_esc(col.id)}', ${idx}, this)">${added ? 'Added ✓' : 'Add to Library'}</button>
+                </div>`;
+            grid.appendChild(card);
+        });
+        container.innerHTML = '';
+        container.appendChild(head);
+        container.appendChild(grid);
+    } catch (e) {
+        console.error('[Catalog] collection load failed:', e);
+        container.innerHTML = '<p style="color:#ef4444;">Failed to load collection.</p>';
     }
 }
 

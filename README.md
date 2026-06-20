@@ -15,6 +15,7 @@
 *   **⚖️ Hierarchical Config:** Precise control via URL parameters that override playlist and global defaults.
 *   **🔒 Human-in-the-Loop:** A dedicated Review Queue to audit and refine AI-generated content before it goes live to your screens.
 *   **🔌 Bring Your Own Model:** Configure the AI engine from the GUI — Google Gemini, OpenAI, Anthropic, OpenRouter (one-click sign-in), or a local Ollama/LM Studio server — all through one OpenAI-compatible backend. No code edits, validated live before saving.
+*   **🖼️ Browse Catalog:** A curated, collection-first library of public-domain masterpieces (museums, NASA, Library of Congress) with ready-made placards. Browsing is instant (text + hotlinked thumbnails); the full-resolution image downloads only when you **Add** a piece. Regenerate/expand it anytime with the offline builder (`python -m tools.build_catalog`).
 *   **💾 Persistent & Safe:** SQLite-backed state with automatic migrations and Docker volume persistence.
 
 ## 🚀 Quickstart Deployment

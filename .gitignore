@@ -26,6 +26,9 @@ __pycache__/
 .playwright-mcp/
 .pytest_cache/
 
+# Catalog builder incremental cache (regenerable)
+tools/.catalog_cache.json
+
 # Local-only dev docs (kept on disk, not published)
 PRD.md
 .ai/active_context.md
