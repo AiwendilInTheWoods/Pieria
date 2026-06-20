@@ -1348,27 +1348,53 @@ async def ai_oauth_exchange(payload: OAuthExchangePayload, db: Session = Depends
 # -----------------------------------------------------------------------------
 # 4.7 Catalog (browseable curated public-domain art; lazy high-res on add)
 # -----------------------------------------------------------------------------
-CATALOG_FILE = Path("static/catalog.json")
+# Split manifest produced by tools/build_catalog.py: an index.json (collection summaries) plus one
+# <collection_id>.json per collection (the items). Lets the catalog scale to thousands and the UI
+# load a collection's thumbnails only when opened.
+CATALOG_DIR = Path("static/catalog")
 # Wikimedia (and most sources) require a descriptive User-Agent; the default httpx UA is rejected.
 SD_USER_AGENT = "ScreenDocent/1.0 (https://github.com/AiwendilInTheWoods/Screen-Docent; art display) httpx"
 
-async def _resolve_catalog(db: Session) -> dict:
-    """Return the catalog manifest: an optional remote static URL (catalog_url setting) with a
-    fallback to the bundled static/catalog.json. No server required — 'remote' is just a static file."""
-    setting = db.query(SettingsModel).filter(SettingsModel.setting_key == "catalog_url").first()
-    if setting and setting.setting_value:
-        try:
-            async with httpx.AsyncClient(headers={"User-Agent": SD_USER_AGENT}) as client:
-                r = await client.get(setting.setting_value, timeout=15.0, follow_redirects=True)
-                if r.status_code == 200:
-                    return r.json()
-                logger.warning(f"[Catalog] remote manifest HTTP {r.status_code}; using bundled.")
-        except Exception as e:
-            logger.warning(f"[Catalog] remote manifest fetch failed ({e}); using bundled.")
-    if not CATALOG_FILE.exists():
-        return {"version": 1, "collections": []}
-    with open(CATALOG_FILE, "r") as f:
+def _read_local_json(path: Path):
+    if not path.exists():
+        return None
+    with open(path, "r") as f:
         return json.load(f)
+
+async def _catalog_remote_base(db: Session) -> Optional[str]:
+    """Optional remote override: a static base URL hosting index.json + <id>.json (no server needed)."""
+    setting = db.query(SettingsModel).filter(SettingsModel.setting_key == "catalog_url").first()
+    return setting.setting_value.rstrip("/") if setting and setting.setting_value else None
+
+async def _fetch_remote_json(base: str, name: str):
+    async with httpx.AsyncClient(headers={"User-Agent": SD_USER_AGENT}) as client:
+        r = await client.get(f"{base}/{name}", timeout=15.0, follow_redirects=True)
+        if r.status_code == 200:
+            return r.json()
+    raise RuntimeError(f"HTTP {r.status_code}")
+
+async def _catalog_index(db: Session) -> dict:
+    """Collection summaries (index.json): optional remote override → bundled split files → empty."""
+    base = await _catalog_remote_base(db)
+    if base:
+        try:
+            return await _fetch_remote_json(base, "index.json")
+        except Exception as e:
+            logger.warning(f"[Catalog] remote index fetch failed ({e}); using bundled.")
+    return _read_local_json(CATALOG_DIR / "index.json") or {"version": 1, "collections": []}
+
+async def _catalog_collection(db: Session, collection_id: str):
+    """One collection's full items file, or None if the id isn't present in the index."""
+    index = await _catalog_index(db)
+    if not any(c.get("id") == collection_id for c in index.get("collections", [])):
+        return None
+    base = await _catalog_remote_base(db)
+    if base:
+        try:
+            return await _fetch_remote_json(base, f"{collection_id}.json")
+        except Exception as e:
+            logger.warning(f"[Catalog] remote collection fetch failed ({e}); using bundled.")
+    return _read_local_json(CATALOG_DIR / f"{collection_id}.json")
 
 async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnail_url: str,
                                        metadata: dict, playlist_id: Optional[int] = None,
@@ -1446,36 +1472,37 @@ async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnai
 
 @app.get("/api/catalog")
 async def get_catalog(db: Session = Depends(get_db)):
-    """Browseable manifest of curated public-domain collections. Items carry prefilled placard
-    metadata + a hotlinked thumbnail_url; high-res is fetched only on add. `added` flags items
-    already in the library (matched by source_url)."""
-    manifest = await _resolve_catalog(db)
+    """Collection summaries (cover + count) for the Browse Catalog grid. Items load per-collection."""
+    return await _catalog_index(db)
+
+@app.get("/api/catalog/{collection_id}")
+async def get_catalog_collection(collection_id: str, db: Session = Depends(get_db)):
+    """One collection's items — prefilled placard metadata + hotlinked thumbnail_url + an `added`
+    flag (matched by source_url). High-res is fetched only on add."""
+    col = await _catalog_collection(db, collection_id)
+    if not col:
+        raise HTTPException(404, detail=f"Unknown collection: {collection_id}")
     added = {row[0] for row in db.query(ArtworkModel.source_url).filter(ArtworkModel.source_url.isnot(None)).all()}
-    for col in manifest.get("collections", []):
-        for it in col.get("items", []):
-            it["added"] = it.get("source_url") in added
-    return manifest
+    for it in col.get("items", []):
+        it["added"] = it.get("source_url") in added
+    return col
 
 class CatalogAddPayload(BaseModel):
     collection_id: str
     item_index: int
     playlist_id: Optional[int] = None
 
-def _catalog_item(manifest: dict, collection_id: str, item_index: int):
-    col = next((c for c in manifest.get("collections", []) if c.get("id") == collection_id), None)
-    if not col:
-        raise HTTPException(404, detail=f"Unknown collection: {collection_id}")
-    items = col.get("items", [])
-    if item_index < 0 or item_index >= len(items):
-        raise HTTPException(404, detail="Unknown catalog item")
-    return items[item_index]
-
 @app.post("/api/catalog/add")
 async def add_catalog_item(payload: CatalogAddPayload, db: Session = Depends(get_db)):
     """Lazily download one catalog item's high-res image and add it to the library (approved,
     metadata prefilled — no AI needed). Optionally links it to a playlist. Idempotent per source_url."""
-    manifest = await _resolve_catalog(db)
-    item = _catalog_item(manifest, payload.collection_id, payload.item_index)
+    col = await _catalog_collection(db, payload.collection_id)
+    if not col:
+        raise HTTPException(404, detail=f"Unknown collection: {payload.collection_id}")
+    items = col.get("items", [])
+    if payload.item_index < 0 or payload.item_index >= len(items):
+        raise HTTPException(404, detail="Unknown catalog item")
+    item = items[payload.item_index]
     art = await _download_and_create_artwork(
         db, source_url=item["source_url"], thumbnail_url=item.get("thumbnail_url"),
         metadata=item, playlist_id=payload.playlist_id)
@@ -1488,8 +1515,7 @@ class CatalogAddCollectionPayload(BaseModel):
 @app.post("/api/catalog/add-collection")
 async def add_catalog_collection(payload: CatalogAddCollectionPayload, db: Session = Depends(get_db)):
     """Best-effort add of every item in a collection (continues past individual failures)."""
-    manifest = await _resolve_catalog(db)
-    col = next((c for c in manifest.get("collections", []) if c.get("id") == payload.collection_id), None)
+    col = await _catalog_collection(db, payload.collection_id)
     if not col:
         raise HTTPException(404, detail=f"Unknown collection: {payload.collection_id}")
     added, failed = 0, 0
