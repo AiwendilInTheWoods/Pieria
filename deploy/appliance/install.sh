@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+# Screen Docent — Appliance provisioner
+#
+# Turns a fresh Raspberry Pi OS Lite (64-bit, Bookworm) install into a kiosk
+# that boots straight into the Screen Docent Canvas display, fullscreen, with
+# no browser chrome and no Fully Kiosk. Idempotent — safe to re-run.
+#
+# Default: display-only (thin client → server elsewhere). Optionally also runs
+# the server on THIS box (all-in-one) when ALL_IN_ONE=1 is set in the config.
+#
+# Usage:  sudo deploy/appliance/install.sh
+set -euo pipefail
+
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Please run as root:  sudo $0" >&2
+  exit 1
+fi
+
+KIOSK_USER="${KIOSK_USER:-kiosk}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+BIN_SRC="$HERE/bin"
+UNIT_SRC="$HERE/systemd"
+CONF_EXAMPLE="$HERE/config/screen-docent.conf.example"
+
+# Read an existing appliance config if one is already present (e.g. placed on
+# the boot partition before first boot) so we honor ALL_IN_ONE / GEMINI_API_KEY.
+ALL_IN_ONE=0
+GEMINI_API_KEY=""
+for d in /boot/firmware /boot /etc; do
+  if [ -r "$d/screen-docent.conf" ]; then
+    # shellcheck disable=SC1090
+    . "$d/screen-docent.conf"
+    break
+  fi
+done
+
+echo "==> Installing packages (cage, seatd, chromium, curl)"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+# chromium-browser is the Raspberry Pi OS package; plain `chromium` on others.
+apt-get install -y --no-install-recommends cage seatd curl \
+  || { echo "package install failed" >&2; exit 1; }
+if ! apt-get install -y --no-install-recommends chromium-browser; then
+  apt-get install -y --no-install-recommends chromium
+fi
+
+echo "==> Enabling seatd"
+systemctl enable --now seatd || true
+
+echo "==> Creating kiosk user: $KIOSK_USER"
+if ! id "$KIOSK_USER" >/dev/null 2>&1; then
+  useradd --create-home --shell /bin/bash "$KIOSK_USER"
+fi
+# Group access wlroots/cage wants for GPU, input, and seat management.
+for g in video render input seat tty; do
+  if getent group "$g" >/dev/null 2>&1; then
+    usermod -aG "$g" "$KIOSK_USER" || true
+  fi
+done
+
+echo "==> Installing launch scripts to /usr/local/bin"
+install -m 0755 "$BIN_SRC/sd-kiosk-launch"   /usr/local/bin/sd-kiosk-launch
+install -m 0755 "$BIN_SRC/sd-wait-for-server" /usr/local/bin/sd-wait-for-server
+
+echo "==> Configuring tty1 autologin for $KIOSK_USER"
+install -d /etc/systemd/system/getty@tty1.service.d
+sed "s/__KIOSK_USER__/$KIOSK_USER/g" "$UNIT_SRC/autologin.conf" \
+  > /etc/systemd/system/getty@tty1.service.d/autologin.conf
+
+echo "==> Installing login hook (launches kiosk on tty1)"
+PROFILE="/home/$KIOSK_USER/.bash_profile"
+if ! grep -q "Screen Docent kiosk launch" "$PROFILE" 2>/dev/null; then
+  cat >> "$PROFILE" <<'EOF'
+
+# Screen Docent kiosk launch
+if [ -z "${DISPLAY:-}" ] && [ "$(tty)" = "/dev/tty1" ]; then
+  exec sd-kiosk-launch
+fi
+EOF
+fi
+chown "$KIOSK_USER:$KIOSK_USER" "$PROFILE"
+
+echo "==> Seeding config on the boot partition"
+BOOT_CONF=""
+for d in /boot/firmware /boot; do
+  if [ -d "$d" ]; then BOOT_CONF="$d/screen-docent.conf"; break; fi
+done
+[ -z "$BOOT_CONF" ] && BOOT_CONF="/boot/firmware/screen-docent.conf"
+if [ ! -e "$BOOT_CONF" ]; then
+  install -m 0644 "$CONF_EXAMPLE" "$BOOT_CONF"
+  echo "    Wrote $BOOT_CONF  (edit SERVER_URL and DISPLAY_ID before reboot)"
+else
+  echo "    $BOOT_CONF already exists — leaving it untouched"
+fi
+
+echo "==> Disabling console blanking"
+for CMDLINE in /boot/firmware/cmdline.txt /boot/cmdline.txt; do
+  if [ -f "$CMDLINE" ]; then
+    grep -q "consoleblank=0" "$CMDLINE" || sed -i 's/[[:space:]]*$/ consoleblank=0/' "$CMDLINE"
+    break
+  fi
+done
+
+if [ "${ALL_IN_ONE:-0}" = "1" ]; then
+  echo "==> All-in-one mode: provisioning the Screen Docent server on this box"
+  REPO_ROOT="$(cd "$HERE/../.." && pwd)"
+  OVERRIDE="$HERE/compose/docker-compose.appliance.yml"
+
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "    Installing Docker (official convenience script)..."
+    curl -fsSL https://get.docker.com | sh
+  fi
+  systemctl enable --now docker || true
+  usermod -aG docker "$KIOSK_USER" || true
+
+  # The base compose mounts env_file: .env — write it (with the Gemini key if given).
+  if [ -n "${GEMINI_API_KEY:-}" ]; then
+    ( umask 077; printf 'GEMINI_API_KEY=%s\n' "$GEMINI_API_KEY" > "$REPO_ROOT/.env" )
+    echo "    Wrote $REPO_ROOT/.env"
+  else
+    echo "    WARNING: GEMINI_API_KEY not set in config — AI features will be unavailable" >&2
+    [ -f "$REPO_ROOT/.env" ] || ( umask 077; : > "$REPO_ROOT/.env" )
+  fi
+
+  echo "    Building & starting the stack (first run downloads + builds; be patient)..."
+  ( cd "$REPO_ROOT" && docker compose -f docker-compose.yml -f "$OVERRIDE" up -d --build )
+  echo "    Server is starting on http://localhost:8000 (restart: unless-stopped survives reboot)"
+fi
+
+echo "==> Finalizing"
+systemctl set-default multi-user.target   # boot to console; autologin does the rest
+systemctl daemon-reload
+
+cat <<EOF
+
+Done.
+
+  1. Edit the config:   $BOOT_CONF
+       - SERVER_URL  -> your Screen Docent server (e.g. http://192.168.1.50:8000)
+       - DISPLAY_ID  -> a unique name for this screen
+  2. Reboot:            sudo reboot
+
+The Pi will boot straight into the fullscreen display. If the server isn't
+reachable yet the screen stays black and paints automatically once it is.
+
+For ALL-IN-ONE (server on this box): set ALL_IN_ONE=1, GEMINI_API_KEY=...,
+and SERVER_URL=http://localhost:8000 in the config, then re-run this script.
+EOF

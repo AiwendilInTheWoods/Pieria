@@ -46,6 +46,14 @@ docker compose up -d --build
 *   **Main Display:** `http://localhost:8000/` (Point your TV browser here)
 *   **Mobile Remote:** `http://localhost:8000/remote` (Control from your phone)
 
+## 🖥️ Display Appliance (recommended for TVs)
+
+The easiest way to drive a TV or monitor is the **Docent Appliance**: flash a
+Raspberry Pi, point it at your server, and it boots straight into the fullscreen
+display — no Fully Kiosk, no browser chrome, no URL typing. See
+[`deploy/appliance/`](deploy/appliance/README.md). For the broader display
+strategy (and e-ink support), see [`ROADMAP.md`](ROADMAP.md).
+
 ## 🏛️ VRA Core Metadata Architecture
 
 Screen Docent utilizes the **Visual Resources Association (VRA) Core** schema for its internal SQLite database design (`models.py`). This guarantees museum-quality structural integrity.

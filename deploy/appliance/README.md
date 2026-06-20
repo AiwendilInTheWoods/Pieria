@@ -1,0 +1,173 @@
+# Screen Docent — Docent Appliance
+
+Turn a cheap Raspberry Pi into a self-contained art frame that boots straight
+into the Screen Docent display: **fullscreen, no browser chrome, no Fully Kiosk,
+survives reboots, never sleeps.** This is the recommended way to drive a TV or
+monitor — point it at your Screen Docent server and forget it.
+
+> **Scope:** *display-only* — the Pi is a thin client that connects to a Screen
+> Docent server running elsewhere (e.g. your MS-01). **This is the recommended
+> production setup, not just a first cut:** the display device only runs the
+> Chromium kiosk, so it stays cheap, cool (~5–7 W), and small enough to tuck
+> behind the panel. Running the server *on the same Pi* ("all-in-one") is also
+> supported (see [below](#all-in-one-mode-server--display-on-one-box)); a
+> pre-baked flashable `.img` remains a future addition. See
+> [`/ROADMAP.md`](../../ROADMAP.md) (Track A).
+
+---
+
+## What you need
+
+- A Raspberry Pi (Pi 4 or Pi 5 recommended; Pi 3 works but is slower) + power + HDMI.
+- A microSD card flashed with **Raspberry Pi OS Lite, 64-bit (Bookworm)** using
+  Raspberry Pi Imager. In the Imager's settings, enable SSH and set a user so you
+  can log in once to run the installer.
+- A running Screen Docent server reachable on your LAN (the box running
+  `docker compose up` — see the repo root [`README.md`](../../README.md)).
+  *(Not needed for all-in-one mode, which runs the server on the Pi itself.)*
+
+## Flash-day checklist
+
+Boxed Pi → running kiosk in minutes:
+
+1. **Raspberry Pi Imager** → choose **Raspberry Pi OS Lite (64-bit)**.
+2. Click the gear / **Edit Settings** *before* writing and set:
+   - **Hostname** (e.g. `docent-living-room`)
+   - **Enable SSH** (password or public key)
+   - **Username + password** (your one-time login to run the installer)
+   - **Wi-Fi SSID + password + country** (so it joins headless)
+   - **Locale / timezone**
+3. Write the card and boot the Pi — no keyboard or monitor required.
+4. *(Optional, and required to pre-enable all-in-one)* drop a `screen-docent.conf`
+   onto the boot partition now.
+5. `ssh <user>@<hostname>.local`, then follow **Install** below.
+
+## Install
+
+SSH into the freshly-booted Pi, then:
+
+```bash
+git clone https://github.com/AiwendilInTheWoods/Screen-Docent.git
+sudo Screen-Docent/deploy/appliance/install.sh
+```
+
+The installer:
+
+- installs `cage` (a minimal single-app Wayland kiosk compositor), Chromium, and `seatd`;
+- creates a `kiosk` user and logs it in automatically on **tty1**;
+- installs the launcher to `/usr/local/bin` and a login hook that runs it;
+- writes a config file to the SD card's **boot partition** so you can edit it
+  from any computer;
+- disables console blanking.
+
+## Configure
+
+Edit `screen-docent.conf` on the **boot partition** (it appears as a small FAT
+volume named `bootfs`/`boot` when you put the SD card in any computer — no SSH
+needed). On the Pi itself it lives at `/boot/firmware/screen-docent.conf`.
+
+```ini
+SERVER_URL=http://192.168.1.50:8000   # your Screen Docent server
+DISPLAY_ID=living_room                # unique name shown in the mobile remote
+MODE=                                 # optional: ken-burns|static-crop|contain-matte
+CYCLE_TIME=                           # optional: seconds per image
+WAIT_TIMEOUT=0                        # 0 = wait forever for the server at boot
+```
+
+Then `sudo reboot`. The Pi comes up fullscreen on the Canvas. If the server
+isn't reachable yet, the screen stays black and paints automatically once it is.
+
+---
+
+## All-in-one mode (server + display on one box)
+
+For a single-frame setup with **no separate server**, the appliance can also run the Screen Docent
+server on the same Pi. In `screen-docent.conf` set:
+
+```ini
+ALL_IN_ONE=1
+SERVER_URL=http://localhost:8000
+GEMINI_API_KEY=your-key-here
+```
+
+then run `sudo install.sh` (re-run it if you flip this on after the first install). The installer
+installs Docker, writes the server's `.env`, and brings up the stack with
+[`compose/docker-compose.appliance.yml`](compose/docker-compose.appliance.yml) — which trims Uvicorn
+from 4 workers to **2** so the server and Chromium kiosk share the Pi's RAM comfortably. The stack
+uses `restart: unless-stopped`, so it returns on every reboot, and `sd-wait-for-server` holds the
+kiosk until it answers.
+
+**Notes:** use a **Pi 5 (8 GB)** for all-in-one — the server's Pillow/Docker work wants the headroom
+(display-only is fine on a Pi 4). First boot is slow (Docker build + the ~500 MB factory-seed
+download). The Gemini key lives on the FAT boot partition — acceptable for a home box, but be aware
+anyone with the SD card can read it.
+
+---
+
+## How it works (and a design note)
+
+The kiosk is launched from the **autologin user's login shell on tty1**, not from
+a standalone systemd service. `cage`/wlroots needs a real **logind seat**
+(`seat0`); a plain service doesn't get one and would fail to find a seat. An
+autologin session is the reliable, well-trodden pattern, so the "systemd" piece
+here is just a `getty@tty1` autologin drop-in. `sd-kiosk-launch` then waits for
+the server, runs Chromium inside `cage`, and relaunches the session if it dies.
+
+Because `cage` has **no screensaver or idle logic**, the screen never blanks —
+so the appliance does **not** need the hidden looping `<video>` "sleep defeater"
+in `static/index.html`. (That element stays in the app for non-appliance displays
+like Fire TV / bring-your-own-browser; it's simply inert here.)
+
+## Files
+
+| File | Role |
+|------|------|
+| `install.sh` | Idempotent provisioner (run with `sudo`). |
+| `bin/sd-kiosk-launch` | Reads the config, builds the URL, runs `cage` + Chromium, relaunches on exit. |
+| `bin/sd-wait-for-server` | Polls the server so Chromium never lands on an error page at cold boot. |
+| `systemd/autologin.conf` | `getty@tty1` drop-in enabling kiosk-user autologin. |
+| `config/screen-docent.conf.example` | Template seeded to the boot partition. |
+| `compose/docker-compose.appliance.yml` | All-in-one override (Uvicorn 4→2 workers) merged over the root compose. |
+
+---
+
+## To verify on real hardware
+
+This is packaging, so validation is "does a fresh device just work":
+
+1. Flash Pi OS Lite, run the installer, set the config, reboot **with no keyboard attached**.
+2. Confirm it lands fullscreen on the Canvas (`/?display=<id>`) with **no browser
+   chrome**, **no manual URL entry**, and **no Fully Kiosk** involved.
+3. Leave it past the normal blank/sleep timeout — confirm the screen stays awake.
+4. Power-cycle — confirm it boots straight back into the display unattended.
+
+## Known unknowns to confirm on the target image
+
+These are intentionally flagged rather than guessed; verify on the Pi OS build you use:
+
+- **Chromium package/binary name** — `chromium-browser` on Raspberry Pi OS; `chromium`
+  elsewhere. The installer tries both; `sd-kiosk-launch` resolves whichever exists.
+- **Chromium Wayland flags** — `--enable-features=UseOzonePlatform --ozone-platform=wayland`
+  are set in `sd-kiosk-launch`. Some Chromium builds under `cage` auto-detect Wayland and
+  need neither; if Chromium fails to start, try removing them.
+- **Seat access** — with an autologin logind session, `cage` should find `seat0` without the
+  `seat` group; `seatd` is installed as a fallback. If `cage` reports "could not create
+  backend"/no seat, confirm `seatd` is running and the user's groups.
+- **Boot partition path** — `/boot/firmware/` on Bookworm, `/boot/` on older images. The
+  installer and launcher handle both.
+
+## Why not just use the display's built-in browser?
+
+Some smart displays can point their own browser at the server and skip the Pi entirely — *if* that
+browser is current enough to render the Canvas app. In practice many aren't: the **Samsung QMR's
+Tizen MagicINFO URL Launcher is too old** and fails to render the app (which is exactly why this
+appliance exists). When the built-in browser can't do it, this thin-client Pi is the fix. Longer
+term, a Screen Docent **e-ink image endpoint** ([`/ROADMAP.md`](../../ROADMAP.md) Track B) may let
+such limited panels show art by fetching a server-rendered *image* instead of running the app.
+
+## Fallback: X11 instead of cage
+
+On a Pi or image where `cage`/Wayland Chromium misbehaves, the classic X11 recipe works:
+`xserver-xorg xinit openbox unclutter`, a `.xinitrc` that runs `xset s off -dpms` then
+`chromium-browser --kiosk <url>`, started via `startx` from the same tty1 login hook. Not
+shipped in v1 to keep one clean path; documented here as the escape hatch.

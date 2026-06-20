@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# sd-kiosk-launch
+#
+# Read the appliance config, build the Canvas URL, wait for the server, then
+# run Chromium fullscreen inside the `cage` kiosk compositor. Relaunches the
+# session if it ever exits. Invoked from the kiosk user's login shell on tty1.
+set -u
+
+find_conf() {
+  for p in /boot/firmware/screen-docent.conf /boot/screen-docent.conf /etc/screen-docent.conf; do
+    [ -r "$p" ] && { printf '%s\n' "$p"; return 0; }
+  done
+  return 1
+}
+
+CONF="$(find_conf)" || {
+  echo "sd-kiosk-launch: no screen-docent.conf found on the boot partition or /etc" >&2
+  exit 1
+}
+# shellcheck disable=SC1090
+. "$CONF"
+
+SERVER_URL="${SERVER_URL:-http://localhost:8000}"
+DISPLAY_ID="${DISPLAY_ID:-default}"
+WAIT_TIMEOUT="${WAIT_TIMEOUT:-0}"
+
+# Build the Canvas URL. Hierarchical overrides (mode, cycle_time) are optional;
+# blank values are omitted so the playlist/server defaults win.
+URL="${SERVER_URL%/}/?display=${DISPLAY_ID}"
+[ -n "${MODE:-}" ]       && URL="${URL}&mode=${MODE}"
+[ -n "${CYCLE_TIME:-}" ] && URL="${URL}&cycle_time=${CYCLE_TIME}"
+
+CHROME_BIN="$(command -v chromium-browser || command -v chromium || true)"
+if [ -z "$CHROME_BIN" ]; then
+  echo "sd-kiosk-launch: chromium not found (expected chromium-browser or chromium)" >&2
+  exit 1
+fi
+
+# Chromium kiosk flags. NOTE: the Wayland/Ozone flags below should be confirmed
+# on the target image — some Chromium builds auto-detect Wayland under cage and
+# need neither; others require both. See deploy/appliance/README.md.
+CHROME_FLAGS=(
+  --kiosk
+  --noerrdialogs
+  --disable-infobars
+  --incognito
+  --no-first-run
+  --disable-session-crashed-bubble
+  --check-for-update-interval=31536000
+  --enable-features=UseOzonePlatform
+  --ozone-platform=wayland
+)
+
+# Don't paint Chromium until the server is reachable (0 = wait forever).
+sd-wait-for-server "$SERVER_URL" "$WAIT_TIMEOUT" || true
+
+# Crash-recovery: if cage or Chromium exits, relaunch after a short pause.
+while true; do
+  echo "sd-kiosk-launch: starting cage -> $URL" >&2
+  cage -- "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" || true
+  echo "sd-kiosk-launch: session exited, restarting in 3s" >&2
+  sleep 3
+done
