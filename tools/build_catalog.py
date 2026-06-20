@@ -25,9 +25,11 @@ import json
 import logging
 import re
 from datetime import datetime, timezone
+from io import BytesIO
 from pathlib import Path
 
 import httpx
+from PIL import Image
 from dotenv import load_dotenv
 
 load_dotenv()  # pick up GEMINI_API_KEY (and any AI config) from .env, like the app does
@@ -35,7 +37,8 @@ load_dotenv()  # pick up GEMINI_API_KEY (and any AI config) from .env, like the 
 import ai_client
 from database import SessionLocal
 from tools import catalog_spec
-from tools.sources import fetch_collection, UA
+from tools.sources import (fetch_collection, UA, MUSEUM_SOURCES, MIN_DISPLAY_EDGE,
+                           resolve_wikimedia, resolve_nasa, resolve_museums)
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("catalog-builder")
@@ -148,26 +151,121 @@ def enrich_item(item: dict) -> dict:
         return _template_placard(item)
 
 
-# ---------------------------------------------------------------- verify
-async def verify_url(client, url: str) -> bool:
+# ---------------------------------------------------------------- verify (display-true)
+async def _thumb_is_real_image(client, url, min_edge=350) -> bool:
+    """The thumbnail must be a real raster image of decent size — kills HTML/SVG landing pages,
+    icons, and tiny derivatives that scraping otherwise lets through."""
     try:
         r = await client.get(url, timeout=30.0, follow_redirects=True)
-        return r.status_code == 200
+        if r.status_code != 200:
+            return False
+        ct = r.headers.get("content-type", "").lower()
+        if not ct.startswith("image/") or "svg" in ct:
+            return False
+        Image.open(BytesIO(r.content)).verify()
+        w, h = Image.open(BytesIO(r.content)).size
+        return max(w, h) >= min_edge
     except Exception:
         return False
+
+async def _source_ok(client, url) -> bool:
+    """The full-res source must serve a real image AND be high enough resolution for big displays
+    (≥ MIN_DISPLAY_EDGE on the long edge). Wikimedia FilePath URLs are pre-gated on the original's
+    size at resolve time (imageinfo), so for those a cheap content-type check suffices; everything
+    else is downloaded and measured."""
+    try:
+        if "commons.wikimedia.org" in url:
+            r = await client.get(url, timeout=45.0, follow_redirects=True, headers={"Range": "bytes=0-4095"})
+            if r.status_code not in (200, 206):
+                return False
+            ct = r.headers.get("content-type", "").lower()
+            return ct.startswith("image/") and "svg" not in ct
+        # Read just the header bytes to get dimensions — avoids downloading huge originals
+        # (museum full/max files can be tens of MB). JPEG SOF / PNG IHDR live near the start.
+        r = await client.get(url, timeout=60.0, follow_redirects=True, headers={"Range": "bytes=0-262143"})
+        if r.status_code not in (200, 206):
+            return False
+        ct = r.headers.get("content-type", "").lower()
+        if not ct.startswith("image/") or "svg" in ct:
+            return False
+        try:
+            w, h = Image.open(BytesIO(r.content)).size
+        except Exception:
+            # Header wasn't in the first chunk — fall back to a full fetch.
+            r2 = await client.get(url, timeout=90.0, follow_redirects=True)
+            if r2.status_code != 200:
+                return False
+            w, h = Image.open(BytesIO(r2.content)).size
+        return max(w, h) >= MIN_DISPLAY_EDGE
+    except Exception:
+        return False
+
+async def verify_item(client, item) -> bool:
+    if not await _thumb_is_real_image(client, item["thumbnail_url"]):
+        return False
+    return await _source_ok(client, item["source_url"])
+
+# ---------------------------------------------------------------- curated picks
+async def resolve_pick(db, pk, spec, client, verify=True):
+    """Resolve one curated 'must-see' pick to a VERIFIED PD candidate, trying each source in order
+    and falling through to the next if a candidate fails the display gates (so e.g. a flaky NASA
+    asset falls back to Wikimedia instead of silently dropping the pick)."""
+    title = pk["title"]
+    artist = pk.get("artist", "")
+    order = pk.get("sources") or spec.get("pick_sources") or ["wikimedia", "museums"]
+    museum_srcs = [s for s in spec.get("sources", []) if s in MUSEUM_SOURCES] or \
+        ["met", "chicago", "cleveland", "rijks", "smk"]
+    for src in order:
+        try:
+            if src == "wikimedia":
+                cand = await resolve_wikimedia(title, artist)
+            elif src == "nasa":
+                cand = await resolve_nasa(title)
+            elif src == "museums":
+                cand = await resolve_museums(db, title, artist, museum_srcs)
+            else:
+                cand = None
+        except Exception as e:
+            logger.warning(f"    resolve {src} failed for '{title}': {e}")
+            cand = None
+        if not cand:
+            continue
+        if artist and cand.get("agent_name", "Unknown") in ("", "Unknown", "Unknown Artist"):
+            cand["agent_name"] = artist
+        if not verify or await verify_item(client, cand):
+            return cand
+    return None
 
 
 # ---------------------------------------------------------------- build
 async def build_collection(db, spec, cache, *, limit=None, enrich=True, verify=True) -> dict:
     cid = spec["id"]
     logger.info(f"\n=== {spec['title']} ({cid}) ===")
-    candidates = await fetch_collection(db, spec)
-    logger.info(f"  fetched {len(candidates)} candidates")
     target = limit or spec.get("target", 20)
-    selected = dedupe_and_select(candidates, target * 2 if verify else target)  # over-select; verify trims
 
     out_items = []
     async with httpx.AsyncClient(headers=UA) as client:
+        # 1) Curated "must-see" picks first — resolved AND verified (tries each source in turn).
+        resolved, missing = [], []
+        for pk in spec.get("picks", []):
+            item = await resolve_pick(db, pk, spec, client, verify=verify)
+            if item:
+                resolved.append(item)
+            else:
+                missing.append(pk.get("title", "?"))
+        if missing:
+            logger.info(f"  MISSING (no verified PD source): {', '.join(str(m)[:32] for m in missing)}")
+
+        # 2) Optional query-discovery supplement to top up toward the target.
+        query_cands = []
+        if spec.get("query_supplement", True) and spec.get("queries"):
+            query_cands = await fetch_collection(db, spec)
+        logger.info(f"  resolved {len(resolved)} picks (+{len(query_cands)} query candidates)")
+
+        candidates = resolved + query_cands  # picks win ties in dedupe (listed first)
+        selected = dedupe_and_select(candidates, target * 2 if verify else target)
+        preverified = {r["source_url"] for r in resolved}
+
         for it in selected:
             if len(out_items) >= target:
                 break
@@ -176,17 +274,17 @@ async def build_collection(db, spec, cache, *, limit=None, enrich=True, verify=T
             if cached and cached.get("verified"):
                 out_items.append(cached["item"])
                 continue
-            if verify:
-                ok = await verify_url(client, su) and await verify_url(client, it["thumbnail_url"])
-                await asyncio.sleep(0.4)  # be polite to source CDNs
+            if verify and su not in preverified:  # picks are already verified above
+                ok = await verify_item(client, it)
+                await asyncio.sleep(0.3)  # be polite to source CDNs
                 if not ok:
-                    logger.info(f"    ✗ dropped (url not 200): {it['title'][:48]}")
+                    logger.info(f"    ✗ dropped (not a display image): {it['title'][:48]}")
                     continue
             if enrich:
                 it = enrich_item(it)
             else:
                 _template_placard(it)
-            cache[su] = {"item": it, "verified": bool(verify)}
+            cache[su] = {"item": it, "verified": True}
             out_items.append(it)
             logger.info(f"    ✓ {it['title'][:48]} — {it['agent_name'][:24]}")
 

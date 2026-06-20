@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated": "2026-06-20T18:57:14+00:00",
+ "generated": "2026-06-20T21:10:27+00:00",
  "collections": [
   {
    "id": "impressionism",
@@ -35,7 +35,7 @@
    "description": "Harmony, perspective, and humanism from the rebirth of classical ideals.",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "count": 18,
+   "count": 20,
    "cover_thumbnail": "https://www.artic.edu/iiif/2/b59cc3e9-a7c0-5aa1-1a22-bb472bb2e6d4/full/400,/0/default.jpg"
   },
   {
@@ -44,7 +44,7 @@
    "description": "Woodblock prints of the 'floating world' — landscapes, kabuki, and everyday Edo life.",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "count": 24,
+   "count": 22,
    "cover_thumbnail": "https://www.artic.edu/iiif/2/b3974542-b9b4-7568-fc4b-966738f61d78/full/400,/0/default.jpg"
   },
   {
@@ -53,8 +53,8 @@
    "description": "Nature at its most awe-inspiring, and the human drama set against it.",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "count": 18,
-   "cover_thumbnail": "https://www.artic.edu/iiif/2/444f3e95-b21f-c821-e6af-00fe9560fb95/full/400,/0/default.jpg"
+   "count": 20,
+   "cover_thumbnail": "https://www.artic.edu/iiif/2/fa81bfb9-5a07-5e3c-33b4-4efde68981c8/full/400,/0/default.jpg"
   },
   {
    "id": "american-art",
@@ -63,7 +63,7 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "count": 20,
-   "cover_thumbnail": "https://www.artic.edu/iiif/2/2bc4d353-e61a-7589-8585-2000a23689bb/full/400,/0/default.jpg"
+   "cover_thumbnail": "https://www.artic.edu/iiif/2/4a076002-dffe-54e9-5256-0691c3a65c3b/full/400,/0/default.jpg"
   },
   {
    "id": "portraits",
@@ -71,7 +71,7 @@
    "description": "Faces that have held our gaze across the centuries.",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "count": 20,
+   "count": 16,
    "cover_thumbnail": "https://www.artic.edu/iiif/2/644050e7-1b8c-18f7-14a6-f2620aa873fd/full/400,/0/default.jpg"
   },
   {
@@ -89,62 +89,62 @@
    "description": "Marble, bronze, and stone — the enduring forms of the ancient and classical world.",
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
-   "count": 18,
-   "cover_thumbnail": "https://images.metmuseum.org/CRDImages/gr/web-large/DP337221.jpg"
+   "count": 16,
+   "cover_thumbnail": "https://images.metmuseum.org/CRDImages/es/web-large/DT8910.jpg"
   },
   {
    "id": "botanical",
-   "title": "Botanical & Natural History",
-   "description": "The art of scientific observation — birds, plants, and the natural world in fine detail.",
+   "title": "Birds & Botanicals",
+   "description": "The art of scientific observation — Audubon's birds and the great botanical plates.",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "count": 16,
-   "cover_thumbnail": "https://www.artic.edu/iiif/2/b4f4b7b6-8a1f-c143-9caf-7154b8290059/full/400,/0/default.jpg"
+   "cover_thumbnail": "https://www.artic.edu/iiif/2/3f0ab072-0d40-61b3-c60f-c1341454e5da/full/400,/0/default.jpg"
   },
   {
    "id": "cosmos",
    "title": "The Cosmos",
    "description": "Public-domain views of deep space from Hubble and the James Webb Space Telescope.",
-   "source": "NASA",
-   "license": "Public Domain (NASA)",
-   "count": 18,
-   "cover_thumbnail": "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001464/GSFC_20171208_Archive_e001464~small.jpg"
+   "source": "NASA, Wikimedia Commons",
+   "license": "Public Domain (NASA / ESA)",
+   "count": 11,
+   "cover_thumbnail": "https://images-assets.nasa.gov/image/PIA15413/PIA15413~medium.jpg"
   },
   {
    "id": "earth-and-spaceflight",
    "title": "Earth & Spaceflight",
-   "description": "Our planet and the missions that let us see it — from Apollo to the Space Station.",
-   "source": "NASA",
+   "description": "Our planet and the missions that let us see it — from Apollo to deep space.",
+   "source": "Wikimedia Commons",
    "license": "Public Domain (NASA)",
-   "count": 14,
-   "cover_thumbnail": "https://images-assets.nasa.gov/image/as10-34-5010/as10-34-5010~medium.jpg"
+   "count": 8,
+   "cover_thumbnail": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Blue%20Marble%2C%20AS17-148-22727.jpg?width=600"
   },
   {
    "id": "vintage-posters",
    "title": "Vintage Posters & Graphic Design",
-   "description": "Public-domain poster art — Art Nouveau, travel, and WPA design at its most striking.",
-   "source": "Library of Congress",
+   "description": "Public-domain poster art — Art Nouveau, Belle Époque, and golden-age travel design.",
+   "source": "Wikimedia Commons",
    "license": "Public Domain",
-   "count": 18,
-   "cover_thumbnail": "https://www.loc.gov/static/images/original-format/group-of-images.svg"
+   "count": 9,
+   "cover_thumbnail": "https://commons.wikimedia.org/wiki/Special:FilePath/%28Albi%29%20Moulin-rouge.%20La%20Goulue%20et%20Valentin%20le%20desoss%C3%A9%20-%20Toulouse-Lautrec%201891%20-%20Inv.138.jpg?width=600"
   },
   {
    "id": "documentary-photography",
    "title": "Documentary Photography",
-   "description": "The unflinching American photograph — the Depression-era FSA archive and beyond.",
-   "source": "Library of Congress",
-   "license": "Public Domain (Library of Congress)",
-   "count": 16,
-   "cover_thumbnail": "https://www.loc.gov/static/images/original-format/group-of-images.svg"
+   "description": "The unflinching photograph — the FSA archive and the pioneers of the form.",
+   "source": "Wikimedia Commons",
+   "license": "Public Domain",
+   "count": 6,
+   "cover_thumbnail": "https://commons.wikimedia.org/wiki/Special:FilePath/Dorothea%20Lange%E2%80%99s%201936%20photograph%20%E2%80%9CMigrant%20Mother%E2%80%9D.jpg?width=600"
   },
   {
    "id": "modern-masters",
    "title": "Modern Masters",
-   "description": "The turn into modernism — symbolism, expression, and the new century (public-domain works).",
+   "description": "The turn into modernism — symbolism and expression at the dawn of the new century.",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "count": 16,
-   "cover_thumbnail": "https://www.artic.edu/iiif/2/35a41ca7-f92c-b686-c89f-978321214c5c/full/400,/0/default.jpg"
+   "count": 14,
+   "cover_thumbnail": "https://www.artic.edu/iiif/2/3b374643-5328-3e00-c02b-5ab56e5ae8f8/full/400,/0/default.jpg"
   }
  ]
 }

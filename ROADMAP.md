@@ -229,6 +229,39 @@ This is packaging, so validation is "does a fresh device just work," not unit te
 
 ---
 
+## Strategy & Direction
+
+Screen Docent occupies a gap nobody else fills: the polished art displays (Samsung The Frame, Meural,
+Canvia) are closed, subscription-based, and cloud-locked — several have **bricked their customers'
+hardware when the vendor moved on** — while the open, self-hosted tools (MagicMirror, Home Assistant
+dashboards, e-ink frameworks) show widgets and photos, not curated art. We aim to be the one thing
+that is **open-source, self-hosted, no-subscription, hardware-agnostic (any TV, Pi, or e-ink panel),
+and genuinely curated** — with a public-domain museum catalog, AI-written placards, and a model you
+choose. You own the brain and your data; nothing we ship can be switched off from afar.
+
+Three directions follow from that:
+
+- **The catalog format is a contribution surface.** The catalog is a simple JSON manifest
+  (`index.json` + per-collection files; each item carries placard text + thumbnail + source URL).
+  That's deliberately an open interchange format: anyone — a community member, an artist, a museum —
+  can publish a collection against the schema, and the app can already load a catalog from a remote
+  URL. The goal is a growing, community-contributed catalog, not a closed library.
+- **Integrations / plugins.** Meet people on the platforms they already run, as thin adapters over
+  the same brain:
+  - **Samsung Frame TV (and other "art-mode" TVs).** Frame owners already hack their own images onto
+    the set; Screen Docent can instead push *curated* art into Art Mode over the local network — a
+    new option for that community that needs no subscription and no cloud. A new "push" output target
+    alongside the browser Canvas and the e-ink pull API.
+  - **MagicMirror²** module — a quick win: a small module that shows the current artwork + placard
+    from a Screen Docent server on the popular smart-mirror platform.
+  - **Home Assistant** add-on / dashboard card — art + ambient display as a first-class smart-home
+    surface.
+  - **e-ink / BYOS image API** (already shipped) as the integration point for the e-ink community
+    (e.g. a TRMNL plugin or Inky example).
+- **Earn trust first.** Stay genuinely open and self-hostable, keep the core free, and grow with the
+  self-hosted / homelab / maker / e-ink communities who share these values — then iterate on what
+  they ask for.
+
 ## Backlog / Future ideas
 
 Captured from working sessions — not yet scheduled. Roughly ordered by how much they move the
@@ -259,6 +292,18 @@ Captured from working sessions — not yet scheduled. Roughly ordered by how muc
   hardware (the current anchors are nominal).
 - **Per-display panel profiles.** Store w/h/palette per `display_id` so the e-ink endpoint needs no
   query params (extends `ActiveDisplayModel`).
+
+### Integrations & plugins
+- **Samsung Frame TV push adapter** *(strategic — gives the Frame-TV DIY community a new option).*
+  A "push" display target that renders the selected artwork to a TV-resolution image and uploads it
+  into the Frame's Art Mode over the local network (Samsung's unofficial art WebSocket API, e.g. the
+  `samsungtvws` library). Reuses the curation brain + the image-render path (`epaper.py`); adds a
+  scheduler + the upload adapter. Net: curated, open, no-subscription art on hardware people already own.
+- **MagicMirror² module** *(quick win).* A small `MMM-ScreenDocent` module that displays the current
+  artwork + placard from a Screen Docent server (the display URL / image endpoint already serves it).
+  Low effort, lands us in a large existing self-hosted community.
+- **Home Assistant add-on / Lovelace card** — see Strategy & Direction.
+- **TRMNL plugin / Inky example** over the existing e-ink image API.
 
 ### Tech debt
 - **Unify the download path.** Refactor the discovery-approve route onto the shared

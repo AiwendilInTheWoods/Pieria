@@ -2,11 +2,36 @@
 Unit tests for the offline catalog builder's pure logic (no network, no model).
 """
 
+import asyncio
+import io
 import json
+
+from PIL import Image
 
 from tools import catalog_spec
 from tools import build_catalog as bc
 from tools import sources
+
+
+def _png_bytes(size):
+    buf = io.BytesIO()
+    Image.new("RGB", size, (30, 60, 90)).save(buf, format="PNG")
+    return buf.getvalue()
+
+
+class _Resp:
+    def __init__(self, status=200, ct="image/png", content=b""):
+        self.status_code = status
+        self.headers = {"content-type": ct}
+        self.content = content
+
+
+class _Client:
+    """Minimal async httpx-like client returning a canned response."""
+    def __init__(self, resp):
+        self._resp = resp
+    async def get(self, url, **kw):
+        return self._resp
 
 
 # ------------------------------------------------------------------ spec
@@ -114,3 +139,56 @@ def test_met_public_domain_kept():
          "source_api": "The Metropolitan Museum of Art",
          "context_hints": json.dumps({"isPublicDomain": True})}
     assert sources._from_scout_result(r) is not None
+
+
+# ------------------------------------------------------------------ LoC junk filter
+def test_loc_best_asset_requires_tile_storage_asset():
+    # A real digitized item lives on tile.loc.gov/storage-services/service.
+    full, thumb = sources._loc_best_asset([
+        "https://tile.loc.gov/storage-services/service/pnp/cph/3g00000/x.jpg"])
+    assert full and "tile.loc.gov/storage-services/service" in full
+    # Static SVG icons / collection landing thumbnails are web pages, not the item → dropped.
+    assert sources._loc_best_asset(["https://www.loc.gov/static/images/original-format/group-of-images.svg"]) == (None, None)
+
+
+def test_loc_junk_titles_match():
+    for t in ["Keep Mum | Articles and Essays | Posters", "Collection Highlights",
+              "Interview with Tony Velonis", "Finding Images in the Prints Division"]:
+        assert sources._LOC_JUNK_TITLE.search(t)
+    assert not sources._LOC_JUNK_TITLE.search("Moulin Rouge: La Goulue")
+
+
+# ------------------------------------------------------------------ Wikimedia PD gate
+def test_wm_is_pd():
+    assert sources._wm_is_pd({"LicenseShortName": {"value": "Public domain"}})
+    assert sources._wm_is_pd({"LicenseShortName": {"value": "CC0"}})
+    assert sources._wm_is_pd({"Copyrighted": {"value": "False"}})
+    assert not sources._wm_is_pd({"LicenseShortName": {"value": "CC BY-SA 4.0"}})
+    assert not sources._wm_is_pd({})
+
+
+# ------------------------------------------------------------------ display-true gates
+def test_thumb_gate_rejects_html_and_svg():
+    assert asyncio.run(bc._thumb_is_real_image(_Client(_Resp(ct="text/html", content=b"<html>")), "u")) is False
+    assert asyncio.run(bc._thumb_is_real_image(_Client(_Resp(ct="image/svg+xml", content=b"<svg/>")), "u")) is False
+
+
+def test_thumb_gate_rejects_tiny_and_accepts_real():
+    assert asyncio.run(bc._thumb_is_real_image(_Client(_Resp(content=_png_bytes((120, 120)))), "u")) is False
+    assert asyncio.run(bc._thumb_is_real_image(_Client(_Resp(content=_png_bytes((500, 400)))), "u")) is True
+
+
+def test_source_gate_enforces_4k_capable_resolution():
+    # Non-Wikimedia source: must be ≥ MIN_DISPLAY_EDGE on the long edge.
+    small = _Client(_Resp(content=_png_bytes((1000, 800))))
+    big = _Client(_Resp(content=_png_bytes((3000, 2000))))
+    assert asyncio.run(bc._source_ok(small, "https://artic.edu/x.jpg")) is False
+    assert asyncio.run(bc._source_ok(big, "https://artic.edu/x.jpg")) is True
+
+
+def test_source_gate_trusts_pregated_wikimedia():
+    # Wikimedia FilePath is pre-gated on the original's size at resolve time → content-type only.
+    cli = _Client(_Resp(status=206, ct="image/jpeg", content=b"\xff\xd8"))
+    assert asyncio.run(bc._source_ok(cli, "https://commons.wikimedia.org/wiki/Special:FilePath/x.jpg?width=3840")) is True
+    html = _Client(_Resp(status=200, ct="text/html", content=b"<html>"))
+    assert asyncio.run(bc._source_ok(html, "https://commons.wikimedia.org/wiki/Special:FilePath/x.jpg?width=3840")) is False
