@@ -138,6 +138,10 @@ Docent's curation **without a browser, WebSocket, or kiosk shell.**
   Pillow/Gemini pipeline helps.
 - Purely **additive** — the TV Canvas client (`static/app.js`) is unchanged; this is a parallel,
   dumb-device interface to the same brain.
+- **Status:** v1 **built** — `GET /display/{id}/current.{png,bmp}` (advance-per-fetch, reuses the
+  bag-shuffle), server-side crop + Floyd–Steinberg dither in [`epaper.py`](epaper.py), palettes
+  spectra6 / acep7 / gray4 / gray16, `X-Refresh-After` sleep hint. Unit-tested (`tests/test_epaper.py`).
+  Deferred: per-display panel profiles, remote-targeting via a binding table, packed/raw 1-bit BMP.
 
 > **Known limitation / non-target:** this track assumes a frame that can be pointed at an arbitrary
 > URL — true for DIY, open-firmware, and BYOS devices, but **not** for cloud/app-locked consumer art

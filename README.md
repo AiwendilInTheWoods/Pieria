@@ -54,6 +54,25 @@ display — no Fully Kiosk, no browser chrome, no URL typing. See
 [`deploy/appliance/`](deploy/appliance/README.md). For the broader display
 strategy (and e-ink support), see [`ROADMAP.md`](ROADMAP.md).
 
+## 🖼️ e-ink & BYOS frames (image API)
+
+Low-power e-ink and "bring-your-own-server" frames (DIY ESP32 + Waveshare, Inky Impression, a TRMNL
+in BYOS mode) don't run the JS display — they just fetch a server-rendered image on a schedule:
+
+```
+GET /display/{display_id}/current.png?playlist=Masterpieces&w=1600&h=1200&palette=spectra6
+```
+
+The server runs the same curation brain (bag-shuffle + affinity), crops to the panel size, and
+Floyd–Steinberg-dithers to the device palette. The response's **`X-Refresh-After`** header tells the
+frame how long (seconds) to deep-sleep before the next fetch; each GET advances to the next image.
+
+- **Palettes:** `spectra6` (E Ink Spectra 6), `acep7` (7-colour ACeP/Gallery), `gray4`, `gray16`.
+- **Formats:** `.png` (default) or `.bmp` (firmware without a PNG decoder).
+- **Fit:** `fit=cover` (fill, default) or `fit=contain` (letterbox on white).
+
+See [`ROADMAP.md`](ROADMAP.md) (Track B).
+
 ## 🏛️ VRA Core Metadata Architecture
 
 Screen Docent utilizes the **Visual Resources Association (VRA) Core** schema for its internal SQLite database design (`models.py`). This guarantees museum-quality structural integrity.
