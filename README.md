@@ -25,33 +25,29 @@ The fastest way to get Screen Docent running is using Docker.
 *   [Docker](https://docs.docker.com/get-docker/)
 *   [Docker Compose](https://docs.docker.com/compose/install/)
 
-### 2. Configure a Model
-You can connect a model entirely from the UI — no file editing required. After launching, open
-**Admin → ⚙ Settings → 🧠 AI Engine**, pick a provider (Google Gemini, OpenAI, Anthropic, OpenRouter,
-or a local Ollama/LM Studio server), paste a key (or **Sign in with OpenRouter** for one-click setup),
-and click **Test & Save**. The key is validated live before it's stored and takes effect within seconds.
-
-Optionally, seed a default Gemini key before first run with a `.env` file in the project root (the UI
-overrides it when set):
+### 2. Launch
+No config files needed — clone and go:
 ```bash
-# Optional fallback — get a free key at https://aistudio.google.com/apikey
-GEMINI_API_KEY=your_api_key_here
-```
-
-### 3. Launch
-```bash
-# Clone and enter the repo
 git clone https://github.com/AiwendilInTheWoods/Screen-Docent.git
 cd Screen-Docent
-
-# Build and start
 docker compose up -d --build
 ```
+(No `.env` required; the stack runs out of the box and you configure the AI model in-app below.)
 
-### 4. Access the System
+### 3. Access the System
 *   **Admin Dashboard:** `http://localhost:8000/admin` (Upload, discover, and manage art)
 *   **Main Display:** `http://localhost:8000/` (Point your TV browser here)
 *   **Mobile Remote:** `http://localhost:8000/remote` (Control from your phone)
+
+### 4. Connect a Model (optional, in-app)
+Screen Docent works immediately without any AI — the starter art ships with full placards, and the
+museum **Discover** scouts need no key. To unlock auto-curation (metadata generation, enrichment,
+smarter search), open **Admin → ⚙ Settings → 🧠 AI Engine**, pick a provider (Google Gemini, OpenAI,
+Anthropic, OpenRouter, or a local Ollama/LM Studio server), paste a key (or **Sign in with
+OpenRouter** for one-click setup), and click **Test & Save** — validated live, effective in seconds.
+
+> Prefer files? You can still pre-seed a default Gemini key with a `.env` (`GEMINI_API_KEY=…`) in the
+> project root before launch; the in-app setting overrides it when set.
 
 ## 🖥️ Display Appliance (recommended for TVs)
 
