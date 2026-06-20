@@ -2,7 +2,9 @@
 
 **Screen Docent** is an open-source, AI-powered digital art curator and signage platform. It transforms any TV or monitor into a high-end museum display, complete with autonomous artwork analysis, intelligent metadata generation, and instant mobile remote control.
 
-![Screen Docent Logo](static/logo.svg)
+![A Screen Docent display showing Vermeer's The Milkmaid with an auto-generated museum placard](static/docs/display.png)
+
+> *A live display: full-bleed artwork, an auto-generated museum placard, and a QR code for details.*
 
 ## ✨ Features
 
@@ -17,6 +19,25 @@
 *   **🔌 Bring Your Own Model:** Configure the AI engine from the GUI — Google Gemini, OpenAI, Anthropic, OpenRouter (one-click sign-in), or a local Ollama/LM Studio server — all through one OpenAI-compatible backend. No code edits, validated live before saving.
 *   **🖼️ Browse Catalog:** A curated, collection-first library of public-domain masterpieces (museums, NASA, Library of Congress) with ready-made placards. Browsing is instant (text + hotlinked thumbnails); the full-resolution image downloads only when you **Add** a piece. Regenerate/expand it anytime with the offline builder (`python -m tools.build_catalog`).
 *   **💾 Persistent & Safe:** SQLite-backed state with automatic migrations and Docker volume persistence.
+
+## 🧭 Deployment Models
+
+Screen Docent is a **curation brain** you run once (a small Docker app) + **any screen** you point at
+it. The same server supports any mix of these at once — it's a versatile setup, not a single appliance:
+
+| Model | What it is | Best for |
+|-------|-----------|----------|
+| **Run the brain anywhere** | Docker on a server / NAS / mini-PC / old laptop; point any screen at it. | The foundation for everything below. |
+| **All-in-one Pi** | Server **and** display on one Raspberry Pi. | The simplest single, self-contained art frame. |
+| **Thin-client Pi → server** | Cheap Pis display; one central server curates. | Scaling to many rooms / whole-home. |
+| **Any browser / Smart TV** | Point a TV browser (or Fully Kiosk) at the display URL. | Reusing a TV you already own — no extra hardware. |
+| **e-ink / "dumb" frame** | Low-power frames fetch a server-rendered, dithered image on a schedule (image API — see the e-ink section below). | Battery e-ink, DIY ESP32/Waveshare, TRMNL (BYOS). |
+| **Multi-display** | One server drives many screens via unique `display` IDs. | A docent in every room, each remote-controllable. |
+
+![A quick tour of the admin dashboard, catalog, and discovery](static/docs/admin-tour.gif)
+
+The full, illustrated guide (with screenshots and walkthroughs for each) lives in the in-app
+**Help & Docs** page at `http://localhost:8000/help`.
 
 ## 🚀 Quickstart Deployment
 

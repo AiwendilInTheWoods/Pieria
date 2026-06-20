@@ -33,23 +33,40 @@
             position: fixed;
             height: 100vh;
             box-sizing: border-box;
+            overflow-y: auto;
         }
 
         aside h1 { font-size: 1.25rem; color: var(--accent-color); margin-top: 0; }
-        aside nav { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
-        aside a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; padding: 10px; border-radius: 8px; transition: 0.2s; }
+        aside nav { display: flex; flex-direction: column; gap: 6px; margin-top: 24px; }
+        aside a { color: #94a3b8; text-decoration: none; font-size: 0.88rem; padding: 9px 10px; border-radius: 8px; transition: 0.2s; }
         aside a:hover { background: rgba(255,255,255,0.05); color: white; }
-        aside a.back { color: var(--accent-color); border: 1px solid var(--accent-color); text-align: center; margin-bottom: 20px; }
+        aside a.back { color: var(--accent-color); border: 1px solid var(--accent-color); text-align: center; margin-bottom: 16px; }
+        aside .nav-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08rem; color: #64748b; margin: 16px 0 2px 10px; }
 
-        main { flex-grow: 1; padding: 60px 80px; margin-left: 280px; max-width: 900px; }
+        main { flex-grow: 1; padding: 60px 80px; margin-left: 280px; max-width: 940px; }
 
-        section { margin-bottom: 60px; }
+        section { margin-bottom: 64px; }
         h2 { font-size: 1.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; color: var(--accent-color); }
         h3 { font-size: 1.2rem; color: #f8fafc; margin-top: 30px; }
+        h4 { margin: 0 0 6px; }
 
         p, li { color: #cbd5e1; }
         ul { padding-left: 20px; }
         li { margin-bottom: 10px; }
+        .lead { font-size: 1.05rem; color: #e2e8f0; }
+
+        /* Screenshots & figures */
+        .shot { width: 100%; border-radius: 12px; border: 1px solid var(--border-color); display: block; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+        .shot.phone { max-width: 300px; margin: 0 auto; }
+        figure { margin: 26px 0; }
+        figcaption { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 10px; }
+
+        /* Deployment model cards */
+        .models { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 26px 0; }
+        .model-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 20px; }
+        .model-card .tag { display: inline-block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06rem; color: #64748b; margin-bottom: 8px; }
+        .model-card h4 { color: var(--accent-color); font-size: 0.98rem; }
+        .model-card p { margin: 0; font-size: 0.84rem; color: #94a3b8; }
 
         .hierarchy-box {
             background: var(--card-bg);
@@ -60,11 +77,12 @@
             justify-content: space-around;
             align-items: center;
             text-align: center;
-            margin: 20px 0;
+            margin: 24px 0;
+            gap: 10px;
         }
         .hierarchy-step { flex: 1; }
         .hierarchy-step span { display: block; font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; }
-        .hierarchy-step strong { font-size: 1.1rem; color: var(--accent-color); }
+        .hierarchy-step strong { font-size: 1.05rem; color: var(--accent-color); }
         .hierarchy-arrow { color: #475569; font-size: 1.5rem; }
 
         table { width: 100%; border-collapse: collapse; margin: 20px 0; background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
@@ -89,200 +107,263 @@
 </head>
 <body>
     <aside>
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px;">
             <img src="/logo.svg" alt="Logo" style="height: 32px;">
             <h1 style="margin: 0; font-size: 1.25rem; color: var(--accent-color);">Screen Docent</h1>
         </div>
         <nav>
             <a href="/admin" class="back">← Back to Dashboard</a>
-            <a href="#quickstart">Quickstart Deployment</a>
-            <a href="#ai-curator">AI Curator & Workflow</a>
+            <span class="nav-label">Start here</span>
+            <a href="#overview">Overview & Deployment Models</a>
+            <a href="#quickstart">Quick Start</a>
+            <span class="nav-label">Fill your walls</span>
+            <a href="#adding-art">Adding Art</a>
+            <a href="#ai-engine">Connecting a Model</a>
+            <span class="nav-label">Show it</span>
+            <a href="#display">The Display & Modes</a>
+            <a href="#remote">Mobile Remote</a>
             <a href="#hierarchy">Configuration Hierarchy</a>
-            <a href="#params">URL Parameters Reference</a>
-            <a href="#remote">Mobile Remote Control</a>
+            <a href="#params">URL Parameters</a>
+            <span class="nav-label">Deploy</span>
             <a href="#appliance">Raspberry Pi Appliance</a>
             <a href="#eink">e-ink & "Dumb" Frames</a>
+            <a href="#https">HTTPS (optional)</a>
             <a href="#hardware">Hardware & Kiosk Tips</a>
         </nav>
     </aside>
 
     <main>
-        <section id="quickstart">
-            <h2>Quickstart Deployment Guide</h2>
-            <p>Get your artwork display engine running in minutes using Docker. This is the recommended method for most users as it bundles all dependencies (Python, Database, and Web Server) into a single, isolated container.</p>
-            
-            <h3>Prerequisites</h3>
-            <ul>
-                <li><strong>Docker:</strong> Installed and running on your host machine.</li>
-                <li><strong>Docker Compose:</strong> (Included with Docker Desktop on Windows/Mac, may need separate install on Linux).</li>
-            </ul>
+        <section id="overview">
+            <h2>Overview & Deployment Models</h2>
+            <p class="lead">Screen Docent is two things: a <strong>curation brain</strong> you run once
+               (a small Docker app), and <strong>any screen</strong> you point at it. Add art, and it plays
+               beautifully — with cinematic pans, museum placards, and a phone remote.</p>
 
-            <h3>Installation Commands</h3>
-            <p>Open your terminal and run the following sequence to clone the repository and start the engine:</p>
-            <pre><code># 1. Clone the repository
-git clone https://github.com/AiwendilInTheWoods/Screen-Docent.git
+            <figure>
+                <img class="shot" src="/docs/display.png" alt="A display showing Vermeer's The Milkmaid with a museum placard and QR code">
+                <figcaption>A live display: full-bleed artwork, an auto-generated museum placard, and a QR code for details.</figcaption>
+            </figure>
 
-# 2. Enter the directory
-cd Screen-Docent
-
-# 3. Build and start the container in detached mode
-docker compose up -d --build</code></pre>
-
-            <div class="tip">
-                <strong>Data Persistence:</strong> Your database and artwork library are stored in persistent Docker volumes (mapped to the <code>./Artwork</code> and <code>./data</code> directories on your host). This means you can safely update the application via <code>git pull</code> and a rebuild without losing your settings or uploaded images.
+            <h3>How it works</h3>
+            <p>The server holds your library, generates metadata, and decides what shows next. Each screen
+               just opens a URL (or, for e-ink, fetches an image). The brain runs in one place; screens are
+               cheap and disposable.</p>
+            <div class="hierarchy-box">
+                <div class="hierarchy-step"><span>The brain (run once)</span><strong>Docker server</strong></div>
+                <div class="hierarchy-arrow">→</div>
+                <div class="hierarchy-step"><span>Any screen</span><strong>TV · Raspberry Pi · e-ink · phone</strong></div>
             </div>
 
-            <h3>First Steps</h3>
-            <p>Once the container is healthy, you can access the different parts of the system via your browser:</p>
-            <ul>
-                <li><strong>Admin Dashboard:</strong> <code>http://localhost:8000/admin</code> &mdash; Start here to create your first playlist and upload high-resolution images.</li>
-                <li><strong>Main Display:</strong> <code>http://localhost:8000/</code> &mdash; Point your TV or monitor browser here to begin the artwork loop.</li>
-                <li><strong>Mobile Remote:</strong> <code>http://localhost:8000/remote</code> &mdash; Access this on your phone to control the playback from your couch.</li>
-            </ul>
+            <h3>Deployment models — pick what fits</h3>
+            <p>It's a versatile setup. The same server supports any mix of these at once:</p>
+            <div class="models">
+                <div class="model-card">
+                    <span class="tag">Core</span>
+                    <h4>Run the brain anywhere</h4>
+                    <p>Docker on a server, NAS, mini-PC, or an old laptop. Then point any screen at it. This is the foundation for every model below.</p>
+                </div>
+                <div class="model-card">
+                    <span class="tag">Simplest single frame</span>
+                    <h4>All-in-one Pi</h4>
+                    <p>Server <em>and</em> display on one Raspberry Pi. Flash a card, hang it behind a monitor — one self-contained art frame.</p>
+                </div>
+                <div class="model-card">
+                    <span class="tag">Scales to a whole home</span>
+                    <h4>Thin-client Pi → server</h4>
+                    <p>One server curates; cheap Pis in each room just display. Add rooms by flashing another card.</p>
+                </div>
+                <div class="model-card">
+                    <span class="tag">No extra hardware</span>
+                    <h4>Any browser / Smart TV</h4>
+                    <p>Point a TV browser (or Fully Kiosk) at the display URL. Great for a TV you already own.</p>
+                </div>
+                <div class="model-card">
+                    <span class="tag">Low power</span>
+                    <h4>e-ink / "dumb" frame</h4>
+                    <p>Battery e-ink and DIY frames fetch a server-rendered, dithered image on a wake schedule. No browser needed.</p>
+                </div>
+                <div class="model-card">
+                    <span class="tag">One server, many screens</span>
+                    <h4>Multi-display</h4>
+                    <p>Give each screen a unique <code>display</code> ID; the phone remote targets any of them independently.</p>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; color:#94a3b8;">New here? Start with <a href="#quickstart" style="color:var(--accent-color);">Quick Start</a>
+               (Docker), or jump to the <a href="#appliance" style="color:var(--accent-color);">Raspberry Pi Appliance</a> for a hang-and-forget frame.</p>
         </section>
 
-        <section id="ai-curator">
-            <h2>AI Curator Agent & Review Workflow</h2>
-            <p>The engine features an autonomous AI pipeline that acts as a digital curator, analyzing your artwork and generating high-quality metadata for the "Museum Placard" display.</p>
+        <section id="quickstart">
+            <h2>Quick Start</h2>
+            <p>The fastest path: run the server with Docker, then open the dashboard. No config files required.</p>
 
-            <h3>Connecting a Model — the AI Engine panel</h3>
-            <p>The easiest way to plug in a model is right in the app: open <strong>Admin → ⚙ Settings → 🧠 AI Engine</strong>. Pick a provider, paste an API key (or sign in), choose a model, and click <strong>Test &amp; Save</strong>. The key is validated against the live provider before it's stored, and changes take effect within seconds — no file editing, no rebuild.</p>
+            <h3>Prerequisites</h3>
+            <ul>
+                <li><a href="https://docs.docker.com/get-docker/" target="_blank" style="color:var(--accent-color);">Docker</a> + Docker Compose (most installs include Compose).</li>
+            </ul>
+
+            <h3>Launch</h3>
+            <pre><code>git clone https://github.com/AiwendilInTheWoods/Screen-Docent.git
+cd Screen-Docent
+docker compose up -d --build</code></pre>
+            <p>That's it — no <code>.env</code> needed. The app boots with starter art already curated.</p>
+
+            <h3>Open it</h3>
+            <ul>
+                <li><strong>Admin Dashboard</strong> — <code>http://localhost:8000/admin</code> (upload, browse the catalog, manage collections)</li>
+                <li><strong>Main Display</strong> — <code>http://localhost:8000/</code> (point your TV/monitor browser here)</li>
+                <li><strong>Mobile Remote</strong> — <code>http://localhost:8000/remote</code> (control from your phone)</li>
+            </ul>
+
+            <figure>
+                <img class="shot" src="/docs/library.png" alt="The Screen Docent admin dashboard showing a grid of masterpieces">
+                <figcaption>The admin dashboard — your library, collections, the art catalog, and settings, all in one place.</figcaption>
+            </figure>
+
+            <div class="tip">
+                <strong>Prefer a dedicated frame?</strong>
+                Flash a Raspberry Pi instead and it boots straight into the fullscreen display — see the
+                <a href="#appliance" style="color:var(--accent-color);">Raspberry Pi Appliance</a> below.
+            </div>
+        </section>
+
+        <section id="adding-art">
+            <h2>Adding Art</h2>
+            <p>Three ways to fill your walls. The first two need <strong>no AI key at all</strong> — only
+               auto-analysis of your own uploads does.</p>
+
+            <h3>1. Browse Catalog — the fastest way</h3>
+            <p>The <strong>Browse Catalog</strong> tab is a curated, collection-first library of public-domain
+               art (museums, NASA, the Library of Congress) with ready-made museum placards. Pick a collection,
+               then click <strong>Add to Library</strong> on any piece — only then does its full-resolution image
+               download. Browsing itself is instant (just text + thumbnails).</p>
+            <figure>
+                <img class="shot" src="/docs/catalog-add.gif" alt="Browsing the catalog: collections grid, opening a collection, and adding a piece">
+                <figcaption>Browse collections → open one → Add to Library. The high-res image downloads only on Add.</figcaption>
+            </figure>
+
+            <h3>2. Discover — search the world's museums</h3>
+            <p>The <strong>Discover</strong> tab searches world-class museum APIs (the Met, Art Institute of
+               Chicago, Cleveland, Rijksmuseum, SMK, and more) for a specific artist, subject, or era. Approve
+               what you like and it joins your library. Works without an AI key — a model just makes the search
+               smarter for ambiguous queries.</p>
+            <figure>
+                <img class="shot" src="/docs/discover.png" alt="The Discover tab with the Art Scout mission control panel">
+                <figcaption>Art Scout mission control — search across museum collections and approve finds.</figcaption>
+            </figure>
+
+            <h3>3. Upload your own</h3>
+            <p>Drag &amp; drop images into the <strong>Full Library</strong> or a collection. If a model is
+               connected, each upload is auto-analyzed (title, a 2-sentence blurb, tags) and lands in the
+               <strong>Review Queue</strong>; if not, you simply fill in the details yourself there and
+               <strong>Approve &amp; Publish</strong>. Either way you stay in control — nothing reaches your
+               screens until you approve it.</p>
+            <div class="tip">
+                <strong>Review Queue:</strong> every new upload waits here so AI guesses never hit your walls
+                unchecked. Edit any field, add an <em>AI Guidance</em> hint and <strong>Regenerate</strong>
+                (if a model is connected), or just type the details and publish.
+            </div>
+        </section>
+
+        <section id="ai-engine">
+            <h2>Connecting a Model (AI Engine)</h2>
+            <p>A model is <strong>optional</strong> — the catalog, Discover, and manual metadata all work without
+               one. Connect a model to unlock <strong>auto-curation</strong>: metadata generation on upload,
+               Wikipedia-grounded enrichment, and smarter search.</p>
+            <figure>
+                <img class="shot" src="/docs/ai-engine.png" alt="The AI Engine settings panel">
+                <figcaption>Admin → ⚙ Settings → 🧠 AI Engine — pick a provider, connect, Test &amp; Save.</figcaption>
+            </figure>
+            <p>Open <strong>Admin → ⚙ Settings → 🧠 AI Engine</strong>, pick a provider, connect, and click
+               <strong>Test &amp; Save</strong> — the key is validated live before it's stored, and takes effect
+               within seconds (no file editing, no rebuild).</p>
             <ul>
                 <li><strong>Google Gemini</strong> — free tier is plenty for personal use. <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent-color);">Get a key →</a></li>
-                <li><strong>OpenAI</strong> (GPT-4o family) and <strong>Anthropic</strong> (Claude) — paste your provider key.</li>
-                <li><strong>OpenRouter</strong> — click <strong>Sign in with OpenRouter</strong> for one-click setup (no key to copy), then reach every major model through a single account.</li>
+                <li><strong>OpenAI</strong> (GPT-4o) and <strong>Anthropic</strong> (Claude) — paste your provider key.</li>
+                <li><strong>OpenRouter</strong> — one-click <strong>Sign in with OpenRouter</strong> (no key to copy), then reach every major model through one account.</li>
                 <li><strong>Local / Ollama / LM Studio</strong> — point the Base URL at your own OpenAI-compatible server (inside Docker, use <code>host.docker.internal</code> instead of <code>localhost</code>); no key needed.</li>
             </ul>
             <div class="tip">
-                <strong>How it works:</strong> every provider is reached through one OpenAI-compatible endpoint, so configuration is just <em>base URL + key + model</em>. The <strong>Advanced</strong> section lets you use a separate (cheaper/faster) model for search classification, override the Base URL, or set a temperature.
+                <strong>One backend for everything:</strong> every provider is reached through a single
+                OpenAI-compatible endpoint, so configuration is just <em>base URL + key + model</em>. The
+                <strong>Advanced</strong> section lets you use a separate cheaper/faster model for search
+                classification, override the Base URL, or set a temperature.
             </div>
-
-            <h3>Alternative: the .env file</h3>
-            <p>If you prefer, you can seed a default key before first run with a <code>.env</code> file in the project root (ignored by version control). The AI Engine panel always overrides this when set.</p>
-            <pre><code># Optional fallback for the AI Curator Agent
+            <p style="font-size:0.88rem; color:#94a3b8;"><strong>Note:</strong> OpenRouter's one-click sign-in
+               needs a secure context — it works over HTTPS or <code>http://localhost</code>, but not a plain
+               <code>http://&lt;LAN-IP&gt;</code> address (paste an OpenRouter key there instead). See
+               <a href="#https" style="color:var(--accent-color);">HTTPS</a>.</p>
+            <details style="margin-top:16px;">
+                <summary style="cursor:pointer; color:#94a3b8; font-size:0.9rem;">Prefer a file? Optional <code>.env</code> fallback</summary>
+                <p style="margin-top:12px;">You can seed a default key before first run with a <code>.env</code> in the project root (the AI Engine panel overrides it when set):</p>
+                <pre><code># Optional fallback
 GEMINI_API_KEY=your_free_key_here</code></pre>
-
-            <h3>The AI Curator Pipeline</h3>
-            <p>When you upload an image via the Admin Dashboard, the following automated workflow is triggered in the background:</p>
-            <ul>
-                <li><strong>Visual Analysis:</strong> The backend agent sends an optimized version of the image to the Vision model.</li>
-                <li><strong>Metadata Generation:</strong> The AI generates a museum-grade <strong>Title</strong>, a <strong>Contextual Description</strong> (2-sentence historical or artistic blurb), and a set of <strong>Descriptive Tags</strong>.</li>
-                <li><strong>Database Entry:</strong> This information is saved alongside your image, awaiting your final approval.</li>
-            </ul>
-
-            <h3>The 'Pending Review' State</h3>
-            <p>To ensure accuracy and prevent AI "hallucinations" from appearing on your displays, all newly ingested art is placed in a <strong>Pending Review</strong> state. This acts as a human-in-the-loop safety mechanism.</p>
-            <ul>
-                <li>Navigate to the <strong>Review Queue</strong> tab in the Admin Console.</li>
-                <li>Review the AI-generated titles and descriptions. You can edit any field to correct historical facts or artistic interpretations.</li>
-                <li><strong>AI Guidance & Regeneration:</strong> If the AI completely misses the mark, you can provide context in the "AI Guidance" field (e.g., "This is actually a family photo from 1995") and click <strong>Regenerate</strong>. The agent will rebuild the metadata using your specific facts.</li>
-                <li>Click <strong>"Approve & Publish"</strong> to move the artwork into the live display rotation.</li>
-            </ul>
-
-            <div class="tip">
-                <strong>RAG Enrichment & Discovery:</strong>
-                <ul>
-                    <li><strong>Browse Catalog:</strong> The fastest way to fill your walls. The "Browse Catalog" tab is a curated, collection-first library of public-domain art (museums, NASA, Library of Congress) with ready-made placards. Browsing is instant — pick a collection, then click <strong>Add to Library</strong> on a piece to download its full-resolution image (nothing heavy downloads until you do). No AI key required.</li>
-                    <li><strong>Art Scouts:</strong> Use the "Discover" tab to search world-class museum APIs for a specific artist, subject, or era when you want something beyond the catalog.</li>
-                    <li><strong>RAG Enrichment:</strong> Use the "Batch Enrich" button to cross-reference your collection with Wikipedia. The AI will fact-check existing metadata and rewrite descriptions using verified historical context.</li>
-                </ul>
-            </div>
-
-            <div class="tip">
-                <strong>Swapping Models</strong><br>
-                Gemini is the default for its high performance-to-cost ratio, but you can switch to <strong>OpenAI (GPT-4o)</strong>, <strong>Anthropic (Claude)</strong>, <strong>OpenRouter</strong>, or a <strong>local model</strong> at any time from <strong>⚙ Settings → 🧠 AI Engine</strong> — no code changes required. All enrichment and search calls follow the model you select.
-            </div>
+            </details>
         </section>
 
-        <section id="hierarchy">
-            <h2>The Configuration Hierarchy</h2>
-            <p>To ensure maximum flexibility across different hardware deployments, the engine uses a <strong>strict priority hierarchy</strong> for all display settings. Settings defined at higher levels always override those at lower levels.</p>
-            
-            <div class="hierarchy-box">
-                <div class="hierarchy-step">
-                    <span>Priority 1</span>
-                    <strong>URL Parameters</strong>
-                </div>
-                <div class="hierarchy-arrow">→</div>
-                <div class="hierarchy-step">
-                    <span>Priority 2</span>
-                    <strong>Playlist Defaults</strong>
-                </div>
-                <div class="hierarchy-arrow">→</div>
-                <div class="hierarchy-step">
-                    <span>Priority 3</span>
-                    <strong>Global Defaults</strong>
-                </div>
-            </div>
-
-            <p><strong>Note:</strong> All time-based configurations (Cycle Time, Wait/Show timers) are measured in <strong>seconds</strong> in the database and Admin UI, and converted to milliseconds only by the rendering engine.</p>
-        </section>
-
-        <section id="params">
-            <h2>URL Parameters Reference</h2>
-            <p>Append these parameters to your display URL (e.g., <code>http://SERVER:8000/?display=tv_01&rotate=true</code>) to override localized behavior.</p>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 25%;">Parameter</th>
-                        <th>Description</th>
-                        <th>Example</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>rotate</code></td>
-                        <td>Forcefully rotates the entire DOM by -90 degrees. Useful for TVs mounted vertically where the OS remains in landscape mode.</td>
-                        <td><code>rotate=true</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>display</code></td>
-                        <td>Assigns a unique ID to the display. This ID allows the Mobile Remote to target this specific screen. Defaults to <code>default</code>.</td>
-                        <td><code>display=living_room</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>cycle_time</code></td>
-                        <td>The number of seconds between artwork transitions.</td>
-                        <td><code>cycle_time=60</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>mode</code></td>
-                        <td>Overrides the visual rendering mode. Options: <code>ken-burns</code>, <code>static-crop</code>, <code>contain-matte</code>.</td>
-                        <td><code>mode=contain-matte</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>shuffle</code></td>
-                        <td>Randomizes the playback order of the current playlist. Options: <code>true</code>, <code>false</code>.</td>
-                        <td><code>shuffle=true</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>placard_wait</code></td>
-                        <td>Seconds to wait after a new image loads before the info placard slides in.</td>
-                        <td><code>placard_wait=5</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>placard_show</code></td>
-                        <td>Seconds to keep the placard visible during its initial entrance.</td>
-                        <td><code>placard_show=20</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>placard_manual</code></td>
-                        <td>Seconds to display the placard when manually triggered by the remote or user interaction.</td>
-                        <td><code>placard_manual=15</code></td>
-                    </tr>
-                </tbody>
-            </table>
+        <section id="display">
+            <h2>The Display & Rendering Modes</h2>
+            <p>Point any screen's browser at <code>http://SERVER:8000/?display=living_room</code>. The
+               <code>display</code> ID names that screen so the remote can target it. The display paints
+               automatically and stays awake — no browser chrome, no manual refresh.</p>
+            <h3>Rendering modes</h3>
+            <ul>
+                <li><strong>Ken Burns</strong> (<code>ken-burns</code>) — slow cinematic pan &amp; zoom across the piece.</li>
+                <li><strong>Static crop</strong> (<code>static-crop</code>) — a fixed, user-defined crop (set per-artwork in the admin).</li>
+                <li><strong>Contain matte</strong> (<code>contain-matte</code>) — the whole piece, letterboxed on a blurred matte.</li>
+            </ul>
+            <p>Set a mode globally, per-collection, or per-screen via the <a href="#params" style="color:var(--accent-color);">URL parameters</a>.
+               Each piece shows an auto-generated <strong>museum placard</strong> (title, artist, blurb) and a
+               QR code for details.</p>
         </section>
 
         <section id="remote">
             <h2>The Mobile Remote Control</h2>
-            <p>The remote console is accessible at <code>/remote</code> from any mobile browser on the same network.</p>
+            <p>Open <code>/remote</code> on any phone on the same network — a no-refresh console for every screen.</p>
+            <figure>
+                <img class="shot phone" src="/docs/remote.png" alt="The mobile remote control on a phone">
+                <figcaption>Switch playlists, change modes, jump pieces, and trigger placards — instantly.</figcaption>
+            </figure>
             <ul>
-                <li><strong>WebSocket Routing:</strong> The remote uses WebSockets for instant control. When you change a playlist or mode on the remote, the targeted TV updates immediately without a page refresh.</li>
-                <li><strong>Target Selection:</strong> Use the "Target Display" dropdown at the top of the remote to select which screen you want to control. Displays appear in this list as soon as they are opened in a browser.</li>
-                <li><strong>Instant Actions:</strong> The remote provides dedicated buttons for Next/Previous artwork and a "Show Placard" button to quickly identify pieces.</li>
+                <li><strong>WebSocket routing:</strong> changes hit the targeted TV instantly, with no page refresh.</li>
+                <li><strong>Target selection:</strong> the "Target Display" dropdown lists every screen as soon as it's opened in a browser.</li>
+                <li><strong>Instant actions:</strong> Next/Previous and a "Show Placard" button to quickly identify pieces.</li>
             </ul>
+        </section>
+
+        <section id="hierarchy">
+            <h2>The Configuration Hierarchy</h2>
+            <p>For flexibility across deployments, settings follow a <strong>strict priority hierarchy</strong> —
+               higher levels override lower ones.</p>
+            <div class="hierarchy-box">
+                <div class="hierarchy-step"><span>Priority 1</span><strong>URL Parameters</strong></div>
+                <div class="hierarchy-arrow">→</div>
+                <div class="hierarchy-step"><span>Priority 2</span><strong>Playlist Defaults</strong></div>
+                <div class="hierarchy-arrow">→</div>
+                <div class="hierarchy-step"><span>Priority 3</span><strong>Global Defaults</strong></div>
+            </div>
+            <p><strong>Note:</strong> all time-based settings (cycle time, placard timers) are in <strong>seconds</strong>
+               in the database and Admin UI; the rendering engine converts to milliseconds.</p>
+        </section>
+
+        <section id="params">
+            <h2>URL Parameters Reference</h2>
+            <p>Append these to a display URL (e.g. <code>http://SERVER:8000/?display=tv_01&amp;rotate=true</code>)
+               to override behavior for one screen.</p>
+            <table>
+                <thead>
+                    <tr><th style="width: 25%;">Parameter</th><th>Description</th><th>Example</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>display</code></td><td>Unique ID for this screen so the remote can target it. Defaults to <code>default</code>.</td><td><code>display=living_room</code></td></tr>
+                    <tr><td><code>mode</code></td><td>Rendering mode: <code>ken-burns</code>, <code>static-crop</code>, <code>contain-matte</code>.</td><td><code>mode=contain-matte</code></td></tr>
+                    <tr><td><code>cycle_time</code></td><td>Seconds between artwork transitions.</td><td><code>cycle_time=60</code></td></tr>
+                    <tr><td><code>shuffle</code></td><td>Randomize playback order: <code>true</code> / <code>false</code>.</td><td><code>shuffle=true</code></td></tr>
+                    <tr><td><code>rotate</code></td><td>Rotates the whole display -90° for TVs mounted vertically in landscape mode.</td><td><code>rotate=true</code></td></tr>
+                    <tr><td><code>placard_wait</code></td><td>Seconds after a new image loads before the placard slides in.</td><td><code>placard_wait=5</code></td></tr>
+                    <tr><td><code>placard_show</code></td><td>Seconds to keep the placard visible on its initial entrance.</td><td><code>placard_show=20</code></td></tr>
+                    <tr><td><code>placard_manual</code></td><td>Seconds to display the placard when triggered by the remote.</td><td><code>placard_manual=15</code></td></tr>
+                </tbody>
+            </table>
         </section>
 
         <section id="appliance">
@@ -296,19 +377,20 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
             <p>Use <strong>Raspberry Pi Imager</strong> to write <strong>Raspberry Pi OS Lite (64-bit)</strong>
                to a microSD card. Before writing, open <em>Edit Settings</em> and set:</p>
             <ul>
-                <li><strong>Hostname</strong> (e.g. <code>docent-living-room</code>)</li>
+                <li><strong>Hostname</strong> (e.g. <code>docent-living-room</code>) &mdash; also becomes the address you'll use: <code>docent-living-room.local</code>.</li>
                 <li><strong>Enable SSH</strong> (password or public key)</li>
                 <li><strong>Username + password</strong> (your one-time login)</li>
-                <li><strong>Wi-Fi SSID + password + country</strong> (so it joins the network headless)</li>
+                <li>⚠️ <strong>Wi-Fi SSID + password + country</strong> &mdash; <strong>the single most important step.</strong> This is the only place Wi-Fi is configured; skip it and the Pi boots dark with no easy recovery.</li>
                 <li><strong>Locale / timezone</strong></li>
             </ul>
 
             <h3>2. Run the installer</h3>
-            <p>Boot the Pi (no keyboard or monitor needed), SSH in, and run:</p>
+            <p>Boot the Pi (no keyboard or monitor needed), SSH in at <code>&lt;hostname&gt;.local</code>, and run:</p>
             <pre><code>git clone https://github.com/AiwendilInTheWoods/Screen-Docent.git
 sudo Screen-Docent/deploy/appliance/install.sh</code></pre>
-            <p>This installs <code>cage</code> + Chromium as a kiosk, sets it to launch on boot, disables screen
-               blanking, and writes a config file to the SD card's boot partition.</p>
+            <p>This installs <code>cage</code> + Chromium as a kiosk, launches it on boot, disables screen
+               blanking, ensures <code>avahi-daemon</code> (so <code>&lt;hostname&gt;.local</code> works), and
+               writes a config file to the SD card's boot partition.</p>
 
             <h3>3. Configure the display</h3>
             <p>Edit <code>screen-docent.conf</code> on the card's <strong>boot partition</strong> (visible on any
@@ -322,12 +404,15 @@ CYCLE_TIME=                           # optional: seconds per image</code></pre>
 
             <h3>All-in-one (server + display on one box)</h3>
             <p>For a single-frame setup with no separate server, set <code>ALL_IN_ONE=1</code>,
-               <code>SERVER_URL=http://localhost:8000</code>, and your <code>GEMINI_API_KEY</code> in the config,
-               then re-run the installer. It installs Docker and runs the server on the same Pi.</p>
+               <code>SERVER_URL=http://localhost:8000</code> in the config, then re-run the installer. It installs
+               Docker and runs the server on the same Pi. Reach the admin from another device at
+               <code>http://&lt;hostname&gt;.local:8000/admin</code>.</p>
 
             <div class="tip">
-                <strong>Full reference:</strong> <code>deploy/appliance/README.md</code> in the repository covers
-                everything, including the X11 fallback and on-device troubleshooting.
+                <strong>Can't reach the box?</strong> Use <code>http://&lt;hostname&gt;.local:8000/admin</code>
+                (the hostname you set in Imager) instead of hunting for the IP. If <code>.local</code> doesn't
+                resolve (some Android devices), find the Pi's address in your router's client list. Full
+                reference &amp; troubleshooting: <code>deploy/appliance/README.md</code> in the repo.
             </div>
         </section>
 
@@ -391,18 +476,40 @@ done</code></pre>
             </div>
         </section>
 
+        <section id="https">
+            <h2>HTTPS (optional)</h2>
+            <p>For a home LAN, plain HTTP is usually fine &mdash; the display path carries no secrets, and the
+               "Not secure" label is mostly perception. HTTPS earns its keep in two cases: you expose the admin
+               beyond your trusted network (so pasted API keys aren't sent in the clear), or you want OpenRouter's
+               one-click sign-in (which needs a secure context).</p>
+            <h3>Turn it on</h3>
+            <pre><code>docker compose --profile tls up -d     # adds an HTTPS proxy on :443; the app stays on :8000</code></pre>
+            <p>This runs a Caddy reverse proxy in front of the app. Browser-trusted HTTPS on a LAN needs
+               <strong>either</strong> a real domain (Caddy fetches a Let's Encrypt cert automatically),
+               <strong>or</strong> Caddy's internal CA &mdash; which means installing its root certificate on each
+               device that opens the admin. Full step-by-step (including the cert-trust commands) is in the
+               repository <code>README.md</code> &rarr; "Enabling HTTPS".</p>
+            <div class="tip">
+                <strong>Keep kiosks on HTTP.</strong> Don't point a TV/Pi/e-ink screen at an internal-CA HTTPS URL
+                &mdash; they can't accept the certificate. Reserve HTTPS for the human-facing admin/remote you open
+                yourself; displays stay on plain <code>http://</code>.
+            </div>
+        </section>
+
         <section id="hardware">
             <h2>Hardware & Kiosk Best Practices</h2>
-            <p>For a seamless "Museum" experience, your display should behave like a native appliance rather than a browser window. The recommended way to get there is the <a href="#appliance" style="color:var(--accent-color);">Raspberry Pi Appliance</a> above &mdash; the options below are for reusing an existing TV stick instead.</p>
+            <p>For a seamless "Museum" experience, your display should behave like a native appliance rather than a
+               browser window. The recommended way to get there is the <a href="#appliance" style="color:var(--accent-color);">Raspberry Pi Appliance</a>
+               above &mdash; the options below are for reusing an existing TV stick instead.</p>
 
             <h3>Bring-your-own TV stick (fallback)</h3>
             <ul>
-                <li><strong>Android / Fire OS:</strong> <a href="https://www.fully-kiosk.com/" target="_blank" style="color:var(--accent-color);">Fully Kiosk Browser</a> lets you lock the TV to a specific URL, hide all toolbars, and prevent the screen from sleeping. (A dedicated Pi appliance avoids needing this third-party app.)</li>
-                <li><strong>Android TV:</strong> <strong>TV Bro</strong> is a great open-source alternative that handles full-screen web apps well on leanback devices.</li>
+                <li><strong>Android / Fire OS:</strong> <a href="https://www.fully-kiosk.com/" target="_blank" style="color:var(--accent-color);">Fully Kiosk Browser</a> locks the TV to a URL, hides toolbars, and prevents sleep. (A dedicated Pi appliance avoids needing this third-party app.)</li>
+                <li><strong>Android TV:</strong> <strong>TV Bro</strong> is a solid open-source alternative for full-screen web apps on leanback devices.</li>
             </ul>
-
             <div class="tip">
-                <strong>Pro Tip:</strong> Most smart TVs have an "Auto Power Off" setting. Ensure this is disabled to prevent the artwork from stopping after a few hours of "inactivity."
+                <strong>Pro Tip:</strong> Most smart TVs have an "Auto Power Off" / "inactivity" timer. Disable it
+                so the artwork doesn't stop after a few hours.
             </div>
         </section>
     </main>

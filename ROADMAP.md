@@ -226,3 +226,41 @@ This is packaging, so validation is "does a fresh device just work," not unit te
 4. **(All-in-one)** confirm the co-resident `docker compose` server serves the same box's display
    and the admin UI is reachable from another device on the LAN.
 5. Power-cycle — confirm it boots straight back into the display unattended.
+
+---
+
+## Backlog / Future ideas
+
+Captured from working sessions — not yet scheduled. Roughly ordered by how much they move the
+"ease-of-use" needle.
+
+### Onboarding (toward truly bonehead-proof)
+- **On-screen admin URL on the frame.** For all-in-one Pi, show `http://<ip>:8000/admin` (and the
+  `<hostname>.local` name) on a boot splash while the kiosk waits for the server — so a non-technical
+  user reads the address straight off the screen instead of hunting the DHCP lease. *(Partial today:
+  mDNS `<hostname>.local` + `avahi-daemon` are documented/installed; the on-screen splash is the gap.)*
+- **Pre-baked flashable `.img` with a first-boot WiFi captive portal.** Flash → power on → connect a
+  phone to a `Docent-Setup` hotspot → pick WiFi + server URL in a browser → done. Eliminates the
+  Raspberry Pi Imager "set WiFi before flashing" cliff entirely. The big lever for non-technical users.
+
+### Catalog → "marketplace"
+- **Remote-hosted catalog manifest.** Serve `index.json` + per-collection files from a static URL
+  (GitHub raw / object store — no server) so the catalog can grow to thousands and update without an
+  app rebuild. *(Backend already supports a `catalog_url` base override with bundled fallback — this
+  is mostly publishing + a settings toggle.)*
+- **Catalog growth & curation.** Scale the offline builder beyond the current 302 curated items; tidy
+  Library-of-Congress record titles (they read like catalog entries); broaden Wikimedia coverage
+  (note: Wikimedia throttles datacenter IPs — the builder runs best from a normal connection).
+- **"Marketplace" tiers.** Paid / community-contributed / bring-your-own collections layered on the
+  same manifest schema; rights-cleared modern posters (rock/film) where licensing allows.
+
+### Engine & rendering
+- **Per-panel e-ink color tuning.** Calibrate the palette RGB anchors against real Spectra 6 / ACeP
+  hardware (the current anchors are nominal).
+- **Per-display panel profiles.** Store w/h/palette per `display_id` so the e-ink endpoint needs no
+  query params (extends `ActiveDisplayModel`).
+
+### Tech debt
+- **Unify the download path.** Refactor the discovery-approve route onto the shared
+  `_download_and_create_artwork` helper (built for the catalog) so seed / discovery / catalog all use
+  one robust downloader (UA + retry/backoff + symlink + playlist link).
