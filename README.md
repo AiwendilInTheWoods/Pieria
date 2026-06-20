@@ -99,14 +99,55 @@ Screen Docent uses a strict priority system for settings like `cycle_time`, `mod
 ## 📖 Documentation
 For URL parameters, the **Raspberry Pi appliance** how-to, **e-ink / "dumb" frame** setup, and hardware tips, visit the internal **Help & Docs** page at `http://localhost:8000/help` from your running server.
 
-## 🔐 Advanced: Enabling HTTPS (SSL Secure Contexts)
-If you intend to host the Admin UI on a semi-public LAN or want strict clipboard/PWA integration, **HTTPS is strongly recommended.**
+## 🔐 Advanced: Enabling HTTPS (optional)
 
-Because Screen-Docent streams heavily to headless browsers (Smart TVs, Raspbian Kiosks), injecting self-signed SSL certificates directly into the Python backend breaks headless players with un-bypassable `ERR_CERT_AUTHORITY_INVALID` errors.
+**Do you need it?** For a home LAN, usually **no**. The display/kiosk path carries no secrets, and the
+app works fine over plain HTTP. Plain HTTP is genuinely sufficient for most setups — the "Not secure"
+label is mostly perception. HTTPS earns its keep in two specific cases:
 
-**Best Practice:** Keep the Screen-Docent python app running natively on `http://localhost:8000` and deploy a lightweight reverse proxy in front of it.
-*   **[Caddy](https://caddyserver.com/):** The easiest solution. A 3-line `Caddyfile` will automatically generate trusted local certificates and securely route traffic.
-*   **[mkcert](https://github.com/FiloSottile/mkcert):** Use this to natively forge locally trusted SSL root CAs on your operating system without triggering kiosk warnings.
+1. **You expose the admin beyond your home/trusted LAN**, or want to stop API keys you paste into
+   **Settings → AI Engine** from crossing the wire in plaintext.
+2. **You want OpenRouter's one-click sign-in.** It uses a browser crypto API that only works in a
+   *secure context* (HTTPS **or** `http://localhost`). Over `http://<LAN-IP>` the button is hidden and
+   you paste an OpenRouter key instead — HTTPS (or accessing via `localhost`) restores one-click.
+
+**Why not bake certs into the app:** Screen Docent streams to headless browsers (Smart TVs, Pi
+kiosks) that can't click through a cert warning — a self-signed cert on the Python backend breaks
+them with un-bypassable `ERR_CERT_AUTHORITY_INVALID`. So TLS is terminated by an **opt-in reverse
+proxy**, and **kiosks keep using plain `http://`** (localhost on an all-in-one box, or
+`http://<server>:8000`). HTTPS is for the **human-facing admin/remote**.
+
+### Turn it on (built-in Caddy profile)
+```bash
+docker compose --profile tls up -d           # adds an HTTPS proxy on :443; app stays on :8000
+```
+This runs [Caddy](https://caddyserver.com/) in front of the app ([`deploy/tls/Caddyfile`](deploy/tls/Caddyfile)).
+
+**End-to-end, the two honest paths** (browser-trusted HTTPS on a LAN always requires *one* of these):
+
+* **A. Real domain (lock icon everywhere, zero manual trust) — recommended if you can.**
+  Point a domain you own at this host's IP (a free DNS name works; split-horizon/local DNS is fine
+  for LAN-only), then:
+  ```bash
+  echo "SD_TLS_HOST=art.example.com" >> .env     # your domain
+  # remove the `tls internal` line in deploy/tls/Caddyfile
+  docker compose --profile tls up -d
+  ```
+  Caddy fetches a trusted Let's Encrypt certificate automatically (ports 80+443 must be reachable).
+
+* **B. LAN-only with Caddy's internal CA (no domain) — you must trust the CA once per device.**
+  Leave the default (`SD_TLS_HOST=docent.local`, `tls internal`). Browsers will warn until you
+  install Caddy's root CA on each phone/laptop that opens the admin:
+  ```bash
+  # grab the root CA Caddy generated, then trust it on your device(s)
+  docker compose --profile tls cp caddy:/data/caddy/pki/authorities/local/root.crt ./caddy-root.crt
+  ```
+  Install `caddy-root.crt` into your OS/browser trust store (macOS Keychain, Windows "Trusted Root",
+  iOS/Android profile). After that, `https://docent.local` shows a clean lock. Per-device, but
+  one-time. (Tools like [mkcert](https://github.com/FiloSottile/mkcert) automate the same idea.)
+
+> **Reminder:** don't point a TV/kiosk at the internal-CA HTTPS URL — it can't accept the cert. Keep
+> displays on `http://` and reserve HTTPS for the admin/remote you open yourself.
 
 ---
 *Built for art lovers, powered by AI.*

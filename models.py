@@ -117,7 +117,12 @@ class ArtworkModel(Base):
     description_narrative: Mapped[Optional[str]] = mapped_column(Text)
     tags: Mapped[Optional[str]] = mapped_column(String)   # comma-separated
     is_seed: Mapped[bool] = mapped_column(Boolean, default=False)
-    
+
+    # Provenance: where a seed/catalog/discovered work was fetched from (enables
+    # re-download, dedup, and "already added" detection for the browseable catalog).
+    source_url: Mapped[Optional[str]] = mapped_column(String, index=True)
+    thumbnail_url: Mapped[Optional[str]] = mapped_column(String)
+
     status: Mapped[str] = mapped_column(String, default='pending_review', index=True)
 
     # Crop Metadata (Stored in Original Pixels)

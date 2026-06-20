@@ -64,6 +64,7 @@ PRESETS = {
             "meta-llama/llama-3.2-90b-vision-instruct",
         ],
         "oauth": True,
+        "key_url": "https://openrouter.ai/keys",
         "json_mode": True,
     },
     "ollama": {

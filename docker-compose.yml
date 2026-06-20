@@ -16,3 +16,29 @@ services:
       - path: .env
         required: false
     restart: unless-stopped
+
+  # Optional HTTPS reverse proxy. Off by default; enable with:
+  #   docker compose --profile tls up -d
+  # The app keeps serving plain http://:8000 for kiosks/displays; Caddy adds https on 443.
+  caddy:
+    image: caddy:2
+    container_name: sd-caddy
+    profiles: ["tls"]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # The hostname you'll open in a browser. Default localhost; set a real domain for
+      # auto Let's Encrypt (and remove `tls internal` in deploy/tls/Caddyfile).
+      - SD_TLS_HOST=${SD_TLS_HOST:-localhost}
+    volumes:
+      - ./deploy/tls/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - art-curator
+
+volumes:
+  caddy_data:
+  caddy_config:

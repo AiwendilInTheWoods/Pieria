@@ -32,15 +32,28 @@ Boxed Pi → running kiosk in minutes:
 
 1. **Raspberry Pi Imager** → choose **Raspberry Pi OS Lite (64-bit)**.
 2. Click the gear / **Edit Settings** *before* writing and set:
-   - **Hostname** (e.g. `docent-living-room`)
+   - **Hostname** (e.g. `docent-living-room`) — also becomes your address: `docent-living-room.local`.
    - **Enable SSH** (password or public key)
    - **Username + password** (your one-time login to run the installer)
-   - **Wi-Fi SSID + password + country** (so it joins headless)
+   - ⚠️ **Wi-Fi SSID + password + country** — **the single most important step.** This is the
+     **only** place Wi-Fi gets configured; it is *not* on the boot partition and cannot be fixed
+     later without a keyboard+monitor. If you skip it, the Pi boots dark and silent.
    - **Locale / timezone**
 3. Write the card and boot the Pi — no keyboard or monitor required.
 4. *(Optional, and required to pre-enable all-in-one)* drop a `screen-docent.conf`
    onto the boot partition now.
 5. `ssh <user>@<hostname>.local`, then follow **Install** below.
+
+> **Finding the box on your network (no IP hunting):** because you set a Hostname in step 2, you reach
+> it by name — SSH as `<hostname>.local`, and (for all-in-one) open the admin at
+> **`http://<hostname>.local:8000/admin`** (e.g. `http://docent-living-room.local:8000/admin`). The
+> installer makes sure the `avahi-daemon` (mDNS) that powers `.local` is running. If your client
+> doesn't do mDNS (some Android devices), find the Pi's DHCP address in your router's client list, or
+> run `ping <hostname>.local` from a Mac/PC to resolve it.
+
+> **Troubleshooting — Pi booted dark / `ssh …local` won't resolve:** almost always the Wi-Fi step (2)
+> was missed or mistyped. Re-flash with **Edit Settings**, or attach a keyboard + monitor and run
+> `sudo nmtui` to join Wi-Fi. (The kiosk also shows nothing until it can reach its server.)
 
 ## Install
 
