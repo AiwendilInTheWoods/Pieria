@@ -14,6 +14,7 @@
 *   **🎨 Advanced Rendering:** Choose between cinematic Ken Burns pans, static user-defined crops, or blurred matte effects.
 *   **⚖️ Hierarchical Config:** Precise control via URL parameters that override playlist and global defaults.
 *   **🔒 Human-in-the-Loop:** A dedicated Review Queue to audit and refine AI-generated content before it goes live to your screens.
+*   **🔌 Bring Your Own Model:** Configure the AI engine from the GUI — Google Gemini, OpenAI, Anthropic, OpenRouter (one-click sign-in), or a local Ollama/LM Studio server — all through one OpenAI-compatible backend. No code edits, validated live before saving.
 *   **💾 Persistent & Safe:** SQLite-backed state with automatic migrations and Docker volume persistence.
 
 ## 🚀 Quickstart Deployment
@@ -24,10 +25,16 @@ The fastest way to get Screen Docent running is using Docker.
 *   [Docker](https://docs.docker.com/get-docker/)
 *   [Docker Compose](https://docs.docker.com/compose/install/)
 
-### 2. Configure Environment
-Create a `.env` file in the project root:
+### 2. Configure a Model
+You can connect a model entirely from the UI — no file editing required. After launching, open
+**Admin → ⚙ Settings → 🧠 AI Engine**, pick a provider (Google Gemini, OpenAI, Anthropic, OpenRouter,
+or a local Ollama/LM Studio server), paste a key (or **Sign in with OpenRouter** for one-click setup),
+and click **Test & Save**. The key is validated live before it's stored and takes effect within seconds.
+
+Optionally, seed a default Gemini key before first run with a `.env` file in the project root (the UI
+overrides it when set):
 ```bash
-# Get your free key at https://aistudio.google.com/
+# Optional fallback — get a free key at https://aistudio.google.com/apikey
 GEMINI_API_KEY=your_api_key_here
 ```
 

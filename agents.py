@@ -3,25 +3,20 @@ AI Agents for Artwork Analysis using Gemini API.
 Phase 3: Automated Metadata Generation with Image Optimization.
 """
 
-import os
 import json
+import asyncio
 import logging
-import io
-import google.generativeai as genai
 from sqlalchemy.orm import Session
 from pathlib import Path
 from PIL import Image
 
+import ai_client
 from models import ArtworkModel
 
 # Increase Pillow limit for high-res artwork
-Image.MAX_IMAGE_PIXELS = 200000000 
+Image.MAX_IMAGE_PIXELS = 200000000
 
 logger = logging.getLogger("artwork-display-api.agents")
-
-# Configure Gemini API
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=GEMINI_API_KEY)
 
 async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
     """
@@ -42,21 +37,8 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
     clean_filename = Path(artwork.filename).stem.replace("_", " ").replace("-", " ")
 
     try:
-        model = genai.GenerativeModel('gemini-2.5-flash')
-        
-        # Optimization: Resize for AI processing (max 2048px)
-        with Image.open(image_path) as img:
-            if img.mode in ("RGBA", "P"): img = img.convert("RGB")
-            img.thumbnail((2048, 2048), Image.Resampling.LANCZOS)
-            
-            img_byte_arr = io.BytesIO()
-            img.save(img_byte_arr, format='JPEG', quality=85)
-            optimized_bytes = img_byte_arr.getvalue()
-
-        image_data = {
-            'mime_type': 'image/jpeg',
-            'data': optimized_bytes
-        }
+        # Optimization: Resize for AI processing (max 2048px) handled by ai_client.image_part.
+        image_data = ai_client.image_part(str(image_path))
 
         system_instruction = (
             "You are a strict, factual museum curator. I am providing an image. "
@@ -78,12 +60,14 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
             "and season if applicable)."
         )
 
-        response = model.generate_content(
-            [system_instruction, image_data],
-            generation_config={"response_mime_type": "application/json"}
+        response_text = await asyncio.to_thread(
+            ai_client.chat,
+            "vision",
+            [{"role": "user", "content": [ai_client.text_part(system_instruction), image_data]}],
+            json_mode=True,
         )
 
-        metadata = json.loads(response.text)
+        metadata = ai_client.parse_json(response_text)
         logger.info(f"[AI Agent] Metadata generated for {artwork.filename}")
 
         artwork.title = metadata.get('title', 'Untitled')

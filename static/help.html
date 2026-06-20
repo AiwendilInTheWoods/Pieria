@@ -145,11 +145,22 @@ docker compose up -d --build</code></pre>
             <h2>AI Curator Agent & Review Workflow</h2>
             <p>The engine features an autonomous AI pipeline that acts as a digital curator, analyzing your artwork and generating high-quality metadata for the "Museum Placard" display.</p>
 
-            <h3>The .env File & API Keys</h3>
-            <p>Before running the system via Docker, you must create a <code>.env</code> file in the project root to store your credentials. This file is ignored by version control to keep your keys secure.</p>
-            <pre><code># Required for the AI Curator Agent
+            <h3>Connecting a Model — the AI Engine panel</h3>
+            <p>The easiest way to plug in a model is right in the app: open <strong>Admin → ⚙ Settings → 🧠 AI Engine</strong>. Pick a provider, paste an API key (or sign in), choose a model, and click <strong>Test &amp; Save</strong>. The key is validated against the live provider before it's stored, and changes take effect within seconds — no file editing, no rebuild.</p>
+            <ul>
+                <li><strong>Google Gemini</strong> — free tier is plenty for personal use. <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent-color);">Get a key →</a></li>
+                <li><strong>OpenAI</strong> (GPT-4o family) and <strong>Anthropic</strong> (Claude) — paste your provider key.</li>
+                <li><strong>OpenRouter</strong> — click <strong>Sign in with OpenRouter</strong> for one-click setup (no key to copy), then reach every major model through a single account.</li>
+                <li><strong>Local / Ollama / LM Studio</strong> — point the Base URL at your own OpenAI-compatible server (inside Docker, use <code>host.docker.internal</code> instead of <code>localhost</code>); no key needed.</li>
+            </ul>
+            <div class="tip">
+                <strong>How it works:</strong> every provider is reached through one OpenAI-compatible endpoint, so configuration is just <em>base URL + key + model</em>. The <strong>Advanced</strong> section lets you use a separate (cheaper/faster) model for search classification, override the Base URL, or set a temperature.
+            </div>
+
+            <h3>Alternative: the .env file</h3>
+            <p>If you prefer, you can seed a default key before first run with a <code>.env</code> file in the project root (ignored by version control). The AI Engine panel always overrides this when set.</p>
+            <pre><code># Optional fallback for the AI Curator Agent
 GEMINI_API_KEY=your_free_key_here</code></pre>
-            <p><strong>Get a Key:</strong> You can obtain a free API key from <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-color);">Google AI Studio</a>. The free tier is more than sufficient for standard personal use.</p>
 
             <h3>The AI Curator Pipeline</h3>
             <p>When you upload an image via the Admin Dashboard, the following automated workflow is triggered in the background:</p>
@@ -177,8 +188,8 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
             </div>
 
             <div class="tip">
-                <strong>Developer Note: Swapping Models</strong><br>
-                While the system uses Gemini by default for its high performance-to-cost ratio, the backend is designed to be modular. Advanced users can swap to <strong>OpenAI (GPT-4o)</strong>, <strong>Anthropic (Claude)</strong>, or local models by modifying the <code>agents.py</code> logic and adding the respective API keys to your <code>.env</code> file.
+                <strong>Swapping Models</strong><br>
+                Gemini is the default for its high performance-to-cost ratio, but you can switch to <strong>OpenAI (GPT-4o)</strong>, <strong>Anthropic (Claude)</strong>, <strong>OpenRouter</strong>, or a <strong>local model</strong> at any time from <strong>⚙ Settings → 🧠 AI Engine</strong> — no code changes required. All enrichment and search calls follow the model you select.
             </div>
         </section>
 

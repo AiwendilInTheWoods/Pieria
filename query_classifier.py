@@ -7,10 +7,10 @@ Hybrid approach: local dictionary lookup first, Gemini Flash fallback for ambigu
 """
 
 import logging
-import os
-import json
 from dataclasses import dataclass, field
 from typing import Optional
+
+import ai_client
 
 logger = logging.getLogger("artwork-display-api.classifier")
 
@@ -328,23 +328,7 @@ class QueryClassifier:
     """
 
     def __init__(self):
-        self._genai_model = None
-
-    def _get_genai_model(self):
-        """Lazy-load the Gemini model only when needed."""
-        if self._genai_model is None:
-            try:
-                import google.generativeai as genai
-                api_key = os.getenv("GEMINI_API_KEY")
-                if api_key:
-                    genai.configure(api_key=api_key)
-                    self._genai_model = genai.GenerativeModel('gemini-2.0-flash')
-                    logger.info("[Classifier] Gemini Flash model loaded for fallback classification.")
-                else:
-                    logger.warning("[Classifier] No GEMINI_API_KEY found. AI fallback disabled.")
-            except Exception as e:
-                logger.warning(f"[Classifier] Failed to load Gemini model: {e}")
-        return self._genai_model
+        pass
 
     def classify(self, query: str) -> SearchIntent:
         """
@@ -406,9 +390,9 @@ class QueryClassifier:
         )
 
     def _classify_with_ai(self, query: str) -> Optional[SearchIntent]:
-        """Use Gemini Flash to classify an ambiguous query."""
-        model = self._get_genai_model()
-        if not model:
+        """Use the configured fast model to classify an ambiguous query."""
+        if not ai_client.get_ai_config().get("configured"):
+            logger.warning("[Classifier] No AI model configured. AI fallback disabled.")
             return None
 
         prompt = f"""Classify this art search query for a museum collection search system.
@@ -427,18 +411,12 @@ Query: "oil on canvas landscapes" → {{"type": "freetext", "canonical_name": "o
 Query: "art nouveau" → {{"type": "genre", "canonical_name": "Art Nouveau", "related_terms": ["Mucha", "decorative arts", "Jugendstil"], "era_hint": "Art Nouveau"}}
 """
         try:
-            response = model.generate_content(prompt)
-            text = response.text.strip()
-            # Strip markdown fences if present
-            if text.startswith("```"):
-                text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-                if text.endswith("```"):
-                    text = text[:-3]
-                text = text.strip()
-                if text.startswith("json"):
-                    text = text[4:].strip()
-
-            data = json.loads(text)
+            response_text = ai_client.chat(
+                "fast",
+                [{"role": "user", "content": prompt}],
+                json_mode=True,
+            )
+            data = ai_client.parse_json(response_text)
             intent_type = data.get("type", "freetext")
             # Normalize type to our expected values
             if intent_type in ("era", "medium"):

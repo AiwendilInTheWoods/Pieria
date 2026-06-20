@@ -5,20 +5,13 @@ Enriches artwork metadata using Wikipedia context and Gemini.
 
 import logging
 import wikipedia
-import google.generativeai as genai
-import json
-import os
 import asyncio
 from sqlalchemy.orm import Session
-from pathlib import Path
-from PIL import Image
+
+import ai_client
 from models import ArtworkModel
 
 logger = logging.getLogger("artwork-display-api.curator")
-
-# Configure Gemini
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=GEMINI_API_KEY)
 
 async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None):
     """
@@ -42,8 +35,6 @@ async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None
         fact_context = "No additional factual context found."
 
     try:
-        model = genai.GenerativeModel('gemini-2.5-flash')
-        
         prompt = (
             f"You are a strict museum curator performing RAG (Retrieval-Augmented Generation). "
             f"Current Data: Title: {artwork.title}, Agent: {artwork.agent_name}. "
@@ -62,29 +53,24 @@ async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None
             "'description_narrative' (a 2-sentence blurb), and 'tags' (a flat array of descriptive strings)."
         )
 
-        contents = [prompt]
+        content_parts = [ai_client.text_part(prompt)]
         if artwork.filename:
             from config import LIBRARY_DIR
             img_path = LIBRARY_DIR / artwork.filename
             if img_path.exists():
                 try:
-                    import io
-                    with Image.open(img_path) as img:
-                        if img.mode in ("RGBA", "P"): img = img.convert("RGB")
-                        img.thumbnail((2048, 2048), Image.Resampling.LANCZOS)
-                        b_arr = io.BytesIO()
-                        img.save(b_arr, format='JPEG', quality=85)
-                    
-                    contents.append({
-                        'mime_type': 'image/jpeg',
-                        'data': b_arr.getvalue()
-                    })
+                    content_parts.append(ai_client.image_part(str(img_path)))
                     logger.info(f"[RAG Curator] Attached {artwork.filename} to Vision RAG payload.")
                 except Exception as ie:
                     logger.warning(f"[RAG Curator] Image parsing failed: {ie}")
 
-        response = await asyncio.to_thread(model.generate_content, contents, generation_config={"response_mime_type": "application/json"})
-        metadata = json.loads(response.text)
+        response_text = await asyncio.to_thread(
+            ai_client.chat,
+            "vision",
+            [{"role": "user", "content": content_parts}],
+            json_mode=True,
+        )
+        metadata = ai_client.parse_json(response_text)
 
         artwork.title = metadata.get('title', artwork.title)
         artwork.agent_name = metadata.get('agent_name', artwork.agent_name)
