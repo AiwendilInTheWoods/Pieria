@@ -48,6 +48,8 @@ async function init() {
     setupUploadZone();
     setupPlaylistInput(); // Add key listener
     await loadPremiumSettings();
+    await handleOAuthCallback();   // catch an OpenRouter OAuth redirect (?code=…)
+    await loadAiSettings();
 
     // Restore the view the user was last on (survives a browser refresh).
     const savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
@@ -1150,4 +1152,205 @@ function unlockPremiumScout(source, name) {
     newCb.style.cssText = "display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;";
     newCb.innerHTML = `<input type="checkbox" name="scout-source" value="${source}" checked style="width: auto; margin: 0;"> ${name}`;
     scoutsContainer.appendChild(newCb);
+}
+
+// -----------------------------------------------------------------------------
+// AI Engine (model provider configuration)
+// -----------------------------------------------------------------------------
+let aiPresets = {};
+
+function _setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v || ''; }
+
+async function loadAiSettings() {
+    try {
+        const resp = await fetch(`${API_BASE}/api/settings/ai`);
+        const cfg = await resp.json();
+        aiPresets = cfg.presets || {};
+
+        const provSel = document.getElementById('ai-provider');
+        if (!provSel) return; // panel not present
+        provSel.innerHTML = '';
+        Object.entries(aiPresets).forEach(([key, p]) => {
+            const opt = document.createElement('option');
+            opt.value = key; opt.textContent = p.label;
+            provSel.appendChild(opt);
+        });
+        provSel.value = (cfg.provider in aiPresets) ? cfg.provider : 'gemini';
+
+        renderAiModels(provSel.value, cfg.model);
+        _setVal('ai-base-url', cfg.base_url);
+        _setVal('ai-model-fast', cfg.model_fast);
+        _setVal('ai-temp', cfg.temperature);
+        applyProviderUI(provSel.value);
+
+        const status = document.getElementById('ai-status');
+        if (status) {
+            if (cfg.has_key) {
+                const src = cfg.key_source === 'env' ? ' (key from environment)' : '';
+                const label = aiPresets[cfg.provider] ? aiPresets[cfg.provider].label : cfg.provider;
+                status.innerHTML = `✓ Connected — <strong>${label}</strong> · ${cfg.model || '(default model)'}${src}`;
+                status.style.color = '#34d399';
+            } else {
+                status.textContent = '⚠ No model configured yet — enrichment & smart search are disabled until you set one.';
+                status.style.color = '#f59e0b';
+            }
+        }
+    } catch (e) {
+        console.error('Failed to load AI settings:', e);
+    }
+}
+
+function renderAiModels(provider, selected) {
+    const sel = document.getElementById('ai-model');
+    if (!sel) return;
+    const models = (aiPresets[provider] && aiPresets[provider].models) || [];
+    sel.innerHTML = '';
+    models.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m; opt.textContent = m;
+        sel.appendChild(opt);
+    });
+    const customOpt = document.createElement('option');
+    customOpt.value = '__custom__'; customOpt.textContent = 'Custom…';
+    sel.appendChild(customOpt);
+
+    if (selected && models.includes(selected)) {
+        sel.value = selected;
+        toggleCustomModel(false);
+    } else if (selected) {
+        sel.value = '__custom__';
+        toggleCustomModel(true, selected);
+    } else {
+        sel.selectedIndex = 0;
+        toggleCustomModel(sel.value === '__custom__');
+    }
+}
+
+function toggleCustomModel(show, val) {
+    const inp = document.getElementById('ai-model-custom');
+    if (!inp) return;
+    inp.style.display = show ? 'block' : 'none';
+    if (val !== undefined) inp.value = val || '';
+}
+
+function onAiModelChange() {
+    const sel = document.getElementById('ai-model');
+    toggleCustomModel(sel.value === '__custom__');
+}
+
+function applyProviderUI(provider) {
+    const p = aiPresets[provider] || {};
+    const keyRow = document.getElementById('ai-key-row');
+    const oauthRow = document.getElementById('ai-oauth-row');
+    const link = document.getElementById('ai-key-link');
+    if (keyRow) keyRow.style.display = p.oauth ? 'none' : 'block';
+    if (oauthRow) oauthRow.style.display = p.oauth ? 'block' : 'none';
+    if (link) {
+        if (p.key_url) { link.style.display = 'inline'; link.href = p.key_url; }
+        else { link.style.display = 'none'; }
+    }
+}
+
+function onAiProviderChange() {
+    const provider = document.getElementById('ai-provider').value;
+    renderAiModels(provider, null);
+    const base = document.getElementById('ai-base-url');
+    if (base) base.value = (aiPresets[provider] && aiPresets[provider].base_url) || '';
+    applyProviderUI(provider);
+}
+
+function currentAiModel() {
+    const sel = document.getElementById('ai-model');
+    if (sel.value === '__custom__') return document.getElementById('ai-model-custom').value.trim();
+    return sel.value;
+}
+
+async function saveAiSettings() {
+    const provider = document.getElementById('ai-provider').value;
+    const model = currentAiModel();
+    const result = document.getElementById('ai-save-result');
+    const btn = document.getElementById('ai-save-btn');
+    if (!model) { result.textContent = 'Please choose or enter a model.'; result.style.color = '#f59e0b'; return; }
+
+    const payload = {
+        provider,
+        api_key: document.getElementById('ai-key').value.trim(),
+        model,
+        model_fast: document.getElementById('ai-model-fast').value.trim(),
+        base_url: document.getElementById('ai-base-url').value.trim(),
+        temperature: document.getElementById('ai-temp').value.trim()
+    };
+
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = '⏳ Testing…'; result.textContent = '';
+    try {
+        const resp = await fetch(`${API_BASE}/api/settings/ai`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            result.textContent = '✗ ' + (data.detail || 'Save failed');
+            result.style.color = '#ef4444';
+        } else {
+            result.textContent = '✓ Saved & verified';
+            result.style.color = '#34d399';
+            document.getElementById('ai-key').value = '';
+            await loadAiSettings();
+        }
+    } catch (e) {
+        result.textContent = '✗ Network error';
+        result.style.color = '#ef4444';
+    } finally {
+        btn.disabled = false; btn.textContent = orig;
+    }
+}
+
+// --- OpenRouter OAuth (PKCE) ---
+function _b64url(bytes) {
+    return btoa(String.fromCharCode(...new Uint8Array(bytes)))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function _randomVerifier() {
+    const arr = new Uint8Array(48);
+    crypto.getRandomValues(arr);
+    return _b64url(arr);
+}
+async function _pkceChallenge(verifier) {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+    return _b64url(digest);
+}
+async function startOpenRouterOAuth() {
+    try {
+        const verifier = _randomVerifier();
+        const challenge = await _pkceChallenge(verifier);
+        sessionStorage.setItem('sd_or_verifier', verifier);
+        try { localStorage.setItem('sd_admin_view', 'settings'); } catch (e) {}
+        const callback = window.location.origin + window.location.pathname;
+        const resp = await fetch(`${API_BASE}/api/settings/ai/oauth/start?callback_url=${encodeURIComponent(callback)}&challenge=${encodeURIComponent(challenge)}`);
+        const data = await resp.json();
+        window.location.href = data.auth_url;
+    } catch (e) {
+        alert('Could not start OpenRouter sign-in: ' + e);
+    }
+}
+async function handleOAuthCallback() {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (!code) return;
+    const verifier = sessionStorage.getItem('sd_or_verifier');
+    history.replaceState({}, document.title, window.location.pathname); // strip ?code= from URL
+    if (!verifier) return;
+    try {
+        const resp = await fetch(`${API_BASE}/api/settings/ai/oauth/exchange`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code, verifier })
+        });
+        const data = await resp.json();
+        if (resp.ok) alert('✓ Connected to OpenRouter!');
+        else alert('OpenRouter sign-in failed: ' + (data.detail || 'unknown error'));
+    } catch (e) {
+        alert('OpenRouter exchange error: ' + e);
+    } finally {
+        sessionStorage.removeItem('sd_or_verifier');
+    }
 }

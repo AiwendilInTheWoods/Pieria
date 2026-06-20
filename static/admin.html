@@ -362,6 +362,66 @@
             <h2 style="color: var(--accent-color); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1rem; margin-bottom: 30px;">Settings & Maintenance</h2>
             
             <div style="display: flex; flex-direction: column; gap: 20px; max-width: 700px;">
+                <!-- AI Engine -->
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">🧠 AI Engine</h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 18px;">
+                        The model that powers artwork enrichment and smart search. Pick a provider, paste a key
+                        (or sign in), then Test &amp; Save.
+                        <span id="ai-status" style="display:block; margin-top:8px; color:#94a3b8;"></span>
+                    </p>
+
+                    <div style="display:grid; gap:14px;">
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.8rem; color:#94a3b8;">Provider</label>
+                            <select id="ai-provider" onchange="onAiProviderChange()" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem;"></select>
+                        </div>
+
+                        <div id="ai-key-row">
+                            <label style="display:block; margin-bottom:6px; font-size:0.8rem; color:#94a3b8;">
+                                API Key
+                                <a id="ai-key-link" href="#" target="_blank" rel="noopener" style="margin-left:8px; font-size:0.72rem; color:var(--accent-color);">Get a key →</a>
+                            </label>
+                            <input type="password" id="ai-key" autocomplete="off" placeholder="Paste your API key (leave blank to keep the saved one)" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem;">
+                        </div>
+
+                        <div id="ai-oauth-row" style="display:none;">
+                            <button class="primary" onclick="startOpenRouterOAuth()" style="padding:12px 20px; font-weight:600;">🔐 Sign in with OpenRouter</button>
+                            <span style="font-size:0.72rem; color:#94a3b8; margin-left:10px;">One click — no key to copy. You'll be returned here.</span>
+                        </div>
+
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.8rem; color:#94a3b8;">Model</label>
+                            <select id="ai-model" onchange="onAiModelChange()" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem;"></select>
+                            <input type="text" id="ai-model-custom" placeholder="Enter a custom model ID…" style="display:none; margin-top:8px; width:100%; box-sizing:border-box; background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem;">
+                        </div>
+
+                        <details style="border:1px solid var(--border-color); border-radius:8px; padding:10px 14px; background:#0f172a;">
+                            <summary style="cursor:pointer; font-size:0.8rem; color:#94a3b8;">Advanced</summary>
+                            <div style="display:grid; gap:14px; margin-top:14px;">
+                                <div>
+                                    <label style="display:block; margin-bottom:6px; font-size:0.78rem; color:#94a3b8;">Fast classification model <span style="opacity:0.6;">(optional — blank uses the model above)</span></label>
+                                    <input type="text" id="ai-model-fast" placeholder="e.g. gemini-2.0-flash" style="width:100%; box-sizing:border-box; background:#111c34; border:1px solid var(--border-color); color:white; padding:9px 12px; border-radius:6px; font-size:0.82rem;">
+                                </div>
+                                <div>
+                                    <label style="display:block; margin-bottom:6px; font-size:0.78rem; color:#94a3b8;">Base URL <span style="opacity:0.6;">(OpenAI-compatible endpoint)</span></label>
+                                    <input type="text" id="ai-base-url" placeholder="https://…/v1" style="width:100%; box-sizing:border-box; background:#111c34; border:1px solid var(--border-color); color:white; padding:9px 12px; border-radius:6px; font-size:0.82rem;">
+                                    <span style="display:block; margin-top:6px; font-size:0.7rem; color:#64748b;">Local servers: inside Docker, use <code>host.docker.internal</code> instead of <code>localhost</code>.</span>
+                                </div>
+                                <div>
+                                    <label style="display:block; margin-bottom:6px; font-size:0.78rem; color:#94a3b8;">Temperature <span style="opacity:0.6;">(optional)</span></label>
+                                    <input type="text" id="ai-temp" placeholder="e.g. 0.4" style="width:120px; box-sizing:border-box; background:#111c34; border:1px solid var(--border-color); color:white; padding:9px 12px; border-radius:6px; font-size:0.82rem;">
+                                </div>
+                            </div>
+                        </details>
+
+                        <div style="display:flex; align-items:center; gap:14px;">
+                            <button class="primary" id="ai-save-btn" onclick="saveAiSettings()" style="padding:12px 22px; font-weight:600;">Test &amp; Save</button>
+                            <span id="ai-save-result" style="font-size:0.8rem;"></span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Discovery Maintenance -->
                 <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
                     <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">Discovery Queue Maintenance</h3>
@@ -420,6 +480,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260618"></script>
+    <script src="admin.js?v=20260620"></script>
 </body>
 </html>

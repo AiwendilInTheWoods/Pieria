@@ -99,6 +99,7 @@ _result_ranker = ResultRanker()
 
 from config import ARTWORK_ROOT, LIBRARY_DIR
 from epaper import render_for_epaper, PALETTES, VALID_FORMATS, media_type_for
+import ai_client
 
 @lru_cache(maxsize=256)
 def get_optimized_image(image_path: Path, size: tuple, quality: int = 85) -> bytes:
@@ -1209,6 +1210,140 @@ async def verify_and_save_api_key(source: str, payload: dict, db: Session = Depe
         db.add(setting)
     db.commit()
     return {"status": "success", "source": source}
+
+# -----------------------------------------------------------------------------
+# 4.6 AI Engine (model provider configuration)
+# -----------------------------------------------------------------------------
+def _upsert_setting(db: Session, key: str, value: str):
+    row = db.query(SettingsModel).filter(SettingsModel.setting_key == key).first()
+    if row:
+        row.setting_value = value
+    else:
+        db.add(SettingsModel(setting_key=key, setting_value=value))
+
+@app.get("/api/settings/ai")
+async def get_ai_settings(db: Session = Depends(get_db)):
+    """Returns the current AI engine config (never the raw key) + provider presets for the UI."""
+    rows = {
+        s.setting_key: s.setting_value
+        for s in db.query(SettingsModel)
+        .filter(SettingsModel.setting_key.in_(ai_client.AI_SETTING_KEYS))
+        .all()
+    }
+    cfg = ai_client.get_ai_config(force=True)
+    return {
+        "provider": rows.get("ai_provider", ai_client.DEFAULT_PROVIDER),
+        "base_url": rows.get("ai_base_url", ""),
+        "model": rows.get("ai_model", ""),
+        "model_fast": rows.get("ai_model_fast", ""),
+        "temperature": rows.get("ai_temperature", ""),
+        "has_key": cfg["configured"],
+        "key_source": "db" if rows.get("ai_api_key") else ("env" if cfg["configured"] else "none"),
+        "presets": {
+            k: {
+                "label": v["label"],
+                "base_url": v["base_url"],
+                "models": v["models"],
+                "oauth": v.get("oauth", False),
+                "key_optional": v.get("key_optional", False),
+                "key_url": v.get("key_url", ""),
+            }
+            for k, v in ai_client.PRESETS.items()
+        },
+    }
+
+class AISettingsPayload(BaseModel):
+    model_config = {"protected_namespaces": ()}  # allow "model"/"model_fast" field names
+    provider: str
+    base_url: Optional[str] = ""
+    api_key: Optional[str] = None  # blank/omitted ⇒ keep the existing stored key
+    model: str
+    model_fast: Optional[str] = ""
+    temperature: Optional[str] = ""
+
+@app.post("/api/settings/ai")
+async def save_ai_settings(payload: AISettingsPayload, db: Session = Depends(get_db)):
+    """Validates a candidate AI config against the live endpoint, then persists it."""
+    provider = payload.provider
+    if provider not in ai_client.PRESETS:
+        raise HTTPException(400, f"Unknown provider: {provider}")
+    if not payload.model:
+        raise HTTPException(400, "A model name is required.")
+
+    base_url = (payload.base_url or ai_client.PRESETS[provider]["base_url"]).rstrip("/")
+    existing = db.query(SettingsModel).filter(SettingsModel.setting_key == "ai_api_key").first()
+    api_key = (
+        (payload.api_key or "").strip()
+        or (existing.setting_value if existing else "")
+        or os.getenv("GEMINI_API_KEY", "")
+    )
+    key_optional = ai_client.PRESETS[provider].get("key_optional", False)
+    if not api_key and not key_optional:
+        raise HTTPException(400, "An API key is required for this provider.")
+
+    # Validate against the live endpoint before persisting (mirrors the museum-key flow).
+    try:
+        await asyncio.to_thread(ai_client.validate_config, provider, base_url, api_key, payload.model)
+    except Exception as e:
+        raise HTTPException(401, detail=f"Validation failed: {str(e)}")
+
+    _upsert_setting(db, "ai_provider", provider)
+    _upsert_setting(db, "ai_base_url", base_url)
+    if api_key:
+        _upsert_setting(db, "ai_api_key", api_key)
+    _upsert_setting(db, "ai_model", payload.model)
+    _upsert_setting(db, "ai_model_fast", (payload.model_fast or "").strip())
+    _upsert_setting(db, "ai_temperature", (payload.temperature or "").strip())
+    db.commit()
+    ai_client.invalidate_config_cache()
+    return {"status": "success", "provider": provider, "model": payload.model}
+
+@app.get("/api/settings/ai/oauth/start")
+async def ai_oauth_start(callback_url: str, challenge: str):
+    """Assembles the OpenRouter authorization URL (PKCE). The client holds the code_verifier."""
+    from urllib.parse import urlencode
+    params = urlencode({
+        "callback_url": callback_url,
+        "code_challenge": challenge,
+        "code_challenge_method": "S256",
+    })
+    return {"auth_url": f"https://openrouter.ai/auth?{params}"}
+
+class OAuthExchangePayload(BaseModel):
+    code: str
+    verifier: str
+
+@app.post("/api/settings/ai/oauth/exchange")
+async def ai_oauth_exchange(payload: OAuthExchangePayload, db: Session = Depends(get_db)):
+    """Exchanges an OpenRouter auth code (+ PKCE verifier) for an API key and saves it."""
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                "https://openrouter.ai/api/v1/auth/keys",
+                json={
+                    "code": payload.code,
+                    "code_verifier": payload.verifier,
+                    "code_challenge_method": "S256",
+                },
+                timeout=20,
+            )
+        if resp.status_code != 200:
+            raise Exception(resp.text[:200])
+        key = resp.json().get("key")
+        if not key:
+            raise Exception("No key returned by OpenRouter.")
+    except Exception as e:
+        raise HTTPException(401, detail=f"OAuth exchange failed: {str(e)}")
+
+    provider = "openrouter"
+    _upsert_setting(db, "ai_provider", provider)
+    _upsert_setting(db, "ai_base_url", ai_client.PRESETS[provider]["base_url"])
+    _upsert_setting(db, "ai_api_key", key)
+    if not db.query(SettingsModel).filter(SettingsModel.setting_key == "ai_model").first():
+        _upsert_setting(db, "ai_model", ai_client.PRESETS[provider]["models"][0])
+    db.commit()
+    ai_client.invalidate_config_cache()
+    return {"status": "success", "provider": provider}
 
 # -----------------------------------------------------------------------------
 # 5. Static File Serving
