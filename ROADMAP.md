@@ -88,13 +88,21 @@ trust.
   `http://<server>/?display=<id>`, launched by a systemd unit, with screen-blanking/DPMS disabled.
   On an OS we control, the existing `<video>` sleep-defeater (`static/index.html:13`) becomes
   unnecessary. A generic Debian / stick-PC recipe is a natural follow-on.
-- **All-in-one variant (single-frame customer) — in scope for Track A.** The same image *also*
-  runs the FastAPI server via the existing `docker-compose.yml` (which exposes port `8000` and
-  persists `./Artwork` and `./data`), so one box = server + display. Plug into HDMI, done. Power
-  users keep a separate multi-display server untouched.
+- **Display-only (client) mode is the primary, production path — not just a first cut.** Validated
+  against a real install (Samsung QM55R 4K signage): a thin-client Pi runs *only* the Chromium kiosk
+  (~5–7 W — cool and small enough to tuck into the panel's shallow rear recess) and points at the
+  central server (e.g. the MS-01). The display device never runs the server. This is what most
+  installs actually want.
+- **All-in-one variant (single-frame customer) — secondary / optional.** For users *without* a
+  separate server, the same image *can also* run the FastAPI server via the existing
+  `docker-compose.yml` (port `8000`, persisting `./Artwork` and `./data`), so one box = server +
+  display. Nice for the product story, but **not required** when a central server already exists
+  (the common case).
 - This removes **both** pain points at once and is the most direct expression of "easiest app for
   the purpose." It changes **no application code** — it's packaging/ops around the current client
   (`app.py`, `static/app.js`, and the data model in `models.py` are untouched).
+- **Status:** built — display-only **and** all-in-one provisioning are in
+  [`deploy/appliance/`](deploy/appliance/README.md) (a pre-baked flashable `.img` is still TODO).
 
 ### Track B — e-ink / low-power / battery frames: become the brain (FOLLOWS)
 
@@ -119,6 +127,12 @@ Docent's curation **without a browser, WebSocket, or kiosk shell.**
   can double as a TRMNL BYOS backend, so a shipping commercial device validates the design, not just
   DIY rigs. The DIY ESP32 + Waveshare world uses the same "fetch a BMP/bitmap over HTTP" pattern
   (often with server-side Floyd–Steinberg dithering already).
+- **Bonus — rescues old / limited built-in browsers.** Some smart displays have a built-in browser
+  that's too old to render the JS Canvas app but can still show a *plain image*. Confirmed case: the
+  Samsung QMR's Tizen MagicINFO **URL Launcher** fails on the app (the reason the Fire TV + Fully
+  Kiosk detour happened) yet could point at this endpoint — with a small meta-refresh wrapper or the
+  panel's own content scheduler for rotation — and show art with **no external box**. So this track
+  also reaches *locked-but-image-capable* panels, not only e-ink frames.
 - **"Looks good on e-ink" as a real feature**, not a checkbox: gamut mapping, contrast/brightness
   pre-boost, per-panel dither tuning. This is a genuine differentiator and a place the existing
   Pillow/Gemini pipeline helps.

@@ -1,0 +1,13 @@
+# Screen Docent — appliance all-in-one compose override.
+#
+# Merged on top of the repo's root docker-compose.yml:
+#   docker compose -f docker-compose.yml \
+#                  -f deploy/appliance/compose/docker-compose.appliance.yml up -d
+#
+# The shipped image's CMD runs Uvicorn with 4 workers (tuned for the MS-01).
+# On a Pi that shares RAM with the Chromium kiosk, override it down to 2 so the
+# server and the display coexist comfortably. Everything else (ports, volumes,
+# env_file, restart policy) is inherited from the base file.
+services:
+  art-curator:
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
