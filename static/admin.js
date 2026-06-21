@@ -225,6 +225,12 @@ function promptModal(message, opts = {}) { return _buildModal({ message, input: 
 window.confirmModal = confirmModal;
 window.promptModal = promptModal;
 
+// Trim a raw ISO timestamp (e.g. 2017-12-08T00:00:00Z) to a readable date for the editable field.
+function _fmtDate(v) {
+    if (!v) return '';
+    return String(v).replace(/T\d{2}:\d{2}:\d{2}\S*$/, '');
+}
+
 // Surface the address other devices should use to reach this server. We echo the
 // origin the admin was actually reached on (so LAN-IP / <host>.local just work), and
 // warn when it's localhost (which other devices can't reach). This avoids reporting a
@@ -1035,7 +1041,7 @@ function renderReviewQueue(artworks) {
                     <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
                     <div class="form-group"><label>Agent/Artist</label><input type="text" id="agent-${art.id}" value="${art.agent_name || ''}"></div>
                     <div class="form-group"><label>Role</label><input type="text" id="role-${art.id}" value="${art.agent_role || ''}"></div>
-                    <div class="form-group"><label>Date/Year</label><input type="text" id="date-${art.id}" value="${art.creation_date || ''}"></div>
+                    <div class="form-group"><label>Date/Year</label><input type="text" id="date-${art.id}" value="${_fmtDate(art.creation_date)}"></div>
                     <div class="form-group"><label>Context</label><input type="text" id="context-${art.id}" value="${art.cultural_context || ''}"></div>
                     <div class="form-group"><label>Medium</label><input type="text" id="medium-${art.id}" value="${art.medium || ''}"></div>
                     <div class="form-group"><label>Display Date</label><input type="text" id="date-display-${art.id}" value="${art.date_display || ''}"></div>
@@ -1100,7 +1106,7 @@ function regenerateArtworkMetadata(id) {
             document.getElementById(`title-${id}`).value = updatedArt.title || '';
             document.getElementById(`agent-${id}`).value = updatedArt.agent_name || '';
             document.getElementById(`role-${id}`).value = updatedArt.agent_role || '';
-            document.getElementById(`date-${id}`).value = updatedArt.creation_date || '';
+            document.getElementById(`date-${id}`).value = _fmtDate(updatedArt.creation_date);
             document.getElementById(`context-${id}`).value = updatedArt.cultural_context || '';
             document.getElementById(`medium-${id}`).value = updatedArt.medium || '';
             document.getElementById(`date-display-${id}`).value = updatedArt.date_display || '';

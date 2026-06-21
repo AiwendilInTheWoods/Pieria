@@ -6,6 +6,7 @@ Phase 4: Targeted WebSocket Routing for Multiple Displays.
 
 import asyncio
 import fcntl
+import html
 import io
 import json
 import logging
@@ -34,7 +35,7 @@ from fastapi import (
     WebSocketDisconnect,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 from pydantic import BaseModel
@@ -840,6 +841,50 @@ async def get_artwork_preview(artwork_id: int, db: Session = Depends(get_db)):
     if not art: raise HTTPException(404)
     path = LIBRARY_DIR / art.filename
     return Response(content=get_optimized_image(path, (1920, 1080), quality=85), media_type="image/jpeg")
+
+@app.get("/art/{artwork_id}", response_class=HTMLResponse)
+async def artwork_detail_page(artwork_id: int, db: Session = Depends(get_db)):
+    """Server-hosted 'Learn More' page the placard QR points at — works offline (no Google hand-off)."""
+    art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
+    if not art:
+        return HTMLResponse("<body style='font-family:sans-serif;background:#0b1020;color:#e2e8f0;padding:40px'>"
+                            "<h1>Artwork not found</h1></body>", status_code=404)
+    e = html.escape
+    title = e(art.title or "Untitled")
+    role = e(art.agent_role) if art.agent_role and art.agent_role != "Artist" else ""
+    date = e(art.date_display or art.creation_date or "")
+    artist_line = e(art.agent_name or "Unknown artist") + (f" · {role}" if role else "") + (f" · {date}" if date else "")
+    meta_bits = " · ".join(b for b in [e(art.cultural_context or ""), e(art.medium or "")] if b)
+    desc = e(art.description_narrative or "")
+    tag_html = "".join(f"<span class=tag>{e(t.strip())}</span>" for t in (art.tags or "").split(",") if t.strip())
+    source = (f"<a class=source href='{e(art.source_url)}' target=_blank rel=noopener>View original source ↗</a>"
+              if art.source_url else "")
+    return HTMLResponse(f"""<!DOCTYPE html><html lang=en><head>
+<meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1">
+<title>{title} — Screen Docent</title><style>
+ :root {{ color-scheme: dark; }}
+ body {{ margin:0; background:#0b1020; color:#e2e8f0; font-family:'Inter',system-ui,-apple-system,sans-serif; line-height:1.6; }}
+ .wrap {{ max-width:760px; margin:0 auto; padding:24px 20px 60px; }}
+ img.hero {{ width:100%; border-radius:14px; background:#0f172a; display:block; margin-bottom:24px; box-shadow:0 10px 40px rgba(0,0,0,.5); }}
+ h1 {{ font-size:1.8rem; margin:0 0 6px; }}
+ .artist {{ font-size:1.1rem; color:#cbd5e1; margin:0 0 4px; }}
+ .meta {{ color:#94a3b8; font-size:.92rem; margin:0 0 20px; }}
+ .desc {{ font-size:1.02rem; }}
+ .tags {{ margin-top:22px; display:flex; flex-wrap:wrap; gap:8px; }}
+ .tag {{ background:#1e293b; border:1px solid #334155; color:#cbd5e1; padding:4px 12px; border-radius:20px; font-size:.8rem; }}
+ .source {{ display:inline-block; margin-top:24px; color:#3b82f6; text-decoration:none; }}
+ .brand {{ margin-top:40px; color:#475569; font-size:.78rem; display:flex; align-items:center; gap:8px; }}
+ .brand img {{ height:20px; opacity:.7; }}
+</style></head><body><div class=wrap>
+ <img class=hero src="/artworks/{art.id}/preview" alt="{title}">
+ <h1>{title}</h1>
+ <p class=artist>{artist_line}</p>
+ {f'<p class=meta>{meta_bits}</p>' if meta_bits else ''}
+ {f'<p class=desc>{desc}</p>' if desc else ''}
+ {f'<div class=tags>{tag_html}</div>' if tag_html else ''}
+ {source}
+ <div class=brand><img src="/logo.svg" alt=""> Presented by Screen Docent</div>
+</div></body></html>""")
 
 @app.delete("/artworks/{artwork_id}")
 async def permanent_delete_artwork(artwork_id: int, db: Session = Depends(get_db)):
