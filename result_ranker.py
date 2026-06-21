@@ -4,11 +4,32 @@ Scores, ranks, and deduplicates art results across museum sources.
 """
 
 import logging
+import re
 import unicodedata
 from difflib import SequenceMatcher
 from typing import Dict, List
 
 logger = logging.getLogger("artwork-display-api.ranker")
+
+# Museum/aggregator titles often arrive with structured-data noise. Strip a leading
+# language label (e.g. "Dutch: Meisje met de parel") and Wikidata QS suffixes so the
+# placard reads cleanly. Intentionally conservative — no translation, no guessing
+# between bilingual halves (those stay editable in the Review Queue).
+_LANG_PREFIX_RE = re.compile(
+    r"^(?:English|French|Dutch|German|Italian|Spanish|Latin|Greek|Russian|Japanese|Chinese|Title|Titre|Titel|Título|Titolo)\s*:\s*",
+    re.IGNORECASE,
+)
+
+
+def clean_title(title: str) -> str:
+    """Light, safe normalization of a museum-supplied title for display."""
+    if not title:
+        return title
+    t = str(title).strip()
+    t = re.split(r"\s+QS:P\d+", t)[0]          # Wikidata structured suffix: '… QS:P1476,en:"…"'
+    t = _LANG_PREFIX_RE.sub("", t)              # leading 'Language: ' label
+    t = re.sub(r"\s+", " ", t).strip()          # collapse whitespace
+    return t or title
 
 
 def _normalize_text(text: str) -> str:
