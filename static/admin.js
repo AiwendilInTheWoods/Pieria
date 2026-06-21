@@ -47,6 +47,7 @@ async function init() {
     setupUploadZone();
     setupPlaylistInput(); // Add key listener
     initServerAddress();  // show the address to point displays/Pi/e-ink/Frame at
+    loadSubscriptions();  // federated collections panel
     await loadPremiumSettings();
     await handleOAuthCallback();   // catch an OpenRouter OAuth redirect (?code=…)
     await loadAiSettings();
@@ -259,6 +260,89 @@ function copyServerAddress() {
     if (c) { c.style.display = 'inline'; setTimeout(() => { c.style.display = 'none'; }, 1500); }
 }
 window.copyServerAddress = copyServerAddress;
+
+// --- Federation: subscriptions + trust badges -------------------------------
+const _TRUST = {
+    bundled:   { label: 'Official',  color: '#3b82f6' },
+    verified:  { label: 'Verified',  color: '#10b981' },
+    community: { label: 'Community', color: '#94a3b8' },
+};
+
+// Origin/trust badge for a collection (or a subscription row).
+function trustBadge(origin, trust) {
+    const key = origin === 'bundled' ? 'bundled' : (trust === 'verified' ? 'verified' : 'community');
+    const b = _TRUST[key];
+    return `<span class="trust-badge" style="font-size:0.62rem; padding:2px 8px; border-radius:10px; border:1px solid ${b.color}; color:${b.color}; white-space:nowrap;">${b.label}</span>`;
+}
+
+async function loadSubscriptions() {
+    const list = document.getElementById('subscriptions-list');
+    if (!list) return;
+    try {
+        const subs = await (await fetch(`${API_BASE}/api/subscriptions`)).json();
+        if (!subs.length) {
+            list.innerHTML = '<p style="font-size:0.8rem; color:#64748b;">No subscriptions yet.</p>';
+            return;
+        }
+        list.innerHTML = subs.map(s => {
+            const pub = (s.publisher && s.publisher.name) || 'Unknown publisher';
+            const err = s.last_status && s.last_status !== 'ok'
+                ? ` · <span style="color:#ef4444;">${_esc(s.last_status)}</span>` : '';
+            return `<div style="border:1px solid var(--border-color); border-radius:8px; padding:12px; background:#0f172a;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <div>
+                        <strong style="font-size:0.85rem;">${_esc(s.title || s.url)}</strong> ${trustBadge('subscription', s.trust)}<br>
+                        <small style="color:#94a3b8;">${_esc(pub)} · ${s.item_count} works${err}</small>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="secondary" onclick="syncSubscription(${s.id})" style="padding:6px 12px; font-size:0.75rem;">Sync</button>
+                        <button class="secondary" onclick="removeSubscription(${s.id}, '${_esc((s.title || s.url).replace(/'/g, ''))}')" style="padding:6px 12px; font-size:0.75rem; border-color:#ef4444; color:#ef4444;">Remove</button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    } catch (e) { console.error('[Admin] loadSubscriptions failed:', e); }
+}
+
+async function addSubscription() {
+    const input = document.getElementById('subscription-url');
+    const url = (input.value || '').trim();
+    if (!url) { showToast('Enter a manifest URL first.', 'error'); return; }
+    try {
+        const res = await fetch(`${API_BASE}/api/subscriptions`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.detail || 'Could not subscribe.', 'error'); return; }
+        input.value = '';
+        showToast(`Subscribed to ${data.title || 'collection'} ✓`, 'success');
+        loadSubscriptions();
+        if (currentView === 'catalog') renderCatalog();
+    } catch (e) { showToast('Network error subscribing.', 'error'); }
+}
+
+async function syncSubscription(id) {
+    try {
+        const res = await fetch(`${API_BASE}/api/subscriptions/${id}/sync`, { method: 'POST' });
+        const data = await res.json();
+        const ok = data.last_status === 'ok';
+        showToast(ok ? 'Synced ✓' : (data.last_status || 'Sync failed'), ok ? 'success' : 'error');
+        loadSubscriptions();
+    } catch (e) { showToast('Network error syncing.', 'error'); }
+}
+
+async function removeSubscription(id, name) {
+    if (!(await confirmModal(`Unsubscribe from "${name}"? Already-added artworks stay in your library.`,
+        { confirmText: 'Unsubscribe', danger: true }))) return;
+    try {
+        await fetch(`${API_BASE}/api/subscriptions/${id}`, { method: 'DELETE' });
+        showToast('Unsubscribed.', 'success');
+        loadSubscriptions();
+        if (currentView === 'catalog') renderCatalog();
+    } catch (e) { showToast('Network error.', 'error'); }
+}
+window.addSubscription = addSubscription;
+window.syncSubscription = syncSubscription;
+window.removeSubscription = removeSubscription;
 
 async function fetchLibrary() {
     try {
@@ -1648,7 +1732,7 @@ async function renderCatalog() {
             card.innerHTML = `
                 <img loading="lazy" src="${_esc(col.cover_thumbnail)}" alt="${_esc(col.title)}" style="background:#0f172a;">
                 <div class="info">
-                    <strong>${_esc(col.title)}</strong><br>
+                    <strong>${_esc(col.title)}</strong> ${trustBadge(col.origin, col.trust)}<br>
                     <small style="opacity:0.7">${_esc(col.description || '')}</small><br>
                     <small style="color:var(--accent-color)">${col.count} works →</small>
                 </div>`;
@@ -1677,7 +1761,7 @@ async function openCatalogCollection(collectionId) {
         head.style.cssText = 'margin-bottom:16px;';
         head.innerHTML = `
             <button class="secondary" onclick="renderCatalog()" style="font-size:0.75rem; padding:6px 12px; margin-bottom:10px;">← All collections</button>
-            <h3 style="margin:6px 0 2px; color:var(--text-color); font-size:1.05rem;">${_esc(col.title)}</h3>
+            <h3 style="margin:6px 0 2px; color:var(--text-color); font-size:1.05rem;">${_esc(col.title)} ${trustBadge(col.origin, col.trust)}</h3>
             <span style="font-size:0.78rem; color:#94a3b8;">${_esc(col.description || '')}</span>
             <span style="display:block; font-size:0.68rem; color:#64748b; margin-top:4px;">${_esc(col.source || '')}${col.license ? ' · ' + _esc(col.license) : ''}</span>
             <div style="margin-top:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">

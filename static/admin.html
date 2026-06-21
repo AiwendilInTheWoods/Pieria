@@ -490,6 +490,21 @@
                     </div>
                     <p id="server-address-note" style="display:none; font-size:0.78rem; color:#fbbf24; margin:14px 0 0;"></p>
                 </div>
+                <!-- Subscriptions (federated collections) -->
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">🌐 Subscriptions <span style="font-weight:normal; color:#94a3b8;">— federated collections</span></h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 14px;">
+                        Subscribe to a publisher's collection by URL. We index pointers — images stay on the
+                        publisher's server, and a feed is checked and validated before it's added. Browse it
+                        alongside your catalog, tagged <strong>Community</strong> (or <strong>Verified</strong>).
+                    </p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <input type="url" id="subscription-url" placeholder="https://publisher.example/collection.json"
+                               style="flex:1; min-width:240px; background:#0f172a; border:1px solid var(--border-color); color:var(--text-color); padding:10px 12px; border-radius:8px; font-size:0.85rem;">
+                        <button class="primary" onclick="addSubscription()" style="padding:10px 18px;">Subscribe</button>
+                    </div>
+                    <div id="subscriptions-list" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
                 <!-- AI Engine -->
                 <div id="ai-engine-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
                     <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">🧠 AI Engine</h3>
@@ -677,6 +692,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260621d"></script>
+    <script src="admin.js?v=20260621e"></script>
 </body>
 </html>
