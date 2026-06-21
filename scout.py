@@ -9,11 +9,15 @@ import logging
 import json
 import httpx
 import random
+import re
+import time
+import difflib
 import traceback
 import asyncio
 import uuid
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional
+from urllib.parse import quote
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
@@ -21,6 +25,95 @@ from models import DiscoveryQueueModel, SettingsModel
 from query_classifier import SearchIntent
 
 logger = logging.getLogger("artwork-display-api.scout")
+
+# ---------------------------------------------------------------------------
+# Shared source helpers (canonical home).
+# The offline catalog builder (tools/sources.py) imports these so live Scouts
+# and the builder apply identical PD / resolution logic and never drift.
+# ---------------------------------------------------------------------------
+
+# A display image must be at least this many pixels on its long edge to look
+# good on big (up-to-4K) displays. Used to gate Wikimedia originals.
+MIN_DISPLAY_EDGE = 2000
+
+_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def _strip_html(s) -> str:
+    return _TAG_RE.sub("", s or "").strip()
+
+
+def _ratio(a, b) -> float:
+    return difflib.SequenceMatcher(None, (a or "").lower(), (b or "").lower()).ratio()
+
+
+def _wikimedia_filepath(filename: str, width: int) -> str:
+    return f"https://commons.wikimedia.org/wiki/Special:FilePath/{quote(filename)}?width={width}"
+
+
+def _wm_match(fname: str, title: str, artist: str = "") -> float:
+    """Score a Commons filename against a wanted work. Commons filenames embed artist/date
+    (e.g. 'Mucha-Job-1896.jpg'), so a plain ratio underrates short titles like 'Job' — instead
+    reward title-token containment, then nudge for the artist surname."""
+    f = re.sub(r"[_\-]+", " ", fname.rsplit(".", 1)[0]).lower()
+    toks = [w for w in re.findall(r"[a-z0-9]+", title.lower()) if len(w) > 2]
+    if toks and all(t in f for t in toks):
+        score = 0.9
+    else:
+        present = (sum(1 for t in toks if t in f) / len(toks)) if toks else 0.0
+        score = max(present, _ratio(f, title))
+    if artist:
+        surname = artist.lower().split()[-1]
+        if len(surname) > 2 and surname in f:
+            score = min(1.0, score + 0.15)
+    return score
+
+
+def _wm_is_pd(extmeta: dict) -> bool:
+    parts = []
+    for k in ("LicenseShortName", "License", "UsageTerms"):
+        v = (extmeta.get(k) or {}).get("value")
+        if v:
+            parts.append(str(v).lower())
+    blob = " ".join(parts)
+    if "public domain" in blob or "cc0" in blob or "pd-" in blob:
+        return True
+    if (extmeta.get("Copyrighted") or {}).get("value", "").strip().lower() in ("false", "no"):
+        return True
+    return False
+
+
+# Polite Wikimedia rate limiting: one request at a time, spaced out, descriptive UA.
+_wm_lock = asyncio.Lock()
+_wm_last = [0.0]
+WM_MIN_INTERVAL = 1.2
+
+
+async def _wm_throttle():
+    async with _wm_lock:
+        wait = WM_MIN_INTERVAL - (time.monotonic() - _wm_last[0])
+        if wait > 0:
+            await asyncio.sleep(wait)
+        _wm_last[0] = time.monotonic()
+
+
+async def _nasa_best_asset(client, nasa_id: str):
+    """Resolve the real full-resolution image from a NASA asset manifest (prefer ~orig/~large jpg).
+    The search 'links' only give a thumbnail, and naive ~orig.jpg guessing often 404s."""
+    try:
+        r = await client.get(f"https://images-assets.nasa.gov/image/{nasa_id}/collection.json", timeout=20.0)
+        if r.status_code != 200:
+            return None
+        urls = [u for u in r.json() if isinstance(u, str) and u.lower().endswith((".jpg", ".jpeg", ".png"))]
+    except Exception:
+        return None
+    if not urls:
+        return None
+    for suffix in ("~orig.jpg", "~orig.jpeg", "~orig.png", "~large.jpg", "~medium.jpg"):
+        for u in urls:
+            if u.lower().endswith(suffix):
+                return u
+    return urls[-1]
 
 class MuseumScout(ABC):
     @abstractmethod
@@ -667,6 +760,134 @@ class EuropeanaScout(MuseumScout):
 
 
 # ---------------------------------------------------------------------------
+# Keyless open-collection Scouts (NASA, Wikimedia Commons)
+# ---------------------------------------------------------------------------
+
+class NasaScout(MuseumScout):
+    """
+    Scout for the NASA images library (images-api.nasa.gov). Keyless, public domain.
+    Resolves each search hit to its real full-resolution asset via the item's
+    collection.json manifest (the search 'links' only expose a thumbnail).
+    """
+    SEARCH_URL = "https://images-api.nasa.gov/search"
+
+    async def find_art(self, query: str = None, intent: SearchIntent = None,
+                       offset: int = 0, limit: int = 10) -> List[Dict]:
+        q = (intent.canonical_name if intent and intent.query_type == "artist" else query) or "galaxy"
+        logger.info(f"[Scout] NasaScout searching for: {q} (offset: {offset})")
+        found = []
+        headers = {"User-Agent": "ScreenDocent/1.0"}
+        try:
+            async with httpx.AsyncClient(headers=headers, timeout=30.0) as client:
+                resp = await client.get(self.SEARCH_URL, params={"q": q, "media_type": "image"})
+                if resp.status_code != 200:
+                    logger.error(f"[Scout] NASA search returned {resp.status_code}")
+                    return []
+                items = resp.json().get("collection", {}).get("items", [])
+                selected = items[offset:offset + limit]
+                for it in selected:
+                    d = (it.get("data") or [{}])[0]
+                    links = it.get("links") or []
+                    thumb = links[0].get("href") if links else None
+                    if not thumb:
+                        continue
+                    full = await _nasa_best_asset(client, d.get("nasa_id", "")) or thumb
+                    found.append({
+                        "source_url": full,
+                        "thumbnail_url": thumb,
+                        "proposed_title": d.get("title") or "Untitled",
+                        "proposed_artist": (f"NASA — {d.get('center')}" if d.get("center") else "NASA"),
+                        "source_api": "NASA",
+                        "context_hints": json.dumps(d),
+                    })
+        except Exception:
+            logger.error(f"[Scout] NasaScout failed: {traceback.format_exc()}")
+        logger.info(f"[Scout] NASA: returning {len(found)} artworks")
+        return found
+
+
+class WikimediaScout(MuseumScout):
+    """
+    Scout for Wikimedia Commons (commons.wikimedia.org). Keyless. Gates hard, in-path,
+    on what the live pipeline cannot gate later: public-domain/CC0 license AND a real
+    raster image at least MIN_DISPLAY_EDGE px on the long edge (display-grade). Politely
+    rate-limited via the shared _wm_throttle.
+    """
+    API_URL = "https://commons.wikimedia.org/w/api.php"
+
+    async def find_art(self, query: str = None, intent: SearchIntent = None,
+                       offset: int = 0, limit: int = 10) -> List[Dict]:
+        q = (intent.canonical_name if intent and intent.query_type == "artist" else query) or "painting"
+        logger.info(f"[Scout] WikimediaScout searching for: {q} (offset: {offset})")
+        found = []
+        params = {
+            "action": "query", "format": "json", "generator": "search",
+            "gsrsearch": q, "gsrnamespace": "6",
+            "gsrlimit": str(limit), "gsroffset": str(offset),
+            "prop": "imageinfo", "iiprop": "url|mime|size|extmetadata",
+        }
+        await _wm_throttle()
+        try:
+            async with httpx.AsyncClient(headers={"User-Agent": "ScreenDocent/1.0 (https://github.com/AiwendilInTheWoods/Screen-Docent)"}, timeout=30.0) as client:
+                resp = None
+                for attempt in range(3):
+                    resp = await client.get(self.API_URL, params=params)
+                    if resp.status_code == 429:
+                        await asyncio.sleep(3 * (attempt + 1)); continue
+                    break
+                if not resp or resp.status_code != 200:
+                    logger.error(f"[Scout] Wikimedia returned {resp.status_code if resp else 'no response'}")
+                    return []
+                pages = (resp.json().get("query") or {}).get("pages") or {}
+        except Exception:
+            logger.error(f"[Scout] WikimediaScout failed: {traceback.format_exc()}")
+            return []
+
+        for p in pages.values():
+            ii = (p.get("imageinfo") or [{}])[0]
+            mime = ii.get("mime", "")
+            if not mime.startswith("image/") or "svg" in mime:
+                continue
+            if max(ii.get("width") or 0, ii.get("height") or 0) < MIN_DISPLAY_EDGE:
+                continue
+            extmeta = ii.get("extmetadata") or {}
+            if not _wm_is_pd(extmeta):
+                continue
+            page_title = p.get("title", "")  # "File:Foo.jpg"
+            fname = page_title.split("File:", 1)[-1]
+            if not fname:
+                continue
+            artist = _strip_html((extmeta.get("Artist") or {}).get("value", "")) or "Unknown Artist"
+            found.append({
+                "source_url": _wikimedia_filepath(fname, 3840),   # up to 4K (capped at the original)
+                "thumbnail_url": _wikimedia_filepath(fname, 600),
+                "proposed_title": _wm_clean_title((extmeta.get("ObjectName") or {}).get("value", ""), fname),
+                "proposed_artist": artist,
+                "source_api": "Wikimedia Commons",
+                "context_hints": json.dumps({
+                    "license": (extmeta.get("LicenseShortName") or {}).get("value", ""),
+                    "width": ii.get("width"), "height": ii.get("height"),
+                    "descriptionurl": ii.get("descriptionurl"),
+                }),
+            })
+        logger.info(f"[Scout] Wikimedia: returning {len(found)} artworks")
+        return found
+
+
+def _title_from_filename(fn: str) -> str:
+    stem = fn.rsplit(".", 1)[0]
+    return stem.replace("_", " ").strip()
+
+
+def _wm_clean_title(raw: str, fname: str) -> str:
+    """Commons ObjectName often embeds Wikibase structured values
+    (e.g. 'The Starry Nighttitle QS:P1476,en:"The Starry Night"'). Strip to a plain label,
+    falling back to the filename when nothing clean remains."""
+    t = re.split(r"\s*(?:title\s*)?QS:", _strip_html(raw or ""))[0].strip()
+    return t or _title_from_filename(fname)
+
+
+# ---------------------------------------------------------------------------
 # Search Session State — In-memory store for "Load More" pagination
 # ---------------------------------------------------------------------------
 
@@ -740,6 +961,8 @@ async def run_scouts(db: Session, query: str = None, sources: List[str] = None,
         "cleveland": ClevelandArtScout(),
         "rijks": RijksmuseumScout(),
         "smk": SmkScout(),
+        "nasa": NasaScout(),
+        "wikimedia": WikimediaScout(),
         "harvard": HarvardScout(keys.get("harvard_api_key")),
         "smithsonian": SmithsonianScout(keys.get("smithsonian_api_key")),
         "europeana": EuropeanaScout(keys.get("europeana_api_key"))
