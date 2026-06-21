@@ -301,23 +301,36 @@ Captured from working sessions — not yet scheduled. Roughly ordered by how muc
   the real device that closes the e-ink loop (drive it from the incoming Pi, fetch the image API,
   eyeball + tune the palette on actual hardware).
 
-### Manifest Entry Builder Studio — the "publish your art" front door
-An interactive studio (in-app GUI, not a CLI) that turns "I have artwork" into a valid
-**Manifest v2** entry — the front door to the federated catalog and to every app feature. A creator
-**uploads art → interactively configures it → exports a manifest entry** (or bulk-processes a folder).
-What it configures:
-- **Metadata / placard** (title, artist, date, license, attribution — per-asset, see Manifest v2).
-- **Crop-for-screens** — set the image's `focal_point` (and later explicit per-aspect crops) so the
-  art frames well on *any* panel (16:9 TV, portrait e-ink, the Frame) instead of blind center-cropping.
-- **Docent treatment** — author the optional `interpretation` block (Learn-More sections,
-  points-of-interest regions to pan/zoom, audio narration) — the authoring surface for the Living Docent.
-- **Output** = a schema-valid manifest entry, gated by `tools/manifest_validator.py` (so everything it
-  emits is guaranteed valid). Bulk mode for many works at once.
-- **Why it matters:** it's federation component (5) "publisher tooling" reimagined as a feature *anyone*
-  wants — it lowers "become a contributor" from "write JSON / run a CLI" to "upload and click," which is
-  the marketplace flywheel. Largely recomposes existing admin pieces (Cropper.js, upload, metadata
-  editing) + the new docent/crop config. Images stay hotlinked from the creator's own hosting (we index,
-  never host); the Studio guides hosting + emits the entry.
+### Studio — the "get my pictures on the screen" front door (TWO modes)
+An interactive in-app studio that turns "I have pictures" into something on the wall. It serves **two
+audiences with opposite needs, and the flows must NOT bleed into each other:**
+
+**Personal mode — "put my family/pet/vacation photos up" (the everyday, mainstream use).**
+- Phone-friendly multi-upload → auto-orient → **smart auto-crop** (focal point; later face/pet-aware) →
+  optional caption/date → pick a playlist → done.
+- **Stores LOCALLY** (the user's own photos, on the user's own server) — reuses the existing
+  upload→library path; **NOT** a manifest. We *host* personal photos; we only *index* federated art.
+- **Must show ZERO federation jargon** — no license/attribution/publisher/manifest. A grandparent
+  uploading pet photos never sees "CC-BY."
+- **Privacy is the headline** vs. Aura/Nixplay/Skylight: *your photos stay on your server — never our
+  cloud, never indexed, never published.* (Directly answers the research's #1 personal-frame pain.)
+- This is also how we compete in the much larger **personal-photo-frame** market, not just vs. the
+  Samsung *art* frame, and it kills the cross-segment "uploading your own is fiddly" pain.
+
+**Publisher mode — "share/publish a collection" (artist/curator/contributor).**
+- Upload art → configure **metadata/placard** (title, artist, date, **per-asset license/attribution**,
+  see Manifest v2) → **crop-for-screens** (`focal_point`) → optional **docent treatment** (the
+  `interpretation` block: Learn-More sections, points-of-interest, audio) → **export a manifest entry**
+  (bulk supported), gated by `tools/manifest_validator.py` so output is guaranteed valid.
+- Images stay hotlinked from the creator's own hosting (we index, never host); the Studio guides hosting.
+- This is federation component (5) "publisher tooling" reimagined as upload-and-click — the marketplace
+  flywheel.
+
+**Shared:** the `focal_point` crop primitive serves both (a family photo also must frame well on a
+portrait e-ink vs. a 16:9 TV) — so `focal_point` should eventually live on the local ArtworkModel too,
+not just manifest items; **face/pet-aware auto-crop** is the premium touch. The **Living Docent stays
+art-only** (you don't narrate a dog; a light "memories/caption" analog is a separate later idea).
+Largely recomposes existing admin pieces (Cropper.js, upload, metadata editing).
 
 ### Interactive docent (the "Living Docent") — ambitious, later phase
 The marquee experience: on a touchscreen kiosk, a user taps **"Learn more about this piece"** and
