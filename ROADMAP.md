@@ -281,13 +281,17 @@ Captured from working sessions — not yet scheduled. Roughly ordered by how muc
   (GitHub raw / object store — no server) so the catalog can grow to thousands and update without an
   app rebuild. *(Backend already supports a `catalog_url` base override with bundled fallback — this
   is mostly publishing + a settings toggle.)*
-- **Catalog growth & curation — a dedicated stocking push (planned, next after the Frame adapter).**
-  The more art in the catalog, the more compelling the product, so accept this is partly tedious
-  hand-curation. Scale the offline builder well beyond the current ~264 curated items: add more
-  canon picks per collection, add collections, tidy Library-of-Congress record titles (they read
-  like catalog entries) and Wikimedia multilingual titles, and broaden Wikimedia coverage (note:
-  Wikimedia throttles datacenter IPs — the builder runs best from a normal connection). Goal: a
-  visibly deep, well-curated library.
+- **Catalog growth & curation — ✅ stocking push done (2026-06-21): 264 → 687 items, 16 → 24
+  collections.** Doubled the canon picks per collection (Impressionism/Post-Impressionism/Ukiyo-e to
+  40) and added 8 collections (Baroque, Symbolism & the Pre-Raphaelites, Art Nouveau & Decorative,
+  Maps & Cartography, Ancient Egypt & the Near East, Asian Art, Medieval & Illuminated, Marine).
+  Added a **Smithsonian (CC0)** pick-resolver; **LoC dropped as a display source** (public derivatives
+  cap at 1024px / masters are unrenderable TIFFs — fails the ≥2000px gate; its content is mirrored on
+  Wikimedia at full res). Matcher hardened: an **artist-gate** (kills same-keyword wrong-artist
+  matches) + **ObjectName scoring** (recovers non-English-titled works like *Das Eismeer*) + the
+  builder verify path now **retries Wikimedia 429s** instead of dropping works. *Further growth:* keep
+  adding canon picks; the 3D-object/manuscript collections (sculpture, Egypt, medieval) are
+  PD-limited (photos of objects are CC-BY-SA, not PD — only museum CC0 fills them).
 - **"Marketplace" tiers.** Paid / community-contributed / bring-your-own collections layered on the
   same manifest schema; rights-cleared modern posters (rock/film) where licensing allows.
 

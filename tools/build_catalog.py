@@ -38,7 +38,8 @@ import ai_client
 from database import SessionLocal
 from tools import catalog_spec
 from tools.sources import (fetch_collection, UA, MUSEUM_SOURCES, MIN_DISPLAY_EDGE,
-                           resolve_wikimedia, resolve_nasa, resolve_museums)
+                           resolve_wikimedia, resolve_nasa, resolve_museums,
+                           resolve_loc, resolve_smithsonian)
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("catalog-builder")
@@ -152,11 +153,29 @@ def enrich_item(item: dict) -> dict:
 
 
 # ---------------------------------------------------------------- verify (display-true)
+async def _get(client, url, **kw):
+    """GET with 429-resilience. Wikimedia rate-limits the image CDN (upload.wikimedia.org) hard during
+    a big build; the verify downloads aren't throttled like the search API, so without this a burst of
+    429s silently drops otherwise-valid works. Retry on 429 honouring Retry-After, capped."""
+    r = None
+    for attempt in range(5):
+        r = await client.get(url, **kw)
+        if r.status_code != 429:
+            return r
+        wait = 0.0
+        try:
+            wait = float(r.headers.get("retry-after", "") or 0)
+        except ValueError:
+            wait = 0.0
+        await asyncio.sleep(min(wait or 2.0 * (attempt + 1), 30.0))
+    return r
+
+
 async def _thumb_is_real_image(client, url, min_edge=350) -> bool:
     """The thumbnail must be a real raster image of decent size — kills HTML/SVG landing pages,
     icons, and tiny derivatives that scraping otherwise lets through."""
     try:
-        r = await client.get(url, timeout=30.0, follow_redirects=True)
+        r = await _get(client, url, timeout=30.0, follow_redirects=True)
         if r.status_code != 200:
             return False
         ct = r.headers.get("content-type", "").lower()
@@ -175,14 +194,14 @@ async def _source_ok(client, url) -> bool:
     else is downloaded and measured."""
     try:
         if "commons.wikimedia.org" in url:
-            r = await client.get(url, timeout=45.0, follow_redirects=True, headers={"Range": "bytes=0-4095"})
+            r = await _get(client, url, timeout=45.0, follow_redirects=True, headers={"Range": "bytes=0-4095"})
             if r.status_code not in (200, 206):
                 return False
             ct = r.headers.get("content-type", "").lower()
             return ct.startswith("image/") and "svg" not in ct
         # Read just the header bytes to get dimensions — avoids downloading huge originals
         # (museum full/max files can be tens of MB). JPEG SOF / PNG IHDR live near the start.
-        r = await client.get(url, timeout=60.0, follow_redirects=True, headers={"Range": "bytes=0-262143"})
+        r = await _get(client, url, timeout=60.0, follow_redirects=True, headers={"Range": "bytes=0-262143"})
         if r.status_code not in (200, 206):
             return False
         ct = r.headers.get("content-type", "").lower()
@@ -192,7 +211,7 @@ async def _source_ok(client, url) -> bool:
             w, h = Image.open(BytesIO(r.content)).size
         except Exception:
             # Header wasn't in the first chunk — fall back to a full fetch.
-            r2 = await client.get(url, timeout=90.0, follow_redirects=True)
+            r2 = await _get(client, url, timeout=90.0, follow_redirects=True)
             if r2.status_code != 200:
                 return False
             w, h = Image.open(BytesIO(r2.content)).size
@@ -221,6 +240,10 @@ async def resolve_pick(db, pk, spec, client, verify=True):
                 cand = await resolve_wikimedia(title, artist)
             elif src == "nasa":
                 cand = await resolve_nasa(title)
+            elif src == "loc":
+                cand = await resolve_loc(title, artist)
+            elif src == "smithsonian":
+                cand = await resolve_smithsonian(db, title, artist)
             elif src == "museums":
                 cand = await resolve_museums(db, title, artist, museum_srcs)
             else:
