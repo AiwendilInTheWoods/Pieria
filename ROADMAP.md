@@ -301,6 +301,24 @@ Captured from working sessions — not yet scheduled. Roughly ordered by how muc
   the real device that closes the e-ink loop (drive it from the incoming Pi, fetch the image API,
   eyeball + tune the palette on actual hardware).
 
+### Manifest Entry Builder Studio — the "publish your art" front door
+An interactive studio (in-app GUI, not a CLI) that turns "I have artwork" into a valid
+**Manifest v2** entry — the front door to the federated catalog and to every app feature. A creator
+**uploads art → interactively configures it → exports a manifest entry** (or bulk-processes a folder).
+What it configures:
+- **Metadata / placard** (title, artist, date, license, attribution — per-asset, see Manifest v2).
+- **Crop-for-screens** — set the image's `focal_point` (and later explicit per-aspect crops) so the
+  art frames well on *any* panel (16:9 TV, portrait e-ink, the Frame) instead of blind center-cropping.
+- **Docent treatment** — author the optional `interpretation` block (Learn-More sections,
+  points-of-interest regions to pan/zoom, audio narration) — the authoring surface for the Living Docent.
+- **Output** = a schema-valid manifest entry, gated by `tools/manifest_validator.py` (so everything it
+  emits is guaranteed valid). Bulk mode for many works at once.
+- **Why it matters:** it's federation component (5) "publisher tooling" reimagined as a feature *anyone*
+  wants — it lowers "become a contributor" from "write JSON / run a CLI" to "upload and click," which is
+  the marketplace flywheel. Largely recomposes existing admin pieces (Cropper.js, upload, metadata
+  editing) + the new docent/crop config. Images stay hotlinked from the creator's own hosting (we index,
+  never host); the Studio guides hosting + emits the entry.
+
 ### Interactive docent (the "Living Docent") — ambitious, later phase
 The marquee experience: on a touchscreen kiosk, a user taps **"Learn more about this piece"** and
 Screen Docent *narrates* it — framing and zooming into the regions it's discussing ("notice in the
