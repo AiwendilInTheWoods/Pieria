@@ -48,6 +48,31 @@ VALID_FITS = ("cover", "contain")
 _PALETTE_IMAGE_CACHE: dict = {}
 
 
+def _fit_rgb(image_path: Path, w: int, h: int, fit: str = "cover") -> Image.Image:
+    """Open a source image, honour EXIF orientation, normalise ANY input mode
+    (JPEG/PNG/WebP, incl. CMYK / RGBA / palette / greyscale) to RGB, and fit it to
+    exactly w x h — cover-crop (centered) or contain (letterbox onto white).
+
+    Shared by the e-ink renderer and the full-colour (Frame TV) renderer so the
+    orient/crop behaviour can't drift between outputs.
+    """
+    if fit not in VALID_FITS:
+        fit = "cover"
+    with Image.open(image_path) as src:
+        img = ImageOps.exif_transpose(src)
+        img = img.convert("RGB")
+        if fit == "cover":
+            return ImageOps.fit(
+                img, (w, h), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5)
+            )
+        # contain — letterbox onto white "paper"
+        scaled = img.copy()
+        scaled.thumbnail((w, h), Image.Resampling.LANCZOS)
+        fitted = Image.new("RGB", (w, h), (255, 255, 255))
+        fitted.paste(scaled, ((w - scaled.width) // 2, (h - scaled.height) // 2))
+        return fitted
+
+
 def _palette_image(name: str) -> Image.Image:
     """Build (once) a Pillow 'P' image carrying the palette, for quantize()."""
     if name not in _PALETTE_IMAGE_CACHE:
@@ -86,42 +111,46 @@ def render_for_epaper(
     if fit not in VALID_FITS:
         fit = "cover"
 
-    with Image.open(image_path) as src:
-        # Honour EXIF orientation, then normalise ANY input mode (JPEG/PNG/WebP,
-        # incl. CMYK / RGBA / palette / greyscale) to RGB before processing.
-        img = ImageOps.exif_transpose(src)
-        img = img.convert("RGB")
+    fitted = _fit_rgb(image_path, w, h, fit)
 
-        if fit == "cover":
-            fitted = ImageOps.fit(
-                img, (w, h), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5)
-            )
-        else:  # contain — letterbox onto white "paper"
-            scaled = img.copy()
-            scaled.thumbnail((w, h), Image.Resampling.LANCZOS)
-            fitted = Image.new("RGB", (w, h), (255, 255, 255))
-            fitted.paste(scaled, ((w - scaled.width) // 2, (h - scaled.height) // 2))
+    if enhance:
+        # Gentle pre-boost so the tiny palette doesn't read as muddy.
+        fitted = ImageEnhance.Contrast(fitted).enhance(1.12)
+        if palette in _COLOR_PALETTES:
+            fitted = ImageEnhance.Color(fitted).enhance(1.25)
 
-        if enhance:
-            # Gentle pre-boost so the tiny palette doesn't read as muddy.
-            fitted = ImageEnhance.Contrast(fitted).enhance(1.12)
-            if palette in _COLOR_PALETTES:
-                fitted = ImageEnhance.Color(fitted).enhance(1.25)
+    quantized = fitted.quantize(
+        palette=_palette_image(palette), dither=Image.Dither.FLOYDSTEINBERG
+    )
 
-        quantized = fitted.quantize(
-            palette=_palette_image(palette), dither=Image.Dither.FLOYDSTEINBERG
-        )
+    buf = io.BytesIO()
+    pil_format, _media = VALID_FORMATS[fmt]
+    if pil_format == "BMP":
+        # 24-bit RGB BMP is the broadest common denominator for firmware
+        # that reads pixels and maps to its own palette. Packed/raw 1-bit
+        # device buffers are deferred (v2).
+        quantized.convert("RGB").save(buf, format="BMP")
+    else:
+        quantized.save(buf, format="PNG", optimize=True)
+    return buf.getvalue()
 
-        buf = io.BytesIO()
-        pil_format, _media = VALID_FORMATS[fmt]
-        if pil_format == "BMP":
-            # 24-bit RGB BMP is the broadest common denominator for firmware
-            # that reads pixels and maps to its own palette. Packed/raw 1-bit
-            # device buffers are deferred (v2).
-            quantized.convert("RGB").save(buf, format="BMP")
-        else:
-            quantized.save(buf, format="PNG", optimize=True)
-        return buf.getvalue()
+
+@lru_cache(maxsize=64)
+def render_fullcolor(
+    image_path: Path,
+    w: int,
+    h: int,
+    fit: str = "cover",
+    quality: int = 90,
+) -> bytes:
+    """Render a source image to a full-colour JPEG sized exactly w x h, for displays
+    that want a normal image (e.g. a Samsung Frame TV's Art Mode at 3840x2160) — same
+    EXIF-orient + cover/contain framing as the e-ink path, but no palette quantization
+    or dithering. Cached on its arguments like render_for_epaper()."""
+    fitted = _fit_rgb(image_path, w, h, fit)
+    buf = io.BytesIO()
+    fitted.save(buf, format="JPEG", quality=quality)
+    return buf.getvalue()
 
 
 def media_type_for(ext: str) -> str:

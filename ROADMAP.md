@@ -281,29 +281,47 @@ Captured from working sessions — not yet scheduled. Roughly ordered by how muc
   (GitHub raw / object store — no server) so the catalog can grow to thousands and update without an
   app rebuild. *(Backend already supports a `catalog_url` base override with bundled fallback — this
   is mostly publishing + a settings toggle.)*
-- **Catalog growth & curation.** Scale the offline builder beyond the current 302 curated items; tidy
-  Library-of-Congress record titles (they read like catalog entries); broaden Wikimedia coverage
-  (note: Wikimedia throttles datacenter IPs — the builder runs best from a normal connection).
+- **Catalog growth & curation — a dedicated stocking push (planned, next after the Frame adapter).**
+  The more art in the catalog, the more compelling the product, so accept this is partly tedious
+  hand-curation. Scale the offline builder well beyond the current ~264 curated items: add more
+  canon picks per collection, add collections, tidy Library-of-Congress record titles (they read
+  like catalog entries) and Wikimedia multilingual titles, and broaden Wikimedia coverage (note:
+  Wikimedia throttles datacenter IPs — the builder runs best from a normal connection). Goal: a
+  visibly deep, well-curated library.
 - **"Marketplace" tiers.** Paid / community-contributed / bring-your-own collections layered on the
   same manifest schema; rights-cleared modern posters (rock/film) where licensing allows.
 
 ### Engine & rendering
 - **Per-panel e-ink color tuning.** Calibrate the palette RGB anchors against real Spectra 6 / ACeP
-  hardware (the current anchors are nominal).
+  hardware (the current anchors are nominal). Concrete target: a **13" 6-color (Spectra 6) panel** —
+  the real device that closes the e-ink loop (drive it from the incoming Pi, fetch the image API,
+  eyeball + tune the palette on actual hardware).
+
+### Later / product validation
+- **Giftable 13" e-ink art frame (family Xmas build).** A self-contained 13" Spectra 6 art frame as a
+  giftable, dogfood-able unit — the cleanest real-world validation (real users, real rooms, all year).
+  Implies: a no-fuss fetch-on-wake client for the panel, an easy "point it at my server" setup, and
+  the palette tuning above. Aspirational target on the calendar: **Christmas 2026.**
 - **Per-display panel profiles.** Store w/h/palette per `display_id` so the e-ink endpoint needs no
   query params (extends `ActiveDisplayModel`).
 
 ### Integrations & plugins
-- **Samsung Frame TV push adapter** *(strategic — gives the Frame-TV DIY community a new option).*
-  A "push" display target that renders the selected artwork to a TV-resolution image and uploads it
-  into the Frame's Art Mode over the local network (Samsung's unofficial art WebSocket API, e.g. the
-  `samsungtvws` library). Reuses the curation brain + the image-render path (`epaper.py`); adds a
-  scheduler + the upload adapter. Net: curated, open, no-subscription art on hardware people already own.
+- **Samsung Frame TV push adapter** — ✅ **shipped** *(pending real-Frame beta)* in
+  [`frame_push.py`](frame_push.py) + [`integrations/frame-tv/`](integrations/frame-tv/). A "push"
+  output target: renders the selected artwork to a full-colour TV-resolution JPEG
+  (`epaper.render_fullcolor`) and uploads it into the Frame's Art Mode over the LAN (Samsung's
+  unofficial art WebSocket via `samsungtvws`), on a leader-only scheduler, configured in
+  Settings → 🖼️ Frame TV. The TV is hidden behind a small `FrameClient` interface so all logic is
+  tested against a fake; the live TV handshake is verified via `integrations/frame-tv/push_once.py`
+  (no Frame on hand — see beta note). *(Follow-ups: real-hardware beta confirmation; crop-aware
+  framing; multi-TV; SSDP auto-discovery.)*
 - **MagicMirror² module** — ✅ **shipped** in [`integrations/MMM-ScreenDocent/`](integrations/MMM-ScreenDocent/).
   A front-end-only `MMM-ScreenDocent` module that shows the current artwork + placard from a Screen
   Docent server (consumes `/next-image`; no server changes). Ships a `preview.html` to try it without
   MagicMirror. *(Follow-ups: publish as its own repo + list in the MM 3rd-party registry; optional
-  WebSocket live-push.)*
+  WebSocket live-push.)* **Hold the 3rd-party-registry listing until there's a real launch plan** —
+  a hosted demo, a short screen-capture GIF, and a polished README. Listing is a one-shot first
+  impression; don't spend it before the rest of the story is ready.
 - **Home Assistant add-on / Lovelace card** — see Strategy & Direction.
 - **TRMNL plugin / Inky example** over the existing e-ink image API.
 

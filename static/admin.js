@@ -50,6 +50,7 @@ async function init() {
     await loadPremiumSettings();
     await handleOAuthCallback();   // catch an OpenRouter OAuth redirect (?code=…)
     await loadAiSettings();
+    loadFrameSettings();   // non-blocking: populate the Frame TV panel
 
     // Restore the view the user was last on (survives a browser refresh).
     const savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
@@ -1378,6 +1379,74 @@ async function saveAiSettings() {
     } finally {
         btn.disabled = false; btn.textContent = orig;
     }
+}
+
+// --- Samsung Frame TV ---
+async function loadFrameSettings() {
+    try {
+        const [cfgResp, plResp] = await Promise.all([
+            fetch(`${API_BASE}/api/settings/frame`),
+            fetch(`${API_BASE}/playlists`)
+        ]);
+        const cfg = await cfgResp.json();
+        const playlists = plResp.ok ? await plResp.json() : [];
+        const sel = document.getElementById('frame-playlist');
+        sel.innerHTML = '<option value="">First playlist (default)</option>' +
+            playlists.map(p => `<option value="${_esc(p.name)}">${_esc(p.name)}</option>`).join('');
+        document.getElementById('frame-enabled').checked = !!cfg.enabled;
+        document.getElementById('frame-host').value = cfg.host || '';
+        sel.value = cfg.playlist || '';
+        const mins = Math.round((cfg.interval_sec || 900) / 60);
+        const intSel = document.getElementById('frame-interval-min');
+        if ([...intSel.options].some(o => o.value == mins)) intSel.value = String(mins);
+        document.getElementById('frame-resolution').value = `${cfg.width || 3840}x${cfg.height || 2160}`;
+        document.getElementById('frame-matte').value = cfg.matte || 'none';
+        const status = document.getElementById('frame-status');
+        status.textContent = cfg.last_push_at
+            ? `Last pushed artwork #${cfg.last_artwork_id} at ${new Date(cfg.last_push_at * 1000).toLocaleString()}.`
+            : '';
+    } catch (e) { /* non-fatal: panel just shows defaults */ }
+}
+
+async function saveFrameSettings() {
+    const result = document.getElementById('frame-save-result');
+    const btn = document.getElementById('frame-save-btn');
+    const [w, h] = document.getElementById('frame-resolution').value.split('x').map(Number);
+    const payload = {
+        enabled: document.getElementById('frame-enabled').checked,
+        host: document.getElementById('frame-host').value.trim(),
+        playlist: document.getElementById('frame-playlist').value,
+        interval_sec: parseInt(document.getElementById('frame-interval-min').value, 10) * 60,
+        width: w, height: h,
+        matte: document.getElementById('frame-matte').value
+    };
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = '⏳ Saving…'; result.textContent = '';
+    try {
+        const resp = await fetch(`${API_BASE}/api/settings/frame`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if (!resp.ok) { result.textContent = '✗ ' + (data.detail || 'Save failed'); result.style.color = '#ef4444'; }
+        else { result.textContent = '✓ Saved'; result.style.color = '#34d399'; await loadFrameSettings(); }
+    } catch (e) { result.textContent = '✗ Network error'; result.style.color = '#ef4444'; }
+    finally { btn.disabled = false; btn.textContent = orig; }
+}
+
+async function testFramePush() {
+    const result = document.getElementById('frame-save-result');
+    const btn = document.getElementById('frame-test-btn');
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = '⏳ Pushing…'; result.textContent = ' (uses saved settings)';
+    try {
+        const resp = await fetch(`${API_BASE}/api/settings/frame/test`, { method: 'POST' });
+        const data = await resp.json();
+        if (data.status === 'pushed') { result.textContent = `✓ Pushed to Frame (artwork #${data.artwork_id})`; result.style.color = '#34d399'; }
+        else if (data.status === 'unchanged') { result.textContent = '✓ Frame already shows the current artwork'; result.style.color = '#34d399'; }
+        else if (data.status === 'skipped') { result.textContent = '⚠ ' + (data.reason || 'nothing to push'); result.style.color = '#f59e0b'; }
+        else { result.textContent = '✗ ' + (data.reason || 'push failed'); result.style.color = '#ef4444'; }
+    } catch (e) { result.textContent = '✗ Network error'; result.style.color = '#ef4444'; }
+    finally { btn.disabled = false; btn.textContent = orig; }
 }
 
 // --- OpenRouter OAuth (PKCE) ---

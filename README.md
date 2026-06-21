@@ -102,11 +102,15 @@ See [`ROADMAP.md`](ROADMAP.md) (Track B).
 
 Thin clients that render the same curation brain on platforms people already run:
 
+- **[Samsung Frame TV](integrations/frame-tv/)** — push curated art into a Frame's **Art Mode** over
+  your LAN (no Samsung account, no Art Store subscription). Configure it in **Settings → 🖼️ Frame TV**
+  (IP, playlist, interval) and the server keeps the Frame updated, reusing the same curation brain.
+  Turns a Frame you already own into another Screen Docent display.
 - **[MagicMirror²](integrations/MMM-ScreenDocent/)** — the `MMM-ScreenDocent` module turns a slot on a
   smart mirror into a rotating museum wall (current artwork + placard from your server). Front-end
   only, no extra setup; includes a `preview.html` to try it in any browser without MagicMirror.
 
-More integrations (Samsung Frame TV push, Home Assistant) are on the [roadmap](ROADMAP.md).
+More integrations (Home Assistant, TRMNL/Inky) are on the [roadmap](ROADMAP.md).
 
 ## 🏛️ VRA Core Metadata Architecture
 

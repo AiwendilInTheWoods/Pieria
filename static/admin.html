@@ -455,6 +455,72 @@
                     </div>
                 </div>
 
+                <!-- Frame TV -->
+                <div id="frame-tv-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">🖼️ Samsung Frame TV</h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 18px;">
+                        Push curated art into a Samsung Frame's Art Mode over your LAN — no Samsung account, no
+                        subscription. The TV shows an "Allow device?" prompt on the first push; accept it once.
+                        <span id="frame-status" style="display:block; margin-top:8px; color:#94a3b8;"></span>
+                    </p>
+
+                    <div style="display:grid; gap:14px;">
+                        <label style="display:flex; align-items:center; gap:10px; font-size:0.85rem; cursor:pointer;">
+                            <input type="checkbox" id="frame-enabled" style="width:auto; margin:0;">
+                            Enable automatic pushing
+                        </label>
+
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.8rem; color:#94a3b8;">Frame TV IP address</label>
+                            <input type="text" id="frame-host" placeholder="e.g. 192.168.1.42" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem;">
+                        </div>
+
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.8rem; color:#94a3b8;">Playlist</label>
+                            <select id="frame-playlist" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem;"></select>
+                        </div>
+
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.8rem; color:#94a3b8;">Change art every</label>
+                            <select id="frame-interval-min" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem;">
+                                <option value="5">5 minutes</option>
+                                <option value="15" selected>15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="60">1 hour</option>
+                                <option value="180">3 hours</option>
+                                <option value="720">12 hours</option>
+                            </select>
+                        </div>
+
+                        <details style="border:1px solid var(--border-color); border-radius:8px; padding:10px 14px; background:#0f172a;">
+                            <summary style="cursor:pointer; font-size:0.8rem; color:#94a3b8;">Advanced</summary>
+                            <div style="display:grid; gap:14px; margin-top:14px;">
+                                <div>
+                                    <label style="display:block; margin-bottom:6px; font-size:0.78rem; color:#94a3b8;">Resolution</label>
+                                    <select id="frame-resolution" style="width:100%; box-sizing:border-box; background:#111c34; border:1px solid var(--border-color); color:white; padding:9px 12px; border-radius:6px; font-size:0.82rem;">
+                                        <option value="3840x2160" selected>3840 × 2160 (UHD Frame)</option>
+                                        <option value="1920x1080">1920 × 1080 (older Frame)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display:block; margin-bottom:6px; font-size:0.78rem; color:#94a3b8;">Matte</label>
+                                    <select id="frame-matte" style="width:100%; box-sizing:border-box; background:#111c34; border:1px solid var(--border-color); color:white; padding:9px 12px; border-radius:6px; font-size:0.82rem;">
+                                        <option value="none" selected>None (full bleed)</option>
+                                        <option value="shadowbox_polar">Shadowbox (white)</option>
+                                        <option value="modernthin_polar">Modern thin (white)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </details>
+
+                        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                            <button class="primary" id="frame-save-btn" onclick="saveFrameSettings()" style="padding:12px 22px; font-weight:600;">Save</button>
+                            <button class="secondary" id="frame-test-btn" onclick="testFramePush()" style="padding:12px 20px;">Test / Push now</button>
+                            <span id="frame-save-result" style="font-size:0.8rem;"></span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Discovery Maintenance -->
                 <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
                     <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">Discovery Queue Maintenance</h3>
@@ -513,6 +579,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260620d"></script>
+    <script src="admin.js?v=20260620e"></script>
 </body>
 </html>
