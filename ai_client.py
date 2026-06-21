@@ -34,21 +34,23 @@ PRESETS = {
     "gemini": {
         "label": "Google Gemini",
         "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
-        "models": ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"],
+        # gemini-3.5-flash + 3.1-flash-lite are GA; 3.1-pro-preview is the latest Pro
+        # currently exposed (swap to gemini-3.5-pro once it reaches GA).
+        "models": ["gemini-3.5-flash", "gemini-3.1-pro-preview", "gemini-3.1-flash-lite"],
         "key_url": "https://aistudio.google.com/apikey",
         "json_mode": True,
     },
     "openai": {
         "label": "OpenAI",
         "base_url": "https://api.openai.com/v1",
-        "models": ["gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini"],
+        "models": ["gpt-5.5", "gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano"],
         "key_url": "https://platform.openai.com/api-keys",
         "json_mode": True,
     },
     "anthropic": {
         "label": "Anthropic Claude",
         "base_url": "https://api.anthropic.com/v1",
-        "models": ["claude-sonnet-4-5", "claude-opus-4-1", "claude-3-5-haiku-latest"],
+        "models": ["claude-opus-4-8", "claude-sonnet-4-6", "claude-haiku-4-5"],
         "key_url": "https://console.anthropic.com/settings/keys",
         # Anthropic's OpenAI-compat layer does not reliably honour response_format;
         # rely on prompt + tolerant fence-stripping instead.
@@ -58,9 +60,9 @@ PRESETS = {
         "label": "OpenRouter (one-click sign-in)",
         "base_url": "https://openrouter.ai/api/v1",
         "models": [
-            "google/gemini-2.5-flash",
-            "openai/gpt-4o-mini",
-            "anthropic/claude-3.5-haiku",
+            "google/gemini-3.5-flash",
+            "openai/gpt-5.4-mini",
+            "anthropic/claude-haiku-4-5",
             "meta-llama/llama-3.2-90b-vision-instruct",
         ],
         "oauth": True,
@@ -86,8 +88,8 @@ PRESETS = {
 # Built-in defaults (Gemini), used when nothing is configured in the DB.
 DEFAULT_PROVIDER = "gemini"
 DEFAULT_BASE_URL = PRESETS["gemini"]["base_url"]
-DEFAULT_MODEL = "gemini-2.5-flash"
-DEFAULT_FAST_MODEL = "gemini-2.0-flash"
+DEFAULT_MODEL = "gemini-3.5-flash"
+DEFAULT_FAST_MODEL = "gemini-3.1-flash-lite"
 
 # Keys we persist in the SettingsModel KV table.
 AI_SETTING_KEYS = (
