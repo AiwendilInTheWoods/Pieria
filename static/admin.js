@@ -101,7 +101,7 @@ async function createPlaylist() {
             await refreshData();
         } else {
             const err = await res.json();
-            alert(`Error: ${err.detail}`);
+            showToast(`Error: ${err.detail}`, 'error');
         }
     } catch (error) {
         console.error('[Admin] Playlist creation failed:', error);
@@ -179,6 +179,51 @@ function showToast(message, type = '') {
     setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2600);
 }
 window.showToast = showToast;
+
+// Themed modal replacing native confirm()/prompt(). confirmModal -> Promise<bool>;
+// promptModal -> Promise<string|null> (null = cancelled). Both are async/awaitable.
+function _buildModal({ message, input, placeholder = '', confirmText = 'OK', cancelText = 'Cancel', danger = false }) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.id = 'modal-overlay';
+        const box = document.createElement('div');
+        box.className = 'modal-box';
+        const msg = document.createElement('p');
+        msg.className = 'modal-msg';
+        msg.textContent = message;
+        box.appendChild(msg);
+        let field = null;
+        if (input) {
+            field = document.createElement('input');
+            field.placeholder = placeholder;
+            box.appendChild(field);
+        }
+        const actions = document.createElement('div');
+        actions.className = 'modal-actions';
+        const cancel = document.createElement('button');
+        cancel.textContent = cancelText;
+        const ok = document.createElement('button');
+        ok.className = 'btn-confirm' + (danger ? ' danger' : '');
+        ok.textContent = confirmText;
+        actions.append(cancel, ok);
+        box.appendChild(actions);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        (field || ok).focus();
+        const close = (val) => { overlay.remove(); resolve(val); };
+        cancel.onclick = () => close(input ? null : false);
+        ok.onclick = () => close(input ? (field ? field.value : '') : true);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) close(input ? null : false); });
+        document.addEventListener('keydown', function esc(e) {
+            if (e.key === 'Escape') { document.removeEventListener('keydown', esc); close(input ? null : false); }
+        });
+        if (field) field.addEventListener('keydown', (e) => { if (e.key === 'Enter') ok.click(); });
+    });
+}
+function confirmModal(message, opts = {}) { return _buildModal({ message, input: false, ...opts }); }
+function promptModal(message, opts = {}) { return _buildModal({ message, input: true, ...opts }); }
+window.confirmModal = confirmModal;
+window.promptModal = promptModal;
 
 // Surface the address other devices should use to reach this server. We echo the
 // origin the admin was actually reached on (so LAN-IP / <host>.local just work), and
@@ -358,7 +403,7 @@ async function dispatchScouts() {
     const selectedSources = Array.from(document.querySelectorAll('input[name="scout-source"]:checked'))
                                  .map(cb => cb.value);
     
-    if (selectedSources.length === 0) return alert("Please select at least one source.");
+    if (selectedSources.length === 0) return showToast("Please select at least one source.", 'error');
 
     // UI Feedback
     btn.disabled = true;
@@ -414,7 +459,7 @@ async function dispatchScouts() {
 
 async function loadMoreDiscoveries() {
     if (!currentSessionId) {
-        alert('No active search session. Please run a new search first.');
+        showToast('No active search session. Please run a new search first.', 'error');
         return;
     }
     
@@ -482,99 +527,99 @@ function rejectDiscovery(id, btn) {
     });
 }
 
-function clearRejectedHistory() {
-    if (!confirm('Are you sure you want to clear your rejected history? Scouts will be able to recommend previously denied artwork again.')) return;
-    
+async function clearRejectedHistory() {
+    if (!(await confirmModal('Clear your rejected history? Scouts will be able to recommend previously denied artwork again.', { confirmText: 'Clear history' }))) return;
+
     enqueueAction(async () => {
         try {
             await fetch(`${API_BASE}/api/discover/history`, { method: 'DELETE' });
-            alert("Rejected history successfully cleared! Scouts will now rediscover previously skipped artwork.");
-        } catch (error) { 
-            console.error('[Admin] Clear history failed:', error); 
-            alert("Failed to clear history. Check console.");
+            showToast('Rejected history cleared — scouts will rediscover skipped artwork.', 'success');
+        } catch (error) {
+            console.error('[Admin] Clear history failed:', error);
+            showToast('Failed to clear history. Check console.', 'error');
         }
     });
 }
 
-function clearOrphanedHistory() {
-    if (!confirm('Clear history for artworks you approved but later deleted? This allows scouts to recommend them again.')) return;
-    
+async function clearOrphanedHistory() {
+    if (!(await confirmModal('Clear history for artworks you approved but later deleted? This allows scouts to recommend them again.', { confirmText: 'Clear' }))) return;
+
     enqueueAction(async () => {
         try {
             const res = await fetch(`${API_BASE}/api/discover/orphans`, { method: 'DELETE' });
             const data = await res.json();
-            alert(data.status + ". Scouts will now rediscover them!");
-        } catch (error) { 
-            console.error('[Admin] Clear orphans failed:', error); 
-            alert("Failed to clear orphaned history. Check console.");
+            showToast(data.status + '. Scouts will now rediscover them.', 'success');
+        } catch (error) {
+            console.error('[Admin] Clear orphans failed:', error);
+            showToast('Failed to clear orphaned history. Check console.', 'error');
         }
     });
 }
 
-function clearPendingDiscoveries() {
-    if (!confirm('Clear ALL pending discover items? This gives you a clean slate for testing.')) return;
-    
+async function clearPendingDiscoveries() {
+    if (!(await confirmModal('Clear ALL pending discover items? This gives you a clean slate.', { confirmText: 'Clear pending', danger: true }))) return;
+
     enqueueAction(async () => {
         try {
             const res = await fetch(`${API_BASE}/api/discover/clear-pending`, { method: 'DELETE' });
             const data = await res.json();
-            alert(data.status);
+            showToast(data.status, 'success');
             // Clear the discover grid UI
             document.getElementById('discover-grid').innerHTML = '';
             document.getElementById('load-more-btn').style.display = 'none';
             currentSessionId = null;
             loadDiscoverQueueThrottled();
-        } catch (error) { 
-            console.error('[Admin] Clear pending failed:', error); 
-            alert("Failed to clear pending items. Check console.");
+        } catch (error) {
+            console.error('[Admin] Clear pending failed:', error);
+            showToast('Failed to clear pending items. Check console.', 'error');
         }
     });
 }
 
-function factoryReset() {
-    if (!confirm('⚠️ FACTORY RESET: This will delete ALL artwork except the original seed masterpieces, clear the entire discover queue, and remove playlist associations. This CANNOT be undone. Are you sure?')) return;
-    
-    const typed = prompt('Type RESET to confirm factory reset:');
+async function factoryReset() {
+    if (!(await confirmModal('⚠️ FACTORY RESET\n\nThis deletes ALL artwork except the original seed masterpieces, clears the entire discover queue, and removes playlist associations. This CANNOT be undone.', { confirmText: 'Continue', danger: true }))) return;
+
+    const typed = await promptModal('Type RESET to confirm factory reset:', { placeholder: 'RESET', confirmText: 'Reset', danger: true });
     if (typed !== 'RESET') {
-        alert('Factory reset cancelled.');
+        if (typed !== null) showToast('Factory reset cancelled.');
         return;
     }
-    
+
     enqueueAction(async () => {
         try {
             const res = await fetch(`${API_BASE}/api/admin/factory-reset`, { method: 'POST' });
             const data = await res.json();
-            alert(`${data.status}\n\nArtworks removed: ${data.artworks_removed}\nFiles deleted: ${data.files_deleted}\nQueue items cleared: ${data.queue_items_cleared}\nSeed artworks preserved: ${data.seed_artworks_preserved}`);
+            showToast(`${data.status} — ${data.artworks_removed} removed, ${data.seed_artworks_preserved} seeds kept.`, 'success');
             // Full page reload to reflect the reset state
-            window.location.reload();
-        } catch (error) { 
-            console.error('[Admin] Factory reset failed:', error); 
-            alert("Factory reset failed. Check console.");
+            setTimeout(() => window.location.reload(), 1200);
+        } catch (error) {
+            console.error('[Admin] Factory reset failed:', error);
+            showToast('Factory reset failed. Check console.', 'error');
         }
     });
 }
 
 async function batchEnrich() {
     if (!aiConfigured) { nudgeConnectModel(); return; }
-    if (!confirm("Run RAG enrichment on the entire approved library? This uses AI and takes time.")) return;
+    if (!(await confirmModal('Run RAG enrichment on the entire approved library? This uses AI and takes time.', { confirmText: 'Run enrichment' }))) return;
     try {
         await fetch(`${API_BASE}/api/curate/batch-enrich`, { method: 'POST' });
-        alert("Batch enrichment started in the background.");
+        showToast('Batch enrichment started in the background.', 'success');
     } catch (error) { console.error('[Admin] Batch enrich failed:', error); }
 }
 
 async function reenrichArtwork(id) {
     if (!aiConfigured) { nudgeConnectModel(); return; }
-    const hint = prompt("AI Guidance (Optional):", "");
+    const hint = await promptModal('AI Guidance (optional):', { placeholder: 'e.g. focus on the historical context', confirmText: 'Re-enrich' });
     if (hint === null) return; // Cancelled
-    
+
     try {
         await fetch(`${API_BASE}/api/curate/reenrich/${id}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ hint: hint })
         });
-        alert("Artwork sent back to Review Queue for re-enrichment.");
+        showToast('Artwork sent back to the Review Queue for re-enrichment.', 'success');
         await refreshData();
     } catch (error) { console.error('[Admin] Re-enrich failed:', error); }
 }
@@ -691,8 +736,8 @@ async function removeArtworkFromPlaylist(artworkId) {
     } catch (error) { console.error('[Admin] Unlink failed:', error); }
 }
 
-function deleteArtworkPermanently(id) {
-    if (!confirm('PERMANENTLY delete this artwork from the library and all playlists? This wipes the file.')) return;
+async function deleteArtworkPermanently(id) {
+    if (!(await confirmModal('Permanently delete this artwork from the library and all playlists? This wipes the file.', { confirmText: 'Delete', danger: true }))) return;
     enqueueAction(async () => {
         try {
             await fetch(`${API_BASE}/artworks/${id}`, { method: 'DELETE' });
@@ -759,22 +804,27 @@ function renderSidebar() {
                         Randomize Order
                     </label>
                 </div>
-                <div>
-                    <label>Cycle (s):</label>
-                    <input type="number" value="${p.display_time}" min="1" onchange="updatePlaylistSetting(${p.id}, {display_time: parseInt(this.value)})" style="width:100%;">
-                </div>
-                <div>
-                    <label>Wait (s):</label>
-                    <input type="number" value="${p.placard_initial_wait_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_initial_wait_sec: parseInt(this.value)})" style="width:100%;">
-                </div>
-                <div>
-                    <label>Show (s):</label>
-                    <input type="number" value="${p.placard_initial_show_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_initial_show_sec: parseInt(this.value)})" style="width:100%;">
-                </div>
-                <div>
-                    <label>Manual (s):</label>
-                    <input type="number" value="${p.placard_interaction_show_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_interaction_show_sec: parseInt(this.value)})" style="width:100%;">
-                </div>
+                <details style="grid-column: span 2; margin-top: 4px;">
+                    <summary style="cursor:pointer; color:#94a3b8; font-size:0.72rem; user-select:none;">⚙ Advanced timing</summary>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:8px;">
+                        <div>
+                            <label title="Seconds each image is shown before advancing">Cycle (s):</label>
+                            <input type="number" value="${p.display_time}" min="1" onchange="updatePlaylistSetting(${p.id}, {display_time: parseInt(this.value)})" style="width:100%;">
+                        </div>
+                        <div>
+                            <label title="Seconds before the placard fades in after an image appears">Wait (s):</label>
+                            <input type="number" value="${p.placard_initial_wait_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_initial_wait_sec: parseInt(this.value)})" style="width:100%;">
+                        </div>
+                        <div>
+                            <label title="Seconds the placard stays visible automatically">Show (s):</label>
+                            <input type="number" value="${p.placard_initial_show_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_initial_show_sec: parseInt(this.value)})" style="width:100%;">
+                        </div>
+                        <div>
+                            <label title="Seconds the placard shows when you tap or click the screen">Manual (s):</label>
+                            <input type="number" value="${p.placard_interaction_show_sec}" min="0" onchange="updatePlaylistSetting(${p.id}, {placard_interaction_show_sec: parseInt(this.value)})" style="width:100%;">
+                        </div>
+                    </div>
+                </details>
             </div>
         `;
         li.onclick = () => selectPlaylist(p.id);
@@ -783,7 +833,7 @@ function renderSidebar() {
 }
 
 async function deletePlaylist(id, name) {
-    if (!confirm(`Delete playlist "${name}"? Library images will remain.`)) return;
+    if (!(await confirmModal(`Delete collection "${name}"? Library images will remain.`, { confirmText: 'Delete', danger: true }))) return;
     try {
         await fetch(`${API_BASE}/playlists/${id}`, { method: 'DELETE' });
         if (currentPlaylistId === id) currentPlaylistId = null;
@@ -1062,7 +1112,7 @@ function regenerateArtworkMetadata(id) {
             
         } catch (error) {
             console.error('[Admin] Regen failed:', error);
-            alert("AI Regeneration failed. Check logs.");
+            showToast("AI Regeneration failed. Check logs.", 'error');
         } finally {
             if (btn) {
                 btn.disabled = false;
@@ -1199,7 +1249,7 @@ async function loadPremiumSettings() {
 }
 
 async function promptApiKey(source, name, registerUrl) {
-    const key = prompt(`Unlock ${name}?\n\nPlease enter your free developer API key.\nYou can generate one instantly at:\n${registerUrl}`);
+    const key = await promptModal(`Unlock ${name}\n\nEnter your free developer API key (generate one instantly at ${registerUrl}):`, { placeholder: 'Paste API key', confirmText: 'Unlock' });
     if (!key) return; // User cancelled
 
     const label = document.getElementById(`premium-${source}`);
@@ -1216,17 +1266,17 @@ async function promptApiKey(source, name, registerUrl) {
         
         const data = await response.json();
         if (!response.ok) {
-            alert(data.detail || "Invalid Key");
+            showToast(data.detail || "Invalid key", 'error');
             label.innerHTML = originalContent;
             label.style.pointerEvents = "auto";
             return;
         }
 
         // Success! Convert to standard checkbox
-        alert(`Success! ${name} is now unlocked and available for scouting!`);
+        showToast(`${name} unlocked and available for scouting.`, 'success');
         unlockPremiumScout(source, name);
     } catch (e) {
-        alert("Network error occurred validating API key.");
+        showToast("Network error validating API key.", 'error');
         label.innerHTML = originalContent;
         label.style.pointerEvents = "auto";
     }
@@ -1519,7 +1569,7 @@ async function _pkceChallenge(verifier) {
 }
 async function startOpenRouterOAuth() {
     if (!window.isSecureContext) {
-        alert('One-click sign-in needs HTTPS or localhost (the browser blocks the required crypto on plain http://IP). Paste an OpenRouter key instead, or open this admin page at http://localhost:8000/admin or over HTTPS.');
+        showToast('One-click sign-in needs HTTPS or localhost — on a plain http://IP the browser blocks the required crypto. Paste an OpenRouter key instead, or open admin at localhost / over HTTPS.', 'error');
         return;
     }
     try {
@@ -1532,7 +1582,7 @@ async function startOpenRouterOAuth() {
         const data = await resp.json();
         window.location.href = data.auth_url;
     } catch (e) {
-        alert('Could not start OpenRouter sign-in: ' + e);
+        showToast('Could not start OpenRouter sign-in: ' + e, 'error');
     }
 }
 async function handleOAuthCallback() {
@@ -1548,10 +1598,10 @@ async function handleOAuthCallback() {
             body: JSON.stringify({ code, verifier })
         });
         const data = await resp.json();
-        if (resp.ok) alert('✓ Connected to OpenRouter!');
-        else alert('OpenRouter sign-in failed: ' + (data.detail || 'unknown error'));
+        if (resp.ok) showToast('Connected to OpenRouter ✓', 'success');
+        else showToast('OpenRouter sign-in failed: ' + (data.detail || 'unknown error'), 'error');
     } catch (e) {
-        alert('OpenRouter exchange error: ' + e);
+        showToast('OpenRouter exchange error: ' + e, 'error');
     } finally {
         sessionStorage.removeItem('sd_or_verifier');
     }
@@ -1623,7 +1673,14 @@ async function openCatalogCollection(collectionId) {
             <button class="secondary" onclick="renderCatalog()" style="font-size:0.75rem; padding:6px 12px; margin-bottom:10px;">← All collections</button>
             <h3 style="margin:6px 0 2px; color:var(--text-color); font-size:1.05rem;">${_esc(col.title)}</h3>
             <span style="font-size:0.78rem; color:#94a3b8;">${_esc(col.description || '')}</span>
-            <span style="display:block; font-size:0.68rem; color:#64748b; margin-top:4px;">${_esc(col.source || '')}${col.license ? ' · ' + _esc(col.license) : ''}</span>`;
+            <span style="display:block; font-size:0.68rem; color:#64748b; margin-top:4px;">${_esc(col.source || '')}${col.license ? ' · ' + _esc(col.license) : ''}</span>
+            <div style="margin-top:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <label style="font-size:0.78rem; color:#94a3b8;">Add to:</label>
+                <select id="catalog-target" style="background:#0f172a; border:1px solid var(--border-color); color:var(--text-color); padding:6px 10px; border-radius:6px; font-size:0.8rem;">
+                    <option value="">Library only</option>
+                    ${(currentPlaylists || []).map(p => `<option value="${p.id}">${_esc(p.name)}</option>`).join('')}
+                </select>
+            </div>`;
 
         const grid = document.createElement('div');
         grid.className = 'artwork-grid';
@@ -1655,21 +1712,28 @@ async function openCatalogCollection(collectionId) {
 async function addCatalogItem(collectionId, itemIndex, btn) {
     const orig = btn.textContent;
     btn.disabled = true; btn.textContent = '⏳ Adding…';
+    const dest = document.getElementById('catalog-target');
+    const playlistId = dest && dest.value ? parseInt(dest.value, 10) : null;
+    const payload = { collection_id: collectionId, item_index: itemIndex };
+    if (playlistId) payload.playlist_id = playlistId;
     try {
         const resp = await fetch(`${API_BASE}/api/catalog/add`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ collection_id: collectionId, item_index: itemIndex })
+            body: JSON.stringify(payload)
         });
         const data = await resp.json();
         if (!resp.ok) {
-            alert(data.detail || 'Add failed');
+            showToast(data.detail || 'Add failed', 'error');
             btn.disabled = false; btn.textContent = orig;
             return;
         }
         btn.textContent = 'Added ✓';
+        const dest = document.getElementById('catalog-target');
+        const destName = dest && dest.value ? dest.options[dest.selectedIndex].text : 'the Library';
+        showToast(`Added to ${destName} ✓`, 'success');
         fetchLibrary(); // refresh the Full Library count in the background
     } catch (e) {
-        alert('Network error adding artwork.');
+        showToast('Network error adding artwork.', 'error');
         btn.disabled = false; btn.textContent = orig;
     }
 }
