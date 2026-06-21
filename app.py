@@ -110,6 +110,7 @@ from models import (
     PlaylistModel,
     RemoteCommandModel,
     SettingsModel,
+    SubscriptionModel,
     playlist_artwork,
 )
 from query_classifier import QueryClassifier
@@ -121,6 +122,7 @@ _query_classifier = QueryClassifier()
 _result_ranker = ResultRanker()
 
 import ai_client
+import federation
 import frame_push
 from config import ARTWORK_ROOT, LIBRARY_DIR
 from epaper import PALETTES, VALID_FORMATS, media_type_for, render_for_epaper
@@ -1413,18 +1415,86 @@ async def _fetch_remote_json(base: str, name: str):
             return r.json()
     raise RuntimeError(f"HTTP {r.status_code}")
 
+# Subscribed (federated) collections share the catalog browse surface, but their ids are namespaced
+# so they can never collide with — or masquerade as — a bundled/official collection.
+SUB_PREFIX = "sub_"
+
+
+def _subscribed_summaries(db: Session) -> list:
+    """Index summaries for enabled subscriptions, each stamped with its origin/trust/publisher."""
+    out = []
+    for sub in db.query(SubscriptionModel).filter(SubscriptionModel.enabled.is_(True)).all():
+        if not sub.cached_manifest:
+            continue
+        try:
+            m = json.loads(sub.cached_manifest)
+        except ValueError:
+            continue
+        items = m.get("items", [])
+        cover = ""
+        if items:
+            img = items[0].get("image") or {}
+            cover = img.get("thumbnail_url") or img.get("full_url") or ""
+        out.append({
+            "id": f"{SUB_PREFIX}{sub.id}",
+            "title": m.get("title") or sub.title or "Untitled",
+            "description": m.get("description", ""),
+            "source": sub.publisher_name or "",
+            "license": "",  # per-item; mixed
+            "count": len(items),
+            "cover_thumbnail": cover,
+            "origin": "subscription",
+            "trust": sub.trust,
+            "publisher": {"id": sub.publisher_id, "name": sub.publisher_name, "url": sub.publisher_url},
+        })
+    return out
+
+
+def _subscribed_collection(db: Session, collection_id: str):
+    """Resolve a `sub_<id>` collection to its cached manifest's items (mapped to the catalog shape)."""
+    try:
+        sub_id = int(collection_id[len(SUB_PREFIX):])
+    except ValueError:
+        return None
+    sub = db.query(SubscriptionModel).filter(
+        SubscriptionModel.id == sub_id, SubscriptionModel.enabled.is_(True)).first()
+    if not sub or not sub.cached_manifest:
+        return None
+    m = json.loads(sub.cached_manifest)
+    return {
+        "id": collection_id,
+        "title": m.get("title"),
+        "description": m.get("description", ""),
+        "source": sub.publisher_name or "",
+        "license": "",
+        "origin": "subscription",
+        "trust": sub.trust,
+        "items": [federation.manifest_item_to_catalog(it) for it in m.get("items", [])],
+    }
+
+
 async def _catalog_index(db: Session) -> dict:
-    """Collection summaries (index.json): optional remote override → bundled split files → empty."""
+    """Collection summaries: optional remote override → bundled split files, then federated
+    subscriptions appended. Bundled/remote collections are stamped origin='bundled' so the UI can
+    distinguish official from subscribed."""
+    index = None
     base = await _catalog_remote_base(db)
     if base:
         try:
-            return await _fetch_remote_json(base, "index.json")
+            index = await _fetch_remote_json(base, "index.json")
         except Exception as e:
             logger.warning(f"[Catalog] remote index fetch failed ({e}); using bundled.")
-    return _read_local_json(CATALOG_DIR / "index.json") or {"version": 1, "collections": []}
+    if index is None:
+        index = _read_local_json(CATALOG_DIR / "index.json") or {"version": 1, "collections": []}
+    for c in index.get("collections", []):
+        c.setdefault("origin", "bundled")
+    index.setdefault("collections", []).extend(_subscribed_summaries(db))
+    return index
 
 async def _catalog_collection(db: Session, collection_id: str):
     """One collection's full items file, or None if the id isn't present in the index."""
+    if collection_id.startswith(SUB_PREFIX):
+        return _subscribed_collection(db, collection_id)
     index = await _catalog_index(db)
     if not any(c.get("id") == collection_id for c in index.get("collections", [])):
         return None
@@ -1643,6 +1713,13 @@ async def add_catalog_item(payload: CatalogAddPayload, db: Session = Depends(get
     if payload.item_index < 0 or payload.item_index >= len(items):
         raise HTTPException(404, detail="Unknown catalog item")
     item = items[payload.item_index]
+    # Federated items come from a third party — SSRF-guard the image URL before the server fetches it
+    # (a malicious manifest could point image.full_url at an internal/loopback address).
+    if payload.collection_id.startswith(SUB_PREFIX):
+        try:
+            federation._assert_public_url(item["source_url"])
+        except federation.FederationError as e:
+            raise HTTPException(400, detail=f"Refused to fetch image: {e}") from e
     art = await _download_and_create_artwork(
         db, source_url=item["source_url"], thumbnail_url=item.get("thumbnail_url"),
         metadata=item, playlist_id=payload.playlist_id)
@@ -1669,6 +1746,67 @@ async def add_catalog_collection(payload: CatalogAddCollectionPayload, db: Sessi
             failed += 1
             logger.warning(f"[Catalog] add-collection item failed: {e}")
     return {"status": "done", "added": added, "failed": failed}
+
+# -----------------------------------------------------------------------------
+# §4.9 Federation — subscribe to third-party Manifest v2 collections by URL
+# -----------------------------------------------------------------------------
+
+def _sub_summary(s: SubscriptionModel) -> dict:
+    return {
+        "id": s.id,
+        "url": s.url,
+        "collection_id": f"{SUB_PREFIX}{s.id}",
+        "title": s.title,
+        "publisher": {"id": s.publisher_id, "name": s.publisher_name, "url": s.publisher_url},
+        "trust": s.trust,
+        "enabled": s.enabled,
+        "item_count": s.item_count,
+        "last_synced": s.last_synced.isoformat() if s.last_synced else None,
+        "last_status": s.last_status,
+    }
+
+class SubscriptionPayload(BaseModel):
+    url: str
+
+@app.get("/api/subscriptions")
+async def list_subscriptions(db: Session = Depends(get_db)):
+    return [_sub_summary(s) for s in db.query(SubscriptionModel).order_by(SubscriptionModel.id).all()]
+
+@app.post("/api/subscriptions")
+async def add_subscription(payload: SubscriptionPayload, db: Session = Depends(get_db)):
+    """Subscribe to a publisher's Manifest v2 URL. Fetched + safety-checked + validated BEFORE a row
+    is created, so a bad/unsafe URL never persists. Trust starts at 'community' (URL-added)."""
+    url = payload.url.strip()
+    if db.query(SubscriptionModel).filter(SubscriptionModel.url == url).first():
+        raise HTTPException(409, detail="Already subscribed to this URL")
+    try:
+        manifest = await federation.fetch_manifest(url)
+    except federation.FederationError as e:
+        raise HTTPException(400, detail=str(e)) from e
+    pub = manifest.get("publisher") or {}
+    sub = SubscriptionModel(
+        url=url, collection_id=manifest.get("id"), title=manifest.get("title"),
+        publisher_id=pub.get("id"), publisher_name=pub.get("name"), publisher_url=pub.get("url"),
+        trust="community", enabled=True, cached_manifest=json.dumps(manifest),
+        item_count=len(manifest.get("items", [])), last_status="ok", last_synced=datetime.now(UTC))
+    db.add(sub); db.commit(); db.refresh(sub)
+    return _sub_summary(sub)
+
+@app.post("/api/subscriptions/{sub_id}/sync")
+async def sync_subscription_endpoint(sub_id: int, db: Session = Depends(get_db)):
+    sub = db.query(SubscriptionModel).filter(SubscriptionModel.id == sub_id).first()
+    if not sub:
+        raise HTTPException(404)
+    await federation.sync_subscription(db, sub)
+    return _sub_summary(sub)
+
+@app.delete("/api/subscriptions/{sub_id}")
+async def delete_subscription(sub_id: int, db: Session = Depends(get_db)):
+    sub = db.query(SubscriptionModel).filter(SubscriptionModel.id == sub_id).first()
+    if not sub:
+        raise HTTPException(404)
+    db.delete(sub); db.commit()
+    return {"status": "removed"}
 
 # -----------------------------------------------------------------------------
 # 5. Static File Serving
