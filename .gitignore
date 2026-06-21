@@ -29,8 +29,8 @@ __pycache__/
 # Catalog builder incremental cache (regenerable)
 tools/.catalog_cache.json
 
-# Local-only dev docs (kept on disk, not published)
+# Local-only dev docs (kept on disk, not published).
+# .ai/ is private-by-default; only the system architecture doc is tracked.
 PRD.md
-.ai/active_context.md
-.ai/decision_log.md
-.ai/strategy_notes.md
+.ai/*
+!.ai/system_architecture.md
