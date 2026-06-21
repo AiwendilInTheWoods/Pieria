@@ -9,11 +9,11 @@ import io
 import json
 
 import pytest
+from fastapi.testclient import TestClient
 from PIL import Image
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from fastapi.testclient import TestClient
 
 import app as app_module
 from app import app

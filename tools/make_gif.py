@@ -8,6 +8,7 @@ guided walkthroughs under static/docs/ for the in-app Help page.
 """
 
 import argparse
+
 from PIL import Image
 
 

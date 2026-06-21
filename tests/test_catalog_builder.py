@@ -8,9 +8,8 @@ import json
 
 from PIL import Image
 
-from tools import catalog_spec
 from tools import build_catalog as bc
-from tools import sources
+from tools import catalog_spec, sources
 
 
 def _png_bytes(size):

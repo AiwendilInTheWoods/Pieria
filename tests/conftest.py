@@ -1,7 +1,9 @@
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from database import Base
+
 
 @pytest.fixture(scope="function")
 def testing_session():
@@ -11,10 +13,10 @@ def testing_session():
         "sqlite:///:memory:", connect_args={"check_same_thread": False}
     )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    
+
     # Initialize all tables in the memory engine
     Base.metadata.create_all(bind=engine)
-    
+
     db = TestingSessionLocal()
     try:
         yield db

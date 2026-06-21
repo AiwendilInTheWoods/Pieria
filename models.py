@@ -3,10 +3,11 @@ SQLAlchemy models for the Artwork Display Engine.
 Phase 3: Many-to-Many relationship between Playlists and Artworks.
 """
 
+from datetime import UTC, datetime
 from typing import List, Optional
-from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Table, Boolean, DateTime
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Table, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database import Base
 
@@ -27,7 +28,7 @@ class ActiveDisplayModel(Base):
     __tablename__ = "active_displays"
 
     display_id: Mapped[str] = mapped_column(String, primary_key=True)
-    last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
 class RemoteCommandModel(Base):
     """
@@ -39,7 +40,7 @@ class RemoteCommandModel(Base):
     target_display: Mapped[str] = mapped_column(String, index=True)
     action: Mapped[str] = mapped_column(String)
     payload: Mapped[Optional[str]] = mapped_column(Text) # JSON string
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
 class DisplayPlaybackSessionModel(Base):
     """
@@ -64,12 +65,12 @@ class PlaylistModel(Base):
     display_time: Mapped[int] = mapped_column(Integer, default=30)
     default_mode: Mapped[str] = mapped_column(String, default="ken-burns")
     shuffle: Mapped[bool] = mapped_column(Boolean, default=False)
-    
+
     # Placard Timers (stored in seconds)
     placard_initial_wait_sec: Mapped[int] = mapped_column(Integer, default=5)
     placard_initial_show_sec: Mapped[int] = mapped_column(Integer, default=15)
     placard_interaction_show_sec: Mapped[int] = mapped_column(Integer, default=10)
-    
+
     # Many-to-Many relationship
     artworks: Mapped[List["ArtworkModel"]] = relationship(
         secondary=playlist_artwork,
@@ -90,11 +91,11 @@ class ArtworkModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     filename: Mapped[str] = mapped_column(String, index=True)
-    
+
     # Original Dimensions
     original_width: Mapped[int] = mapped_column(Integer, default=0)
     original_height: Mapped[int] = mapped_column(Integer, default=0)
-    
+
     # Many-to-Many relationship
     playlists: Mapped[List["PlaylistModel"]] = relationship(
         secondary=playlist_artwork,

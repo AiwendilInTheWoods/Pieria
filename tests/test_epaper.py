@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from epaper import render_for_epaper, PALETTES
+from epaper import PALETTES, render_for_epaper
 
 
 def _make_image(tmp_path: Path, name="src.jpg", mode="RGB", size=(240, 160)) -> Path:

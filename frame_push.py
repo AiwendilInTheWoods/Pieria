@@ -22,8 +22,8 @@ from pathlib import Path
 from typing import Awaitable, Callable, Optional, Tuple
 
 from database import SessionLocal
-from models import SettingsModel
 from epaper import render_fullcolor
+from models import SettingsModel
 
 logger = logging.getLogger("artwork-display-api.frame")
 

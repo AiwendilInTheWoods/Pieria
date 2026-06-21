@@ -11,12 +11,12 @@ back to the ``GEMINI_API_KEY`` environment variable + Gemini defaults so existin
 deployments keep working with zero changes (now routed through Gemini's OpenAI-compat endpoint).
 """
 
-import os
-import io
-import time
-import json
 import base64
+import io
+import json
 import logging
+import os
+import time
 
 import httpx
 from PIL import Image

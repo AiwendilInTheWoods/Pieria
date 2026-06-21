@@ -65,8 +65,7 @@ let activeArtworkId = null;
 let activeImageStartTime = 0;
 
 async function init() {
-    console.log(`[Client] Initializing Display: ${DISPLAY_ID}. API: ${API_BASE}`);
-    
+
     const requestedMode = urlParams.get('mode');
     const validModes = ['ken-burns', 'static-crop', 'contain-matte'];
     if (requestedMode && validModes.includes(requestedMode)) {
@@ -87,13 +86,11 @@ async function init() {
  * Initializes Targeted WebSocket connection.
  */
 function connectWS() {
-    console.log(`[Client] Connecting to Remote Hub at: ${WS_URL}`);
     socket = new WebSocket(WS_URL);
 
     socket.onmessage = async (event) => {
         try {
             const msg = JSON.parse(event.data);
-            console.log('[Client] Command Received:', msg);
 
             switch (msg.action) {
                 case 'set_playlist':
@@ -134,7 +131,6 @@ async function handleRemotePlaylistSwitch(name) {
     const p = currentPlaylists.find(pl => pl.name === name);
     if (!p) return;
 
-    console.log(`[Client] Targeted Switch: ${name}`);
     currentPlaylist = name;
     currentDisplayTime = p.display_time * 1000;
     currentImageIndex = null; 

@@ -9,15 +9,15 @@ import asyncio
 import io
 
 import pytest
-from PIL import Image
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
+from PIL import Image
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 import app as app_module
-from app import app, _download_image_to_library
+from app import _download_image_to_library, app
 from database import Base, get_db
 from models import ArtworkModel, DiscoveryQueueModel
 

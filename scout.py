@@ -5,23 +5,25 @@ Discovers new high-resolution public-domain art.
 Smart Search: Uses QueryClassifier to dispatch API-specific optimized queries.
 """
 
-import logging
+import asyncio
+import difflib
 import json
-import httpx
+import logging
 import random
 import re
 import time
-import difflib
 import traceback
-import asyncio
 import uuid
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional
-from urllib.parse import quote
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+from urllib.parse import quote
+
+import httpx
 from sqlalchemy.orm import Session
-from models import DiscoveryQueueModel, SettingsModel
+
+from models import SettingsModel
 from query_classifier import SearchIntent
 
 logger = logging.getLogger("artwork-display-api.scout")
@@ -637,7 +639,7 @@ class SmithsonianScout(MuseumScout):
 class EuropeanaScout(MuseumScout):
     """
     Tier-2 Scout for Europeana requiring API WSKey.
-    
+
     Quality filters:
     - contentTier:3/4 — high-quality records with good images
     - IMAGE_SIZE:large/extra_large — decent resolution images
@@ -671,7 +673,7 @@ class EuropeanaScout(MuseumScout):
 
                 # Strategy: progressive fallback for best quality results
                 # For artists: who: field returns actual works BY the artist
-                # For genres: text search + TYPE:IMAGE 
+                # For genres: text search + TYPE:IMAGE
                 if intent and intent.query_type == "artist":
                     strategies = [
                         # 1st: who: field — small but precise (genuine works)
@@ -721,11 +723,11 @@ class EuropeanaScout(MuseumScout):
                     full_url = None
                     if art.get('edmIsShownBy'):
                         full_url = art['edmIsShownBy'][0]
-                    
+
                     thumb_url = None
                     if art.get('edmPreview'):
                         thumb_url = art['edmPreview'][0]
-                    
+
                     if not full_url and not thumb_url:
                         continue
 
