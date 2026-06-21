@@ -46,6 +46,7 @@ async function processQueue() {
 async function init() {
     setupUploadZone();
     setupPlaylistInput(); // Add key listener
+    initServerAddress();  // show the address to point displays/Pi/e-ink/Frame at
     await loadPremiumSettings();
     await handleOAuthCallback();   // catch an OpenRouter OAuth redirect (?code=…)
     await loadAiSettings();
@@ -154,8 +155,46 @@ function switchView(view) {
 
     document.getElementById('sidebar-playlists').classList.toggle('hidden', view !== 'playlists');
 
+    // On mobile, picking a view closes the slide-in drawer.
+    document.body.classList.remove('sidebar-open');
+
     if (view === 'catalog') renderCatalog();
 }
+
+// Mobile-only: toggle the slide-in sidebar drawer (no-op visual on desktop).
+function toggleSidebar() {
+    document.body.classList.toggle('sidebar-open');
+}
+window.toggleSidebar = toggleSidebar;
+
+// Surface the address other devices should use to reach this server. We echo the
+// origin the admin was actually reached on (so LAN-IP / <host>.local just work), and
+// warn when it's localhost (which other devices can't reach). This avoids reporting a
+// bogus container IP — Docker bridging makes a server-side LAN-IP lookup unreliable.
+function initServerAddress() {
+    const el = document.getElementById('server-address');
+    if (!el) return;
+    el.textContent = window.location.origin;
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+        const note = document.getElementById('server-address-note');
+        if (note) {
+            note.style.display = 'block';
+            note.innerHTML = "You're viewing this on the server itself, so this shows <code>localhost</code> — " +
+                "other devices can't reach that. Point them at this machine's LAN address instead: find it with " +
+                "<code>hostname -I</code>, or open this admin from another device via " +
+                "<code>http://&lt;this-hostname&gt;.local:8000/admin</code> and this address will update to match.";
+        }
+    }
+}
+
+function copyServerAddress() {
+    const txt = document.getElementById('server-address').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(txt);
+    const c = document.getElementById('server-address-copied');
+    if (c) { c.style.display = 'inline'; setTimeout(() => { c.style.display = 'none'; }, 1500); }
+}
+window.copyServerAddress = copyServerAddress;
 
 async function fetchLibrary() {
     try {
@@ -747,6 +786,7 @@ function selectPlaylist(id) {
     document.querySelectorAll('.playlist-item').forEach(el => el.classList.toggle('active', parseInt(el.dataset.id) === id));
     document.getElementById('target-playlist-name').textContent = playlist.name;
     renderArtworkGrid(playlist.artworks || []);
+    document.body.classList.remove('sidebar-open');  // close the mobile drawer on selection
 }
 
 function setupUploadZone() {

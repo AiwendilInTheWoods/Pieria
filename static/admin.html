@@ -223,9 +223,56 @@
             30%      { box-shadow: 0 0 0 4px rgba(59,130,246,0.55); }
         }
         .ai-flash { animation: aiFlash 1.3s ease; border-color: var(--accent-color) !important; }
+
+        /* --- Mobile top bar + slide-in sidebar drawer (hidden on desktop) --- */
+        .mobile-topbar { display: none; }
+        .sidebar-backdrop { display: none; }
+
+        @media (max-width: 768px) {
+            /* The sidebar becomes a drawer that slides over the content; a fixed top
+               bar with a hamburger replaces the always-visible desktop sidebar so the
+               admin is usable (and scrollable) on a phone. */
+            .mobile-topbar {
+                display: flex; align-items: center; gap: 12px;
+                position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 60;
+                background: var(--sidebar-bg); border-bottom: 1px solid var(--border-color);
+                padding: 0 16px;
+            }
+            .mobile-topbar .hamburger {
+                background: transparent; border: 1px solid var(--border-color);
+                color: var(--text-color); font-size: 1.2rem; line-height: 1;
+                padding: 8px 13px; border-radius: 8px; cursor: pointer;
+            }
+            .mobile-topbar .mt-title { font-size: 1rem; font-weight: 600; color: var(--accent-color); }
+
+            aside {
+                position: fixed; top: 0; left: 0; bottom: 0; z-index: 70;
+                width: 280px; max-width: 85vw;
+                transform: translateX(-100%); transition: transform 0.25s ease;
+                box-shadow: 2px 0 24px rgba(0,0,0,0.55);
+            }
+            body.sidebar-open aside { transform: translateX(0); }
+
+            .sidebar-backdrop {
+                position: fixed; inset: 0; z-index: 65; background: rgba(0,0,0,0.55);
+            }
+            body:not(.sidebar-open) .sidebar-backdrop { display: none; }
+            body.sidebar-open .sidebar-backdrop { display: block; }
+
+            main { padding: 56px 16px 0; }      /* clear the fixed top bar */
+            .action-bar { padding-top: 20px; }
+            .review-form { grid-template-columns: 1fr; }  /* stack form fields */
+            .mission-control { padding: 18px !important; }
+        }
     </style>
 </head>
 <body>
+    <!-- Mobile-only top bar + drawer backdrop (CSS hides these on desktop) -->
+    <div class="mobile-topbar">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
+        <span class="mt-title">Screen Docent</span>
+    </div>
+    <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
     <aside>
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
             <img src="/logo.svg" alt="Logo" style="height: 32px;">
@@ -392,6 +439,19 @@
             <h2 style="color: var(--accent-color); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1rem; margin-bottom: 30px;">Settings & Maintenance</h2>
             
             <div style="display: flex; flex-direction: column; gap: 20px; max-width: 700px;">
+                <!-- This Server — the address to point other devices (Pi, e-ink, Frame) at -->
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">📡 This Server</h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 14px;">
+                        Point your displays, Pi appliances, e-ink frames, and the Frame TV at this address.
+                    </p>
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                        <code id="server-address" style="background:#0f172a; border:1px solid var(--border-color); padding:10px 14px; border-radius:8px; font-size:0.95rem; color:var(--success-color);">—</code>
+                        <button class="secondary" onclick="copyServerAddress()" style="padding:8px 14px;">Copy</button>
+                        <span id="server-address-copied" style="display:none; color:var(--success-color); font-size:0.8rem;">Copied ✓</span>
+                    </div>
+                    <p id="server-address-note" style="display:none; font-size:0.78rem; color:#fbbf24; margin:14px 0 0;"></p>
+                </div>
                 <!-- AI Engine -->
                 <div id="ai-engine-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
                     <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">🧠 AI Engine</h3>
@@ -579,6 +639,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260620e"></script>
+    <script src="admin.js?v=20260621a"></script>
 </body>
 </html>
