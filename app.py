@@ -1792,7 +1792,7 @@ async def add_subscription(payload: SubscriptionPayload, db: Session = Depends(g
     sub = SubscriptionModel(
         url=url, collection_id=manifest.get("id"), title=manifest.get("title"),
         publisher_id=pub.get("id"), publisher_name=pub.get("name"), publisher_url=pub.get("url"),
-        trust="community", enabled=True, cached_manifest=json.dumps(manifest),
+        trust=federation.assess_trust(manifest), enabled=True, cached_manifest=json.dumps(manifest),
         item_count=len(manifest.get("items", [])), last_status="ok", last_synced=datetime.now(UTC))
     db.add(sub); db.commit(); db.refresh(sub)
     return _sub_summary(sub)
