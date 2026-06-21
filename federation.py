@@ -11,16 +11,23 @@ Security posture (we index pointers, never host bytes; the user chose the URL):
 Untrusted manifest strings are escaped at *render* time (the /art page + browse UI), not here.
 """
 
+import base64
 import ipaddress
 import json
+import logging
 import socket
 from datetime import UTC, datetime
+from pathlib import Path
 from urllib.parse import urlparse
 
 import httpx
+from nacl.exceptions import BadSignatureError
+from nacl.signing import VerifyKey
 
 from models import SubscriptionModel
 from tools.manifest_validator import validate_manifest
+
+logger = logging.getLogger("artwork-display-api.federation")
 
 MAX_MANIFEST_BYTES = 5 * 1024 * 1024  # 5 MB
 MAX_ITEMS = 5000
@@ -31,8 +38,55 @@ BLOCKED_HOSTS: set[str] = set()
 BLOCKED_PUBLISHERS: set[str] = set()
 
 
+def _load_trusted_keys() -> dict:
+    """Curated registry: publisher.id -> base64 Ed25519 public key. A signed manifest is promoted to
+    'verified' only when its publisher key matches an entry here (else a valid self-signed feed stays
+    'community' / trust-on-first-use). v1 = a hand-curated static file."""
+    path = Path(__file__).parent / "registry" / "trusted_publishers.json"
+    try:
+        return (json.loads(path.read_text()) or {}).get("publishers", {})
+    except (OSError, ValueError):
+        return {}
+
+
+TRUSTED_KEYS = _load_trusted_keys()
+
+
 class FederationError(Exception):
     """Any reason a manifest URL was rejected (network, safety, or schema)."""
+
+
+def canonical_bytes(manifest: dict) -> bytes:
+    """Deterministic bytes a manifest is signed over: the object minus `signature`, JSON with sorted
+    keys + compact separators + UTF-8. Signer and verifier must agree on exactly this."""
+    body = {k: v for k, v in manifest.items() if k != "signature"}
+    return json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+
+def verify_signature(manifest: dict) -> bool:
+    """True iff the manifest carries a `signature` + `publisher.public_key` and the Ed25519 signature
+    validates over the canonical bytes (i.e. untampered, signed by that key)."""
+    key_b64 = (manifest.get("publisher") or {}).get("public_key")
+    sig_b64 = manifest.get("signature")
+    if not key_b64 or not sig_b64:
+        return False
+    try:
+        VerifyKey(base64.b64decode(key_b64)).verify(canonical_bytes(manifest), base64.b64decode(sig_b64))
+        return True
+    except (BadSignatureError, ValueError, TypeError):
+        return False
+
+
+def assess_trust(manifest: dict, trusted_keys: dict | None = None) -> str:
+    """Trust tier for a manifest: 'verified' (signed + key matches the curated registry for that
+    publisher) or 'community' (unsigned, or validly self-signed but not registry-trusted)."""
+    keys = TRUSTED_KEYS if trusted_keys is None else trusted_keys
+    pub = manifest.get("publisher") or {}
+    if not manifest.get("signature") or not verify_signature(manifest):
+        return "community"
+    if pub.get("id") and keys.get(pub["id"]) == pub.get("public_key"):
+        return "verified"
+    return "community"
 
 
 def _assert_public_url(url: str) -> None:
@@ -93,6 +147,10 @@ async def fetch_manifest(url: str) -> dict:
     pub_id = (obj.get("publisher") or {}).get("id")
     if pub_id and pub_id in BLOCKED_PUBLISHERS:
         raise FederationError("publisher is on the blocklist")
+    # A present-but-invalid signature means tampered/corrupt — reject outright. (Unsigned is fine;
+    # it just stays in the 'community' tier.)
+    if obj.get("signature") and not verify_signature(obj):
+        raise FederationError("manifest signature is invalid (tampered, or wrong key)")
     return obj
 
 
@@ -134,6 +192,7 @@ async def sync_subscription(db, sub: SubscriptionModel) -> SubscriptionModel:
     sub.publisher_id = pub.get("id")
     sub.publisher_name = pub.get("name")
     sub.publisher_url = pub.get("url")
+    sub.trust = assess_trust(manifest)   # re-evaluate the tier on every sync
     sub.cached_manifest = json.dumps(manifest)
     sub.item_count = len(manifest.get("items", []))
     sub.last_status = "ok"
