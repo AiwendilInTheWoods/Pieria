@@ -299,9 +299,11 @@ Captured from working sessions — not yet scheduled. Roughly ordered by how muc
   into the Frame's Art Mode over the local network (Samsung's unofficial art WebSocket API, e.g. the
   `samsungtvws` library). Reuses the curation brain + the image-render path (`epaper.py`); adds a
   scheduler + the upload adapter. Net: curated, open, no-subscription art on hardware people already own.
-- **MagicMirror² module** *(quick win).* A small `MMM-ScreenDocent` module that displays the current
-  artwork + placard from a Screen Docent server (the display URL / image endpoint already serves it).
-  Low effort, lands us in a large existing self-hosted community.
+- **MagicMirror² module** — ✅ **shipped** in [`integrations/MMM-ScreenDocent/`](integrations/MMM-ScreenDocent/).
+  A front-end-only `MMM-ScreenDocent` module that shows the current artwork + placard from a Screen
+  Docent server (consumes `/next-image`; no server changes). Ships a `preview.html` to try it without
+  MagicMirror. *(Follow-ups: publish as its own repo + list in the MM 3rd-party registry; optional
+  WebSocket live-push.)*
 - **Home Assistant add-on / Lovelace card** — see Strategy & Direction.
 - **TRMNL plugin / Inky example** over the existing e-ink image API.
 
