@@ -250,75 +250,57 @@ async def run_factory_seed(db: Session):
             db_local = SessionLocal()
             try:
                 await asyncio.sleep(2)
-                headers = {"User-Agent": "ScreenDocent/1.0 (https://github.com/AiwendilInTheWoods/Screen-Docent; admin@local) httpx/0.24"}
-                async with httpx.AsyncClient(headers=headers) as client:
-                    for idx, item in enumerate(seed_items):
-                        await asyncio.sleep(2.0)
-                        try:
-                            pl_name = item.get("playlist", "The Masterpieces")
-                            playlist = db_local.query(PlaylistModel).filter(PlaylistModel.name == pl_name).first()
-                            if not playlist:
-                                playlist = PlaylistModel(name=pl_name)
-                                db_local.add(playlist); db_local.commit(); db_local.refresh(playlist)
-                                (ARTWORK_ROOT / pl_name).mkdir(parents=True, exist_ok=True)
-                            
-                            safe_name = f"seed_{idx}_{item.get('title', 'art').replace(' ','_').lower()[:15]}.jpg"
-                            safe_name = "".join(x for x in safe_name if x.isalnum() or x in '_-.')
-                            
-                            logger.info(f"[Bootstrapper] Downloading '{safe_name}'...")
-                            
-                            max_retries = 3
-                            for attempt in range(max_retries):
-                                resp = await client.get(item.get("source_url"), timeout=30.0, follow_redirects=True)
-                                if resp.status_code == 429:
-                                    backoff = 5 * (attempt + 1)
-                                    logger.warning(f"[Bootstrapper] 429 Rate Limit hit for {safe_name}. Backing off {backoff}s...")
-                                    await asyncio.sleep(backoff)
-                                    continue
-                                break
+                for idx, item in enumerate(seed_items):
+                    await asyncio.sleep(2.0)
+                    try:
+                        pl_name = item.get("playlist", "The Masterpieces")
+                        playlist = db_local.query(PlaylistModel).filter(PlaylistModel.name == pl_name).first()
+                        if not playlist:
+                            playlist = PlaylistModel(name=pl_name)
+                            db_local.add(playlist); db_local.commit(); db_local.refresh(playlist)
+                            (ARTWORK_ROOT / pl_name).mkdir(parents=True, exist_ok=True)
 
-                            if resp.status_code == 200:
-                                dest_path = LIBRARY_DIR / safe_name
-                                # Remove stale symlinks/files before writing
-                                if dest_path.is_symlink() or dest_path.exists():
-                                    dest_path.unlink()
-                                with open(dest_path, "wb") as f:
-                                    f.write(resp.content)
-                                
-                                pl_path = ARTWORK_ROOT / pl_name / safe_name
-                                # Remove stale symlink before creating new one
-                                if pl_path.is_symlink() or pl_path.exists():
-                                    pl_path.unlink()
-                                try: os.symlink(dest_path.resolve(), pl_path)
-                                except OSError: shutil.copy(dest_path, pl_path)
-                                    
-                                with Image.open(dest_path) as img: w, h = img.size
-                                    
-                                artwork = ArtworkModel(
-                                    filename=safe_name, original_width=w, original_height=h,
-                                    crop_width=float(w), crop_height=float(h),
-                                    status='approved',
-                                    title=item.get("title"), agent_name=item.get("agent_name"),
-                                    agent_role=item.get("agent_role"), creation_date=item.get("creation_date"),
-                                    cultural_context=item.get("cultural_context"), medium=item.get("medium"),
-                                    date_display=item.get("date_display"), description_narrative=item.get("description_narrative"),
-                                    tags=item.get("tags"), is_seed=True
-                                )
-                                db_local.add(artwork); db_local.commit(); db_local.refresh(artwork)
-                                
-                                try:
-                                    db_local.execute(playlist_artwork.insert().values(
-                                        playlist_id=playlist.id, artwork_id=artwork.id, display_order=idx
-                                    ))
-                                    db_local.commit()
-                                except Exception:
-                                    db_local.rollback()  # playlist_artwork may already exist
-                                
-                                logger.info(f"[Bootstrapper] ✓ Seeded '{item.get('title')}' → {pl_name}")
-                                
-                            else: logger.error(f"[Bootstrapper] Failed download {safe_name}: HTTP {resp.status_code}")
-                                
-                        except Exception as inner_e: logger.error(f"[Bootstrapper] Item error: {inner_e}")
+                        filename = f"seed_{idx}_{item.get('title', 'art').replace(' ','_').lower()[:15]}"
+                        logger.info(f"[Bootstrapper] Downloading '{filename}'...")
+
+                        # Shared robust downloader (UA + 429 retry + validation).
+                        try:
+                            dest_path, safe_name, w, h = await _download_image_to_library(
+                                item.get("source_url"), filename=filename)
+                        except HTTPException as e:
+                            logger.error(f"[Bootstrapper] Failed download {filename}: {e.detail}")
+                            continue
+
+                        pl_path = ARTWORK_ROOT / pl_name / safe_name
+                        # Remove stale symlink before creating new one
+                        if pl_path.is_symlink() or pl_path.exists():
+                            pl_path.unlink()
+                        try: os.symlink(dest_path.resolve(), pl_path)
+                        except OSError: shutil.copy(dest_path, pl_path)
+
+                        artwork = ArtworkModel(
+                            filename=safe_name, original_width=w, original_height=h,
+                            crop_width=float(w), crop_height=float(h),
+                            status='approved',
+                            title=item.get("title"), agent_name=item.get("agent_name"),
+                            agent_role=item.get("agent_role"), creation_date=item.get("creation_date"),
+                            cultural_context=item.get("cultural_context"), medium=item.get("medium"),
+                            date_display=item.get("date_display"), description_narrative=item.get("description_narrative"),
+                            tags=item.get("tags"), is_seed=True
+                        )
+                        db_local.add(artwork); db_local.commit(); db_local.refresh(artwork)
+
+                        try:
+                            db_local.execute(playlist_artwork.insert().values(
+                                playlist_id=playlist.id, artwork_id=artwork.id, display_order=idx
+                            ))
+                            db_local.commit()
+                        except Exception:
+                            db_local.rollback()  # playlist_artwork may already exist
+
+                        logger.info(f"[Bootstrapper] ✓ Seeded '{item.get('title')}' → {pl_name}")
+
+                    except Exception as inner_e: logger.error(f"[Bootstrapper] Item error: {inner_e}")
             finally: db_local.close()
 
         asyncio.create_task(perform_downloads(seeds))
@@ -684,29 +666,18 @@ async def approve_discovery(item_id: int, background_tasks: BackgroundTasks, db:
     item = db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.id == item_id).first()
     if not item: raise HTTPException(404)
     
-    # 1. Download full-res image
-    filename = f"scouted_{item_id}_{item.proposed_title.replace(' ', '_')[:50]}.jpg"
-    filepath = LIBRARY_DIR / filename
-    
-    try:
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(item.source_url, timeout=30.0, follow_redirects=True)
-            if resp.status_code == 200:
-                with open(filepath, "wb") as f:
-                    f.write(resp.content)
-            else:
-                raise Exception(f"Download failed: {resp.status_code}")
-    except Exception as e:
-        logger.error(f"[Discovery] Download failed: {e}")
-        raise HTTPException(500, detail=str(e))
+    # 1. Download full-res image via the shared robust downloader (descriptive UA — Wikimedia/NASA
+    #    reject the default httpx UA — plus 429 retry, redirects, and image validation).
+    filename = f"scouted_{item_id}_{item.proposed_title.replace(' ', '_')[:50]}"
+    _, filename, w, h = await _download_image_to_library(item.source_url, filename=filename)
 
     # 2. Add to database
-    with Image.open(filepath) as img: w, h = img.size
     new_art = ArtworkModel(
-        filename=filename, 
+        filename=filename,
         original_width=w, original_height=h,
         title=item.proposed_title,
         agent_name=item.proposed_artist,
+        source_url=item.source_url,
         status='processing'
     )
     db.add(new_art)
@@ -1402,29 +1373,26 @@ async def _catalog_collection(db: Session, collection_id: str):
             logger.warning(f"[Catalog] remote collection fetch failed ({e}); using bundled.")
     return _read_local_json(CATALOG_DIR / f"{collection_id}.json")
 
-async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnail_url: str,
-                                       metadata: dict, playlist_id: Optional[int] = None,
-                                       filename_prefix: str = "catalog") -> ArtworkModel:
-    """Download a remote image once and create an *approved* ArtworkModel with prefilled metadata.
-    Mirrors the factory-seed path (UA + 429 backoff, sanitized unique filename, optional playlist
-    symlink + link). Dedups on source_url — returns the existing row if already added."""
-    existing = db.query(ArtworkModel).filter(ArtworkModel.source_url == source_url).first()
-    if existing:
-        return existing
-
-    title = (metadata.get("title") or "art")
-    def _safe(suffix=""):
-        base = f"{filename_prefix}_{title.replace(' ', '_').lower()[:18]}{suffix}.jpg"
-        return "".join(x for x in base if x.isalnum() or x in "_-.")
-    safe_name = _safe()
+async def _download_image_to_library(source_url: str, *, filename: str,
+                                     retries: int = 3) -> tuple[Path, str, int, int]:
+    """Robustly download a remote image into LIBRARY_DIR — the one downloader the seed, discovery,
+    and catalog paths share. Sends a descriptive User-Agent (the default httpx UA is rejected by
+    Wikimedia and others), follows redirects, retries 429s with escalating backoff, writes to a
+    collision-safe unique filename, and validates the bytes are a real image (a bad download is
+    deleted, never left in the library). Returns (dest_path, safe_filename, width, height); raises
+    HTTPException on download or validation failure."""
+    safe_name = "".join(x for x in filename if x.isalnum() or x in "_-.")
+    if not safe_name.lower().endswith(".jpg"):
+        safe_name += ".jpg"
+    stem = safe_name[:-4]
     dest_path = LIBRARY_DIR / safe_name
     n = 1
     while dest_path.exists():
-        safe_name = _safe(f"_{n}"); dest_path = LIBRARY_DIR / safe_name; n += 1
+        safe_name = f"{stem}_{n}.jpg"; dest_path = LIBRARY_DIR / safe_name; n += 1
 
     resp = None
     async with httpx.AsyncClient(headers={"User-Agent": SD_USER_AGENT}) as client:
-        for attempt in range(3):
+        for attempt in range(retries):
             resp = await client.get(source_url, timeout=45.0, follow_redirects=True)
             if resp.status_code == 429:
                 await asyncio.sleep(3 * (attempt + 1))
@@ -1441,6 +1409,22 @@ async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnai
     except Exception:
         dest_path.unlink(missing_ok=True)
         raise HTTPException(502, detail="Downloaded file was not a valid image.")
+    return dest_path, safe_name, w, h
+
+
+async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnail_url: str,
+                                       metadata: dict, playlist_id: Optional[int] = None,
+                                       filename_prefix: str = "catalog") -> ArtworkModel:
+    """Download a remote image once and create an *approved* ArtworkModel with prefilled metadata.
+    Uses the shared robust downloader (UA + 429 backoff + validation), then optionally links the
+    artwork into a playlist. Dedups on source_url — returns the existing row if already added."""
+    existing = db.query(ArtworkModel).filter(ArtworkModel.source_url == source_url).first()
+    if existing:
+        return existing
+
+    title = (metadata.get("title") or "art")
+    filename = f"{filename_prefix}_{title.replace(' ', '_').lower()[:18]}"
+    dest_path, safe_name, w, h = await _download_image_to_library(source_url, filename=filename)
 
     artwork = ArtworkModel(
         filename=safe_name, original_width=w, original_height=h,

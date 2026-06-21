@@ -330,6 +330,9 @@ Captured from working sessions — not yet scheduled. Roughly ordered by how muc
 - **TRMNL plugin / Inky example** over the existing e-ink image API.
 
 ### Tech debt
-- **Unify the download path.** Refactor the discovery-approve route onto the shared
-  `_download_and_create_artwork` helper (built for the catalog) so seed / discovery / catalog all use
-  one robust downloader (UA + retry/backoff + symlink + playlist link).
+- **Unify the download path — ✅ done (2026-06-21).** Extracted a shared `_download_image_to_library`
+  core (descriptive UA + 429 retry/backoff + redirects + collision-safe filename + image validation);
+  seed, discovery, and catalog all route through it. Fixed a real bug: the discovery-approve route
+  used a bare httpx client (default UA → **Wikimedia/NASA 403**), so approving a Wikimedia/NASA
+  discovery could fail — verified live (old bare-UA → 403, new core → 200). 6 new tests
+  (`tests/test_download.py`), suite 85 green.
