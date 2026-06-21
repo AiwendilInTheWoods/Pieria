@@ -167,6 +167,19 @@ function toggleSidebar() {
 }
 window.toggleSidebar = toggleSidebar;
 
+// Transient, themed feedback. type: '' | 'success' | 'error'. Replaces native alert().
+function showToast(message, type = '') {
+    let c = document.getElementById('toast-container');
+    if (!c) { c = document.createElement('div'); c.id = 'toast-container'; document.body.appendChild(c); }
+    const t = document.createElement('div');
+    t.className = 'toast' + (type ? ' ' + type : '');
+    t.textContent = message;
+    c.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2600);
+}
+window.showToast = showToast;
+
 // Surface the address other devices should use to reach this server. We echo the
 // origin the admin was actually reached on (so LAN-IP / <host>.local just work), and
 // warn when it's localhost (which other devices can't reach). This avoids reporting a
@@ -318,7 +331,7 @@ function renderDiscoveryGrid() {
                     <small style="opacity:0.6">${item.source_api}</small>
                 </div>
                 <div class="actions" style="grid-template-columns: 1fr 1fr;">
-                    <button onclick="approveDiscovery(${item.id}, this)" class="success">Approve</button>
+                    <button onclick="approveDiscovery(${item.id}, this)" class="success" title="Send to the Review Queue to finalize and publish">Review →</button>
                     <button onclick="rejectDiscovery(${item.id}, this)" style="color: #ef4444;">Reject</button>
                 </div>
             `;
@@ -450,10 +463,12 @@ function approveDiscovery(id, btn) {
     btn.textContent = "Queued...";
     btn.style.opacity = "0.7";
     enqueueAction(async () => {
-        btn.textContent = "Downloading...";
+        btn.textContent = "Sending...";
         const res = await fetch(`${API_BASE}/api/discover/approve/${id}`, { method: 'POST' });
         if (!res.ok) {
-            alert("Download failed. The museum server might be busy.");
+            showToast("Couldn't fetch that artwork — the museum server may be busy.", "error");
+        } else {
+            showToast("Sent to the Review Queue →", "success");
         }
     });
 }
@@ -784,7 +799,7 @@ function selectPlaylist(id) {
     const playlist = currentPlaylists.find(p => p.id === id);
     if (!playlist) return;
     document.querySelectorAll('.playlist-item').forEach(el => el.classList.toggle('active', parseInt(el.dataset.id) === id));
-    document.getElementById('target-playlist-name').textContent = playlist.name;
+    document.getElementById('target-playlist-name').textContent = 'to ' + playlist.name;
     renderArtworkGrid(playlist.artworks || []);
     document.body.classList.remove('sidebar-open');  // close the mobile drawer on selection
 }
@@ -1564,7 +1579,7 @@ async function renderCatalog() {
         if (countEl) countEl.textContent = total;
 
         if (!collections.length) {
-            container.innerHTML = '<p style="color:#94a3b8;">No catalog available yet. Run <code>python -m tools.build_catalog</code> to generate one.</p>';
+            container.innerHTML = '<p style="color:#94a3b8;">No catalog collections are loaded. Screen Docent normally ships with a curated catalog — meanwhile, the <strong>Discover</strong> tab can search the world\'s museums directly.</p>';
             return;
         }
         const grid = document.createElement('div');

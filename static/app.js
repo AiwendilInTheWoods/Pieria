@@ -76,10 +76,36 @@ async function init() {
     initModeToggles();
     initNavButtons();
     initCustomDropdown();
-    connectWS(); 
+    connectWS();
+
+    showManageHint();
 
     await refreshPlaylists(true);
     setInterval(() => refreshPlaylists(false), 15000);
+}
+
+// Briefly point a first-time viewer at the admin, then fade out (so it's invisible on a wall).
+function showManageHint() {
+    const hint = document.getElementById('manage-hint');
+    const url = document.getElementById('manage-url');
+    if (!hint || !url) return;
+    url.textContent = `${window.location.host}/admin`;
+    hint.style.display = 'block';
+    setTimeout(() => { hint.style.opacity = '0'; }, 7000);
+    setTimeout(() => { hint.style.display = 'none'; }, 8000);
+}
+
+// Show/hide the "no art yet" overlay (replaces a silent black screen).
+function setEmptyState(show) {
+    const el = document.getElementById('empty-state');
+    if (!el) return;
+    if (show) {
+        const u = document.getElementById('empty-admin-url');
+        if (u) u.textContent = `${window.location.host}/admin`;
+        el.classList.remove('hidden');
+    } else {
+        el.classList.add('hidden');
+    }
 }
 
 /**
@@ -311,9 +337,10 @@ async function fetchAndTransition(direction = 1, isSkipped = false) {
         }
 
         const response = await fetch(`${API_BASE}/next-image?${params.toString()}`);
-        if (!response.ok) throw new Error('No approved images');
+        if (!response.ok) { setEmptyState(true); return; }  // no approved images → guidance, not black
         const data = await response.json();
-        
+        setEmptyState(false);
+
         currentPlaylistData = data;
         currentImageIndex = data.index;
         currentImageUrl = `${API_BASE}${data.image_url}`;

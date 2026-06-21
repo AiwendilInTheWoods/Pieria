@@ -112,7 +112,7 @@ from models import (
     playlist_artwork,
 )
 from query_classifier import QueryClassifier
-from result_ranker import ResultRanker
+from result_ranker import ResultRanker, clean_title
 from scout import create_search_session, get_search_session
 
 # Shared instances for smart search
@@ -188,6 +188,7 @@ async def run_scouts_bg(query: str = None, sources: List[str] = None,
                 DiscoveryQueueModel.source_url == item['source_url']
             ).first()
             if not existing:
+                item['proposed_title'] = clean_title(item.get('proposed_title'))
                 new_entry = DiscoveryQueueModel(
                     **item,
                     search_session_id=session_id

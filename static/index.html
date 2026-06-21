@@ -7,6 +7,20 @@
     <link rel="stylesheet" href="styles.css">
     <!-- QRCode.js CDN for Phase 3 Museum Placard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* Empty state — shown instead of a black screen when there's no art yet. */
+        #empty-state { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:200; background:#0b1020; }
+        #empty-state .empty-card { text-align:center; color:#cbd5e1; font-family:'Inter',system-ui,-apple-system,sans-serif; max-width:560px; padding:40px; }
+        #empty-state .empty-logo { height:64px; opacity:0.85; margin-bottom:22px; }
+        #empty-state h2 { font-size:2rem; margin:0 0 12px; color:#f1f5f9; font-weight:600; }
+        #empty-state p { font-size:1.05rem; margin:6px 0; opacity:0.85; line-height:1.5; }
+        #empty-state .empty-url { margin-top:18px; font-family:monospace; font-size:1.25rem; color:#10b981; }
+        /* First-load hint pointing to the admin (auto-fades). */
+        #manage-hint { position:absolute; bottom:24px; right:24px; z-index:210; background:rgba(15,23,42,0.85);
+            color:#cbd5e1; padding:10px 16px; border-radius:10px; font-family:'Inter',system-ui,sans-serif;
+            font-size:0.85rem; border:1px solid #334155; transition:opacity 0.8s ease; }
+        #manage-hint span { color:#10b981; font-family:monospace; }
+    </style>
 </head>
 <body>
     <!-- The Fire Stick Sleep Defeater: Invisible looping video to keep the system awake -->
@@ -79,7 +93,20 @@
         <div id="overlay" class="fade-overlay">
             <h2 id="playlist-title"></h2>
         </div>
+
+        <!-- Empty state (no approved art) — replaces a silent black screen with guidance -->
+        <div id="empty-state" class="hidden">
+            <div class="empty-card">
+                <img src="/logo.svg" alt="" class="empty-logo">
+                <h2>No art yet</h2>
+                <p>Add artwork in the admin and it will appear here automatically.</p>
+                <p class="empty-url" id="empty-admin-url"></p>
+            </div>
+        </div>
+
+        <!-- First-load hint pointing to the admin (fades out after a few seconds) -->
+        <div id="manage-hint" style="display:none;">Manage at <span id="manage-url"></span></div>
     </div>
-    <script src="app.js?v=20260429"></script>
+    <script src="app.js?v=20260621a"></script>
 </body>
 </html>

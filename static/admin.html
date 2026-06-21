@@ -224,6 +224,22 @@
         }
         .ai-flash { animation: aiFlash 1.3s ease; border-color: var(--accent-color) !important; }
 
+        /* --- Toasts (transient, themed feedback; replaces native alert) --- */
+        #toast-container {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            z-index: 200; display: flex; flex-direction: column; gap: 10px;
+            align-items: center; pointer-events: none;
+        }
+        .toast {
+            background: var(--sidebar-bg); border: 1px solid var(--border-color);
+            color: var(--text-color); padding: 12px 20px; border-radius: 10px;
+            font-size: 0.88rem; box-shadow: 0 8px 30px rgba(0,0,0,0.45); max-width: 90vw;
+            opacity: 0; transform: translateY(10px); transition: opacity .25s, transform .25s;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { border-color: var(--success-color); }
+        .toast.error { border-color: #ef4444; }
+
         /* --- Mobile top bar + slide-in sidebar drawer (hidden on desktop) --- */
         .mobile-topbar { display: none; }
         .sidebar-backdrop { display: none; }
@@ -273,6 +289,7 @@
         <span class="mt-title">Screen Docent</span>
     </div>
     <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+    <div id="toast-container"></div>
     <aside>
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
             <img src="/logo.svg" alt="Logo" style="height: 32px;">
@@ -330,7 +347,7 @@
         <div id="view-playlists">
             <div class="action-bar">
                 <div id="upload-zone" class="upload-zone">
-                    Upload New to <span id="target-playlist-name">None</span>
+                    Upload New <span id="target-playlist-name">to a collection</span>
                     <input type="file" id="file-input" hidden multiple>
                 </div>
                 <button class="primary" style="margin-left: 20px;" onclick="openLibraryPicker()">Add from Library</button>
@@ -639,6 +656,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260621a"></script>
+    <script src="admin.js?v=20260621b"></script>
 </body>
 </html>
