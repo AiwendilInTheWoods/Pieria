@@ -9,25 +9,31 @@ match the live discovery pipeline. NASA / Library of Congress / Wikimedia are ne
 """
 
 import asyncio
-import difflib
 import json
 import logging
 import re
-import time
-from urllib.parse import quote
 
 import httpx
 
-from scout import run_scouts
+from scout import (
+    run_scouts,
+    MIN_DISPLAY_EDGE,
+    _nasa_best_asset,
+    _strip_html,
+    _ratio,
+    _wikimedia_filepath,
+    _wm_match,
+    _wm_is_pd,
+    _wm_throttle,
+)
 from query_classifier import QueryClassifier
 
 logger = logging.getLogger("catalog-builder.sources")
 
 UA = {"User-Agent": "ScreenDocent-CatalogBuilder/1.0 (https://github.com/AiwendilInTheWoods/Screen-Docent)"}
 MUSEUM_SOURCES = {"chicago", "met", "cleveland", "rijks", "smk"}
-# A catalog image must be at least this many pixels on its long edge to look good on big (up-to-4K)
-# displays. Used both to pre-gate Wikimedia originals and to gate downloaded source images.
-MIN_DISPLAY_EDGE = 2000
+# MIN_DISPLAY_EDGE (≥2000px long edge for up-to-4K displays) and the Wikimedia/NASA resolution +
+# PD helpers are imported from scout.py so the offline builder and the live Scouts never drift.
 _classifier = QueryClassifier()
 
 
@@ -107,24 +113,6 @@ async def from_museums(db, sources, queries, per_query=10) -> list:
                 out.append(it)
     return out
 
-
-async def _nasa_best_asset(client, nasa_id: str):
-    """Resolve the real full-resolution image from a NASA asset manifest (prefer ~orig/~large jpg).
-    The search 'links' only give a thumbnail, and naive ~orig.jpg guessing often 404s."""
-    try:
-        r = await client.get(f"https://images-assets.nasa.gov/image/{nasa_id}/collection.json", timeout=20.0)
-        if r.status_code != 200:
-            return None
-        urls = [u for u in r.json() if isinstance(u, str) and u.lower().endswith((".jpg", ".jpeg", ".png"))]
-    except Exception:
-        return None
-    if not urls:
-        return None
-    for suffix in ("~orig.jpg", "~orig.jpeg", "~orig.png", "~large.jpg", "~medium.jpg"):
-        for u in urls:
-            if u.lower().endswith(suffix):
-                return u
-    return urls[-1]
 
 async def from_nasa(queries, per_query=10) -> list:
     out = []
@@ -231,10 +219,6 @@ async def from_loc(queries, per_query=10) -> list:
     return out
 
 
-def _wikimedia_filepath(filename: str, width: int) -> str:
-    return f"https://commons.wikimedia.org/wiki/Special:FilePath/{quote(filename)}?width={width}"
-
-
 def _title_from_filename(fn: str) -> str:
     stem = fn.rsplit(".", 1)[0]
     return stem.replace("_", " ").strip()
@@ -261,56 +245,8 @@ async def from_wikimedia(files) -> list:
 
 # --------------------------------------------------------------------------- #
 # Single-work resolvers — used by the curated "must-see" picks pipeline.
+# (PD/match/throttle helpers are imported from scout.py — see top of file.)
 # --------------------------------------------------------------------------- #
-_TAG_RE = re.compile(r"<[^>]+>")
-
-def _strip_html(s):
-    return _TAG_RE.sub("", s or "").strip()
-
-def _ratio(a, b):
-    return difflib.SequenceMatcher(None, (a or "").lower(), (b or "").lower()).ratio()
-
-def _wm_match(fname: str, title: str, artist: str = "") -> float:
-    """Score a Commons filename against a wanted work. Commons filenames embed artist/date
-    (e.g. 'Mucha-Job-1896.jpg'), so a plain ratio underrates short titles like 'Job' — instead
-    reward title-token containment, then nudge for the artist surname."""
-    f = re.sub(r"[_\-]+", " ", fname.rsplit(".", 1)[0]).lower()
-    toks = [w for w in re.findall(r"[a-z0-9]+", title.lower()) if len(w) > 2]
-    if toks and all(t in f for t in toks):
-        score = 0.9
-    else:
-        present = (sum(1 for t in toks if t in f) / len(toks)) if toks else 0.0
-        score = max(present, _ratio(f, title))
-    if artist:
-        surname = artist.lower().split()[-1]
-        if len(surname) > 2 and surname in f:
-            score = min(1.0, score + 0.15)
-    return score
-
-# Polite Wikimedia rate limiting: one request at a time, spaced out, descriptive UA.
-_wm_lock = asyncio.Lock()
-_wm_last = [0.0]
-WM_MIN_INTERVAL = 1.2
-
-async def _wm_throttle():
-    async with _wm_lock:
-        wait = WM_MIN_INTERVAL - (time.monotonic() - _wm_last[0])
-        if wait > 0:
-            await asyncio.sleep(wait)
-        _wm_last[0] = time.monotonic()
-
-def _wm_is_pd(extmeta: dict) -> bool:
-    parts = []
-    for k in ("LicenseShortName", "License", "UsageTerms"):
-        v = (extmeta.get(k) or {}).get("value")
-        if v:
-            parts.append(str(v).lower())
-    blob = " ".join(parts)
-    if "public domain" in blob or "cc0" in blob or "pd-" in blob:
-        return True
-    if (extmeta.get("Copyrighted") or {}).get("value", "").strip().lower() in ("false", "no"):
-        return True
-    return False
 
 async def resolve_wikimedia(title: str, artist: str = ""):
     """Find a public-domain Wikimedia Commons image for a specific work. URLs are built via
