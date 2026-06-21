@@ -1498,13 +1498,18 @@ async def _catalog_collection(db: Session, collection_id: str):
     index = await _catalog_index(db)
     if not any(c.get("id") == collection_id for c in index.get("collections", [])):
         return None
+    col = None
     base = await _catalog_remote_base(db)
     if base:
         try:
-            return await _fetch_remote_json(base, f"{collection_id}.json")
+            col = await _fetch_remote_json(base, f"{collection_id}.json")
         except Exception as e:
             logger.warning(f"[Catalog] remote collection fetch failed ({e}); using bundled.")
-    return _read_local_json(CATALOG_DIR / f"{collection_id}.json")
+    if col is None:
+        col = _read_local_json(CATALOG_DIR / f"{collection_id}.json")
+    if isinstance(col, dict):
+        col.setdefault("origin", "bundled")
+    return col
 
 async def _download_image_to_library(source_url: str, *, filename: str,
                                      retries: int = 3) -> tuple[Path, str, int, int]:
