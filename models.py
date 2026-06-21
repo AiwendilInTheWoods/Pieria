@@ -161,3 +161,29 @@ class SettingsModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     setting_key: Mapped[str] = mapped_column(String, unique=True, index=True)
     setting_value: Mapped[str] = mapped_column(String)
+
+
+class SubscriptionModel(Base):
+    """A federated Manifest v2 collection the user subscribed to by URL.
+
+    Provenance lives HERE (in our DB), established at subscribe-time — never trusted from the
+    manifest body. Every browsed item inherits its origin/trust from this row, so a third-party
+    feed can never masquerade as a bundled/official collection (those load from disk, not this path).
+    """
+    __tablename__ = "subscriptions"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    url: Mapped[str] = mapped_column(String, unique=True, index=True)
+    collection_id: Mapped[Optional[str]] = mapped_column(String)   # from the manifest
+    title: Mapped[Optional[str]] = mapped_column(String)
+    publisher_id: Mapped[Optional[str]] = mapped_column(String)
+    publisher_name: Mapped[Optional[str]] = mapped_column(String)
+    publisher_url: Mapped[Optional[str]] = mapped_column(String)
+    # 'community' (added by raw URL, trust-on-first-use) vs 'verified' (registry + signature, later).
+    trust: Mapped[str] = mapped_column(String, default="community")
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    cached_manifest: Mapped[Optional[str]] = mapped_column(Text)    # last VALIDATED manifest JSON
+    item_count: Mapped[int] = mapped_column(Integer, default=0)
+    last_synced: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    last_status: Mapped[Optional[str]] = mapped_column(String)      # 'ok' | 'error: …'
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
