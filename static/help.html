@@ -396,6 +396,15 @@ sudo Screen-Docent/deploy/appliance/install.sh</code></pre>
                writes a config file to the SD card's boot partition.</p>
 
             <h3>3. Configure the display</h3>
+            <div class="tip" id="find-server-address">
+                <strong>Finding your server's address</strong>
+                <code>SERVER_URL</code> is wherever your Screen Docent server runs &mdash; not this Pi. To find it:
+                <ul style="margin:8px 0 0; padding-left:20px;">
+                    <li>Open the admin (<code>Settings &rarr; 📡 This Server</code>) on the server box &mdash; it shows the exact address to copy.</li>
+                    <li>Or on the server run <code>hostname -I</code> for its LAN IP (e.g. <code>192.168.1.50</code>) &rarr; <code>http://192.168.1.50:8000</code>.</li>
+                    <li>Or use its hostname: <code>http://&lt;server-hostname&gt;.local:8000</code> (works on most home networks via mDNS).</li>
+                </ul>
+            </div>
             <p>Edit <code>screen-docent.conf</code> on the card's <strong>boot partition</strong> (visible on any
                computer &mdash; no SSH needed), then reboot:</p>
             <pre><code>SERVER_URL=http://192.168.1.50:8000   # your Screen Docent server
@@ -448,7 +457,8 @@ CYCLE_TIME=                           # optional: seconds per image</code></pre>
             <p>Any device that can GET a URL on a timer works. The pattern is always the same:
                <strong>wake &rarr; GET the image sized for your panel &rarr; display it &rarr; sleep for
                <code>X-Refresh-After</code> seconds</strong>. A Raspberry Pi driving any panel from the
-               framebuffer can do it in a few lines:</p>
+               framebuffer can do it in a few lines (set <code>SERVER</code> to your server's address &mdash;
+               see <a href="#find-server-address">Finding your server's address</a>):</p>
             <pre><code>#!/bin/sh
 SERVER=http://192.168.1.50:8000
 DISPLAY_ID=hallway
