@@ -100,6 +100,7 @@ _result_ranker = ResultRanker()
 from config import ARTWORK_ROOT, LIBRARY_DIR
 from epaper import render_for_epaper, PALETTES, VALID_FORMATS, media_type_for
 import ai_client
+import frame_push
 
 @lru_cache(maxsize=256)
 def get_optimized_image(image_path: Path, size: tuple, quality: int = 85) -> bytes:
@@ -358,7 +359,12 @@ async def lifespan(app: FastAPI):
             await run_factory_seed(db)
         finally:
             db.close()
-            
+
+        # Leader-only: the Samsung Frame TV pusher. Running it solely in the leader avoids
+        # firing it once per uvicorn worker. No-op until enabled in Settings → Frame TV.
+        asyncio.create_task(frame_push.frame_push_loop(_frame_select))
+        logger.info("[Startup] Frame TV push loop scheduled (leader).")
+
     except BlockingIOError:
         logger.info("[Startup] Follower worker initialized. Skipping exclusive boot tasks.")
     except Exception as e:
@@ -1469,6 +1475,93 @@ async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnai
             except Exception:
                 db.rollback()
     return artwork
+
+# ---------------------------------------------------------------------------
+# §4.8 Samsung Frame TV push (Integrations)
+# ---------------------------------------------------------------------------
+
+async def _frame_select(playlist: str):
+    """Selector injected into the Frame pusher: pick the current artwork for a playlist (reusing the
+    bag-shuffle/affinity in get_next_image, on a dedicated display_id) and return (file_path, id)."""
+    db = SessionLocal()
+    try:
+        pl = playlist
+        if not pl:
+            first = db.query(PlaylistModel).order_by(PlaylistModel.id).first()
+            if not first:
+                return None
+            pl = first.name
+        cfg = frame_push.get_frame_config()
+        info = await get_next_image(
+            playlist_name=pl, shuffle=None, display_id=cfg["display_id"], direction=1, db=db
+        )
+        art_id = (info.get("metadata") or {}).get("id")
+        if not art_id:
+            return None
+        art = db.query(ArtworkModel).filter(ArtworkModel.id == art_id).first()
+        if not art:
+            return None
+        return (LIBRARY_DIR / art.filename, art_id)
+    except Exception as e:
+        logger.warning(f"[Frame] selection failed: {e}")
+        return None
+    finally:
+        db.close()
+
+
+@app.get("/api/settings/frame")
+async def get_frame_settings(db: Session = Depends(get_db)):
+    """Current Frame TV config (+ last-push status) for the Settings panel."""
+    cfg = frame_push.get_frame_config(force=True)
+    return {
+        "enabled": cfg["enabled"],
+        "host": cfg["host"],
+        "port": cfg["port"],
+        "playlist": cfg["playlist"],
+        "interval_sec": cfg["interval_sec"],
+        "width": cfg["width"],
+        "height": cfg["height"],
+        "matte": cfg["matte"],
+        "last_artwork_id": cfg["last_artwork_id"],
+        "last_push_at": cfg["last_push_at"],
+    }
+
+
+class FrameSettingsPayload(BaseModel):
+    enabled: bool = False
+    host: Optional[str] = ""
+    port: Optional[int] = 8001
+    playlist: Optional[str] = ""
+    interval_sec: Optional[int] = 900
+    width: Optional[int] = 3840
+    height: Optional[int] = 2160
+    matte: Optional[str] = "none"
+
+
+@app.post("/api/settings/frame")
+async def save_frame_settings(payload: FrameSettingsPayload, db: Session = Depends(get_db)):
+    """Persist Frame TV settings. Takes effect on the next push cycle (config cache invalidated)."""
+    if payload.enabled and not (payload.host or "").strip():
+        raise HTTPException(400, "A Frame TV host/IP is required to enable pushing.")
+    _upsert_setting(db, "frame_enabled", "true" if payload.enabled else "false")
+    _upsert_setting(db, "frame_host", (payload.host or "").strip())
+    _upsert_setting(db, "frame_port", str(payload.port or 8001))
+    _upsert_setting(db, "frame_playlist", (payload.playlist or "").strip())
+    _upsert_setting(db, "frame_interval_sec", str(max(60, payload.interval_sec or 900)))
+    _upsert_setting(db, "frame_width", str(payload.width or 3840))
+    _upsert_setting(db, "frame_height", str(payload.height or 2160))
+    _upsert_setting(db, "frame_matte", (payload.matte or "none").strip())
+    db.commit()
+    frame_push.invalidate_frame_cache()
+    return {"status": "success"}
+
+
+@app.post("/api/settings/frame/test")
+async def test_frame_push(db: Session = Depends(get_db)):
+    """One-shot 'Test / Push now'. Returns a structured result (never 500s) so the GUI can show a
+    clean message with or without a TV present."""
+    return await frame_push.run_test_push(_frame_select)
+
 
 @app.get("/api/catalog")
 async def get_catalog(db: Session = Depends(get_db)):
