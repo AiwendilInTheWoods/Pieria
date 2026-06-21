@@ -301,6 +301,27 @@ Captured from working sessions — not yet scheduled. Roughly ordered by how muc
   the real device that closes the e-ink loop (drive it from the incoming Pi, fetch the image API,
   eyeball + tune the palette on actual hardware).
 
+### Interactive docent (the "Living Docent") — ambitious, later phase
+The marquee experience: on a touchscreen kiosk, a user taps **"Learn more about this piece"** and
+Screen Docent *narrates* it — framing and zooming into the regions it's discussing ("notice in the
+flowers how the brushwork builds texture…"), eventually as warm audio in a named, trustworthy docent
+persona, and finally answering the user's own questions. Builds directly on the new server-hosted
+`/art/{id}` page (`app.py`), which already assembles the per-artwork data surface a docent speaks from.
+Phasing (each shippable on its own):
+- **A — Richer "Learn More" text.** The `/art/{id}` page gains AI-generated expandable sections
+  (composition, technique, history) beyond the single placard paragraph. Pure metadata, no new infra.
+- **B — Guided visual tour.** Pre-computed **points of interest** (image regions + commentary) that the
+  kiosk pans/zooms to while the text scrolls. **Reuses the existing Ken Burns crop/zoom engine**, just
+  *scripted per-region* instead of random. The region+commentary data is generated **once** (a vision
+  model proposes regions and what to say about each) and **baked like placards are today** — so the
+  kiosk does zero per-view model calls (offline-capable, cheap, on-brand with "bake it once").
+- **C — Audio docent.** TTS narration of the tour with a named persona voice (someone you trust).
+- **D — Conversational Q&A.** Ask about the piece: text input + **STT in, TTS out**; the LLM is grounded
+  in the artwork's stored metadata + a retrieved knowledge snippet. The kiosk's touchscreen is the venue.
+- **Why it fits:** deepens the one thing competitors don't have (museum-grade *curation + interpretation*,
+  not just pretty pixels), and the heavy compute is build-time, not runtime. Needs: a touchscreen kiosk
+  deployment profile, a voice/TTS provider decision (local vs. API), and the baked POI schema.
+
 ### Later / product validation
 - **Giftable 13" e-ink art frame (family Xmas build).** A self-contained 13" Spectra 6 art frame as a
   giftable, dogfood-able unit — the cleanest real-world validation (real users, real rooms, all year).
