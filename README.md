@@ -98,6 +98,16 @@ frame how long (seconds) to deep-sleep before the next fetch; each GET advances 
 
 See [`ROADMAP.md`](ROADMAP.md) (Track B).
 
+## 🔌 Integrations
+
+Thin clients that render the same curation brain on platforms people already run:
+
+- **[MagicMirror²](integrations/MMM-ScreenDocent/)** — the `MMM-ScreenDocent` module turns a slot on a
+  smart mirror into a rotating museum wall (current artwork + placard from your server). Front-end
+  only, no extra setup; includes a `preview.html` to try it in any browser without MagicMirror.
+
+More integrations (Samsung Frame TV push, Home Assistant) are on the [roadmap](ROADMAP.md).
+
 ## 🏛️ VRA Core Metadata Architecture
 
 Screen Docent utilizes the **Visual Resources Association (VRA) Core** schema for its internal SQLite database design (`models.py`). This guarantees museum-quality structural integrity.

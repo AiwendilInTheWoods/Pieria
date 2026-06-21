@@ -1,0 +1,81 @@
+/* MMM-ScreenDocent — museum placard styling that reads well on a dark mirror.
+   Works both in a normal region (contained card) and in fullscreen_below
+   (art as a full-bleed backdrop with a corner placard). */
+
+.MMM-ScreenDocent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+.MMM-ScreenDocent .sd-image {
+	max-width: 100%;
+	max-height: 70vh;
+	object-fit: contain;
+	border-radius: 4px;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+	transition: opacity 1s ease-in-out;
+}
+
+.MMM-ScreenDocent .sd-placard {
+	max-width: 32em;
+	text-align: center;
+	line-height: 1.35;
+}
+
+.MMM-ScreenDocent .sd-title {
+	font-size: 1.2em;
+	font-weight: 500;
+	font-style: italic;
+}
+
+.MMM-ScreenDocent .sd-artist {
+	font-size: 1em;
+	margin-top: 2px;
+}
+
+.MMM-ScreenDocent .sd-meta {
+	margin-top: 4px;
+	text-transform: none;
+	letter-spacing: 0.5px;
+}
+
+.MMM-ScreenDocent .sd-description {
+	margin-top: 8px;
+	opacity: 0.85;
+	line-height: 1.4;
+}
+
+.MMM-ScreenDocent .sd-status {
+	padding: 1em;
+}
+
+/* Fullscreen backdrop: the art fills the screen and the placard floats bottom-left,
+   the way an art display looks. MagicMirror adds .region.fullscreen.below for that slot. */
+.region.fullscreen.below .MMM-ScreenDocent {
+	position: absolute;
+	inset: 0;
+	display: block;
+}
+
+.region.fullscreen.below .MMM-ScreenDocent .sd-image {
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	max-height: none;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.region.fullscreen.below .MMM-ScreenDocent .sd-placard {
+	position: absolute;
+	left: 4vw;
+	bottom: 4vh;
+	max-width: 28em;
+	text-align: left;
+	padding: 14px 18px;
+	background: rgba(0, 0, 0, 0.45);
+	backdrop-filter: blur(6px);
+	border-radius: 6px;
+}

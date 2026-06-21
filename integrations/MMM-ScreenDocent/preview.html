@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>MMM-ScreenDocent — Preview</title>
+	<!-- Reuse the real module stylesheet so the preview matches MagicMirror. -->
+	<link rel="stylesheet" href="MMM-ScreenDocent.css" />
+	<style>
+		/* Minimal MagicMirror-like dark canvas + the few base classes the module uses. */
+		body { margin: 0; background: #000; color: #fff;
+		       font-family: "Roboto Condensed", Helvetica, sans-serif; }
+		.bright { color: #fff; }
+		.dimmed { color: #888; }
+		.small { font-size: 0.8em; }
+		.light { font-weight: 300; }
+		#bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+		       padding: 10px 14px; background: #111; border-bottom: 1px solid #333;
+		       font-size: 14px; }
+		#bar input { background: #000; color: #fff; border: 1px solid #444;
+		             border-radius: 4px; padding: 6px 8px; }
+		#bar button { background: #2563eb; color: #fff; border: 0; border-radius: 4px;
+		              padding: 7px 14px; cursor: pointer; }
+		#bar .hint { color: #888; }
+		#stage { padding: 24px; }
+	</style>
+</head>
+<body>
+	<div id="bar">
+		<label>Server <input id="server" value="http://localhost:8000" size="26" /></label>
+		<label>Playlist <input id="playlist" placeholder="(blank = first)" size="18" /></label>
+		<button id="go">Preview</button>
+		<span class="hint">Standalone preview — no MagicMirror needed. Each refresh advances the rotation.</span>
+	</div>
+	<div id="stage"></div>
+
+	<script>
+		// --- Minimal MagicMirror runtime stub so the real module file runs as-is. ---
+		window.Log = { info: console.log, warn: console.warn, error: console.error };
+		let _registered = null;
+		window.Module = { register: (name, obj) => { _registered = obj; _registered._name = name; } };
+	</script>
+	<!-- Load the ACTUAL module under test. -->
+	<script src="MMM-ScreenDocent.js"></script>
+	<script>
+		let instance = null;
+		const stage = document.getElementById("stage");
+
+		function render() {
+			stage.innerHTML = "";
+			stage.appendChild(instance.getDom());
+		}
+
+		function launch() {
+			if (instance && instance.timer) clearTimeout(instance.timer);
+			instance = Object.create(_registered);
+			instance.name = _registered._name;
+			instance.config = Object.assign({}, _registered.defaults, {
+				serverUrl: document.getElementById("server").value.trim() || "http://localhost:8000",
+				playlist: document.getElementById("playlist").value.trim()
+			});
+			instance.updateDom = render; // MM normally fades; here we just re-render.
+			instance.start();
+		}
+
+		document.getElementById("go").addEventListener("click", launch);
+		launch();
+	</script>
+</body>
+</html>
