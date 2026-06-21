@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Screen Docent</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- QRCode.js CDN for Phase 3 Museum Placard -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- QRCode.js — vendored locally so the display works fully offline / air-gapped -->
+    <script src="/vendor/qrcode.min.js"></script>
     <style>
         /* Empty state — shown instead of a black screen when there's no art yet. */
         #empty-state { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:200; background:#0b1020; }
@@ -20,11 +20,16 @@
             color:#cbd5e1; padding:10px 16px; border-radius:10px; font-family:'Inter',system-ui,sans-serif;
             font-size:0.85rem; border:1px solid #334155; transition:opacity 0.8s ease; }
         #manage-hint span { color:#10b981; font-family:monospace; }
+        /* Stacked glyph + caption on the rendering-mode toggles (clearer than glyph-only). */
+        .mode-toggles button { display:inline-flex; flex-direction:column; align-items:center; gap:2px; line-height:1.1; }
+        .mode-toggles .glyph { font-size:1.15em; }
+        .mode-toggles .mode-label { font-size:0.6rem; opacity:0.8; letter-spacing:0.03em; }
     </style>
 </head>
 <body>
-    <!-- The Fire Stick Sleep Defeater: Invisible looping video to keep the system awake -->
-    <video loop muted autoplay playsinline style="display:none; pointer-events:none;" src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
+    <!-- Sleep defeater: invisible looping video keeps Fire Stick / TV browsers awake.
+         Vendored locally (tiny 2x2 black clip) so it works offline — no external dependency. -->
+    <video loop muted autoplay playsinline style="display:none; pointer-events:none;" src="/assets/keepawake.mp4"></video>
 
     <div id="display-container" class="ken-burns">
         <!-- Background matte layer for 'Mode C' -->
@@ -81,9 +86,9 @@
                 <div class="control-group">
                     <label>Rendering Mode</label>
                     <div class="mode-toggles">
-                        <button id="mode-a" class="active" title="Ken Burns Pan">↔</button>
-                        <button id="mode-b" title="Static Crop">▣</button>
-                        <button id="mode-c" title="Contain (Matte)">⛶</button>
+                        <button id="mode-a" class="active" title="Ken Burns pan" aria-label="Ken Burns pan"><span class="glyph">↔</span><span class="mode-label">Pan</span></button>
+                        <button id="mode-b" title="Static crop" aria-label="Static crop"><span class="glyph">▣</span><span class="mode-label">Crop</span></button>
+                        <button id="mode-c" title="Contain (matte)" aria-label="Contain (matte)"><span class="glyph">⛶</span><span class="mode-label">Fit</span></button>
                     </div>
                 </div>
             </div>
@@ -107,6 +112,6 @@
         <!-- First-load hint pointing to the admin (fades out after a few seconds) -->
         <div id="manage-hint" style="display:none;">Manage at <span id="manage-url"></span></div>
     </div>
-    <script src="app.js?v=20260621a"></script>
+    <script src="app.js?v=20260621b"></script>
 </body>
 </html>

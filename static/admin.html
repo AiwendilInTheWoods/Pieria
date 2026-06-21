@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Screen Docent Admin</title>
-    <!-- Cropper.js CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    <!-- Sortable.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+    <!-- Cropper.js + Sortable.js — vendored locally so admin works offline / air-gapped -->
+    <link rel="stylesheet" href="/vendor/cropper.min.css">
+    <script src="/vendor/cropper.min.js"></script>
+    <script src="/vendor/Sortable.min.js"></script>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -678,6 +677,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260621c"></script>
+    <script src="admin.js?v=20260621d"></script>
 </body>
 </html>

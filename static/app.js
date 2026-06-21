@@ -406,8 +406,12 @@ function updatePlacard(metadata) {
     }
     const qrEl = document.getElementById('qrcode');
     qrEl.innerHTML = '';
+    // Point at our own server-hosted detail page (works offline; no Google hand-off).
+    const learnUrl = metadata.id
+        ? `${window.location.origin}/art/${metadata.id}`
+        : `https://www.google.com/search?q=${encodeURIComponent((metadata.agent_name || '') + ' ' + (metadata.title || ''))}`;
     new QRCode(qrEl, {
-        text: `https://www.google.com/search?q=${encodeURIComponent(metadata.agent_name + " " + metadata.title)}`,
+        text: learnUrl,
         width: 80, height: 80, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
     });
 }
