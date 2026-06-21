@@ -274,20 +274,31 @@ async def resolve_wikimedia(title: str, artist: str = ""):
         logger.warning(f"[wikimedia] '{query}' failed: {e}")
         return None
 
-    best, best_score = None, 0.0
+    best, best_score, best_px = None, 0.0, 0
+    surname = artist.lower().split()[-1] if artist else ""
     for p in pages.values():
         ii = (p.get("imageinfo") or [{}])[0]
         if not ii.get("mime", "").startswith("image/") or "svg" in ii.get("mime", ""):
             continue
         # Resolution gate: the original must be large enough to look good on up-to-4K displays.
-        if max(ii.get("width") or 0, ii.get("height") or 0) < MIN_DISPLAY_EDGE:
+        px = max(ii.get("width") or 0, ii.get("height") or 0)
+        if px < MIN_DISPLAY_EDGE:
             continue
-        if not _wm_is_pd(ii.get("extmetadata") or {}):
+        em = ii.get("extmetadata") or {}
+        if not _wm_is_pd(em):
             continue
         page_title = p.get("title", "")  # "File:Foo.jpg"
         s = _wm_match(page_title.replace("File:", ""), title, artist)
-        if s > best_score:
-            best, best_score = (page_title, ii), s
+        # Non-English works are often filed under a foreign name (e.g. "Das Eismeer") while the
+        # English title lives in the ObjectName metadata — score that too, but only when the artist
+        # is corroborated, so a generic ObjectName can't pull in a wrong-artist work.
+        objname = _strip_html((em.get("ObjectName") or {}).get("value", "")).split("QS:")[0]
+        artist_meta = _strip_html((em.get("Artist") or {}).get("value", ""))
+        if objname and ((not surname) or any(
+                surname in t.lower() for t in (page_title, artist_meta, objname))):
+            s = max(s, _wm_match(objname, title, artist))
+        if s > best_score or (s == best_score and px > best_px):
+            best, best_score, best_px = (page_title, ii), s, px
     if not best or best_score < 0.5:
         return None
 
@@ -306,10 +317,74 @@ async def resolve_nasa(title: str):
     items = await from_nasa([title], per_query=3)
     return max(items, key=lambda it: _ratio(it["title"], title)) if items else None
 
+def _artist_ok(want: str, cand: str) -> bool:
+    """Guard against a pick matching a same-keyword work by a *different* artist (e.g. Tiffany's
+    'Magnolia and Irises' resolving to Monet's 'Irises'). If the museum record has no artist we
+    allow it (many CC0 antiquities are anonymous) and rely on the title; otherwise the wanted
+    artist's surname must appear, or the names must be broadly similar."""
+    if not want:
+        return True
+    c = (cand or "").lower()
+    if c in ("", "unknown", "unknown artist"):
+        return True
+    surname = want.lower().split()[-1]
+    if len(surname) > 2 and surname in c:
+        return True
+    return _ratio(c, want) >= 0.6
+
+
 async def resolve_museums(db, title: str, artist: str, sources):
     items = await from_museums(db, sources, [f"{title} {artist}".strip()], per_query=6)
+    items = [it for it in items
+             if _ratio(it["title"], title) >= 0.6 and _artist_ok(artist, it.get("agent_name"))]
+    return max(items, key=lambda it: _ratio(it["title"], title)) if items else None
+
+
+async def resolve_loc(title: str, artist: str = ""):
+    """Resolve a curated pick to a digitized Library of Congress asset (tile.loc.gov storage).
+    LoC search is title/keyword based (no artist field), so we match on the title."""
+    items = await from_loc([title], per_query=10)
     items = [it for it in items if _ratio(it["title"], title) >= 0.4]
     return max(items, key=lambda it: _ratio(it["title"], title)) if items else None
+
+
+def _si_is_cc0(raw: dict) -> bool:
+    """Smithsonian Open Access marks reuse rights in content.descriptiveNonRepeating.metadata_usage.
+    We only admit CC0 records — everything else (rights-reserved, no-usage) is rejected, since the
+    builder auto-publishes without human review."""
+    try:
+        usage = (raw.get("content", {}).get("descriptiveNonRepeating", {}).get("metadata_usage") or {})
+        return str(usage.get("access", "")).upper() == "CC0"
+    except Exception:
+        return False
+
+
+async def resolve_smithsonian(db, title: str, artist: str = ""):
+    """Resolve a curated pick to a CC0 Smithsonian Open Access image. Reuses the live
+    SmithsonianScout (which loads the API key from the settings table), then hard-gates to CC0
+    and title-matches. Returns None if no CC0 image matches."""
+    q = f"{title} {artist}".strip()
+    try:
+        results = await run_scouts(db, query=q, sources=["smithsonian"], limit=10)
+    except Exception as e:
+        logger.warning(f"[smithsonian] '{q}' failed: {e}")
+        return None
+    best, best_score = None, 0.0
+    for r in results:
+        try:
+            raw = json.loads(r.get("context_hints") or "{}")
+        except Exception:
+            raw = {}
+        if not _si_is_cc0(raw):
+            continue
+        it = _from_scout_result(r)
+        if not it:
+            continue
+        it["license"] = "Public Domain (CC0, Smithsonian Open Access)"
+        s = _ratio(it["title"], title)
+        if s > best_score:
+            best, best_score = it, s
+    return best if best and best_score >= 0.4 else None
 
 
 async def fetch_collection(db, spec, per_query=None) -> list:
