@@ -267,6 +267,29 @@ Three directions follow from that:
 Captured from working sessions — not yet scheduled. Roughly ordered by how much they move the
 "ease-of-use" needle.
 
+### Competitor-informed feature gaps (2026-06 deep-research)
+From a 4-segment competitor pain study (Samsung Frame, Amazon art/ambient, dedicated frames, museum
+apps; full report in private `.ai/competitor_research_2026-06.md`). Each maps to a recurring,
+cross-segment consumer pain we don't yet fully close. **Our self-hosted/free/ad-free/offline thesis
+already answers the top pains** (subscriptions, ads, cloud lock-in, abandonment) — these are the gaps.
+- **Night/ambient art profile (M) — highest leverage.** Auto-dim + warm-bias + scheduled brightness
+  curves, **never auto-*off***. Counters the cross-segment pains that hit *every* rival: "glows at
+  night," "dull by day," and Samsung's motion-sensor turning art *off* when you sit still.
+- **mDNS autodiscovery + first-run setup wizard (M).** Neutralizes self-hosting's one disadvantage
+  (setup friction) vs. plug-and-play rivals. Builds on the shipped "📡 This Server" card; pairs with
+  the pre-baked `.img` / captive-portal onboarding ideas below.
+- **"Add your own art/photos" smart upload (M).** Auto-crop/mat preview + Frame-TV-ready 4K export;
+  answers the high-frequency "uploading your own is fiddly" pain. **This is the Studio's Personal
+  mode** (see Studio above) — and the privacy angle (*photos stay on your server, never our cloud*)
+  directly counters the personal-frame cloud-upload grievance.
+- **Source-grounded Living Docent with hallucination guardrails (M–L).** The research's strongest
+  caution: AI hallucination is the *existential* trust risk for interpretation. Make narration
+  retrieval-grounded in museum metadata and label "verified vs. generated." Folds into the Docent phasing.
+- **Per-panel e-ink tuning as a headline feature (M).** Already roadmapped (Engine & rendering); the
+  research *validates the market* — Aura's $499 e-ink frame and the "no more bright screens" sentiment.
+- *(Marketing, not a feature: the "Already ahead" list — no subscription / no ads / un-orphanable /
+  works-offline / clean art-only canvas / runs-on-what-you-own — is ready-made copy. See the report.)*
+
 ### Onboarding (toward truly bonehead-proof)
 - **On-screen admin URL on the frame.** For all-in-one Pi, show `http://<ip>:8000/admin` (and the
   `<hostname>.local` name) on a boot splash while the kiosk waits for the server — so a non-technical
