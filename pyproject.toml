@@ -1,0 +1,33 @@
+# Ruff — dev-only linter/formatter for this repo. NOT shipped: it lives in
+# requirements-dev.txt and the Docker image installs only requirements.txt.
+#   ruff check .          # lint
+#   ruff check --fix .    # lint + autofix the safe ones
+#   ruff format .         # format
+[tool.ruff]
+target-version = "py312"
+line-length = 110
+# Generated / vendored / data dirs we don't lint.
+extend-exclude = ["venv", ".venv", "migrations/versions", "static/docs", "Artwork", "data"]
+
+[tool.ruff.lint]
+# Pragmatic first adoption tuned to THIS codebase, not a generic preset.
+#   F  pyflakes      — real logic bugs: unused imports/vars, undefined names. High value.
+#   W  pycodestyle   — trailing/blank-line whitespace hygiene.
+#   I  isort         — consistent import ordering.
+#   UP pyupgrade     — safe syntax modernizations (minus the broad typing rewrite, below).
+select = ["F", "W", "I", "UP"]
+ignore = [
+    "E501",   # line length — this codebase is intentionally dense; reflowing is churn, not value.
+    "UP006",  # List->list / Dict->dict in annotations — deferred to a focused modernization pass.
+    "UP045",  # Optional[X]->X | None — same; ~120 annotation edits, not for the cleanup commit.
+    "UP035",  # deprecated typing imports — pairs with the above.
+]
+# Deliberately NOT selected (would fight the house style / framework idioms, mostly false positives here):
+#   E701/E702 — intentional one-line `db.add(x); db.commit()` compactness.
+#   B008      — FastAPI `Depends()`/`Query()` in defaults is the framework idiom, not a bug.
+#   E712      — SQLAlchemy `Col == True` filters are idiomatic, not `is True` mistakes.
+#   E402      — deliberate mid-module/lazy imports (circular-import avoidance).
+
+[tool.ruff.lint.per-file-ignores]
+# Tests favour terseness; allow unused imports in __init__ re-exports.
+"__init__.py" = ["F401"]

@@ -6,8 +6,9 @@ Phase 2: Transitioning from filesystem-only to SQLite-backed state.
 import logging
 import os
 from typing import Generator
-from sqlalchemy import create_engine, text, inspect
-from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 logger = logging.getLogger("artwork-display-api.database")
 

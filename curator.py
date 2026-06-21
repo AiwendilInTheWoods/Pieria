@@ -3,9 +3,10 @@ Autonomous RAG Curator for Screen Docent.
 Enriches artwork metadata using Wikipedia context and Gemini.
 """
 
-import logging
-import wikipedia
 import asyncio
+import logging
+
+import wikipedia
 from sqlalchemy.orm import Session
 
 import ai_client
@@ -42,7 +43,7 @@ async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None
         )
         if context_hints:
             prompt += f"Raw JSON Metadata from Museum API: {context_hints} "
-            
+
         prompt += (
             "Task: Rewrite the museum placard metadata using the Factual Context and Museum API Metadata as the primary source of truth. "
             "If the Wikipedia context contradicts the Museum metadata, prioritize the Museum metadata. "
@@ -79,9 +80,9 @@ async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None
         artwork.cultural_context = metadata.get('cultural_context', artwork.cultural_context)
         artwork.medium = metadata.get('medium', artwork.medium)
         artwork.date_display = metadata.get('date_display', getattr(artwork, 'date_display', ''))
-        
+
         artwork.description_narrative = metadata.get('description_narrative', getattr(artwork, 'description_narrative', ''))
-        
+
         tags = metadata.get('tags', [])
         if tags:
             artwork.tags = ", ".join(tags) if isinstance(tags, list) else str(tags)
@@ -105,7 +106,7 @@ async def batch_enrich_all(db: Session):
     """
     artworks = db.query(ArtworkModel).filter(ArtworkModel.status == 'approved').all()
     logger.info(f"[RAG Curator] Starting batch enrichment for {len(artworks)} items.")
-    
+
     for art in artworks:
         await enrich_artwork(art.id, db)
         await asyncio.sleep(2) # Rate-limiting delay

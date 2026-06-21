@@ -4,30 +4,42 @@ FastAPI Backend for the Artwork Display Engine.
 Phase 4: Targeted WebSocket Routing for Multiple Displays.
 """
 
-import os
+import asyncio
+import fcntl
+import io
+import json
 import logging
+import os
 import random
 import shutil
-import io
-import asyncio
-import json
-import fcntl
-from datetime import datetime, timezone, timedelta
 from contextlib import asynccontextmanager
-from typing import List, Dict, Optional
+from datetime import UTC, datetime, timedelta
 from functools import lru_cache
 from pathlib import Path
+from typing import Dict, List, Optional
 from urllib.parse import quote
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Query, Depends, UploadFile, File, Form, BackgroundTasks, WebSocket, WebSocketDisconnect, Request
+from fastapi import (
+    BackgroundTasks,
+    Depends,
+    FastAPI,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+    WebSocket,
+    WebSocketDisconnect,
+)
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from sqlalchemy import select, delete, update
 from PIL import Image
 from pydantic import BaseModel
+from sqlalchemy import delete, select, update
+from sqlalchemy.orm import Session
 
 # Load environment variables
 load_dotenv()
@@ -83,24 +95,35 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Local imports
-from database import init_db, get_db, SessionLocal
-from models import PlaylistModel, ArtworkModel, playlist_artwork, DiscoveryQueueModel, SettingsModel, ActiveDisplayModel, RemoteCommandModel, DisplayPlaybackSessionModel
-from agents import process_artwork
+import httpx
+
 import curator
 import scout
-from scout import create_search_session, get_search_session
-import httpx
+from agents import process_artwork
+from database import SessionLocal, get_db, init_db
+from models import (
+    ActiveDisplayModel,
+    ArtworkModel,
+    DiscoveryQueueModel,
+    DisplayPlaybackSessionModel,
+    PlaylistModel,
+    RemoteCommandModel,
+    SettingsModel,
+    playlist_artwork,
+)
 from query_classifier import QueryClassifier
 from result_ranker import ResultRanker
+from scout import create_search_session, get_search_session
 
 # Shared instances for smart search
 _query_classifier = QueryClassifier()
 _result_ranker = ResultRanker()
 
-from config import ARTWORK_ROOT, LIBRARY_DIR
-from epaper import render_for_epaper, PALETTES, VALID_FORMATS, media_type_for
 import ai_client
 import frame_push
+from config import ARTWORK_ROOT, LIBRARY_DIR
+from epaper import PALETTES, VALID_FORMATS, media_type_for, render_for_epaper
+
 
 @lru_cache(maxsize=256)
 def get_optimized_image(image_path: Path, size: tuple, quality: int = 85) -> bytes:
@@ -204,7 +227,7 @@ def sync_db_with_filesystem(db: Session) -> None:
                     dest_path = LIBRARY_DIR / file_path.name
                     if not dest_path.exists():
                         shutil.move(file_path, dest_path)
-                    
+
                     artwork = db.query(ArtworkModel).filter(ArtworkModel.filename == file_path.name).first()
                     if not artwork:
                         with Image.open(dest_path) as img:
@@ -215,17 +238,17 @@ def sync_db_with_filesystem(db: Session) -> None:
                             status='approved'
                         )
                         db.add(artwork); db.commit(); db.refresh(artwork)
-                    
+
                     existing_link = db.execute(
                         select(playlist_artwork).where(
                             playlist_artwork.c.playlist_id == playlist.id,
                             playlist_artwork.c.artwork_id == artwork.id
                         )
                     ).first()
-                    
+
                     if not existing_link:
                         db.execute(playlist_artwork.insert().values(
-                            playlist_id=playlist.id, 
+                            playlist_id=playlist.id,
                             artwork_id=artwork.id,
                             display_order=0
                         ))
@@ -235,17 +258,17 @@ async def run_factory_seed(db: Session):
     """Parses factory_seed.json and injects masterpieces if library is empty."""
     seed_file = Path("static/factory_seed.json")
     if not seed_file.exists(): return
-        
+
     existing = db.query(ArtworkModel).filter(ArtworkModel.is_seed == True).first()
     if existing: return
-        
+
     try:
         import json
-        with open(seed_file, "r") as f:
+        with open(seed_file) as f:
             seeds = json.load(f)
-            
+
         logger.info(f"[Bootstrapper] Injecting {len(seeds)} Masterpieces from Factory Seed...")
-        
+
         async def perform_downloads(seed_items: list):
             db_local = SessionLocal()
             try:
@@ -311,10 +334,11 @@ async def run_factory_seed(db: Session):
 from alembic import command
 from alembic.config import Config
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifecycle events for FastAPI application with multi-worker concurrency locks."""
-    
+
     lock_file = None
     try:
         # Leader Election using fcntl
@@ -322,9 +346,9 @@ async def lifespan(app: FastAPI):
         # The other 3 workers will throw a BlockingIOError and skip initialization.
         lock_file = open("/tmp/screen_docent_startup.lock", "w")
         fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        
+
         logger.info("[Startup] Leader elected. Running exclusive boot tasks (migrations, filesystem sync)...")
-        
+
         # Run Alembic migrations on startup
         alembic_cfg = Config("alembic.ini")
         logger.info("Running Alembic migrations...")
@@ -333,7 +357,7 @@ async def lifespan(app: FastAPI):
             logger.info("Alembic migrations complete.")
         except Exception as e:
             logger.error(f"Failed to run Alembic migrations: {e}")
-            
+
         init_db()
         db = SessionLocal()
         try:
@@ -352,8 +376,8 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"[Startup] Unexpected error during initialization: {e}")
     finally:
-        # We deliberately do NOT unlock the file here. 
-        # If we unlock it while the leader is still finishing startup tasks, 
+        # We deliberately do NOT unlock the file here.
+        # If we unlock it while the leader is still finishing startup tasks,
         # a slightly delayed follower worker could grab the lock and run migrations concurrently.
         # The OS will naturally release the lock when the Uvicorn worker process terminates on server shutdown.
         yield
@@ -372,7 +396,7 @@ async def inject_aggressive_cache_headers(request: Request, call_next):
     )
     is_code_asset = path.endswith((".css", ".js", ".json"))
     is_html_asset = path.endswith(".html") or path == "/admin" or path == "/remote" or path == "/"
-    
+
     if path.startswith("/api/") or is_html_asset or path.startswith("/display/"):
         # API/HTML and the per-display e-ink endpoint must never be cached.
         # (/display/*.png must beat the is_media_cacheable .png rule below.)
@@ -574,10 +598,10 @@ async def reenrich_artwork(artwork_id: int, request: RegenerationRequest, db: Se
     """Sets artwork status back to pending and triggers AI re-enrichment."""
     art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
     if not art: raise HTTPException(404)
-    
+
     art.status = 'pending_review'
     db.commit()
-    
+
     updated_art = await process_artwork(artwork_id, db, user_hint=request.hint)
     return updated_art
 
@@ -597,12 +621,6 @@ async def get_discovery_queue(
     if session_id:
         query = query.filter(DiscoveryQueueModel.search_session_id == session_id)
     return query.order_by(DiscoveryQueueModel.relevance_score.desc()).all()
-
-@app.post("/api/discover/refresh")
-async def trigger_discovery(search: Optional[str] = Query(None), background_tasks: BackgroundTasks = None, db: Session = Depends(get_db)):
-    """Triggers scouts to find new art, optionally guided by a search term."""
-    background_tasks.add_task(run_scouts_bg, query=search)
-    return {"status": "Art scouts dispatched", "search": search}
 
 @app.post("/api/discover/dispatch")
 async def dispatch_discovery(request: DispatchRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
@@ -665,7 +683,7 @@ async def approve_discovery(item_id: int, background_tasks: BackgroundTasks, db:
     """Downloads approved discovery and adds to library."""
     item = db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.id == item_id).first()
     if not item: raise HTTPException(404)
-    
+
     # 1. Download full-res image via the shared robust downloader (descriptive UA — Wikimedia/NASA
     #    reject the default httpx UA — plus 429 retry, redirects, and image validation).
     filename = f"scouted_{item_id}_{item.proposed_title.replace(' ', '_')[:50]}"
@@ -687,7 +705,7 @@ async def approve_discovery(item_id: int, background_tasks: BackgroundTasks, db:
 
     # 3. Enrich with RAG Curator
     background_tasks.add_task(run_rag_pipeline, new_art.id, item.context_hints)
-    
+
     return {"status": "Art added and fully enriched", "artwork_id": new_art.id}
 
 @app.post("/api/discover/reject/{item_id}")
@@ -711,19 +729,19 @@ async def clear_orphaned_approvals(db: Session = Depends(get_db)):
     """Deletes discovery queue items that were 'approved' but have no active artwork entry."""
     approved_items = db.query(DiscoveryQueueModel).filter(DiscoveryQueueModel.status == 'approved').all()
     artworks = db.query(ArtworkModel.filename).filter(ArtworkModel.filename.like('scouted_%')).all()
-    
+
     active_scout_ids = set()
     for (fname,) in artworks:
         parts = fname.split('_')
         if len(parts) >= 2 and parts[1].isdigit():
             active_scout_ids.add(int(parts[1]))
-            
+
     orphans_deleted = 0
     for item in approved_items:
         if item.id not in active_scout_ids:
             db.delete(item)
             orphans_deleted += 1
-            
+
     db.commit()
     return {"status": f"Successfully cleared {orphans_deleted} orphaned approvals"}
 
@@ -747,11 +765,10 @@ async def factory_reset(db: Session = Depends(get_db)):
     - Clears playlist-artwork associations for deleted art
     - Clears search sessions
     """
-    import shutil
-    
+
     # 1. Delete all discovery queue items (all statuses)
     discover_count = db.execute(delete(DiscoveryQueueModel)).rowcount
-    
+
     # 2. Get non-seed artworks to delete their files
     non_seed_art = db.query(ArtworkModel).filter(ArtworkModel.is_seed != True).all()
     files_deleted = 0
@@ -771,13 +788,13 @@ async def factory_reset(db: Session = Depends(get_db)):
                 if pl_link.is_symlink() or pl_link.exists():
                     try: pl_link.unlink()
                     except Exception: pass
-    
+
     # 3. Remove ALL artwork-playlist associations (both seed and non-seed)
     db.execute(playlist_artwork.delete())
-    
+
     # 4. Delete non-seed artwork records from DB
     art_count = db.query(ArtworkModel).filter(ArtworkModel.is_seed != True).delete(synchronize_session='fetch')
-    
+
     # 5. Delete seed artworks too so bootstrapper re-downloads on next start
     seed_art = db.query(ArtworkModel).filter(ArtworkModel.is_seed == True).all()
     for art in seed_art:
@@ -793,19 +810,19 @@ async def factory_reset(db: Session = Depends(get_db)):
                     try: pl_link.unlink()
                     except Exception: pass
     seed_count = db.query(ArtworkModel).filter(ArtworkModel.is_seed == True).delete(synchronize_session='fetch')
-    
+
     # 6. Clear search sessions
     from scout import _search_sessions
     _search_sessions.clear()
-    
+
     db.commit()
-    
+
     logger.info(f"[Factory Reset] Removed {art_count} + {seed_count} seed artworks, {files_deleted} files, {discover_count} queue items. Seeds will re-download on restart.")
     return {
         "status": "Factory reset complete. Restart the server to re-seed masterpieces.",
         "artworks_removed": art_count,
         "seed_artworks_removed": seed_count,
-        "files_deleted": files_deleted, 
+        "files_deleted": files_deleted,
         "queue_items_cleared": discover_count,
     }
 
@@ -833,10 +850,10 @@ async def permanent_delete_artwork(artwork_id: int, db: Session = Depends(get_db
 
 @app.get("/next-image")
 async def get_next_image(
-    playlist_name: str, 
-    shuffle: Optional[bool] = Query(None), 
+    playlist_name: str,
+    shuffle: Optional[bool] = Query(None),
     display_id: str = Query("default"),
-    direction: int = Query(1), 
+    direction: int = Query(1),
     db: Session = Depends(get_db)
 ):
     """
@@ -845,16 +862,16 @@ async def get_next_image(
     """
     p = db.query(PlaylistModel).filter(PlaylistModel.name == playlist_name).first()
     if not p: raise HTTPException(404)
-    
+
     # Resolve Shuffle Hierarchy (URL override > Playlist setting)
     resolved_shuffle = shuffle if shuffle is not None else p.shuffle
 
     # Fetch all approved artworks in this playlist
     artworks = db.query(ArtworkModel).join(playlist_artwork).filter(
-        playlist_artwork.c.playlist_id == p.id, 
+        playlist_artwork.c.playlist_id == p.id,
         ArtworkModel.status == 'approved'
     ).order_by(playlist_artwork.c.display_order).all()
-    
+
     if not artworks: raise HTTPException(404, detail="No approved images")
     count = len(artworks)
 
@@ -863,7 +880,7 @@ async def get_next_image(
         DisplayPlaybackSessionModel.display_id == display_id,
         DisplayPlaybackSessionModel.playlist_id == p.id
     ).first()
-    
+
     if not session:
         session = DisplayPlaybackSessionModel(display_id=display_id, playlist_id=p.id)
         db.add(session)
@@ -875,13 +892,13 @@ async def get_next_image(
     if resolved_shuffle:
         # Bag Shuffle Logic
         unplayed_ids = json.loads(session.unplayed_artworks_json)
-        
+
         # Valid approved IDs in this playlist
         valid_ids = [a.id for a in artworks]
-        
+
         # Filter unplayed to only include currently valid/approved IDs
         bag = [aid for aid in unplayed_ids if aid in valid_ids]
-        
+
         # If bag is empty, refill it
         if not bag:
             bag = valid_ids
@@ -890,16 +907,16 @@ async def get_next_image(
         # Phase 6 Bonus: Weighted random draw based on affinity_score
         # Get actual artwork objects for the IDs in the bag to access affinity scores
         bag_artworks = [a for a in artworks if a.id in bag]
-        
+
         if bag_artworks:
             # random.choices uses weights. affinity_score defaults to 1.0.
             weights = [max(0.1, a.affinity_score) for a in bag_artworks]
             selected_art = random.choices(bag_artworks, weights=weights, k=1)[0]
-            
+
             # Remove from bag
             bag.remove(selected_art.id)
             session.unplayed_artworks_json = json.dumps(bag)
-            
+
             # Find its index in the ordered list for the frontend (optional but helpful)
             for i, a in enumerate(artworks):
                 if a.id == selected_art.id:
@@ -915,11 +932,11 @@ async def get_next_image(
     db.commit()
 
     return {
-        "index": selected_idx, 
+        "index": selected_idx,
         "image_url": f"/media/_Library/{quote(selected_art.filename)}",
-        "playlist": playlist_name, 
+        "playlist": playlist_name,
         "display_time": p.display_time,
-        "default_mode": p.default_mode, 
+        "default_mode": p.default_mode,
         "shuffle": resolved_shuffle,
         "placard_wait": p.placard_initial_wait_sec,
         "placard_show": p.placard_initial_show_sec,
@@ -927,7 +944,7 @@ async def get_next_image(
         "crop": {"x": selected_art.crop_x, "y": selected_art.crop_y, "width": selected_art.crop_width, "height": selected_art.crop_height},
         "metadata": {
             "id": selected_art.id,
-            "title": selected_art.title, "agent_name": selected_art.agent_name, "agent_role": selected_art.agent_role, 
+            "title": selected_art.title, "agent_name": selected_art.agent_name, "agent_role": selected_art.agent_role,
             "creation_date": selected_art.creation_date, "cultural_context": selected_art.cultural_context,
             "medium": selected_art.medium, "date_display": selected_art.date_display,
             "description": selected_art.description_narrative, "tags": selected_art.tags
@@ -941,7 +958,7 @@ def touch_active_display(db: Session, display_id: str):
     try:
         d = db.query(ActiveDisplayModel).filter(ActiveDisplayModel.display_id == display_id).first()
         if d:
-            d.last_seen_at = datetime.now(timezone.utc)
+            d.last_seen_at = datetime.now(UTC)
         else:
             db.add(ActiveDisplayModel(display_id=display_id))
         db.commit()
@@ -1016,14 +1033,14 @@ async def get_display_image(
 # 4. WebSocket & Remote Control
 # -----------------------------------------------------------------------------
 @app.get("/remote")
-async def get_remote_page(): 
+async def get_remote_page():
     return FileResponse(STATIC_DIR / "remote.html")
 
 @app.get("/api/remote/displays")
 async def get_active_displays(db: Session = Depends(get_db)):
     """Returns a list of all display IDs currently connected via WebSocket across all workers."""
     # Consider a display active if seen in the last 15 seconds
-    cutoff = datetime.now(timezone.utc) - timedelta(seconds=15)
+    cutoff = datetime.now(UTC) - timedelta(seconds=15)
     displays = db.query(ActiveDisplayModel).filter(ActiveDisplayModel.last_seen_at > cutoff).all()
     return [d.display_id for d in displays]
 
@@ -1031,13 +1048,13 @@ async def get_active_displays(db: Session = Depends(get_db)):
 async def remote_change_playlist(request: RemoteChangeRequest, db: Session = Depends(get_db)):
     """Targeted command to change a playlist, mode, or trigger navigation on a specific display."""
     logger.info(f"Targeted Remote Command: {request.target_display} -> {request.action}")
-    
+
     payload = {"action": request.action}
     if request.playlist:
         payload["playlist"] = request.playlist
     if request.mode:
         payload["mode"] = request.mode
-        
+
     # Phase 5: Persist command to DB to bridge across worker processes
     cmd = RemoteCommandModel(
         target_display=request.target_display,
@@ -1046,14 +1063,14 @@ async def remote_change_playlist(request: RemoteChangeRequest, db: Session = Dep
     )
     db.add(cmd)
     db.commit()
-    
+
     return {"status": "command_queued"}
 
 @app.websocket("/ws/{display_id}")
 async def websocket_endpoint(websocket: WebSocket, display_id: str):
     """Handles targeted display connections with multi-worker synchronization."""
     await manager.connect(websocket, display_id)
-    
+
     async def heartbeat():
         """Updates the active_displays table to signify this display is alive on this worker."""
         while True:
@@ -1061,7 +1078,7 @@ async def websocket_endpoint(websocket: WebSocket, display_id: str):
                 with SessionLocal() as db:
                     display = db.query(ActiveDisplayModel).filter(ActiveDisplayModel.display_id == display_id).first()
                     if display:
-                        display.last_seen_at = datetime.now(timezone.utc)
+                        display.last_seen_at = datetime.now(UTC)
                     else:
                         display = ActiveDisplayModel(display_id=display_id)
                         db.add(display)
@@ -1134,15 +1151,15 @@ def record_telemetry(payload: TelemetryHeartbeat, db: Session = Depends(get_db))
     artwork = db.query(ArtworkModel).filter(ArtworkModel.id == payload.artwork_id).first()
     if not artwork:
         raise HTTPException(status_code=404, detail="Artwork not found")
-        
+
     # Update raw telemetry
     artwork.total_display_time += payload.display_time_sec
     if payload.skipped:
         artwork.skip_count += 1
-        
+
     # Phase 6 Director Affinity Calculation (v1)
     # This is a naive calculation that will be evolved.
-    # Base is 1.0. 
+    # Base is 1.0.
     # Skipping heavily penalizes (-0.1).
     # Natural display slightly rewards (+0.05 per 30s).
     if payload.skipped:
@@ -1150,7 +1167,7 @@ def record_telemetry(payload: TelemetryHeartbeat, db: Session = Depends(get_db))
     else:
         intervals = payload.display_time_sec / 30.0
         artwork.affinity_score = min(5.0, artwork.affinity_score + (0.05 * intervals))
-        
+
     db.commit()
     return {"status": "ok", "affinity": artwork.affinity_score}
 
@@ -1159,7 +1176,7 @@ async def verify_and_save_api_key(source: str, payload: dict, db: Session = Depe
     """Validates an API key against the source museum backend and persists it."""
     key = payload.get("api_key")
     if not key: raise HTTPException(400, "api_key payload is required.")
-    
+
     try:
         async with httpx.AsyncClient() as client:
             if source == "harvard":
@@ -1335,7 +1352,7 @@ SD_USER_AGENT = "ScreenDocent/1.0 (https://github.com/AiwendilInTheWoods/Screen-
 def _read_local_json(path: Path):
     if not path.exists():
         return None
-    with open(path, "r") as f:
+    with open(path) as f:
         return json.load(f)
 
 async def _catalog_remote_base(db: Session) -> Optional[str]:

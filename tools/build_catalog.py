@@ -24,22 +24,30 @@ import asyncio
 import json
 import logging
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from io import BytesIO
 from pathlib import Path
 
 import httpx
-from PIL import Image
 from dotenv import load_dotenv
+from PIL import Image
 
 load_dotenv()  # pick up GEMINI_API_KEY (and any AI config) from .env, like the app does
 
 import ai_client
 from database import SessionLocal
 from tools import catalog_spec
-from tools.sources import (fetch_collection, UA, MUSEUM_SOURCES, MIN_DISPLAY_EDGE,
-                           resolve_wikimedia, resolve_nasa, resolve_museums,
-                           resolve_loc, resolve_smithsonian)
+from tools.sources import (
+    MIN_DISPLAY_EDGE,
+    MUSEUM_SOURCES,
+    UA,
+    fetch_collection,
+    resolve_loc,
+    resolve_museums,
+    resolve_nasa,
+    resolve_smithsonian,
+    resolve_wikimedia,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("catalog-builder")
@@ -375,7 +383,7 @@ async def main():
     # Write the index in spec order, keeping only collections that have a file on disk.
     ordered = [summaries[s["id"]] for s in catalog_spec.COLLECTIONS
                if s["id"] in summaries and (CATALOG_DIR / f"{s['id']}.json").exists()]
-    index = {"version": 1, "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    index = {"version": 1, "generated": datetime.now(UTC).isoformat(timespec="seconds"),
              "collections": ordered}
     idx_path.write_text(json.dumps(index, indent=1, ensure_ascii=False))
     total = sum(c["count"] for c in ordered)

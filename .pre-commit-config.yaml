@@ -6,3 +6,9 @@ repos:
     hooks:
       - id: gitleaks
         name: gitleaks (block committed secrets)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.18         # keep in sync with requirements-dev.txt
+    hooks:
+      - id: ruff           # lint only (autofix); config in pyproject.toml.
+        args: [--fix]      # `ruff format` is available but intentionally NOT enforced —
+                           # it would reflow this codebase's deliberately compact style.

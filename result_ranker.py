@@ -6,7 +6,7 @@ Scores, ranks, and deduplicates art results across museum sources.
 import logging
 import unicodedata
 from difflib import SequenceMatcher
-from typing import List, Dict, Optional
+from typing import Dict, List
 
 logger = logging.getLogger("artwork-display-api.ranker")
 

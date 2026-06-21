@@ -3,12 +3,12 @@ AI Agents for Artwork Analysis using Gemini API.
 Phase 3: Automated Metadata Generation with Image Optimization.
 """
 
-import json
 import asyncio
 import logging
-from sqlalchemy.orm import Session
 from pathlib import Path
+
 from PIL import Image
+from sqlalchemy.orm import Session
 
 import ai_client
 from models import ArtworkModel
@@ -24,13 +24,13 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
     Optimizes image size before sending to prevent timeouts.
     """
     logger.info(f"[AI Agent] Starting analysis for artwork ID: {artwork_id} (Hint: {user_hint or 'None'})")
-    
+
     artwork = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
     if not artwork: return
 
     from config import LIBRARY_DIR
     image_path = LIBRARY_DIR / artwork.filename
-    
+
     if not image_path.exists(): return
 
     # Clean filename for context
@@ -45,10 +45,10 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
             f"The original filename was \"{clean_filename}\". Use this filename as a hint for the title or artist ONLY if it contains readable words; "
             "ignore it if it looks like random letters/numbers. "
         )
-        
+
         if user_hint:
             system_instruction += f"If a User Hint is provided: \"{user_hint}\", treat it as absolute fact and build your description around it. "
-        
+
         system_instruction += (
             "If you cannot confidently identify the creator from the visual data or hints, explicitly state \"Unknown Artist\" rather than guessing. "
             "Return ONLY a valid JSON object strictly using these keys: "
@@ -77,9 +77,9 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
         artwork.cultural_context = metadata.get('cultural_context', '')
         artwork.medium = metadata.get('medium', '')
         artwork.date_display = metadata.get('date_display', '')
-        
+
         artwork.description_narrative = metadata.get('description_narrative', '')
-        
+
         tags = metadata.get('tags', [])
         artwork.tags = ", ".join(tags) if isinstance(tags, list) else str(tags)
 

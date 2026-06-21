@@ -1,16 +1,14 @@
-from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
-from alembic import context
-
 # ADDED FOR SCREEN DOCENT:
 import os
 import sys
+from logging.config import fileConfig
+
+from alembic import context
+from sqlalchemy import engine_from_config, pool
+
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 from database import Base
-import models # ensure models are loaded
+
 target_metadata = Base.metadata
 
 # this is the Alembic Config object, which provides

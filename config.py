@@ -5,6 +5,7 @@ Extracted from app.py to break circular import dependencies.
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()

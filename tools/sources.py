@@ -15,18 +15,18 @@ import re
 
 import httpx
 
+from query_classifier import QueryClassifier
 from scout import (
-    run_scouts,
     MIN_DISPLAY_EDGE,
     _nasa_best_asset,
-    _strip_html,
     _ratio,
+    _strip_html,
     _wikimedia_filepath,
-    _wm_match,
     _wm_is_pd,
+    _wm_match,
     _wm_throttle,
+    run_scouts,
 )
-from query_classifier import QueryClassifier
 
 logger = logging.getLogger("catalog-builder.sources")
 

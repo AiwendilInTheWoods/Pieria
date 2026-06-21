@@ -44,7 +44,6 @@ async function processQueue() {
 }
 
 async function init() {
-    console.log('[Admin] Initializing Refactored Console...');
     setupUploadZone();
     setupPlaylistInput(); // Add key listener
     await loadPremiumSettings();
