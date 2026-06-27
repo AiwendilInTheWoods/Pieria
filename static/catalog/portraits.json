@@ -6,66 +6,6 @@
  "license": "Public Domain",
  "items": [
   {
-   "title": "Miniature Vessel in the Form of a Portrait Head with Painted Cheeks",
-   "agent_name": "Moche",
-   "agent_role": "Artist",
-   "creation_date": "100 BCE–500 CE",
-   "cultural_context": "Moche culture, Pre-Columbian",
-   "medium": "Ceramic and pigment",
-   "date_display": "100 BCE–500 CE",
-   "description_narrative": "This ceramic vessel from the Moche culture is skillfully molded into a miniature portrait head. Traces of pigment are still visible, notably highlighting the painted cheeks.",
-   "tags": "moche, ceramic, vessel, portrait, ancient, pre-columbian, sculptural, anthropomorphic",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/644050e7-1b8c-18f7-14a6-f2620aa873fd/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/644050e7-1b8c-18f7-14a6-f2620aa873fd/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Self-Portrait",
-   "agent_name": "Walter Shirlaw",
-   "agent_role": "Artist",
-   "creation_date": "1878",
-   "cultural_context": "American, 19th century",
-   "medium": "Oil on canvas",
-   "date_display": "1878",
-   "description_narrative": "This striking 1878 oil on canvas captures artist Walter Shirlaw in a moment of self-reflection. The artwork serves as a direct visual record of the artist, rendered by his own hand.",
-   "tags": "self-portrait, portrait, oil painting, american art, realism, 19th century, artist",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/7b7a6f39-1cd8-ea2f-9811-18b0e23edac0/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/7b7a6f39-1cd8-ea2f-9811-18b0e23edac0/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Untitled (Painted Portrait of Charles Coit)",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "1855/56",
-   "cultural_context": "Early Photography, 19th Century",
-   "medium": "Daguerreotype",
-   "date_display": "1855/56",
-   "description_narrative": "This untitled daguerreotype captures a painted portrait of Charles Coit, meticulously crafted in the mid-19th century. The unique photographic process, often hand-colored, offered a detailed and reflective likeness, making it a prized form of portraiture during its era.",
-   "tags": "portrait, daguerreotype, photography, 19th century, painted, studio portrait, early photography",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e8c92565-704d-d666-b213-8b26d0ea969d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e8c92565-704d-d666-b213-8b26d0ea969d/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Untitled (Portrait of a Man Painting)",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "1865",
-   "cultural_context": "19th century photography",
-   "medium": "Ambrotype",
-   "date_display": "1865",
-   "description_narrative": "This ambrotype from 1865 captures an unknown man engaged in the act of painting, offering a glimpse into artistic practice of the mid-19th century. The unique photographic process renders a detailed, direct positive image on glass.",
-   "tags": "portrait, man, painting, artist, ambrotype, 19th century, photography",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/90ebe170-9747-6569-e809-c4fe0f86b5ae/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/90ebe170-9747-6569-e809-c4fe0f86b5ae/full/400,/0/default.jpg"
-  },
-  {
    "title": "Portrait of an Artist",
    "agent_name": "Follower of Frans Hals",
    "agent_role": "Artist",
@@ -77,8 +17,8 @@
    "tags": "portrait, oil painting, 17th century, dutch golden age, baroque, frans hals follower, european art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/c95d58bf-fe9e-e5bb-2c71-ab8bad984759/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/c95d58bf-fe9e-e5bb-2c71-ab8bad984759/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Follower%20of%20Frans%20Hals%20-%20Portrait%20of%20an%20Artist%20-%201894.1023%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Follower%20of%20Frans%20Hals%20-%20Portrait%20of%20an%20Artist%20-%201894.1023%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Self-Portrait",
@@ -92,8 +32,8 @@
    "tags": "self-portrait, post-impressionism, oil painting, expressive, dutch art, portraiture, intense",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/47c5bcb8-62ef-e5d7-55e7-f5121f409a30/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/47c5bcb8-62ef-e5d7-55e7-f5121f409a30/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Self-Portrait%20-%201954.326%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Self-Portrait%20-%201954.326%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "The Captive Slave (Ira Aldridge)",
@@ -107,8 +47,8 @@
    "tags": "portrait, slavery, Ira Aldridge, acting, oil painting, 19th century, dramatic, realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/5490fd49-dd52-4fd7-7d41-d871dcffae55/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/5490fd49-dd52-4fd7-7d41-d871dcffae55/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Philip%20Simpson%20-%20The%20Captive%20Slave%20-%202008.188%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Philip%20Simpson%20-%20The%20Captive%20Slave%20-%202008.188%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Portrait of a Man with Gray Hair",
@@ -122,8 +62,8 @@
    "tags": "portrait, man, georgian, scottish, oil painting, realism, dignified",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/51a56e7e-ffa2-bb9e-7f16-99bc0b4b4d66/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/51a56e7e-ffa2-bb9e-7f16-99bc0b4b4d66/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Henry%20Raeburn%20-%20Portrait%20of%20a%20Man%20with%20Gray%20Hair%20-%201962.961%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Henry%20Raeburn%20-%20Portrait%20of%20a%20Man%20with%20Gray%20Hair%20-%201962.961%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Édouard Manet",
@@ -137,8 +77,8 @@
    "tags": "portrait, oil painting, 19th century, french art, realism, artist portrait, contemplative",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/dd4f9115-150c-2f1a-0f37-50899553d6b4/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/dd4f9115-150c-2f1a-0f37-50899553d6b4/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Henri%20Fantin-Latour%20-%20%C3%89douard%20Manet%20-%201905.207%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Henri%20Fantin-Latour%20-%20%C3%89douard%20Manet%20-%201905.207%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Madame Cezanne in a Yellow Chair",
@@ -152,8 +92,8 @@
    "tags": "portrait, post-impressionism, oil painting, figure study, domestic scene, structural, modern art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/4822cd01-44ac-041a-36b8-c0542377b750/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/4822cd01-44ac-041a-36b8-c0542377b750/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Madame%20C%C3%A9zanne%20in%20a%20Yellow%20Chair%20-%201948.54%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Madame%20C%C3%A9zanne%20in%20a%20Yellow%20Chair%20-%201948.54%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Madame de Pastoret and Her Son",
@@ -167,8 +107,8 @@
    "tags": "portrait, neoclassical, mother and child, family, French art, 18th century, tenderness, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/72227c9e-413c-8930-477d-5a90e0a2123c/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/72227c9e-413c-8930-477d-5a90e0a2123c/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20de%20Pastoret%20and%20Her%20Son%20-%201967.228%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20de%20Pastoret%20and%20Her%20Son%20-%201967.228%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Madame Roulin Rocking the Cradle (La berceuse)",
@@ -182,8 +122,8 @@
    "tags": "portrait, woman, motherhood, oil painting, post-impressionism, vibrant colors, arles period",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/6f3ca8b9-fef6-edfc-a71c-3e7b471d5f6c/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/6f3ca8b9-fef6-edfc-a71c-3e7b471d5f6c/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Madame%20Roulin%20Rocking%20the%20Cradle%20%28La%20berceuse%29%20-%201926.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Madame%20Roulin%20Rocking%20the%20Cradle%20%28La%20berceuse%29%20-%201926.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Old Man with a Gold Chain",
@@ -197,8 +137,8 @@
    "tags": "portrait, oil painting, old man, dutch golden age, realism, baroque, dignified",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3eaab3a3-2b47-9fdd-121c-050f6b8d9ccb/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3eaab3a3-2b47-9fdd-121c-050f6b8d9ccb/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt%20Harmensz.%20van%20Rijn%20-%20Old%20Man%20with%20a%20Gold%20Chain%20-%20Google%20Art%20Project.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt%20Harmensz.%20van%20Rijn%20-%20Old%20Man%20with%20a%20Gold%20Chain%20-%20Google%20Art%20Project.jpg?width=600"
   },
   {
    "title": "Young Woman at an Open Half-Door",
@@ -212,8 +152,8 @@
    "tags": "young woman, portrait, doorway, dutch golden age, baroque, figure study, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/91c51644-871f-cda9-82bb-94f4973ae339/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/91c51644-871f-cda9-82bb-94f4973ae339/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Samuel%20van%20Hoogstraten%20-%20Young%20woman%20at%20an%20open%20half-door%20%281645%29.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Samuel%20van%20Hoogstraten%20-%20Young%20woman%20at%20an%20open%20half-door%20%281645%29.jpg?width=600"
   },
   {
    "title": "The Child's Bath",
@@ -227,8 +167,8 @@
    "tags": "mother and child, domestic scene, impressionism, american art, 19th century, oil painting, intimacy, everyday life",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3b885ae0-4d46-5fe4-d70a-00474827f02c/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3b885ae0-4d46-5fe4-d70a-00474827f02c/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mary%20Cassatt%20-%20The%20Child%27s%20Bath%20-%20Google%20Art%20Project.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mary%20Cassatt%20-%20The%20Child%27s%20Bath%20-%20Google%20Art%20Project.jpg?width=600"
   },
   {
    "title": "Interrupted Reading",
@@ -242,8 +182,8 @@
    "tags": "figure study, reading, woman, contemplative, realism, barbizon school, 19th century art, interior scene",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/1c2d32a7-790c-501a-e124-00f28cf5052d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/1c2d32a7-790c-501a-e124-00f28cf5052d/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Camille%20Corot%20-%20Interrupted%20Reading%20-%201922.410%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Camille%20Corot%20-%20Interrupted%20Reading%20-%201922.410%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Madame François Buron",
@@ -257,8 +197,8 @@
    "tags": "portraiture, 18th century, french art, oil painting, david, pre-neoclassical",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/77f1c8e3-16c6-1147-f4aa-4cfc8bd3eb8b/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/77f1c8e3-16c6-1147-f4aa-4cfc8bd3eb8b/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20Fran%C3%A7ois%20Buron%20-%201963.205%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20Fran%C3%A7ois%20Buron%20-%201963.205%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Jean Renoir Sewing",
@@ -272,8 +212,8 @@
    "tags": "portrait, domestic scene, child, sewing, impressionism, French art, familial, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/41728a11-a073-6efa-387c-a40384477ad2/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/41728a11-a073-6efa-387c-a40384477ad2/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Jean%20Renoir%20Sewing%20-%201937.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Jean%20Renoir%20Sewing%20-%201937.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Portrait of a Man with a Pink",
@@ -287,8 +227,8 @@
    "tags": "portrait, man, flower, early netherlandish, renaissance, flemish, oil painting, detailed",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/f731615e-ee25-f8e5-b957-69635e1e2d60/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/f731615e-ee25-f8e5-b957-69635e1e2d60/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Quentin%20Massys%20-%20Portrait%20of%20a%20Man%20with%20a%20Pink%20-%201894.1025%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Quentin%20Massys%20-%20Portrait%20of%20a%20Man%20with%20a%20Pink%20-%201894.1025%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Amédée-David, the Comte de Pastoret",
@@ -302,8 +242,8 @@
    "tags": "portrait, neoclassicism, french art, 19th century, oil painting, male portrait, formality, academic art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/8d119fd0-2f57-f20e-a3f5-a573904001e9/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/8d119fd0-2f57-f20e-a3f5-a573904001e9/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Auguste%20Dominique%20Ingres%20-%20Am%C3%A9d%C3%A9e-David%2C%20the%20Comte%20de%20Pastoret%20-%201971.452%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Auguste%20Dominique%20Ingres%20-%20Am%C3%A9d%C3%A9e-David%2C%20the%20Comte%20de%20Pastoret%20-%201971.452%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Lucie Berard (Child in White)",
@@ -317,8 +257,8 @@
    "tags": "child, portrait, impressionism, french art, girl, innocence, oil painting, delicate",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/0e94a829-b3b7-8317-b609-d1826f0369f0/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/0e94a829-b3b7-8317-b609-d1826f0369f0/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Lucie%20Berard%20%28Child%20in%20White%29%20-%201933.1172%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Lucie%20Berard%20%28Child%20in%20White%29%20-%201933.1172%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Merahi metua no Tehamana (Tehamana Has Many Parents or The Ancestors of Tehamana)",
@@ -332,8 +272,8 @@
    "tags": "tahitian, portrait, woman, post-impressionism, symbolism, exoticism, spirituality, serene",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/48268fc7-2eb4-ded6-1293-e91f27b66478/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/48268fc7-2eb4-ded6-1293-e91f27b66478/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20Gauguin%20-%20The%20Ancestors%20of%20Tehamana%20OR%20Tehamana%20Has%20Many%20Parents%20%28Merahi%20metua%20no%20Tehamana%29%20-%20Google%20Art%20Project.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20Gauguin%20-%20The%20Ancestors%20of%20Tehamana%20OR%20Tehamana%20Has%20Many%20Parents%20%28Merahi%20metua%20no%20Tehamana%29%20-%20Google%20Art%20Project.jpg?width=600"
   },
   {
    "title": "Francesco de' Medici",
@@ -347,8 +287,8 @@
    "tags": "portrait, Florentine, noble, Medici, Renaissance, Mannerism, formal, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/9a29cc5d-3779-c9ab-2aa2-0df7b6c3f391/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/9a29cc5d-3779-c9ab-2aa2-0df7b6c3f391/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alessandro%20Allori%20-%20Francesco%20de%27%20Medici%20-%201965.1179%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alessandro%20Allori%20-%20Francesco%20de%27%20Medici%20-%201965.1179%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Beggar with Oysters (Philosopher)",
@@ -362,8 +302,8 @@
    "tags": "beggar, philosopher, realism, modern art, portrait, oysters, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/4e074d70-4424-331b-ec89-0776a45d6825/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/4e074d70-4424-331b-ec89-0776a45d6825/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%C3%89douard%20Manet%20-%20Beggar%20with%20Oysters%20%28Philosopher%29%20-%201931.504%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%C3%89douard%20Manet%20-%20Beggar%20with%20Oysters%20%28Philosopher%29%20-%201931.504%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Polynesian Woman with Children",
@@ -377,8 +317,8 @@
    "tags": "polynesian, woman, children, tahiti, post-impressionism, symbolism, tropical, landscape",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/cc5cdb81-14cf-27e9-eda8-94c08244ebaa/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/cc5cdb81-14cf-27e9-eda8-94c08244ebaa/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Polynesian%20Woman%20with%20Children%201901%20Paul%20Gauguin.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Polynesian%20Woman%20with%20Children%201901%20Paul%20Gauguin.jpg?width=600"
   },
   {
    "title": "Portrait of General José Manuel Romero",
@@ -392,8 +332,8 @@
    "tags": "portrait, general, military, oil painting, goya, spanish art, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/5553b728-cc59-1d08-7505-f9b3826334b8/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/5553b728-cc59-1d08-7505-f9b3826334b8/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Francisco%20Jos%C3%A9%20de%20Goya%20y%20Lucientes%20-%20Portrait%20of%20General%20Jos%C3%A9%20Manuel%20Romero%20-%201970.1036%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Francisco%20Jos%C3%A9%20de%20Goya%20y%20Lucientes%20-%20Portrait%20of%20General%20Jos%C3%A9%20Manuel%20Romero%20-%201970.1036%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Portrait of Constance Pipelet",
@@ -407,8 +347,8 @@
    "tags": "portrait, oil painting, 18th century, French, woman, historical, realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/9ca3be44-a673-2ad9-f0d8-a8e28ee8d397/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/9ca3be44-a673-2ad9-f0d8-a8e28ee8d397/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Fran%C3%A7ois%20D%C3%A9soria%20-%20Portrait%20of%20Constance%20Pipelet%20-%201939.533%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Fran%C3%A7ois%20D%C3%A9soria%20-%20Portrait%20of%20Constance%20Pipelet%20-%201939.533%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Winged Figure",
@@ -422,8 +362,8 @@
    "tags": "american art, symbolism, idealism, winged figure, angel, ethereal, serene",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e7f7d1fb-9b18-45b4-1279-204a150279f5/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e7f7d1fb-9b18-45b4-1279-204a150279f5/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Abbott%20Handerson%20Thayer%20-%20Winged%20Figure%20-%201947.32%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Abbott%20Handerson%20Thayer%20-%20Winged%20Figure%20-%201947.32%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "The Advance-Guard, or The Military Sacrifice (The Ambush)",
@@ -437,8 +377,8 @@
    "tags": "western art, american west, military, frontier, horses, oil painting, realism, late 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/f1e03813-f9c7-f4f8-fbe8-a5eeae84fda4/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/f1e03813-f9c7-f4f8-fbe8-a5eeae84fda4/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Frederic%20Remington%20-%20The%20Advance-Guard%2C%20or%20The%20Military%20Sacrifice%20%28The%20Ambush%29%20-%201982.802%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Frederic%20Remington%20-%20The%20Advance-Guard%2C%20or%20The%20Military%20Sacrifice%20%28The%20Ambush%29%20-%201982.802%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Mrs. Potter Palmer",
@@ -452,8 +392,8 @@
    "tags": "portrait, woman, oil painting, realism, elegant, late 19th century, Swedish art, impressionistic brushwork",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/6f3dc71a-683d-7ad6-e24a-a97c4877f30d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/6f3dc71a-683d-7ad6-e24a-a97c4877f30d/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anders%20Zorn%20-%20Mrs.%20Potter%20Palmer%20-%201922.450%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anders%20Zorn%20-%20Mrs.%20Potter%20Palmer%20-%201922.450%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "John Thomlinson and His Family",
@@ -467,8 +407,8 @@
    "tags": "portrait, family, group portrait, oil painting, 18th century, British, domestic scene",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e8a4e4ed-13cf-901a-adc9-4a0e9bc47424/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e8a4e4ed-13cf-901a-adc9-4a0e9bc47424/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Arthur%20Devis%20-%20John%20Thomlinson%20and%20His%20Family%20-%201956.130%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Arthur%20Devis%20-%20John%20Thomlinson%20and%20His%20Family%20-%201956.130%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Portrait of a Noblewoman Dressed in Mourning",
@@ -482,8 +422,8 @@
    "tags": "portrait, noblewoman, mourning, Baroque, Italian, oil painting, grief, somber",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/7904b9d2-675f-7aeb-88c3-e29cd519b7be/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/7904b9d2-675f-7aeb-88c3-e29cd519b7be/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacopo%20da%20Empoli%20-%20Portrait%20of%20a%20Noblewoman%20Dressed%20in%20Mourning%20-%201960.1%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacopo%20da%20Empoli%20-%20Portrait%20of%20a%20Noblewoman%20Dressed%20in%20Mourning%20-%201960.1%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Helena Tromper Du Bois",
@@ -497,8 +437,8 @@
    "tags": "portrait, flemish, baroque, woman, elegance, 17th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/8f899167-2faf-bd0d-cf9c-9ca2fcb07a4b/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/8f899167-2faf-bd0d-cf9c-9ca2fcb07a4b/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anthony%20van%20Dyck%20-%20Helena%20Leonora%20Sieveri%20-%201894.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anthony%20van%20Dyck%20-%20Helena%20Leonora%20Sieveri%20-%201894.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Elaine",
@@ -512,8 +452,8 @@
    "tags": "arthurian legend, tragedy, romanticism, narrative art, victorian, figure painting, mythology",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/27d70359-d92b-18fb-b31a-f3dd4e3c78ac/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/27d70359-d92b-18fb-b31a-f3dd4e3c78ac/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toby%20Edward%20Rosenthal%20-%20Elaine%20-%201917.3%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toby%20Edward%20Rosenthal%20-%20Elaine%20-%201917.3%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Self-Portrait",
@@ -527,8 +467,8 @@
    "tags": "self-portrait, male, artist, 19th century, oil painting, early impressionism, france, naturalism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/eb2cd58f-db63-0236-cebd-7ca8e63eda54/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/eb2cd58f-db63-0236-cebd-7ca8e63eda54/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fr%C3%A9d%C3%A9ric%20Bazille%20-%20Self-Portrait%20-%201962.336%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fr%C3%A9d%C3%A9ric%20Bazille%20-%20Self-Portrait%20-%201962.336%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Portrait of a Woman with a Man at a Casement",

@@ -6,156 +6,6 @@
  "license": "Public Domain",
  "items": [
   {
-   "title": "John James Audubon discovering his drawings eaten by a rat",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "1870s",
-   "cultural_context": "Meiji era, Japanese",
-   "medium": "Color woodblock print; oban",
-   "date_display": "1870s",
-   "description_narrative": "This vibrant color woodblock print captures naturalist John James Audubon's dramatic discovery of a rat consuming his invaluable avian drawings. The vivid scene, characteristic of the medium, portrays a moment of profound artistic and scientific loss.",
-   "tags": "john james audubon, rat, naturalist, discovery, woodblock print, 19th century, dramatic, frustration",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/b4f4b7b6-8a1f-c143-9caf-7154b8290059/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/b4f4b7b6-8a1f-c143-9caf-7154b8290059/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Harlequin Duck",
-   "agent_name": "Robert Havell",
-   "agent_role": "Artist",
-   "creation_date": "1826/39",
-   "cultural_context": "Natural History Illustration, 19th Century",
-   "medium": "Hand-colored engraving with aquatint and etching on ivory wove paper",
-   "date_display": "1826/39",
-   "description_narrative": "This vibrant hand-colored engraving captures the distinctive Harlequin Duck, showcasing intricate detail through aquatint and etching techniques. Created by Robert Havell, it exemplifies the detailed natural history illustrations of the early 19th century.",
-   "tags": "harlequin duck, bird, wildlife, natural history, engraving, aquatint, etching, hand-colored",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2ae6aacf-6434-72c7-22ca-082924fedb4c/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2ae6aacf-6434-72c7-22ca-082924fedb4c/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Black Backed Gull",
-   "agent_name": "Robert Havell",
-   "agent_role": "Artist",
-   "creation_date": "1826/39",
-   "cultural_context": "19th century, scientific illustration",
-   "medium": "Hand-colored engraving with aquatint and etching on cream wove paper",
-   "date_display": "1826/39",
-   "description_narrative": "This print, titled 'Black Backed Gull,' is a meticulous ornithological illustration by Robert Havell. Created through hand-colored engraving with aquatint and etching, the artwork captures the bird's form and plumage with precise line work and subtle tonal variations.",
-   "tags": "ornithology, bird, nature, engraving, aquatint, hand-colored, printmaking, detailed",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/a48d77a6-ee9d-5da8-00e1-3f8a41a00d2a/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/a48d77a6-ee9d-5da8-00e1-3f8a41a00d2a/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Great American Shrike",
-   "agent_name": "Robert Havell",
-   "agent_role": "Artist",
-   "creation_date": "1834",
-   "cultural_context": "19th century, British",
-   "medium": "Hand-colored engraving, with aquatint, on ivory wove paper",
-   "date_display": "1834",
-   "description_narrative": "This hand-colored engraving by Robert Havell meticulously depicts the Great American Shrike, showcasing the artist's skill in combining line and aquatint. The detailed rendering of the bird on ivory wove paper serves as both scientific illustration and fine art.",
-   "tags": "bird, engraving, ornithological, nature, scientific illustration, printmaking, natural history",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3f0ab072-0d40-61b3-c60f-c1341454e5da/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3f0ab072-0d40-61b3-c60f-c1341454e5da/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Male Bay Breasted Warbler",
-   "agent_name": "Robert Havell",
-   "agent_role": "Artist",
-   "creation_date": "1829",
-   "cultural_context": "19th Century, British",
-   "medium": "Hand-colored engraving, with aquatint, on cream wove paper",
-   "date_display": "1829",
-   "description_narrative": "This exquisite hand-colored engraving by Robert Havell vividly captures the intricate details of a male Bay-breasted Warbler. Rendered with aquatint on cream wove paper, the print showcases the bird's distinctive plumage and a delicate branch.",
-   "tags": "bird, warbler, nature, engraving, hand-colored, ornithological illustration, 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/573befa5-fd0a-d12f-488a-0aebd7646b26/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/573befa5-fd0a-d12f-488a-0aebd7646b26/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Florida Jay",
-   "agent_name": "Robert Havell",
-   "agent_role": "Artist",
-   "creation_date": "1830",
-   "cultural_context": "19th century natural history illustration",
-   "medium": "Hand-colored engraving, with aquatint, on ivory wove paper",
-   "date_display": "1830",
-   "description_narrative": "Robert Havell's 'Florida Jay' is a meticulously hand-colored engraving, capturing the distinctive plumage of the Florida Scrub-Jay. This detailed aquatint print exemplifies the artistic and scientific precision characteristic of early 19th-century ornithological illustration.",
-   "tags": "bird, wildlife, natural history, engraving, hand-colored print, scientific illustration, 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/bf44e53f-9df4-3246-8acd-3af23625396a/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/bf44e53f-9df4-3246-8acd-3af23625396a/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Cervus Virginianus",
-   "agent_name": "John Woodhouse Audubon",
-   "agent_role": "Artist",
-   "creation_date": "1848",
-   "cultural_context": "19th century, American",
-   "medium": "Hand-colored lithograph on wove paper",
-   "date_display": "1848",
-   "description_narrative": "This hand-colored lithograph by John Woodhouse Audubon vividly portrays the Cervus Virginianus, commonly known as the white-tailed deer, with careful attention to naturalistic detail. The intricate rendition and hand-coloring highlight the animal's features, reflecting the era's focus on detailed natural history illustration.",
-   "tags": "deer, wildlife, animal illustration, lithography, hand-colored, 19th century, natural history",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/89e48ecf-e57c-fbe1-af81-0c00907145b2/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/89e48ecf-e57c-fbe1-af81-0c00907145b2/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Bust of a Youth (Saint John the Baptist)",
-   "agent_name": "Francesco Mochi",
-   "agent_role": "Artist",
-   "creation_date": "1630-40",
-   "cultural_context": "Baroque, Italian",
-   "medium": "Marble on variegated black marble socle",
-   "date_display": "1630-40",
-   "description_narrative": "Francesco Mochi's marble 'Bust of a Youth' vividly portrays Saint John the Baptist, capturing a moment of profound spiritual intensity. The dynamic carving of the youthful figure, along with its expressive face, exemplifies the dramatic potential of Baroque sculpture.",
-   "tags": "sculpture, marble, baroque, religious, saint john the baptist, bust, dramatic, expressive",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/4e37b182-cc1e-ef86-3eb2-de7d5b9db717/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/4e37b182-cc1e-ef86-3eb2-de7d5b9db717/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Saint James the Greater",
-   "agent_name": "Master F. P.",
-   "agent_role": "Artist",
-   "creation_date": "n.d.",
-   "cultural_context": "European",
-   "medium": "Etching in black on cream laid paper",
-   "date_display": "n.d.",
-   "description_narrative": "This etching in black on cream laid paper depicts Saint James the Greater, an important figure in Christian tradition. Created by the artist known as Master F. P., the print showcases the precise lines achievable through this medium.",
-   "tags": "saint james, religious, christian, etching, printmaking, figurative, devotional",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/6d0943bb-e4b6-102e-4742-0d1533f54c97/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/6d0943bb-e4b6-102e-4742-0d1533f54c97/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Saint John the Evangelist",
-   "agent_name": "Paolo Farinati",
-   "agent_role": "Artist",
-   "creation_date": "1567",
-   "cultural_context": "Italian Renaissance",
-   "medium": "Etching in black on paper",
-   "date_display": "1567",
-   "description_narrative": "This etching by Paolo Farinati depicts Saint John the Evangelist, showcasing the characteristic linework of the printmaking medium. Created in 1567, it reflects the artistic approaches of its era.",
-   "tags": "saint, biblical, etching, printmaking, renaissance art, religious, italian art",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e4387d3c-49db-6bc3-9e3d-4ec59ad147f8/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e4387d3c-49db-6bc3-9e3d-4ec59ad147f8/full/400,/0/default.jpg"
-  },
-  {
    "title": "Nocturne: Blue and Gold—Southampton Water",
    "agent_name": "James McNeill Whistler",
    "agent_role": "Artist",
@@ -167,8 +17,8 @@
    "tags": "nocturne, seascape, aestheticism, atmospheric, tonalism, blue and gold, tranquility",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/50034c7f-ce51-00f1-430e-a6f7efc233fc/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/50034c7f-ce51-00f1-430e-a6f7efc233fc/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20Nocturne%2C%20Blue%20and%20Gold%E2%80%94Southampton%20Water%20-%201900.52%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20Nocturne%2C%20Blue%20and%20Gold%E2%80%94Southampton%20Water%20-%201900.52%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "At Mouquin's",
@@ -182,38 +32,8 @@
    "tags": "restaurant, urban life, genre scene, american art, ashcan school, early 20th century, social realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/b146368d-a855-63ac-6115-04b835c60bb0/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/b146368d-a855-63ac-6115-04b835c60bb0/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Butterfly",
-   "agent_name": "James McNeill Whistler",
-   "agent_role": "Artist",
-   "creation_date": "c. 1890",
-   "cultural_context": "Aestheticism, American",
-   "medium": "Graphite on ivory wove paper",
-   "date_display": "c. 1890",
-   "description_narrative": "This delicate drawing, titled 'Butterfly,' is rendered in graphite by James McNeill Whistler, capturing the subtle form of the insect. Executed on ivory wove paper, it exemplifies a precise and refined approach to natural observation.",
-   "tags": "butterfly, insect, drawing, graphite, sketch, nature, study, aesthetic",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/d92660fb-b49a-ff1f-e761-0efacce3023f/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/d92660fb-b49a-ff1f-e761-0efacce3023f/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Plaque with Saints James and John the Evangelist",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "1160–80",
-   "cultural_context": "Medieval",
-   "medium": "Gilt copper, champlevé enamel",
-   "date_display": "1160–80",
-   "description_narrative": "This plaque depicts Saints James and John the Evangelist, crafted from gilt copper with champlevé enamel. The intricate enamelwork, created by carving recesses into the metal and filling them with colored glass paste, exemplifies the decorative artistry of its period.",
-   "tags": "religious, medieval, champlevé, enamel, metalwork, saints, decorative arts",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/cfb0e651-e0df-5197-d9e4-c88ef70772a0/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/cfb0e651-e0df-5197-d9e4-c88ef70772a0/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/William%20James%20Glackens%20-%20At%20Mouquin%27s%20-%201925.295%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/William%20James%20Glackens%20-%20At%20Mouquin%27s%20-%201925.295%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "James William Wallack",
@@ -227,98 +47,8 @@
    "tags": "portrait, oil painting, 19th century, male figure, charles robert leslie, james william wallack, american art, british art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e3b91cbd-674a-5da7-1a01-42a2e9a3cadf/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e3b91cbd-674a-5da7-1a01-42a2e9a3cadf/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Mary (Polly) Lawton Bringhurst",
-   "agent_name": "James Peale",
-   "agent_role": "Artist",
-   "creation_date": "1790",
-   "cultural_context": "Early American, 18th Century",
-   "medium": "Watercolor on ivory (recto), sepia on ivory with human hair (verso), and gold",
-   "date_display": "1790",
-   "description_narrative": "This exquisite miniature portrait depicts Mary (Polly) Lawton Bringhurst, rendered in watercolor on ivory by James Peale. The artwork's intricate design extends to the verso, which features sepia on ivory adorned with human hair and encased in gold.",
-   "tags": "portrait, miniature, watercolor, ivory, sepia, 18th century, american",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/f5b9d80c-e652-1420-a695-73ab60119b9d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/f5b9d80c-e652-1420-a695-73ab60119b9d/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Head of Executioner, from John Evelyn's Sculptura",
-   "agent_name": "Richard Houston",
-   "agent_role": "Artist",
-   "creation_date": "1755",
-   "cultural_context": "18th century, British",
-   "medium": "Mezzotint in black on ivory laid paper",
-   "date_display": "1755",
-   "description_narrative": "This mezzotint depicts the powerful \"Head of Executioner,\" rendered in stark black on ivory laid paper. Created by Richard Houston in 1755, it showcases the detailed textural qualities possible with this printmaking technique.",
-   "tags": "executioner, head, portrait, mezzotint, printmaking, 18th century, british",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/8317e653-b0eb-3ba3-1886-3141db56f529/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/8317e653-b0eb-3ba3-1886-3141db56f529/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Design cover for West Point Song of the Graduates",
-   "agent_name": "James McNeill Whistler",
-   "agent_role": "Artist",
-   "creation_date": "1852",
-   "cultural_context": "19th century, American",
-   "medium": "Transfer lithograph in black on off-white wove paper",
-   "date_display": "1852",
-   "description_narrative": "James McNeill Whistler designed this cover for the \"West Point Song of the Graduates,\" an early example of his work in printmaking. Rendered as a transfer lithograph in black on off-white wove paper, this piece demonstrates Whistler's nascent skills in commercial design.",
-   "tags": "west point, song cover, military, lithography, design, illustration, american art",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/c52ac8f4-fef0-bce3-55e9-63432fe8125e/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/c52ac8f4-fef0-bce3-55e9-63432fe8125e/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Lady Elizabeth Montagu",
-   "agent_name": "James McArdell",
-   "agent_role": "Artist",
-   "creation_date": "1756",
-   "cultural_context": "18th Century British",
-   "medium": "Mezzotint on ivory laid paper",
-   "date_display": "1756",
-   "description_narrative": "This elegant mezzotint depicts Lady Elizabeth Montagu, a prominent figure in 18th-century English society known for her literary salons. James McArdell masterfully uses the mezzotint technique to achieve rich tonal variations, creating a sophisticated portrait.",
-   "tags": "portrait, woman, nobility, 18th century, mezzotint, printmaking, elegant, British art",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/340f87c7-a0fd-b69d-f410-23b5902652f9/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/340f87c7-a0fd-b69d-f410-23b5902652f9/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Title Page, from A select collection of views and ruins in Rome and its vicinity",
-   "agent_name": "James Merigot",
-   "agent_role": "Artist",
-   "creation_date": "1796/98",
-   "cultural_context": "Late 18th Century, European",
-   "medium": "Hand-colored aquatint on paper",
-   "date_display": "1796/98",
-   "description_narrative": "This intricately designed title page introduces 'A select collection of views and ruins in Rome and its vicinity,' an album showcasing the enduring grandeur of Roman architecture. Executed as a hand-colored aquatint, it offers an artistic prelude to the detailed topographical prints within the publication.",
-   "tags": "title page, aquatint, roman ruins, topographical, 18th century, hand-colored, printmaking",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/9ef0a0e6-d709-7105-7cbd-3a597ff64f92/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/9ef0a0e6-d709-7105-7cbd-3a597ff64f92/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Coverlet",
-   "agent_name": "James Cunningham",
-   "agent_role": "Artist",
-   "creation_date": "1843",
-   "cultural_context": "19th century craft",
-   "medium": "Cotton and wool, plain weave double cloth; woven on loom with Jacquard attachment; two loom widths joined",
-   "date_display": "1843",
-   "description_narrative": "This coverlet, crafted by James Cunningham in 1843, demonstrates the intricate possibilities of double-cloth weaving using cotton and wool. Its creation on a loom with a Jacquard attachment highlights early mechanical advancements in textile production, resulting in two joined loom widths.",
-   "tags": "coverlet, textile, weaving, jacquard, cotton, wool, domestic art, 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/183f8955-7171-52d8-4846-584450c08c25/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/183f8955-7171-52d8-4846-584450c08c25/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Charles%20Robert%20Leslie%20-%20James%20William%20Wallack%20-%201923.359%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Charles%20Robert%20Leslie%20-%20James%20William%20Wallack%20-%201923.359%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "James Vibert, Sculptor",
@@ -332,8 +62,8 @@
    "tags": "portraiture, male subject, sculptor, oil painting, 1907, ferdinand hodler",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/caf7fb08-39ef-7bd8-b81a-181ee31cc324/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/caf7fb08-39ef-7bd8-b81a-181ee31cc324/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ferdinand%20Hodler%20-%20James%20Vibert%2C%20Sculptor%20-%201926.212%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ferdinand%20Hodler%20-%20James%20Vibert%2C%20Sculptor%20-%201926.212%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "The Fountain, Villa Torlonia, Frascati, Italy",
@@ -347,8 +77,8 @@
    "tags": "landscape, Italy, fountain, villa, oil painting, light, Edwardian, architecture",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3f9aa9db-61e1-7060-fdb0-bfd7e41ddd08/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3f9aa9db-61e1-7060-fdb0-bfd7e41ddd08/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20The%20Fountain%2C%20Villa%20Torlonia%2C%20Frascati%2C%20Italy%20-%20Google%20Art%20Project.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20The%20Fountain%2C%20Villa%20Torlonia%2C%20Frascati%2C%20Italy%20-%20Google%20Art%20Project.jpg?width=600"
   },
   {
    "title": "Scenes from the Life of Saint John the Baptist",
@@ -362,8 +92,8 @@
    "tags": "religious, narrative, early renaissance, italian, tempera, saint john the baptist",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/a6c18204-e035-5fd0-408e-46b27d1ee6c5/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/a6c18204-e035-5fd0-408e-46b27d1ee6c5/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bartolommeo%20di%20Giovanni%20-%20Scenes%20from%20the%20Life%20of%20Saint%20John%20the%20Baptist%20-%201937.996%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bartolommeo%20di%20Giovanni%20-%20Scenes%20from%20the%20Life%20of%20Saint%20John%20the%20Baptist%20-%201937.996%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Stoke-by-Nayland",
@@ -377,8 +107,8 @@
    "tags": "landscape, romanticism, england, nature, rural, atmospheric, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/400ce9e8-2f67-44e2-dd68-e6c98880d27f/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/400ce9e8-2f67-44e2-dd68-e6c98880d27f/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Constable%20-%20Stoke-by-Nayland%20-%201922.4453%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Constable%20-%20Stoke-by-Nayland%20-%201922.4453%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Landscape with Saint John on Patmos",
@@ -392,8 +122,8 @@
    "tags": "landscape, religious, classical, baroque, serene, saint john, patmos",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/aa870b0d-5a1b-660a-6dc6-56c12109cf6e/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/aa870b0d-5a1b-660a-6dc6-56c12109cf6e/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nicolas%20Poussin%20-%20Landscape%20with%20Saint%20John%20on%20Patmos%20-%201930.500%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nicolas%20Poussin%20-%20Landscape%20with%20Saint%20John%20on%20Patmos%20-%201930.500%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Mrs. George Swinton (Elizabeth Ebsworth)",
@@ -407,8 +137,8 @@
    "tags": "portrait, oil painting, society portraiture, gilded age, elegance, late 19th century, realism, london society",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/074c1b1b-fe92-01ce-9e62-cc99369142dd/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/074c1b1b-fe92-01ce-9e62-cc99369142dd/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20George%20Swinton%20%28Elizabeth%20Ebsworth%29%20-%201922.4450%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20George%20Swinton%20%28Elizabeth%20Ebsworth%29%20-%201922.4450%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "The Captive Slave (Ira Aldridge)",
@@ -422,8 +152,8 @@
    "tags": "portrait, slavery, Ira Aldridge, acting, oil painting, 19th century, dramatic, realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/5490fd49-dd52-4fd7-7d41-d871dcffae55/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/5490fd49-dd52-4fd7-7d41-d871dcffae55/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Philip%20Simpson%20-%20The%20Captive%20Slave%20-%202008.188%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Philip%20Simpson%20-%20The%20Captive%20Slave%20-%202008.188%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Rip Van Winkle",
@@ -437,8 +167,8 @@
    "tags": "american painting, romanticism, literature, folklore, narrative, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/c1f5d7ea-65f6-0ac6-d22f-549d27cfdd38/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/c1f5d7ea-65f6-0ac6-d22f-549d27cfdd38/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Quidor%20-%20Rip%20Van%20Winkle%20-%201982.765%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Quidor%20-%20Rip%20Van%20Winkle%20-%201982.765%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Coast Scene, Bathers",
@@ -452,8 +182,8 @@
    "tags": "seascape, bathers, shoreline, tonalism, aestheticism, oil painting, 19th century, serene",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/5888c23a-635f-396a-117b-2223032c0201/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/5888c23a-635f-396a-117b-2223032c0201/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20Coast%20Scene%2C%20Bathers%20-%201933.208%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20Coast%20Scene%2C%20Bathers%20-%201933.208%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Grey and Silver: Old Battersea Reach",
@@ -467,8 +197,8 @@
    "tags": "river scene, London, tonalism, aestheticism, urban landscape, boats, serene, subtle",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/f0b3ff64-d68e-3fd2-ffc9-5470eb9fea6e/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/f0b3ff64-d68e-3fd2-ffc9-5470eb9fea6e/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20Grey%20and%20Silver-%20Old%20Battersea%20Reach%20-%20Google%20Art%20Project.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20Grey%20and%20Silver-%20Old%20Battersea%20Reach%20-%20Google%20Art%20Project.jpg?width=600"
   },
   {
    "title": "The Artist in His Studio",
@@ -482,8 +212,8 @@
    "tags": "artist, studio, interior, oil painting, 19th century, american art, british art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e01a4f76-d089-8e22-8431-3488db37a293/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e01a4f76-d089-8e22-8431-3488db37a293/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20The%20Artist%20in%20His%20Studio%20-%201912.141%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20The%20Artist%20in%20His%20Studio%20-%201912.141%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Mrs. John Nicholson (Hannah Duncan) and John Nicholson, Jr.",
@@ -497,8 +227,8 @@
    "tags": "portrait, mother and child, family, 18th century, american art, oil painting, realism, domestic scene",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/de8b304b-8250-78cf-dfa2-5f91458b78f9/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/de8b304b-8250-78cf-dfa2-5f91458b78f9/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Charles%20Willson%20Peale%20-%20Mrs.%20John%20Nicholson%20%28Hannah%20Duncan%29%20and%20John%20Nicholson%2C%20Jr.%20-%201952.1001%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Charles%20Willson%20Peale%20-%20Mrs.%20John%20Nicholson%20%28Hannah%20Duncan%29%20and%20John%20Nicholson%2C%20Jr.%20-%201952.1001%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Arrangement in Flesh Color and Brown: Portrait of Arthur Jerome Eddy",
@@ -512,8 +242,8 @@
    "tags": "portrait, oil painting, whistler, tonalism, aestheticism, fin de siècle, american art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/43165650-0212-8897-0605-dc3fdda88c13/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/43165650-0212-8897-0605-dc3fdda88c13/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20Arrangement%20in%20Flesh%20Color%20and%20Brown%2C%20Portrait%20of%20Arthur%20Jerome%20Eddy%20-%201931.501%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20McNeill%20Whistler%20-%20Arrangement%20in%20Flesh%20Color%20and%20Brown%2C%20Portrait%20of%20Arthur%20Jerome%20Eddy%20-%201931.501%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Madame Paul Escudier (Louise Lefevre)",
@@ -527,8 +257,8 @@
    "tags": "portrait, woman, society portraiture, realism, elegant, 19th century, american art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/c6da9f8c-643b-f331-0f8f-a9b6a844caf6/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/c6da9f8c-643b-f331-0f8f-a9b6a844caf6/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Madame%20Paul%20Escudier%20%28Louise%20Lefevre%29%2C%201882%2C%202007.391.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Madame%20Paul%20Escudier%20%28Louise%20Lefevre%29%2C%201882%2C%202007.391.jpg?width=600"
   },
   {
    "title": "Icebound",
@@ -542,8 +272,8 @@
    "tags": "winter, landscape, snow, ice, impressionism, american impressionism, serene, subtle",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3ae75415-0551-ae17-c478-3b8687a6f246/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3ae75415-0551-ae17-c478-3b8687a6f246/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Henry%20Twachtman%20-%20Icebound%20-%201917.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Henry%20Twachtman%20-%20Icebound%20-%201917.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   }
  ]
 }

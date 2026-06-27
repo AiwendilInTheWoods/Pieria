@@ -17,8 +17,8 @@
    "tags": "landscape, American art, romanticism, sublime, nature, Niagara Falls, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/18092196-50ae-3ff1-9205-1b3110e966c3/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/18092196-50ae-3ff1-9205-1b3110e966c3/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Distant%20View%20of%20Niagara%20Falls%201830%20Thomas%20Cole.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Distant%20View%20of%20Niagara%20Falls%201830%20Thomas%20Cole.jpg?width=600"
   },
   {
    "title": "New England Scenery",
@@ -32,38 +32,8 @@
    "tags": "landscape, american art, hudson river school, romanticism, 19th century, nature, sublime",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/99e276fd-f076-f396-b5c1-b22c3ce62b45/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/99e276fd-f076-f396-b5c1-b22c3ce62b45/full/400,/0/default.jpg"
-  },
-  {
-   "title": "The Good Shepherd",
-   "agent_name": "Thomas Cole",
-   "agent_role": "Artist",
-   "creation_date": "1849",
-   "cultural_context": "Hudson River School, American Romanticism",
-   "medium": "Lithograph on white wove plate paper",
-   "date_display": "1849",
-   "description_narrative": "This lithograph by Thomas Cole, titled \"The Good Shepherd\" and created in 1849, likely portrays a traditional religious theme. The work, rendered on white wove plate paper, evokes a sense of spiritual guidance within a serene landscape.",
-   "tags": "religious, pastoral, romanticism, allegorical, 19th century, american art, lithography",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/c10cd836-5364-65d6-e62f-4551f011571e/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/c10cd836-5364-65d6-e62f-4551f011571e/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Portrait of John D. Rockefeller",
-   "agent_name": "Timothy Cole",
-   "agent_role": "Artist",
-   "creation_date": "1921",
-   "cultural_context": "American, 20th century",
-   "medium": "Wood engraving on cream China paper, tipped onto ivory wove paper",
-   "date_display": "1921",
-   "description_narrative": "This wood engraving by Timothy Cole depicts a portrait of the prominent American industrialist John D. Rockefeller. Created in 1921, the work demonstrates Cole's masterful technique in printmaking, capturing the subject with intricate detail.",
-   "tags": "portrait, john d. rockefeller, industrialist, wood engraving, printmaking, american art, 20th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/68775103-1b8b-d246-a4d2-fe177d750095/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/68775103-1b8b-d246-a4d2-fe177d750095/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Cole%20-%20New%20England%20Scenery%20-%201900.558%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Cole%20-%20New%20England%20Scenery%20-%201900.558%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "A Friendly Warning",
@@ -77,8 +47,8 @@
    "tags": "painting, 19th century, american art, narrative, figurative, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e1f6ef79-7216-4f19-ac78-a307a2fb4f32/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e1f6ef79-7216-4f19-ac78-a307a2fb4f32/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Hicks%20-%20A%20Friendly%20Warning%20-%201967.174%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Hicks%20-%20A%20Friendly%20Warning%20-%201967.174%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Capture of the Tripoli by the Enterprise",
@@ -92,8 +62,8 @@
    "tags": "naval, historical, marine, early american, war, 19th century, dramatic",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2b219d21-c128-ea2e-cb0b-69d2e9e98e5e/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2b219d21-c128-ea2e-cb0b-69d2e9e98e5e/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Birch%20-%20Capture%20of%20the%20Tripoli%20by%20the%20Enterprise%20-%201991.30%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Birch%20-%20Capture%20of%20the%20Tripoli%20by%20the%20Enterprise%20-%201991.30%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Pergola with Oranges",
@@ -107,8 +77,8 @@
    "tags": "pergola, oranges, garden, romanticism, landscape, picturesque, vibrant",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3236b056-f154-b3b6-3c37-6d70cac49bfe/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3236b056-f154-b3b6-3c37-6d70cac49bfe/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Fearnley%20-%20Pergola%20with%20Oranges%20-%20Art%20Institute%20of%20Chicago%20-%202002.599.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Fearnley%20-%20Pergola%20with%20Oranges%20-%20Art%20Institute%20of%20Chicago%20-%202002.599.jpg?width=600"
   },
   {
    "title": "Coming Squall (Nahant Beach with a Summer Shower)",
@@ -122,8 +92,8 @@
    "tags": "landscape, seascape, storm, nature, romanticism, early american, dramatic",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/28a7765b-fc38-1a56-87dd-cbcdb647fcdb/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/28a7765b-fc38-1a56-87dd-cbcdb647fcdb/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Coming%20Squall%20%28Nahant%20Beach%20with%20a%20Summer%20Shower%29%20-%202005.159%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Coming%20Squall%20%28Nahant%20Beach%20with%20a%20Summer%20Shower%29%20-%202005.159%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Apollo and Marsyas",
@@ -137,8 +107,8 @@
    "tags": "mythology, classical, German art, painting, narrative, late 19th century, symbolist",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/13d31515-70ec-197f-59f6-b71dc6f60903/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/13d31515-70ec-197f-59f6-b71dc6f60903/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hans%20Thoma%20-%20Apollo%20und%20Marsyas.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hans%20Thoma%20-%20Apollo%20und%20Marsyas.jpg?width=600"
   },
   {
    "title": "Study for \"William Rush Carving His Allegorical Figure of the Schuylkill River\"",
@@ -152,8 +122,8 @@
    "tags": "realism, american art, portraiture, sculpture, studio scene, 19th century, preparatory study",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/bb08408a-0650-380f-4f0f-c3f012d1113e/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/bb08408a-0650-380f-4f0f-c3f012d1113e/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Study%20for%20%22William%20Rush%20Carving%20His%20Allegorical%20Figure%20of%20the%20Schuylkill%20River%22%20-%201968.91%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Study%20for%20%22William%20Rush%20Carving%20His%20Allegorical%20Figure%20of%20the%20Schuylkill%20River%22%20-%201968.91%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Summit of the Sierras",
@@ -167,8 +137,8 @@
    "tags": "landscape, american west, sierra nevada, mountains, gouache, romanticism, sublime",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/fdca1465-3f25-bba8-8692-ac4697c0e3e8/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/fdca1465-3f25-bba8-8692-ac4697c0e3e8/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Summit%20of%20the%20Sierras%20by%20Thomas%20Moran.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Summit%20of%20the%20Sierras%20by%20Thomas%20Moran.jpg?width=600"
   },
   {
    "title": "Portrait of Mary Adeline Williams",
@@ -182,8 +152,8 @@
    "tags": "portrait, realism, american art, oil painting, late 19th century, psychological, contemplative",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/8cb9f5ea-c955-96fd-c2d6-c720b0dbf7d4/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/8cb9f5ea-c955-96fd-c2d6-c720b0dbf7d4/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Portrait%20of%20Mary%20Adeline%20Williams%20-%201939.548%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Portrait%20of%20Mary%20Adeline%20Williams%20-%201939.548%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Riter Fitzgerald",
@@ -197,8 +167,8 @@
    "tags": "portrait, american realism, oil painting, male subject, 19th century, psychological, muted",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/0ba00909-2927-68ce-5c4d-a7534d18c4f4/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/0ba00909-2927-68ce-5c4d-a7534d18c4f4/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Riter%20Fitzgerald%20-%201950.1511%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Riter%20Fitzgerald%20-%201950.1511%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Sarah Dupont",
@@ -212,8 +182,8 @@
    "tags": "portraiture, 18th century, British art, oil painting, elegant, aristocratic, Georgian era",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/d763c113-194b-62a5-3e39-e2b479c5df47/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/d763c113-194b-62a5-3e39-e2b479c5df47/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mrs.%20Philip%20Dupont%2C%20c.%201778%2C%20by%20Thomas%20Gainsborough%20-%20Art%20Institute%20of%20Chicago%20-%20DSC09480.JPG?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mrs.%20Philip%20Dupont%2C%20c.%201778%2C%20by%20Thomas%20Gainsborough%20-%20Art%20Institute%20of%20Chicago%20-%20DSC09480.JPG?width=600"
   },
   {
    "title": "Landscape with Dog",
@@ -227,38 +197,8 @@
    "tags": "landscape, american landscape, nature, dog, serene, oil painting, romanticism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/08b38ff2-2659-2c0b-dba8-221e173f4fc3/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/08b38ff2-2659-2c0b-dba8-221e173f4fc3/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Concerto Spirituale",
-   "agent_name": "Thomas Rowlandson",
-   "agent_role": "Artist",
-   "creation_date": "c. 1775/80",
-   "cultural_context": "Georgian era, British",
-   "medium": "Pen and brush with brown wash, over traces of graphite, on ivory wove paper",
-   "date_display": "c. 1775/80",
-   "description_narrative": "Thomas Rowlandson's *Concerto Spirituale* presents a lively scene rendered with pen and brush and brown wash. Created around 1775/80, this work showcases the artist's distinctive style, characterized by expressive lines and dynamic compositions.",
-   "tags": "drawing, satire, humor, music, Georgian era, British art, wash technique",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/7ce27844-88ea-0ab1-aed9-6f233823d0c9/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/7ce27844-88ea-0ab1-aed9-6f233823d0c9/full/400,/0/default.jpg"
-  },
-  {
-   "title": "A Woodman Seated on a Bundle of Faggots",
-   "agent_name": "Thomas Gainsborough",
-   "agent_role": "Artist",
-   "creation_date": "1787",
-   "cultural_context": "18th Century, British",
-   "medium": "Black chalk with stumping, heightened with touches of white gouache and traces of white chalk, on buff laid paper",
-   "date_display": "1787",
-   "description_narrative": "This drawing depicts a lone woodman seated on a bundle of faggots, his posture suggesting a moment of rest. Gainsborough masterfully uses black chalk with stumping and white heightening to create a sense of texture and depth, highlighting the rustic nature of his subject.",
-   "tags": "woodman, rural life, figure study, 18th century, british art, drawing, chalk, contemplative",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2fdec380-76c2-19bd-bf60-4ca26e7c1b1d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2fdec380-76c2-19bd-bf60-4ca26e7c1b1d/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Landscape%20with%20Dog%20-%201990.485%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Landscape%20with%20Dog%20-%201990.485%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Mrs. Klapp (Anna Milnor)",
@@ -272,8 +212,8 @@
    "tags": "portrait, oil painting, American art, 19th century, realism, woman, Thomas Sully",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/eac2c2c9-fe4a-ba6f-948c-b579b0f2bca3/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/eac2c2c9-fe4a-ba6f-948c-b579b0f2bca3/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Mrs.%20Klapp%20%28Anna%20Milnor%29%20-%201950.1362%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Mrs.%20Klapp%20%28Anna%20Milnor%29%20-%201950.1362%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Dr. Joseph Klapp",
@@ -287,8 +227,8 @@
    "tags": "portrait, oil painting, American, 19th century, formal, doctor, realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/18bf4909-8fb1-1971-4256-9945d712a279/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/18bf4909-8fb1-1971-4256-9945d712a279/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Dr.%20Joseph%20Klapp%20-%201950.1363%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Dr.%20Joseph%20Klapp%20-%201950.1363%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Isabella Wolff",
@@ -302,143 +242,8 @@
    "tags": "portrait, woman, romanticism, british art, oil painting, 19th century, elegance, refined",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/0052fc88-353e-db97-8741-b6b5ec6fb354/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/0052fc88-353e-db97-8741-b6b5ec6fb354/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Infantry Armor and Targe (Shield)",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "1590/1600",
-   "cultural_context": "European, late 16th century",
-   "medium": "Steel, gilding, brass, and leather",
-   "date_display": "1590/1600",
-   "description_narrative": "This formidable infantry armor set, complete with a matching targe shield, showcases the protective craftsmanship of the late 16th century. Crafted from steel with gilding, brass, and leather, it represents the defensive equipment used by soldiers of the period.",
-   "tags": "armor, targe, shield, infantry, protective gear, steel, historical, european",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/aec72989-d74d-8c62-4a67-afa3d4dfd231/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/aec72989-d74d-8c62-4a67-afa3d4dfd231/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Field Armor",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "1510/70",
-   "cultural_context": "Renaissance",
-   "medium": "Steel and leather",
-   "date_display": "1510/70",
-   "description_narrative": "This Field Armor exemplifies the protective gear worn during the early to mid-16th century, expertly crafted from steel and leather. Designed for combat, its articulated plates provided vital defense while allowing for a degree of mobility on the battlefield.",
-   "tags": "armor, steel, leather, protective, military, renaissance, historical, combat",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/93bec36e-8c25-feef-8836-66850dd01db3/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/93bec36e-8c25-feef-8836-66850dd01db3/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Composite Boy's Armor for Foot Tournament at the Barriers",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "c. 1600",
-   "cultural_context": "Early Modern, European",
-   "medium": "Steel, brass, and leather",
-   "date_display": "c. 1600",
-   "description_narrative": "This composite boy's armor, crafted from steel, brass, and leather around 1600, was designed for a foot tournament at the barriers. It represents specialized protective gear for ceremonial combat during the Early Modern period.",
-   "tags": "armor, historical, tournament, protective gear, steel, european, early modern, ceremonial",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/7988895b-e4c9-738f-bbd1-10b5db828e58/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/7988895b-e4c9-738f-bbd1-10b5db828e58/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Three-Quarter Field Armor of Anime Construction",
-   "agent_name": "Workshop of Michel Witz, the Younger",
-   "agent_role": "Artist",
-   "creation_date": "c. 1560",
-   "cultural_context": "German Renaissance, 16th century",
-   "medium": "Steel and leather",
-   "date_display": "c. 1560",
-   "description_narrative": "This three-quarter field armor, made of steel and leather, provided robust protection in a style described as Anime construction. Crafted in the workshop of Michel Witz the Younger around 1560, this impressive suit was designed for use in battle.",
-   "tags": "armor, steel, leather, 16th century, military, protection, renaissance",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/335b2a74-7517-8639-7d9c-3997ba2dacc0/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/335b2a74-7517-8639-7d9c-3997ba2dacc0/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Infantry Armor",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "c. 1550-60",
-   "cultural_context": "16th Century, European",
-   "medium": "Steel, iron, leather and black paint",
-   "date_display": "c. 1550-60",
-   "description_narrative": "This formidable infantry armor, crafted from steel, iron, and leather, provided crucial protection for soldiers during the mid-16th century. Its robust construction and black painted finish reflect the practical demands and aesthetic of military equipment from that era.",
-   "tags": "armor, military, 16th century, protective gear, steel, historical, craftsmanship",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/10435096-e43c-395d-86a0-fe28715ad4c5/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/10435096-e43c-395d-86a0-fe28715ad4c5/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Composite Armor for Heavy Cavalry (Cuirassier)",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "1620-40",
-   "cultural_context": "17th century",
-   "medium": "Steel, leather, and paint",
-   "date_display": "1620-40",
-   "description_narrative": "This composite armor for a cuirassier offers robust protection for a heavy cavalry soldier. Crafted from steel, leather, and paint, it provided essential defense during the early to mid-17th century.",
-   "tags": "armor, cavalry, steel, protective gear, 17th century, military history, historical artifact",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/5edd0c44-2b9b-8974-47c3-0da1468a8b98/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/5edd0c44-2b9b-8974-47c3-0da1468a8b98/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Half Armor",
-   "agent_name": "Unknown Artist",
-   "agent_role": "Artist",
-   "creation_date": "c. 1560/70",
-   "cultural_context": "Renaissance, European",
-   "medium": "Steel",
-   "date_display": "c. 1560/70",
-   "description_narrative": "This robust half-armor, meticulously crafted from steel, offered crucial protection for a warrior during the mid-to-late 16th century. Its functional design and expert metallurgy reflect the advanced military technology and craftsmanship of its era.",
-   "tags": "armor, steel, 16th century, military, protective, craftsmanship, historical",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/18dcc994-b299-37fa-f491-b8088a86eecb/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/18dcc994-b299-37fa-f491-b8088a86eecb/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Landscape in the Style of Ancient Masters: colophon by Lu Hui, dated 1912",
-   "agent_name": "Lu Hui",
-   "agent_role": "Artist",
-   "creation_date": "Ming dynasty (1368–1644), album dated 1642, colophon dated 1912",
-   "cultural_context": "Ming dynasty, Chinese",
-   "medium": "Album leaf; ink on paper",
-   "date_display": "Ming dynasty (1368–1644), album dated 1642, colophon dated 1912",
-   "description_narrative": "This ink on paper album leaf depicts a landscape in the style of ancient masters, reflecting a reverence for historical artistic traditions. Originally an album dated 1642 from the Ming dynasty, the work includes a colophon by artist Lu Hui, added in 1912.",
-   "tags": "landscape, ink painting, album leaf, Ming dynasty, Chinese art, traditional, contemplative",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/5cd23ba4-071f-a2e9-b0cb-7a1efa6bde18/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/5cd23ba4-071f-a2e9-b0cb-7a1efa6bde18/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Windsor Armchair",
-   "agent_name": "J. M. Hasbrouck",
-   "agent_role": "Artist",
-   "creation_date": "1752–87",
-   "cultural_context": "18th century, American",
-   "medium": "Tulipwood, maple, oak, and ash",
-   "date_display": "1752–87",
-   "description_narrative": "This Windsor Armchair, crafted from a combination of tulipwood, maple, oak, and ash, exemplifies the robust yet elegant domestic furniture of its era. Created by J. M. Hasbrouck between 1752 and 1787, it showcases the detailed construction characteristic of 18th-century craftsmanship.",
-   "tags": "furniture, windsor chair, armchair, wooden, 18th century, american, craftsmanship",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/37e09c4d-a017-2891-856a-366dd602e3ff/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/37e09c4d-a017-2891-856a-366dd602e3ff/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Thomas%20Lawrence%20-%20Mrs.%20Jens%20Wolff%20-%201922.4461%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Thomas%20Lawrence%20-%20Mrs.%20Jens%20Wolff%20-%201922.4461%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Fishing Boats with Hucksters Bargaining for Fish",
@@ -452,38 +257,8 @@
    "tags": "seascape, marine, romanticism, atmospheric, fishing, boats, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/8641479e-c93e-f1a8-9925-19be061706da/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/8641479e-c93e-f1a8-9925-19be061706da/full/400,/0/default.jpg"
-  },
-  {
-   "title": "A Shipwreck",
-   "agent_name": "Charles Turner",
-   "agent_role": "Artist",
-   "creation_date": "1805/07",
-   "cultural_context": "Romanticism",
-   "medium": "Mezzotint on ivory laid paper",
-   "date_display": "1805/07",
-   "description_narrative": "Charles Turner's mezzotint captures the dramatic intensity of a shipwreck, highlighting the destructive power of nature. This print on ivory laid paper showcases the artist's skill in rendering light and shadow to convey the tumultuous scene.",
-   "tags": "shipwreck, disaster, marine, mezzotint, print, romanticism, dramatic",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2c496b98-9215-252a-7b71-8085e12b7342/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2c496b98-9215-252a-7b71-8085e12b7342/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Frederick Douglass",
-   "agent_name": "Samuel J. Miller",
-   "agent_role": "Artist",
-   "creation_date": "1847-52",
-   "cultural_context": "Mid-19th century, American",
-   "medium": "Daguerreotype",
-   "date_display": "1847-52",
-   "description_narrative": "This daguerreotype captures a striking portrait of Frederick Douglass, the eminent abolitionist and orator. Created by Samuel J. Miller between 1847 and 1852, the image reflects the powerful presence of a pivotal figure in American history.",
-   "tags": "frederick douglass, portrait, daguerreotype, early photography, abolitionist, historical, 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/68597cf9-01aa-7c1f-1179-d4b8811e1c05/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/68597cf9-01aa-7c1f-1179-d4b8811e1c05/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Fishing%20Boats%20with%20Hucksters%20Bargaining%20for%20Fish%20-%201922.4472%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Fishing%20Boats%20with%20Hucksters%20Bargaining%20for%20Fish%20-%201922.4472%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Valley of Aosta: Snowstorm, Avalanche, and Thunderstorm",
@@ -497,38 +272,8 @@
    "tags": "romanticism, landscape, snowstorm, avalanche, thunderstorm, sublime, dramatic, nature",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/564e2e3f-eb93-88a7-d265-8fea006facff/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/564e2e3f-eb93-88a7-d265-8fea006facff/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Pair of Flintlock Pistols",
-   "agent_name": "J. J. Behr",
-   "agent_role": "Artist",
-   "creation_date": "1700/30",
-   "cultural_context": "Early 18th Century",
-   "medium": "Walnut, brass, and gold",
-   "date_display": "1700/30",
-   "description_narrative": "This elegant pair of flintlock pistols showcases intricate craftsmanship, fashioned from walnut, brass, and gold. Crafted by J. J. Behr between 1700 and 1730, these weapons exemplify early 18th-century decorative artistry.",
-   "tags": "weaponry, firearms, decorative arts, craftsmanship, 18th century, walnut, brass, gold",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2f10aa80-0b8e-39b0-0396-cc1b08ffe1b7/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2f10aa80-0b8e-39b0-0396-cc1b08ffe1b7/full/400,/0/default.jpg"
-  },
-  {
-   "title": "An April Shower: A View from Binsey Ferry Near Oxford, Looking Towards Port Meadow and Godstow",
-   "agent_name": "William Turner",
-   "agent_role": "Artist",
-   "creation_date": "1842",
-   "cultural_context": "19th century, British",
-   "medium": "Watercolor over graphite, with scraping, on cream wove paper",
-   "date_display": "1842",
-   "description_narrative": "William Turner captured a fleeting moment of natural drama in \"An April Shower,\" depicting a view near Oxford with approaching rain. This 1842 watercolor over graphite, with scraping, showcases his innovative approach to light and atmosphere.",
-   "tags": "landscape, weather, rain, oxford, watercolor, british, 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/145df0a2-9d2c-58f6-e0b4-ac6a81d4ef58/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/145df0a2-9d2c-58f6-e0b4-ac6a81d4ef58/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Valley%20of%20Aosta%2C%20Snowstorm%2C%20Avalanche%2C%20and%20Thunderstorm%20-%201947.513%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Valley%20of%20Aosta%2C%20Snowstorm%2C%20Avalanche%2C%20and%20Thunderstorm%20-%201947.513%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Study for \"An Aragonese Smuggler\"",
@@ -542,8 +287,8 @@
    "tags": "study, smuggler, aragonese, oil painting, figure study, 19th century art, preparatory work",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/1dec252a-a3bd-aa36-8085-96eba58cdf07/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/1dec252a-a3bd-aa36-8085-96eba58cdf07/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/William%20Turner%20Dannat%20-%20Study%20for%20%22An%20Aragonese%20Smuggler%22%20-%201887.231%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/William%20Turner%20Dannat%20-%20Study%20for%20%22An%20Aragonese%20Smuggler%22%20-%201887.231%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   }
  ]
 }

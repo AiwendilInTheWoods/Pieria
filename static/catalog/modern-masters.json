@@ -6,96 +6,6 @@
  "license": "Public Domain",
  "items": [
   {
-   "title": "The Scream",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1895",
-   "cultural_context": "Symbolism, Expressionism, Norwegian",
-   "medium": "Lithograph in black ink on cream card",
-   "date_display": "1895",
-   "description_narrative": "In this lithograph, a central figure clutches their head, emitting a silent scream against a swirling, abstracted landscape. The stark black ink on cream card emphasizes the anguished form and the dramatic, unsettling lines.",
-   "tags": "anxiety, despair, expressionism, figure, lithograph, landscape, symbolism",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3b374643-5328-3e00-c02b-5ab56e5ae8f8/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3b374643-5328-3e00-c02b-5ab56e5ae8f8/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Madonna",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1895/96",
-   "cultural_context": "Symbolism, Expressionism, Norwegian",
-   "medium": "Handcolored lithograph in black on mottled gray-blue wove paper (discolored to gray-green), laid down on white wove paper",
-   "date_display": "1895/96",
-   "description_narrative": "This handcolored lithograph by Edvard Munch presents a striking Madonna figure, rendered with bold lines and a somber palette. Created in 1895-1896, it is a significant example of the artist's printmaking endeavors.",
-   "tags": "madonna, female figure, symbolism, expressionism, printmaking, lithograph, norwegian art",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/c89b1d65-be23-b83b-5297-9f0ac0d6a4df/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/c89b1d65-be23-b83b-5297-9f0ac0d6a4df/full/400,/0/default.jpg"
-  },
-  {
-   "title": "The Sick Child",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1894",
-   "cultural_context": "Symbolism, Expressionism, Norwegian",
-   "medium": "Drypoint in black on cream wove paper",
-   "date_display": "1894",
-   "description_narrative": "This drypoint by Edvard Munch depicts a somber scene of a sick child, reflecting themes of illness and vulnerability. Created in 1894, it showcases Munch's mastery of printmaking to convey profound emotional states.",
-   "tags": "illness, child, drypoint, symbolism, expressionism, anxiety, psychological, modern art",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/1a7f67dd-58dc-14ef-dc96-8d80b7bfd91c/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/1a7f67dd-58dc-14ef-dc96-8d80b7bfd91c/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Male Nude with Left Foot on a Pedestal",
-   "agent_name": "Gustav Klimt",
-   "agent_role": "Artist",
-   "creation_date": "1879",
-   "cultural_context": "Late 19th century, Austrian",
-   "medium": "Graphite and white heightening on brown wove paper",
-   "date_display": "1879",
-   "description_narrative": "This early drawing by Gustav Klimt depicts a male nude, rendered with graphite and white heightening on brown wove paper. It serves as a foundational academic study, demonstrating the artist's skill in anatomical representation.",
-   "tags": "male nude, figure study, academic drawing, graphite, early work, Austrian art",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/35a41ca7-f92c-b686-c89f-978321214c5c/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/35a41ca7-f92c-b686-c89f-978321214c5c/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Male Nude",
-   "agent_name": "Gustav Klimt",
-   "agent_role": "Artist",
-   "creation_date": "January 29, 1880",
-   "cultural_context": "Late 19th Century, Austrian",
-   "medium": "Various graphite pencils, with erasing and stumping, on cream laid paper",
-   "date_display": "January 29, 1880",
-   "description_narrative": "Gustav Klimt's 'Male Nude', created in 1880, demonstrates the artist's early academic drawing proficiency. This figure study utilizes various graphite pencils, alongside erasing and stumping techniques, on cream laid paper.",
-   "tags": "male nude, figure study, academic drawing, graphite, early work, human form, drawing",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/ee8a9167-1535-b432-3dc7-6e80eeed91fc/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/ee8a9167-1535-b432-3dc7-6e80eeed91fc/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Seated Woman from the Front with Hat, Face Hooded",
-   "agent_name": "Gustav Klimt",
-   "agent_role": "Artist",
-   "creation_date": "1910",
-   "cultural_context": "Art Nouveau, Vienna Secession, Austrian",
-   "medium": "Graphite, with colored pencil, on ivory wove paper",
-   "date_display": "1910",
-   "description_narrative": "Gustav Klimt's 1910 drawing captures a seated woman, her face obscured by a hood and hat, rendered with precise lines. This work in graphite and colored pencil on ivory wove paper exemplifies the artist's draftsmanship and intimate approach to figure studies.",
-   "tags": "drawing, figure study, woman, portraiture, art nouveau, modernism, austrian art",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/7936867b-74ab-7347-51f0-9ab14d050e9d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/7936867b-74ab-7347-51f0-9ab14d050e9d/full/400,/0/default.jpg"
-  },
-  {
    "title": "Paris Street; Rainy Day",
    "agent_name": "Gustave Caillebotte",
    "agent_role": "Artist",
@@ -107,8 +17,8 @@
    "tags": "urban life, street scene, rainy day, 19th century, realism, city, umbrellas, french art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/f8fd76e9-c396-5678-36ed-6a348c904d27/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/f8fd76e9-c396-5678-36ed-6a348c904d27/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Caillebotte%20-%20Paris%20Street%2C%20Rainy%20Day%20-%201964.336%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Caillebotte%20-%20Paris%20Street%2C%20Rainy%20Day%20-%201964.336%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Hercules and the Lernaean Hydra",
@@ -122,8 +32,8 @@
    "tags": "mythology, symbolism, hercules, hydra, french, heroic, dramatic, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2ae64c8a-266d-470a-a25a-c83127564636/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2ae64c8a-266d-470a-a25a-c83127564636/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hercules%20and%20the%20Lernaean%20Hydra%2C%201875-1876%2C%20by%20Gustave%20Moreau%20-%20Art%20Institute%20of%20Chicago%20-%20DSC09590.JPG?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hercules%20and%20the%20Lernaean%20Hydra%2C%201875-1876%2C%20by%20Gustave%20Moreau%20-%20Art%20Institute%20of%20Chicago%20-%20DSC09590.JPG?width=600"
   },
   {
    "title": "Calf's Head and Ox Tongue",
@@ -137,8 +47,8 @@
    "tags": "still life, realism, meat, food, detailed, oil painting, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/0274aa9e-95d1-2a8e-12e3-2b09d7749b4f/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/0274aa9e-95d1-2a8e-12e3-2b09d7749b4f/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Caillebotte%20-%20Calf%27s%20Head%20and%20Ox%20Tongue%20-%201999.561%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Caillebotte%20-%20Calf%27s%20Head%20and%20Ox%20Tongue%20-%201999.561%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Alpine Scene",
@@ -152,8 +62,8 @@
    "tags": "landscape, alpine, mountains, oil painting, 19th century, romanticism, french, sublime",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/07bdc94a-7d44-fde8-c0e1-f19fefce359d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/07bdc94a-7d44-fde8-c0e1-f19fefce359d/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Dor%C3%A9%20-%20Alpine%20Scene%20-%201967.588%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Dor%C3%A9%20-%20Alpine%20Scene%20-%201967.588%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Mère Grégoire",
@@ -167,8 +77,8 @@
    "tags": "portrait, woman, realism, french realism, direct, naturalistic, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2e6d08c8-dac0-4f1c-3e56-de3539ceb905/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2e6d08c8-dac0-4f1c-3e56-de3539ceb905/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20M%C3%A8re%20Gr%C3%A9goire%20-%201930.78%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20M%C3%A8re%20Gr%C3%A9goire%20-%201930.78%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "The Rock of Hautepierre",
@@ -182,8 +92,8 @@
    "tags": "landscape, realism, nature, oil painting, rock formation, french art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e0f47937-a1ee-76b4-6505-35a33119a634/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e0f47937-a1ee-76b4-6505-35a33119a634/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20Les%20Roches%20de%20Hautepierre%20%28ca.%201869%29.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20Les%20Roches%20de%20Hautepierre%20%28ca.%201869%29.jpg?width=600"
   },
   {
    "title": "An Alpine Scene",
@@ -197,8 +107,8 @@
    "tags": "landscape, Realism, oil painting, French art, mountain, nature, alpine, Courbet",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/54b7fd5e-3467-f777-45e7-0719400ecfc0/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/54b7fd5e-3467-f777-45e7-0719400ecfc0/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20An%20Alpine%20Scene%20-%201901.456%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20An%20Alpine%20Scene%20-%201901.456%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "The Valley of Les Puits-Noir",
@@ -212,8 +122,8 @@
    "tags": "landscape, realism, french art, 19th century, nature, valley, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2a2163db-9351-018a-0d65-47be9c84dce8/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2a2163db-9351-018a-0d65-47be9c84dce8/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20The%20Valley%20of%20Les%20Puits-Noir%20%281868%29.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20The%20Valley%20of%20Les%20Puits-Noir%20%281868%29.jpg?width=600"
   },
   {
    "title": "Rêverie (Portrait of Gabrielle Borreau)",
@@ -227,8 +137,8 @@
    "tags": "portrait, realism, 19th century, contemplative, figure study, oil painting, french art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/40d69445-feb4-d6d5-bcad-bb142856f0a6/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/40d69445-feb4-d6d5-bcad-bb142856f0a6/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20R%C3%AAverie%20%281862%29.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20R%C3%AAverie%20%281862%29.jpg?width=600"
   },
   {
    "title": "Cliffs on the Sea Coast: Small Beach, Sunrise (Falaise au bord de la mer, vu Petite Plage, soleil levant)",
@@ -242,38 +152,8 @@
    "tags": "seascape, landscape, realism, nature, cliffs, sunrise, oil painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/29d3c6bc-7b53-d13f-a625-0490141c6f10/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/29d3c6bc-7b53-d13f-a625-0490141c6f10/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Study for Paris Street; Rainy Day",
-   "agent_name": "Gustave Caillebotte",
-   "agent_role": "Artist",
-   "creation_date": "1877",
-   "cultural_context": "Impressionism, French",
-   "medium": "Graphite, with touches of erasing and touches of charcoal, on tan, moderately thick, moderately textured handmade laid paper",
-   "date_display": "1877",
-   "description_narrative": "This detailed graphite and charcoal study by Gustave Caillebotte explores the composition and figures for his seminal work, \"Paris Street; Rainy Day.\" Executed in 1877, it captures the structured urban planning and bourgeois life characteristic of Impressionist Paris.",
-   "tags": "paris, street scene, urban life, impressionism, drawing, preparatory study, figure study, 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/bb330849-a1d7-78df-ac85-e0295c3a448c/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/bb330849-a1d7-78df-ac85-e0295c3a448c/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Sketchbook",
-   "agent_name": "Gustave Caillebotte",
-   "agent_role": "Artist",
-   "creation_date": "June 1883–September 1887",
-   "cultural_context": "19th Century",
-   "medium": "Sketchbook containing 40 drawings: 30 in graphite, 7 in watercolor over graphite, and 3 in graphite and brush and gray wash, on 40 sheets of cream wove paper bound in brown cloth",
-   "date_display": "June 1883–September 1887",
-   "description_narrative": "This sketchbook by Gustave Caillebotte contains 40 drawings, showcasing his prolific artistic practice. The collection features graphite, watercolor, and brush and gray wash works across its cream wove paper sheets.",
-   "tags": "sketchbook, drawings, graphite, watercolor, studies, 19th century, preliminary works",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/25ffdf23-5c03-2ea7-1ca3-35fc820da729/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/25ffdf23-5c03-2ea7-1ca3-35fc820da729/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20Falaise%20au%20bord%20de%20la%20mer%20%281865%29.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20Falaise%20au%20bord%20de%20la%20mer%20%281865%29.jpg?width=600"
   },
   {
    "title": "The Brook of Les Puits-Noir",
@@ -287,38 +167,8 @@
    "tags": "landscape, nature, brook, forest, realism, 19th-century art, tranquil",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/6575c354-8a4f-60d3-ad6f-06fa8d7f9ded/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/6575c354-8a4f-60d3-ad6f-06fa8d7f9ded/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Self-Portrait with a Hat",
-   "agent_name": "Gustave Caillebotte",
-   "agent_role": "Artist",
-   "creation_date": "c. 1879",
-   "cultural_context": "Impressionism, French",
-   "medium": "Graphite on off-white, medium-weight, moderately textured laid paper",
-   "date_display": "c. 1879",
-   "description_narrative": "This self-portrait by Gustave Caillebotte captures the artist in graphite, presenting a direct gaze. Executed on textured laid paper, it showcases his skill in drawing.",
-   "tags": "self-portrait, male, drawing, graphite, french, 19th century, impressionism",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/a65aa820-9e86-22d7-0498-33cee489f36b/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/a65aa820-9e86-22d7-0498-33cee489f36b/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Inspiration",
-   "agent_name": "Gustave Moreau",
-   "agent_role": "Artist",
-   "creation_date": "c. 1893",
-   "cultural_context": "Symbolism, French",
-   "medium": "Watercolor and gouache, with pen and blue ink, over traces of graphite, on ivory wove paper, wrapped and adhered on verso to wood pulp board",
-   "date_display": "c. 1893",
-   "description_narrative": "\"Inspiration\" by Gustave Moreau is a delicate work rendered in watercolor and gouache with pen and blue ink. This composition reflects the artist's characteristic exploration of mythical and allegorical themes, often associated with the Symbolist movement.",
-   "tags": "Gustave Moreau, watercolor, gouache, Symbolism, allegory, French art, 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e0002909-4bcc-1a96-ecda-2eebd30a3f61/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e0002909-4bcc-1a96-ecda-2eebd30a3f61/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20The%20Brook%20of%20Les%20Puits-Noir%20-%201933.1117%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%20-%20The%20Brook%20of%20Les%20Puits-Noir%20-%201933.1117%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "The Girl by the Window",
@@ -332,128 +182,8 @@
    "tags": "expressionism, symbolism, psychological, solitude, figure painting, norwegian art, fin de siècle",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/d7df2633-3b40-f570-c906-211503a37cde/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/d7df2633-3b40-f570-c906-211503a37cde/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Two Women on the Shore",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1898",
-   "cultural_context": "Expressionism, Norwegian",
-   "medium": "Woodcut printed from one block (sawn into three sections) in dark blue, green, black and red-brown ink with additions in green crayon on cream Japanese paper",
-   "date_display": "1898",
-   "description_narrative": "Edvard Munch's 1898 woodcut, \"Two Women on the Shore,\" depicts two figures by the water's edge. This work showcases Munch's innovative printmaking technique, utilizing a single block sawn into multiple sections to achieve distinct color areas.",
-   "tags": "two women, shore, woodcut, expressionism, printmaking, melancholic, landscape",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/faf61d4e-118f-4dff-5b72-dde12b07efa2/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/faf61d4e-118f-4dff-5b72-dde12b07efa2/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Consolation",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1894",
-   "cultural_context": "Symbolism, Expressionism, late 19th century, Norwegian",
-   "medium": "Drypoint and open bite in black on cream wove paper",
-   "date_display": "1894",
-   "description_narrative": "Edvard Munch's \"Consolation\" exemplifies his mastery of printmaking through the intricate techniques of drypoint and open bite. Created in 1894, this work likely explores profound human emotions, a central theme in the Norwegian artist's oeuvre.",
-   "tags": "symbolism, expressionism, printmaking, drypoint, emotional, psychological, melancholy, late 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3c238326-e414-7db6-6a87-52b891051a60/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3c238326-e414-7db6-6a87-52b891051a60/full/400,/0/default.jpg"
-  },
-  {
-   "title": "The Sick Child I",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1896",
-   "cultural_context": "Symbolism, Expressionism, Norwegian",
-   "medium": "Transfer lithograph printed from two stones in pale blue and black ink on ivory wove paper",
-   "date_display": "1896",
-   "description_narrative": "This transfer lithograph, 'The Sick Child I,' depicts a poignant scene centered on a young, ailing figure. Created by Edvard Munch, it explores themes of illness, mortality, and human vulnerability, reflecting his personal experiences and characteristic emotional depth.",
-   "tags": "symbolism, expressionism, illness, child, melancholy, lithograph, portrait, printmaking",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/d661b811-c78c-ac16-b39c-442cbd8c517f/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/d661b811-c78c-ac16-b39c-442cbd8c517f/full/400,/0/default.jpg"
-  },
-  {
-   "title": "The Dead Mother and Her Child",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1901",
-   "cultural_context": "Expressionism, Symbolism, Norwegian",
-   "medium": "Etching with open bite and drypoint in black ink on heavyweight cream wove paper",
-   "date_display": "1901",
-   "description_narrative": "Edvard Munch's 1901 etching, 'The Dead Mother and Her Child', masterfully employs open bite and drypoint techniques to create a stark, emotional scene. This powerful work portrays profound grief and the chilling presence of death through its somber figures and dark tones.",
-   "tags": "death, grief, mother, child, etching, printmaking, expressionism, symbolism",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/fef63772-af1b-c8b7-3872-d330b602bc3d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/fef63772-af1b-c8b7-3872-d330b602bc3d/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Boys Bathing",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1896",
-   "cultural_context": "Expressionism, Symbolism, Norwegian",
-   "medium": "Color burnished aquatint, inked à la poupée, on buff laid paper",
-   "date_display": "1896",
-   "description_narrative": "This vibrant color aquatint by Edvard Munch depicts a group of boys engaged in bathing, capturing a moment of youthful activity. The artist's innovative use of burnished aquatint and à la poupée inking creates rich tones and a distinctive texture, characteristic of his graphic work.",
-   "tags": "boys, bathing, figures, printmaking, aquatint, color print, Norwegian, expressionist",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/0d997f3f-d49f-a3c7-b04f-6891008bb210/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/0d997f3f-d49f-a3c7-b04f-6891008bb210/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Young Woman on the Beach",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1896",
-   "cultural_context": "Symbolism, Expressionism, Norwegian",
-   "medium": "Burnished aquatint and drypoint in purple, blue, gray and yellow, inked à la poupée, on cream laid Arches paper",
-   "date_display": "1896",
-   "description_narrative": "This print by Edvard Munch depicts a solitary young woman on a beach, rendered with burnished aquatint and drypoint. The artist utilized a sophisticated à la poupée inking technique, applying purple, blue, gray, and yellow inks to create a nuanced composition on cream laid Arches paper.",
-   "tags": "printmaking, aquatint, drypoint, figure, beach, symbolism, expressionism, melancholic",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/525b5016-d00c-8d4e-ae8a-de45ca076f17/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/525b5016-d00c-8d4e-ae8a-de45ca076f17/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Man Bathing",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1899",
-   "cultural_context": "Expressionism, late 19th century, Norwegian",
-   "medium": "Color woodcut from two blocks on grayish ivory card",
-   "date_display": "1899",
-   "description_narrative": "This striking color woodcut depicts a lone male figure in the act of bathing. Edvard Munch utilized two blocks to create this powerful image, showcasing the distinctive textures and bold forms inherent in the woodcut technique.",
-   "tags": "man, nude, bathing, woodcut, printmaking, expressionism, figural",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e26b450d-8dc0-2c0b-d6de-24c9477aaabe/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e26b450d-8dc0-2c0b-d6de-24c9477aaabe/full/400,/0/default.jpg"
-  },
-  {
-   "title": "The Brooch. Eva Mudocci",
-   "agent_name": "Edvard Munch",
-   "agent_role": "Artist",
-   "creation_date": "1903",
-   "cultural_context": "Symbolism, Expressionism, Norwegian",
-   "medium": "Lithograph on thin Japanese paper",
-   "date_display": "1903",
-   "description_narrative": "This striking lithograph portrays the Danish violinist Eva Mudocci, a subject frequently depicted by Edvard Munch. Mudocci gazes directly at the viewer, her face framed by dark hair and adorned with a prominent brooch.",
-   "tags": "portrait, lithograph, Eva Mudocci, woman, musician, printmaking, introspective, early 20th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/78387b3f-e923-16cc-8b5a-55402278498d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/78387b3f-e923-16cc-8b5a-55402278498d/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Edvard%20Munch%20-%20The%20Girl%20by%20the%20Window%20-%202000.50%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Edvard%20Munch%20-%20The%20Girl%20by%20the%20Window%20-%202000.50%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   }
  ]
 }
