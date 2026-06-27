@@ -662,6 +662,53 @@ async def upload_personal_photo(
     _link_artwork_to_playlist(db, pl.id, art.id)
     return art
 
+
+STUDIO_CAPTION_PROMPT = (
+    "You are writing a short, warm caption for someone's personal photo — like the title in a family "
+    "photo album or on the back of a postcard. Look at the image and write an evocative title of 3 to "
+    "8 words that captures the PLACE, OCCASION, and MOOD. Name the location or event if it is provided "
+    "below or clearly recognizable. Do NOT list objects or describe the scene clinically. "
+    "Good: \"A Sunny Day at Bondi Beach\". Bad: \"A child holding a bucket and shovel on sand\". "
+    "Return ONLY a JSON object: {\"caption\": \"<your title>\"}."
+)
+
+
+class CaptionRequest(BaseModel):
+    hint: Optional[str] = None
+
+
+@app.post("/api/studio/caption/{artwork_id}")
+async def suggest_caption(artwork_id: int, payload: CaptionRequest, db: Session = Depends(get_db)):
+    """Studio → My Photos: suggest an evocative, album-style caption for a personal photo via the
+    configured vision model (opt-in). Returns the suggestion only — the user edits/accepts it in the
+    UI. `model_is_local` tells the UI whether the photo stays on-device (a local Ollama/LM Studio
+    model) or is sent to a cloud model, so the privacy note can be honest instead of a blanket warning."""
+    art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
+    if not art:
+        raise HTTPException(404, detail="Artwork not found")
+    img_path = LIBRARY_DIR / art.filename
+    if not img_path.exists():
+        raise HTTPException(404, detail="Image file missing")
+    cfg = ai_client.get_ai_config(force=True)
+    if not cfg["configured"]:
+        raise HTTPException(400, detail="No AI model is configured. Add one in Settings → AI Engine, "
+                                        "or type a caption yourself.")
+    prompt = STUDIO_CAPTION_PROMPT
+    hint = (payload.hint or "").strip()
+    if hint:
+        prompt += f" The user notes about this photo: \"{hint}\" — weave it in naturally."
+    parts = [ai_client.text_part(prompt), ai_client.image_part(str(img_path))]
+    try:
+        resp = await asyncio.to_thread(
+            ai_client.chat, "vision", [{"role": "user", "content": parts}], json_mode=True)
+        caption = (ai_client.parse_json(resp).get("caption") or "").strip()
+    except Exception as e:
+        logger.warning(f"[Studio] caption generation failed: {e}")
+        raise HTTPException(502, detail="Caption generation failed. Try again, or type one yourself.")
+    if not caption:
+        raise HTTPException(502, detail="The model didn't return a caption. Try again.")
+    return {"caption": caption, "model_is_local": ai_client.is_local_base_url(cfg["base_url"])}
+
 @app.get("/artworks/pending", response_model=List[ArtworkSchema])
 async def get_pending_artworks(db: Session = Depends(get_db)):
     return db.query(ArtworkModel).filter(ArtworkModel.status == 'pending_review').all()
@@ -1394,6 +1441,7 @@ async def get_ai_settings(db: Session = Depends(get_db)):
         "temperature": rows.get("ai_temperature", ""),
         "has_key": cfg["configured"],
         "key_source": "db" if rows.get("ai_api_key") else ("env" if cfg["configured"] else "none"),
+        "model_is_local": ai_client.is_local_base_url(cfg["base_url"]),
         "presets": {
             k: {
                 "label": v["label"],

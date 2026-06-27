@@ -13,10 +13,12 @@ deployments keep working with zero changes (now routed through Gemini's OpenAI-c
 
 import base64
 import io
+import ipaddress
 import json
 import logging
 import os
 import time
+from urllib.parse import urlparse
 
 import httpx
 from PIL import Image
@@ -171,6 +173,28 @@ def invalidate_config_cache() -> None:
     """Force the next get_ai_config() to re-read the DB (call after a settings write)."""
     _cache["data"] = None
     _cache["ts"] = 0.0
+
+
+_LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1", "host.docker.internal", "0.0.0.0"}
+
+
+def is_local_base_url(base_url: str) -> bool:
+    """True when the model endpoint is on-device / on the LAN (Ollama, LM Studio,
+    host.docker.internal, a private IP) — so images sent to it never leave the user's network.
+    Lets the Studio show an honest privacy note for AI captioning instead of a blanket warning."""
+    try:
+        host = (urlparse(base_url).hostname or "").lower()
+    except Exception:
+        return False
+    if not host:
+        return False
+    if host in _LOCAL_HOSTS or host.endswith(".local"):
+        return True
+    try:
+        ip = ipaddress.ip_address(host)
+        return ip.is_private or ip.is_loopback or ip.is_link_local
+    except ValueError:
+        return False
 
 
 def supports_json_mode(provider: str) -> bool:

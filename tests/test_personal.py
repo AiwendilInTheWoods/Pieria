@@ -93,3 +93,58 @@ def test_personal_upload_rejects_non_image(client):
     c, _ = client
     r = c.post("/upload/personal", files={"file": ("notimg.txt", b"hello world", "text/plain")})
     assert r.status_code == 400
+
+
+# --- AI auto-caption (increment ④) ---
+
+@pytest.mark.parametrize("url,local", [
+    ("http://localhost:11434/v1", True),
+    ("http://127.0.0.1:1234/v1", True),
+    ("http://host.docker.internal:11434/v1", True),
+    ("http://192.168.1.50:11434/v1", True),
+    ("http://10.0.0.5/v1", True),
+    ("https://api.openai.com/v1", False),
+    ("https://generativelanguage.googleapis.com/v1beta/openai", False),
+    ("https://openrouter.ai/api/v1", False),
+    ("", False),
+])
+def test_is_local_base_url(url, local):
+    import ai_client
+    assert ai_client.is_local_base_url(url) is local
+
+
+def test_caption_suggests_and_reports_local(client, monkeypatch):
+    c, _ = client
+    body = _upload(c, caption="").json()   # creates a personal artwork + its file on disk
+    monkeypatch.setattr(app_module.ai_client, "get_ai_config",
+                        lambda force=False: {"configured": True, "base_url": "http://localhost:11434/v1"})
+    monkeypatch.setattr(app_module.ai_client, "chat",
+                        lambda *a, **k: '{"caption": "A Sunny Day at Bondi Beach"}')
+    r = c.post(f"/api/studio/caption/{body['id']}", json={"hint": "Bondi"})
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["caption"] == "A Sunny Day at Bondi Beach"
+    assert d["model_is_local"] is True   # localhost model ⇒ photo stays on-device
+
+
+def test_caption_reports_cloud_model(client, monkeypatch):
+    c, _ = client
+    body = _upload(c).json()
+    monkeypatch.setattr(app_module.ai_client, "get_ai_config",
+                        lambda force=False: {"configured": True, "base_url": "https://api.openai.com/v1"})
+    monkeypatch.setattr(app_module.ai_client, "chat", lambda *a, **k: '{"caption": "Golden Hour"}')
+    d = c.post(f"/api/studio/caption/{body['id']}", json={}).json()
+    assert d["caption"] == "Golden Hour" and d["model_is_local"] is False
+
+
+def test_caption_requires_configured_model(client, monkeypatch):
+    c, _ = client
+    body = _upload(c).json()
+    monkeypatch.setattr(app_module.ai_client, "get_ai_config",
+                        lambda force=False: {"configured": False, "base_url": ""})
+    assert c.post(f"/api/studio/caption/{body['id']}", json={}).status_code == 400
+
+
+def test_caption_unknown_artwork_404(client):
+    c, _ = client
+    assert c.post("/api/studio/caption/99999", json={}).status_code == 404
