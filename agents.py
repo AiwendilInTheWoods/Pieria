@@ -18,6 +18,32 @@ Image.MAX_IMAGE_PIXELS = 200000000
 
 logger = logging.getLogger("artwork-display-api.agents")
 
+# Shared focal-point derivation, used by both vision passes (this module's upload analysis and the
+# RAG curator) so the instruction + parsing can't drift between them.
+FOCAL_POINT_INSTRUCTION = (
+    "Also include 'focal_point': the [x, y] location of the composition's main visual subject — the "
+    "point a viewer's eye is drawn to that must stay in frame when the image is cropped or panned "
+    "(e.g. a portrait's face, the principal figure or object). Use normalized coordinates where "
+    "[0, 0] is the top-left corner and [1, 1] is the bottom-right (a face in the upper middle is "
+    "about [0.5, 0.3]); use [0.5, 0.5] only when there is no single clear subject."
+)
+
+
+def apply_focal_point(artwork: ArtworkModel, metadata: dict) -> None:
+    """Store an optional 'focal_point': [x, y] (normalized 0..1) from a vision response as the
+    artwork's framing anchor. Tolerant of missing/malformed values (keeps the prior focal point)."""
+    fp = metadata.get("focal_point")
+    if not (isinstance(fp, (list, tuple)) and len(fp) == 2):
+        return
+    try:
+        x = min(1.0, max(0.0, float(fp[0])))
+        y = min(1.0, max(0.0, float(fp[1])))
+    except (TypeError, ValueError):
+        return  # parse both before assigning — never leave a half-applied focal point
+    artwork.focal_x = x
+    artwork.focal_y = y
+
+
 async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
     """
     Analyzes artwork using Gemini 2.5 Flash.
@@ -57,7 +83,8 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
             "'date_display' (a formatted string like 'c. 1890', or '19th century'), "
             "'description_narrative' (a 2-sentence museum-style blurb), "
             "and 'tags' (a flat array of 5-10 descriptive strings covering mood, subject, style, "
-            "and season if applicable)."
+            "and season if applicable). "
+            + FOCAL_POINT_INSTRUCTION
         )
 
         response_text = await asyncio.to_thread(
@@ -82,6 +109,8 @@ async def process_artwork(artwork_id: int, db: Session, user_hint: str = None):
 
         tags = metadata.get('tags', [])
         artwork.tags = ", ".join(tags) if isinstance(tags, list) else str(tags)
+
+        apply_focal_point(artwork, metadata)
 
         db.commit()
         return artwork # Return updated object

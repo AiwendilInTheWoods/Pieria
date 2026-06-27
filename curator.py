@@ -10,6 +10,7 @@ import wikipedia
 from sqlalchemy.orm import Session
 
 import ai_client
+from agents import FOCAL_POINT_INSTRUCTION, apply_focal_point
 from models import ArtworkModel
 
 logger = logging.getLogger("artwork-display-api.curator")
@@ -51,7 +52,8 @@ async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None
             "'title', 'agent_name', 'agent_role' (e.g., 'Painter'), 'creation_date', 'cultural_context' (e.g., 'Dutch'), "
             "'medium' (e.g., 'Oil on canvas'), 'physical_dimensions', 'current_repository', "
             "'date_display' (a formatted string like 'c. 1890', or '19th century'), "
-            "'description_narrative' (a 2-sentence blurb), and 'tags' (a flat array of descriptive strings)."
+            "'description_narrative' (a 2-sentence blurb), and 'tags' (a flat array of descriptive strings). "
+            + FOCAL_POINT_INSTRUCTION
         )
 
         content_parts = [ai_client.text_part(prompt)]
@@ -86,6 +88,8 @@ async def enrich_artwork(artwork_id: int, db: Session, context_hints: str = None
         tags = metadata.get('tags', [])
         if tags:
             artwork.tags = ", ".join(tags) if isinstance(tags, list) else str(tags)
+
+        apply_focal_point(artwork, metadata)
 
         artwork.status = 'pending_review'
         db.commit()
