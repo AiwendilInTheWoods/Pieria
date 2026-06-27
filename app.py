@@ -124,7 +124,7 @@ _result_ranker = ResultRanker()
 import ai_client
 import federation
 import frame_push
-from config import ARTWORK_ROOT, LIBRARY_DIR
+from config import ARTWORK_ROOT, LIBRARY_DIR, SD_USER_AGENT
 from epaper import PALETTES, VALID_FORMATS, media_type_for, render_for_epaper
 
 
@@ -1394,8 +1394,8 @@ async def ai_oauth_exchange(payload: OAuthExchangePayload, db: Session = Depends
 # <collection_id>.json per collection (the items). Lets the catalog scale to thousands and the UI
 # load a collection's thumbnails only when opened.
 CATALOG_DIR = Path("static/catalog")
-# Wikimedia (and most sources) require a descriptive User-Agent; the default httpx UA is rejected.
-SD_USER_AGENT = "ScreenDocent/1.0 (https://github.com/AiwendilInTheWoods/Screen-Docent; art display) httpx"
+# SD_USER_AGENT (the descriptive UA Wikimedia/museums require) now lives in config.py so the
+# offline tools/ scripts can reuse it without importing this app.
 
 def _read_local_json(path: Path):
     if not path.exists():

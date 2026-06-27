@@ -1,0 +1,30 @@
+# Weekly deterministic check that every image source Screen Docent ships still resolves to a real
+# image — the regime that catches external source-rot (e.g. Wikimedia tightening its thumbnail
+# whitelist, which once left a fresh box booting empty) before a user hits it.
+#
+# Scope here is seed + catalog (the things we ship). Subscriptions are intentionally excluded:
+# they live in a user's local DB, which doesn't exist in CI — run `--scope subscriptions` locally.
+#
+# NOTE: this job is EXPECTED RED until the catalog is re-sourced. The Art Institute of Chicago
+# (artic.edu, 403/Cloudflare) and Cleveland CDN currently block server-side fetches, so their
+# catalog items fail. That red is the regime correctly flagging catalog rot to fix — not a broken
+# workflow. The factory seed (the part that blocks a fresh install) is green.
+name: Verify Sources
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+  workflow_dispatch: {}    # allow on-demand runs from the Actions tab
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Verify seed + catalog source URLs
+        run: python -m tools.verify_sources --scope seed,catalog
