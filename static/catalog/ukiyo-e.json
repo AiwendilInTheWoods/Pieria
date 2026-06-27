@@ -18,7 +18,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Katsushika%20Hokusai%20-%20The%20Great%20Wave%20off%20the%20Coast%20of%20Kanagawa%20LCCN2008660568.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Katsushika%20Hokusai%20-%20The%20Great%20Wave%20off%20the%20Coast%20of%20Kanagawa%20LCCN2008660568.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Katsushika%20Hokusai%20-%20The%20Great%20Wave%20off%20the%20Coast%20of%20Kanagawa%20LCCN2008660568.jpg?width=600",
+   "focal_point": [
+    0.32,
+    0.38
+   ]
   },
   {
    "title": "Under the Wave off Kanagawa (Kanagawa oki nami ura), also known as The Great Wave, from the series \"Thirty-Six Views of Mount Fuji (Fugaku sanjurokkei)\"",
@@ -33,7 +37,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tsunami%20by%20hokusai%2019th%20century.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tsunami%20by%20hokusai%2019th%20century.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tsunami%20by%20hokusai%2019th%20century.jpg?width=600",
+   "focal_point": [
+    0.3,
+    0.4
+   ]
   }
  ]
 }

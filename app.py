@@ -305,6 +305,7 @@ async def run_factory_seed(db: Session):
                         try: os.symlink(dest_path.resolve(), pl_path)
                         except OSError: shutil.copy(dest_path, pl_path)
 
+                        sfx, sfy = _focal_xy(item)
                         artwork = ArtworkModel(
                             filename=safe_name, original_width=w, original_height=h,
                             crop_width=float(w), crop_height=float(h),
@@ -313,7 +314,8 @@ async def run_factory_seed(db: Session):
                             agent_role=item.get("agent_role"), creation_date=item.get("creation_date"),
                             cultural_context=item.get("cultural_context"), medium=item.get("medium"),
                             date_display=item.get("date_display"), description_narrative=item.get("description_narrative"),
-                            tags=item.get("tags"), is_seed=True
+                            tags=item.get("tags"), is_seed=True,
+                            focal_x=sfx, focal_y=sfy,
                         )
                         db_local.add(artwork); db_local.commit(); db_local.refresh(artwork)
 
@@ -1738,6 +1740,18 @@ async def _download_image_to_library(source_url: str, *, filename: str,
     return dest_path, safe_name, w, h
 
 
+def _focal_xy(item: dict, default: tuple = (0.5, 0.5)) -> tuple:
+    """Parse a flat 'focal_point': [x, y] (normalized 0..1) from a catalog/seed item — the Ken Burns
+    / crop framing anchor baked by tools/backfill_focal_*. Absent or malformed ⇒ centered default."""
+    fp = item.get("focal_point")
+    if isinstance(fp, (list, tuple)) and len(fp) == 2:
+        try:
+            return min(1.0, max(0.0, float(fp[0]))), min(1.0, max(0.0, float(fp[1])))
+        except (TypeError, ValueError):
+            pass
+    return default
+
+
 async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnail_url: str,
                                        metadata: dict, playlist_id: Optional[int] = None,
                                        filename_prefix: str = "catalog") -> ArtworkModel:
@@ -1752,15 +1766,7 @@ async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnai
     filename = f"{filename_prefix}_{title.replace(' ', '_').lower()[:18]}"
     dest_path, safe_name, w, h = await _download_image_to_library(source_url, filename=filename)
 
-    # A baked catalog / federated manifest item may carry image.focal_point as [x, y] (normalized
-    # 0..1) — the Ken Burns / crop framing anchor. Absent ⇒ stays centered (0.5, 0.5).
-    fx, fy = 0.5, 0.5
-    fp = metadata.get("focal_point")
-    if isinstance(fp, (list, tuple)) and len(fp) == 2:
-        try:
-            fx = min(1.0, max(0.0, float(fp[0]))); fy = min(1.0, max(0.0, float(fp[1])))
-        except (TypeError, ValueError):
-            pass
+    fx, fy = _focal_xy(metadata)   # baked catalog/manifest focal_point [x, y] (normalized); else centered
 
     artwork = ArtworkModel(
         filename=safe_name, original_width=w, original_height=h,

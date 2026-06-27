@@ -18,7 +18,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP143157.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP143157.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP143157.jpg",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "The Slave Ship",
@@ -33,7 +37,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Slave-ship.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Slave-ship.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Slave-ship.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Snow Storm: Steam-Boat off a Harbour's Mouth",
@@ -48,7 +56,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/J.M.W.%20Turner%20%E2%80%93%20Snow%20Storm%20-%20Steam-Boat%20off%20a%20Harbour%27s%20Mouth.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/J.M.W.%20Turner%20%E2%80%93%20Snow%20Storm%20-%20Steam-Boat%20off%20a%20Harbour%27s%20Mouth.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/J.M.W.%20Turner%20%E2%80%93%20Snow%20Storm%20-%20Steam-Boat%20off%20a%20Harbour%27s%20Mouth.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.5
+   ]
   },
   {
    "title": "The Shipwreck",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Shipwreck%20engraving%20by%20William%20Miller%20after%20Turner.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Shipwreck%20engraving%20by%20William%20Miller%20after%20Turner.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Shipwreck%20engraving%20by%20William%20Miller%20after%20Turner.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Dutch Boats in a Gale",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20047.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20047.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20047.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.55
+   ]
   },
   {
    "title": "Breezing Up (A Fair Wind)",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Breezing%20Up%20%28A%20Fair%20Wind%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Breezing%20Up%20%28A%20Fair%20Wind%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Breezing%20Up%20%28A%20Fair%20Wind%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "The Fog Warning",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Fog%20Warning%20%28lightened%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Fog%20Warning%20%28lightened%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Fog%20Warning%20%28lightened%29.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.3
+   ]
   },
   {
    "title": "Northeaster",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Northeaster%20by%20Winslow%20Homer%201895.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Northeaster%20by%20Winslow%20Homer%201895.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Northeaster%20by%20Winslow%20Homer%201895.jpg?width=600",
+   "focal_point": [
+    0.3,
+    0.4
+   ]
   },
   {
    "title": "Eight Bells",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/WinslowHomer-Eight%20Bells%201886.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/WinslowHomer-Eight%20Bells%201886.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/WinslowHomer-Eight%20Bells%201886.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   },
   {
    "title": "The Ninth Wave",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aivazovsky%2C%20Ivan%20-%20The%20Ninth%20Wave.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aivazovsky%2C%20Ivan%20-%20The%20Ninth%20Wave.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aivazovsky%2C%20Ivan%20-%20The%20Ninth%20Wave.jpg?width=600",
+   "focal_point": [
+    0.36,
+    0.85
+   ]
   },
   {
    "title": "The Black Sea",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aivazovsky%20-%20Black%20Sea%20Fleet%20in%20the%20Bay%20of%20Theodosia.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aivazovsky%20-%20Black%20Sea%20Fleet%20in%20the%20Bay%20of%20Theodosia.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aivazovsky%20-%20Black%20Sea%20Fleet%20in%20the%20Bay%20of%20Theodosia.jpg?width=600",
+   "focal_point": [
+    0.2,
+    0.55
+   ]
   },
   {
    "title": "Among the Waves",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Breaking%20Wave%20%28by%20Ivan%20Aivazovsky%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Breaking%20Wave%20%28by%20Ivan%20Aivazovsky%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Breaking%20Wave%20%28by%20Ivan%20Aivazovsky%29.jpg?width=600",
+   "focal_point": [
+    0.7,
+    0.62
+   ]
   },
   {
    "title": "A Dutch Ship in a Strong Breeze",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Willem%20van%20de%20Velde%20II%20-%20A%20Dutch%20Ship%20and%20Other%20Small%20Vessels%20in%20a%20Strong%20Breeze.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Willem%20van%20de%20Velde%20II%20-%20A%20Dutch%20Ship%20and%20Other%20Small%20Vessels%20in%20a%20Strong%20Breeze.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Willem%20van%20de%20Velde%20II%20-%20A%20Dutch%20Ship%20and%20Other%20Small%20Vessels%20in%20a%20Strong%20Breeze.jpg?width=600",
+   "focal_point": [
+    0.32,
+    0.66
+   ]
   },
   {
    "title": "Ships in a Stormy Sea",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ludolf%20Bakhuizen%20-%20Ships%20on%20a%20Stormy%20Sea%2C%201698%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ludolf%20Bakhuizen%20-%20Ships%20on%20a%20Stormy%20Sea%2C%201698%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ludolf%20Bakhuizen%20-%20Ships%20on%20a%20Stormy%20Sea%2C%201698%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.58
+   ]
   },
   {
    "title": "Ships in Distress off a Rocky Coast",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ludolf%20Bakhuizen%20-%20Ships%20in%20Distress%20off%20a%20Rocky%20Coast%20-%20WGA01128.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ludolf%20Bakhuizen%20-%20Ships%20in%20Distress%20off%20a%20Rocky%20Coast%20-%20WGA01128.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ludolf%20Bakhuizen%20-%20Ships%20in%20Distress%20off%20a%20Rocky%20Coast%20-%20WGA01128.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.55
+   ]
   },
   {
    "title": "The Monk by the Sea",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caspar%20David%20Friedrich%20-%20Der%20M%C3%B6nch%20am%20Meer%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caspar%20David%20Friedrich%20-%20Der%20M%C3%B6nch%20am%20Meer%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caspar%20David%20Friedrich%20-%20Der%20M%C3%B6nch%20am%20Meer%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.35,
+    0.85
+   ]
   },
   {
    "title": "The Stormy Sea",
@@ -258,7 +322,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet-Boats.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet-Boats.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet-Boats.jpg?width=600",
+   "focal_point": [
+    0.27,
+    0.78
+   ]
   },
   {
    "title": "Calm Sea",
@@ -273,7 +341,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%2C%20Calm%20Sea%2C%201866%2C%20NGA%2066408.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%2C%20Calm%20Sea%2C%201866%2C%20NGA%2066408.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Courbet%2C%20Calm%20Sea%2C%201866%2C%20NGA%2066408.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.6
+   ]
   },
   {
    "title": "Brig upon the Water",
@@ -288,7 +360,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Le%20Gray%20-%20Brig%20upon%20the%20Water%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Le%20Gray%20-%20Brig%20upon%20the%20Water%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Le%20Gray%20-%20Brig%20upon%20the%20Water%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.54,
+    0.66
+   ]
   },
   {
    "title": "The Great Wave, Sète",
@@ -303,7 +379,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Le%20Gray-The%20Great%20Wave.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Le%20Gray-The%20Great%20Wave.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave%20Le%20Gray-The%20Great%20Wave.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.47
+   ]
   },
   {
    "title": "Ships in a Storm",
@@ -318,7 +398,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubbels%20-%20Ships%20in%20the%20storm%20-%20with%20frame.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubbels%20-%20Ships%20in%20the%20storm%20-%20with%20frame.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubbels%20-%20Ships%20in%20the%20storm%20-%20with%20frame.jpg?width=600",
+   "focal_point": [
+    0.37,
+    0.55
+   ]
   },
   {
    "title": "The Icebergs",
@@ -333,7 +417,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Icebergs%20by%20Frederic%20Edwin%20Church%2C%20detail%2C%201861%2C%20oil%20on%20canvas%20-%20Dallas%20Museum%20of%20Art%20-%20DSC04831.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Icebergs%20by%20Frederic%20Edwin%20Church%2C%20detail%2C%201861%2C%20oil%20on%20canvas%20-%20Dallas%20Museum%20of%20Art%20-%20DSC04831.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Icebergs%20by%20Frederic%20Edwin%20Church%2C%20detail%2C%201861%2C%20oil%20on%20canvas%20-%20Dallas%20Museum%20of%20Art%20-%20DSC04831.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   }
  ]
 }

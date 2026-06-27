@@ -11,7 +11,11 @@
     "tags": "night, sky, stars, village, post-impressionism, landscape",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.45,
+      0.35
+    ]
   },
   {
     "title": "A Sunday on La Grande Jatte",
@@ -25,7 +29,11 @@
     "tags": "park, people, pointillism, river, leisure, sunday",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.82,
+      0.5
+    ]
   },
   {
     "title": "The Great Wave off Kanagawa",
@@ -39,7 +47,11 @@
     "tags": "wave, ocean, boats, mount fuji, ukiyo-e, landscape",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Great_Wave_off_Kanagawa.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Great_Wave_off_Kanagawa.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.3,
+      0.35
+    ]
   },
   {
     "title": "Wanderer above the Sea of Fog",
@@ -53,7 +65,11 @@
     "tags": "fog, mountains, romanticism, sublime, landscape, wanderer",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.5,
+      0.37
+    ]
   },
   {
     "title": "Mona Lisa",
@@ -67,7 +83,11 @@
     "tags": "portrait, renaissance, sfumato, enigmatic, female",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.5,
+      0.28
+    ]
   },
   {
     "title": "Girl with a Pearl Earring",
@@ -81,7 +101,11 @@
     "tags": "portrait, dutch golden age, pearl, turban, female",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/1665_Girl_with_a_Pearl_Earring.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/1665_Girl_with_a_Pearl_Earring.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.42,
+      0.42
+    ]
   },
   {
     "title": "The Kiss",
@@ -95,7 +119,11 @@
     "tags": "love, gold, art nouveau, couple, embrace, ornamental",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.45,
+      0.22
+    ]
   },
   {
     "title": "The Night Watch",
@@ -109,7 +137,11 @@
     "tags": "group portrait, militia, baroque, dramatic lighting, dutch golden age",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Night_Watch_-_HD.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Night_Watch_-_HD.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.47,
+      0.55
+    ]
   },
   {
     "title": "Water Lilies",
@@ -123,7 +155,11 @@
     "tags": "water lilies, pond, impressionism, flowers, nature, reflections",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.5,
+      0.62
+    ]
   },
   {
     "title": "The Birth of Venus",
@@ -137,7 +173,11 @@
     "tags": "mythology, venus, renaissance, goddess, shell, classical",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.52,
+      0.18
+    ]
   },
   {
     "title": "The Creation of Adam",
@@ -151,7 +191,11 @@
     "tags": "fresco, sistine chapel, genesis, god, adam, renaissance",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.5,
+      0.46
+    ]
   },
   {
     "title": "Impression, Sunrise",
@@ -165,7 +209,11 @@
     "tags": "sunrise, harbor, boats, impressionism, fog, water",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Monet_-_Impression%2C_Sunrise.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Monet_-_Impression%2C_Sunrise.jpg?width=600",
-    "playlist": "Landscapes & Horizons"
+    "playlist": "Landscapes & Horizons",
+    "focal_point": [
+      0.61,
+      0.32
+    ]
   },
   {
     "title": "Café Terrace at Night",
@@ -179,7 +227,11 @@
     "tags": "cafe, night, stars, arles, post-impressionism, urban",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent_Willem_van_Gogh_-_Cafe_Terrace_at_Night_%28Yorck%29.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent_Willem_van_Gogh_-_Cafe_Terrace_at_Night_%28Yorck%29.jpg?width=600",
-    "playlist": "Landscapes & Horizons"
+    "playlist": "Landscapes & Horizons",
+    "focal_point": [
+      0.32,
+      0.55
+    ]
   },
   {
     "title": "The Scream",
@@ -193,7 +245,11 @@
     "tags": "scream, anxiety, expressionism, bridge, sunset, anguish",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.55,
+      0.72
+    ]
   },
   {
     "title": "The Milkmaid",
@@ -207,7 +263,11 @@
     "tags": "domestic, light, milk, kitchen, dutch golden age, still life",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg?width=600",
-    "playlist": "Faces of Antiquity"
+    "playlist": "Faces of Antiquity",
+    "focal_point": [
+      0.56,
+      0.27
+    ]
   },
   {
     "title": "Sunflowers",
@@ -221,7 +281,11 @@
     "tags": "sunflowers, still life, yellow, vase, post-impressionism",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent_Willem_van_Gogh_127.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent_Willem_van_Gogh_127.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.5,
+      0.42
+    ]
   },
   {
     "title": "The Dance Class",
@@ -235,7 +299,11 @@
     "tags": "ballet, dance, rehearsal, paris, impressionism, movement",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Edgar_Degas_-_The_Ballet_Class_-_Google_Art_Project.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Edgar_Degas_-_The_Ballet_Class_-_Google_Art_Project.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.34,
+      0.42
+    ]
   },
   {
     "title": "American Gothic",
@@ -249,7 +317,11 @@
     "tags": "portrait, american, gothic, rural, farmer, pitchfork",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg?width=600",
-    "playlist": "Faces of Antiquity"
+    "playlist": "Faces of Antiquity",
+    "focal_point": [
+      0.66,
+      0.27
+    ]
   },
   {
     "title": "A Bar at the Folies-Bergère",
@@ -263,7 +335,11 @@
     "tags": "bar, barmaid, mirror, paris, impressionism, nightlife",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Edouard_Manet%2C_A_Bar_at_the_Folies-Berg%C3%A8re.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Edouard_Manet%2C_A_Bar_at_the_Folies-Berg%C3%A8re.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.47,
+      0.22
+    ]
   },
   {
     "title": "Whistler's Mother",
@@ -277,7 +353,11 @@
     "tags": "portrait, mother, seated, profile, tonalism, grey",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Whistlers_Mother_high_res.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Whistlers_Mother_high_res.jpg?width=600",
-    "playlist": "Faces of Antiquity"
+    "playlist": "Faces of Antiquity",
+    "focal_point": [
+      0.73,
+      0.24
+    ]
   },
   {
     "title": "The School of Athens",
@@ -291,7 +371,11 @@
     "tags": "philosophy, plato, aristotle, fresco, renaissance, architecture",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.5,
+      0.46
+    ]
   },
   {
     "title": "Bal du moulin de la Galette",
@@ -305,7 +389,11 @@
     "tags": "dance, party, paris, montmartre, impressionism, sunlight",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste_Renoir%2C_Le_Moulin_de_la_Galette.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste_Renoir%2C_Le_Moulin_de_la_Galette.jpg?width=600",
-    "playlist": "Landscapes & Horizons"
+    "playlist": "Landscapes & Horizons",
+    "focal_point": [
+      0.46,
+      0.54
+    ]
   },
   {
     "title": "Nighthawks",
@@ -319,7 +407,11 @@
     "tags": "diner, night, urban, loneliness, realism, american",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nighthawks_by_Edward_Hopper_1942.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nighthawks_by_Edward_Hopper_1942.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.66,
+      0.55
+    ]
   },
   {
     "title": "Liberty Leading the People",
@@ -333,7 +425,11 @@
     "tags": "revolution, liberty, flag, france, romanticism, battle",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Eug%C3%A8ne_Delacroix_-_Le_28_Juillet._La_Libert%C3%A9_guidant_le_peuple.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Eug%C3%A8ne_Delacroix_-_Le_28_Juillet._La_Libert%C3%A9_guidant_le_peuple.jpg?width=600",
-    "playlist": "The Masterpieces"
+    "playlist": "The Masterpieces",
+    "focal_point": [
+      0.55,
+      0.26
+    ]
   },
   {
     "title": "Self-Portrait with Straw Hat",
@@ -347,6 +443,10 @@
     "tags": "self-portrait, hat, post-impressionism, portrait, paris",
     "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Van_Gogh_Self-Portrait_with_Straw_Hat_1887-Metropolitan.jpg?width=3840",
     "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Van_Gogh_Self-Portrait_with_Straw_Hat_1887-Metropolitan.jpg?width=600",
-    "playlist": "Faces of Antiquity"
+    "playlist": "Faces of Antiquity",
+    "focal_point": [
+      0.48,
+      0.42
+    ]
   }
 ]

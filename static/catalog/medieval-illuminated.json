@@ -18,7 +18,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/cl/original/DP225775.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/cl/web-large/DP225775.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/cl/web-large/DP225775.jpg",
+   "focal_point": [
+    0.45,
+    0.25
+   ]
   },
   {
    "title": "The Belles Heures of Jean de France, duc de Berry",
@@ -33,7 +37,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/cl/original/DP253014.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/cl/web-large/DP253014.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/cl/web-large/DP253014.jpg",
+   "focal_point": [
+    0.5,
+    0.33
+   ]
   },
   {
    "title": "The Unicorn Rests in a Garden (from the Unicorn Tapestries)",
@@ -48,7 +56,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/cl/original/DP118991.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/cl/web-large/DP118991.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/cl/web-large/DP118991.jpg",
+   "focal_point": [
+    0.45,
+    0.45
+   ]
   },
   {
    "title": "Book of Kells: Chi Rho Page",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Meister%20des%20Book%20of%20Kells%20001.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Meister%20des%20Book%20of%20Kells%20001.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Meister%20des%20Book%20of%20Kells%20001.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.4
+   ]
   },
   {
    "title": "Très Riches Heures du Duc de Berry: January",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Les%20Tr%C3%A8s%20Riches%20Heures%20du%20duc%20de%20Berry%20Janvier-2.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Les%20Tr%C3%A8s%20Riches%20Heures%20du%20duc%20de%20Berry%20Janvier-2.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Les%20Tr%C3%A8s%20Riches%20Heures%20du%20duc%20de%20Berry%20Janvier-2.jpg?width=600",
+   "focal_point": [
+    0.78,
+    0.45
+   ]
   },
   {
    "title": "Très Riches Heures du Duc de Berry: February",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/008%20MS%2065%20F2%20V.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/008%20MS%2065%20F2%20V.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/008%20MS%2065%20F2%20V.jpg?width=600",
+   "focal_point": [
+    0.33,
+    0.63
+   ]
   },
   {
    "title": "Bayeux Tapestry: Harold's Oath",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bayeux%20Tapestry%20de%20Montfaucon%209.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bayeux%20Tapestry%20de%20Montfaucon%209.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bayeux%20Tapestry%20de%20Montfaucon%209.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.5
+   ]
   },
   {
    "title": "Ghent Altarpiece: Adoration of the Mystic Lamb",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ghent%20Altarpiece%20-%20Adoration%20of%20the%20Mystic%20Lamb.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ghent%20Altarpiece%20-%20Adoration%20of%20the%20Mystic%20Lamb.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ghent%20Altarpiece%20-%20Adoration%20of%20the%20Mystic%20Lamb.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.33
+   ]
   },
   {
    "title": "Maestà",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Duccio%20di%20Buoninsegna%20041.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Duccio%20di%20Buoninsegna%20041.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Duccio%20di%20Buoninsegna%20041.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.4
+   ]
   },
   {
    "title": "Santa Trinita Maestà",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cimabue%20-%20Maest%C3%A0%20di%20Santa%20Trinita%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cimabue%20-%20Maest%C3%A0%20di%20Santa%20Trinita%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cimabue%20-%20Maest%C3%A0%20di%20Santa%20Trinita%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.2
+   ]
   },
   {
    "title": "Annunciation",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Simone%20Martini%20%E2%80%94%20Annunciation%20with%20St.%20Margaret%20and%20St.%20Ansanus.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Simone%20Martini%20%E2%80%94%20Annunciation%20with%20St.%20Margaret%20and%20St.%20Ansanus.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Simone%20Martini%20%E2%80%94%20Annunciation%20with%20St.%20Margaret%20and%20St.%20Ansanus.jpg?width=600",
+   "focal_point": [
+    0.64,
+    0.52
+   ]
   },
   {
    "title": "Annunciation",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fra%20Angelico%20-%20Annunciation.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fra%20Angelico%20-%20Annunciation.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fra%20Angelico%20-%20Annunciation.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.38
+   ]
   },
   {
    "title": "Sainte-Chapelle Stained Glass",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sainte-Chapelle%20de%20Vincennes%2C%20vue%20d%27ensemble%20des%20vitraux%20de%20l%27abside%20et%20du%20choeur%20%28bgw17%201030%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sainte-Chapelle%20de%20Vincennes%2C%20vue%20d%27ensemble%20des%20vitraux%20de%20l%27abside%20et%20du%20choeur%20%28bgw17%201030%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sainte-Chapelle%20de%20Vincennes%2C%20vue%20d%27ensemble%20des%20vitraux%20de%20l%27abside%20et%20du%20choeur%20%28bgw17%201030%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   }
  ]
 }

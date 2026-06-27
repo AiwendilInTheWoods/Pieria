@@ -18,7 +18,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Bedroom%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Bedroom%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Bedroom%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.5
+   ]
   },
   {
    "title": "Self-Portrait",
@@ -33,7 +37,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Self-Portrait%20-%201954.326%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Self-Portrait%20-%201954.326%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Self-Portrait%20-%201954.326%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.34
+   ]
   },
   {
    "title": "The Poet's Garden",
@@ -48,7 +56,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Poet%27s%20Garden%20-%201933.433%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Poet%27s%20Garden%20-%201933.433%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Poet%27s%20Garden%20-%201933.433%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   },
   {
    "title": "A Peasant Woman Digging in Front of Her Cottage",
@@ -63,7 +75,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20A%20Peasant%20Woman%20Digging%20in%20Front%20of%20Her%20Cottage%20-%201968.92%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20A%20Peasant%20Woman%20Digging%20in%20Front%20of%20Her%20Cottage%20-%201968.92%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20A%20Peasant%20Woman%20Digging%20in%20Front%20of%20Her%20Cottage%20-%201968.92%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.62,
+    0.72
+   ]
   },
   {
    "title": "The Drinkers",
@@ -78,7 +94,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Drinkers%20-%201953.178%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Drinkers%20-%201953.178%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20The%20Drinkers%20-%201953.178%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.35
+   ]
   },
   {
    "title": "Fishing in Spring, the Pont de Clichy (Asnières)",
@@ -93,7 +113,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Fishing%20in%20Spring%2C%20the%20Pont%20de%20Clichy%20%28Asni%C3%A8res%29%20-%201965.1169%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Fishing%20in%20Spring%2C%20the%20Pont%20de%20Clichy%20%28Asni%C3%A8res%29%20-%201965.1169%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Fishing%20in%20Spring%2C%20the%20Pont%20de%20Clichy%20%28Asni%C3%A8res%29%20-%201965.1169%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.55
+   ]
   },
   {
    "title": "Madame Roulin Rocking the Cradle (La berceuse)",
@@ -108,7 +132,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Madame%20Roulin%20Rocking%20the%20Cradle%20%28La%20berceuse%29%20-%201926.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Madame%20Roulin%20Rocking%20the%20Cradle%20%28La%20berceuse%29%20-%201926.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Madame%20Roulin%20Rocking%20the%20Cradle%20%28La%20berceuse%29%20-%201926.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.28
+   ]
   },
   {
    "title": "Terrace and Observation Deck at the Moulin de Blute-Fin, Montmartre",
@@ -123,7 +151,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Terrace%20and%20Observation%20Deck%20at%20the%20Moulin%20de%20Blute-Fin%2C%20Montmartre%20-%201926.202%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Terrace%20and%20Observation%20Deck%20at%20the%20Moulin%20de%20Blute-Fin%2C%20Montmartre%20-%201926.202%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Terrace%20and%20Observation%20Deck%20at%20the%20Moulin%20de%20Blute-Fin%2C%20Montmartre%20-%201926.202%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.7,
+    0.65
+   ]
   },
   {
    "title": "Grapes, Lemons, Pears, and Apples",
@@ -138,7 +170,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Grapes%2C%20Lemons%2C%20Pears%2C%20and%20Apples%20-%201949.215%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Grapes%2C%20Lemons%2C%20Pears%2C%20and%20Apples%20-%201949.215%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Grapes%2C%20Lemons%2C%20Pears%2C%20and%20Apples%20-%201949.215%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Weeping Tree",
@@ -153,7 +189,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Van%20Gogh%20-%20Blick%20in%20den%20Park%20von%20Arles.jpeg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Van%20Gogh%20-%20Blick%20in%20den%20Park%20von%20Arles.jpeg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Van%20Gogh%20-%20Blick%20in%20den%20Park%20von%20Arles.jpeg?width=600",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   },
   {
    "title": "The Basket of Apples",
@@ -168,7 +208,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Basket%20of%20Apples%20-%201926.252%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Basket%20of%20Apples%20-%201926.252%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Basket%20of%20Apples%20-%201926.252%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.4
+   ]
   },
   {
    "title": "The Bay of Marseille, Seen from L'Estaque",
@@ -183,7 +227,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Bay%20of%20Marseilles%2C%20Seen%20from%20L%27Estaque%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Bay%20of%20Marseilles%2C%20Seen%20from%20L%27Estaque%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Bay%20of%20Marseilles%2C%20Seen%20from%20L%27Estaque%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Auvers, Panoramic View",
@@ -198,7 +246,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Auvers%2C%20Panoramic%20View%20-%201933.422%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Auvers%2C%20Panoramic%20View%20-%201933.422%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Auvers%2C%20Panoramic%20View%20-%201933.422%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Madame Cezanne in a Yellow Chair",
@@ -213,7 +265,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Madame%20C%C3%A9zanne%20in%20a%20Yellow%20Chair%20-%201948.54%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Madame%20C%C3%A9zanne%20in%20a%20Yellow%20Chair%20-%201948.54%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Madame%20C%C3%A9zanne%20in%20a%20Yellow%20Chair%20-%201948.54%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.21
+   ]
   },
   {
    "title": "The Vase of Tulips",
@@ -228,7 +284,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Vase%20of%20Tulips%20-%201933.423%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Vase%20of%20Tulips%20-%201933.423%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Vase%20of%20Tulips%20-%201933.423%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.35
+   ]
   },
   {
    "title": "The Bathers",
@@ -243,7 +303,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Bathers%20-%201942.457%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Bathers%20-%201942.457%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Bathers%20-%201942.457%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.65
+   ]
   },
   {
    "title": "The Plate of Apples",
@@ -258,7 +322,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Plate%20of%20Apples%20-%201949.512%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Plate%20of%20Apples%20-%201949.512%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20The%20Plate%20of%20Apples%20-%201949.512%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.6
+   ]
   },
   {
    "title": "Bathers",
@@ -273,7 +341,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Bathers%20-%201973.672%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Bathers%20-%201973.672%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Bathers%20-%201973.672%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.55
+   ]
   },
   {
    "title": "Standing Bather, Seen from the Back",
@@ -288,7 +360,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Standing%20Bather%2C%20Seen%20from%20the%20Back%20-%202007.289%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Standing%20Bather%2C%20Seen%20from%20the%20Back%20-%202007.289%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Standing%20Bather%2C%20Seen%20from%20the%20Back%20-%202007.289%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.2
+   ]
   },
   {
    "title": "A Sunday on La Grande Jatte — 1884",
@@ -303,7 +379,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20Sunday%20on%20La%20Grande%20Jatte%2C%20Georges%20Seurat%2C%201884.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20Sunday%20on%20La%20Grande%20Jatte%2C%20Georges%20Seurat%2C%201884.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20Sunday%20on%20La%20Grande%20Jatte%2C%20Georges%20Seurat%2C%201884.jpg?width=600",
+   "focal_point": [
+    0.78,
+    0.4
+   ]
   },
   {
    "title": "Oil Sketch for \"A Sunday on La Grande Jatte — 1884\"",
@@ -318,7 +398,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Georges%20Seurat%20-%20Oil%20Sketch%20for%20%22La%20Grande%20Jatte%22%20-%201981.15%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Georges%20Seurat%20-%20Oil%20Sketch%20for%20%22La%20Grande%20Jatte%22%20-%201981.15%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Georges%20Seurat%20-%20Oil%20Sketch%20for%20%22La%20Grande%20Jatte%22%20-%201981.15%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.35
+   ]
   },
   {
    "title": "Final Study for \"Bathers at Asnières\"",
@@ -333,7 +417,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Georges%20Seurat%20-%20Final%20Study%20for%20%22Bathers%20at%20Asni%C3%A8res%22%20-%201962.578%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Georges%20Seurat%20-%20Final%20Study%20for%20%22Bathers%20at%20Asni%C3%A8res%22%20-%201962.578%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Georges%20Seurat%20-%20Final%20Study%20for%20%22Bathers%20at%20Asni%C3%A8res%22%20-%201962.578%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.42
+   ]
   }
  ]
 }

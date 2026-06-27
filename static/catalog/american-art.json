@@ -18,7 +18,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Herring%20Net%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Herring%20Net%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Herring%20Net%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.32
+   ]
   },
   {
    "title": "After the Hurricane, Bahamas",
@@ -33,7 +37,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20After%20the%20Hurricane%2C%20Bahamas%20%281899%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20After%20the%20Hurricane%2C%20Bahamas%20%281899%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20After%20the%20Hurricane%2C%20Bahamas%20%281899%29.jpg?width=600",
+   "focal_point": [
+    0.18,
+    0.66
+   ]
   },
   {
    "title": "Croquet Scene",
@@ -48,7 +56,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Croquet%20Scene%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Croquet%20Scene%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Croquet%20Scene%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.31,
+    0.25
+   ]
   },
   {
    "title": "The Water Fan",
@@ -63,7 +75,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Water%20Fan.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Water%20Fan.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Water%20Fan.jpg?width=600",
+   "focal_point": [
+    0.39,
+    0.4
+   ]
   },
   {
    "title": "Life-Size Black Bass",
@@ -78,7 +94,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Life-Size%20Black%20Bass.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Life-Size%20Black%20Bass.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Life-Size%20Black%20Bass.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.45
+   ]
   },
   {
    "title": "Stowing Sail",
@@ -93,7 +113,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Stowing%20Sail.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Stowing%20Sail.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Stowing%20Sail.jpg?width=600",
+   "focal_point": [
+    0.67,
+    0.45
+   ]
   },
   {
    "title": "North Woods Club, Adirondacks (The Interrupted Tete-a-Tete)",
@@ -108,7 +132,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20North%20Woods%20Club%2C%20Adirondacks%20%28The%20Interrupted%20Tete-a-Tete%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20North%20Woods%20Club%2C%20Adirondacks%20%28The%20Interrupted%20Tete-a-Tete%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20North%20Woods%20Club%2C%20Adirondacks%20%28The%20Interrupted%20Tete-a-Tete%29.jpg?width=600",
+   "focal_point": [
+    0.74,
+    0.73
+   ]
   },
   {
    "title": "Mount Washington",
@@ -123,7 +151,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Washington%2C%20by%20Winslow%20Homer%20%28Chicago%20Art%20Institute%201951.313%29%20B.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Washington%2C%20by%20Winslow%20Homer%20%28Chicago%20Art%20Institute%201951.313%29%20B.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Washington%2C%20by%20Winslow%20Homer%20%28Chicago%20Art%20Institute%201951.313%29%20B.jpg?width=600",
+   "focal_point": [
+    0.25,
+    0.42
+   ]
   },
   {
    "title": "Peach Blossoms",
@@ -138,7 +170,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Peach%20Blossoms%2C%201878.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Peach%20Blossoms%2C%201878.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Peach%20Blossoms%2C%201878.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.27
+   ]
   },
   {
    "title": "Coast of Maine",
@@ -153,7 +189,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Coast%20of%20Maine%20-%201931.505%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Coast%20of%20Maine%20-%201931.505%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Coast%20of%20Maine%20-%201931.505%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.42
+   ]
   },
   {
    "title": "The Rapids, Hudson River, Adirondacks",
@@ -168,7 +208,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Rapids%2C%20Hudson%20River%2C%20Adirondacks.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Rapids%2C%20Hudson%20River%2C%20Adirondacks.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Rapids%2C%20Hudson%20River%2C%20Adirondacks.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.42
+   ]
   },
   {
    "title": "Fishing off Scarborough",
@@ -183,7 +227,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Fishing%20off%20Scarborough%2C%201882.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Fishing%20off%20Scarborough%2C%201882.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Fishing%20off%20Scarborough%2C%201882.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.62
+   ]
   },
   {
    "title": "Adirondacks Guide",
@@ -198,7 +246,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Adirondacks%20Guide.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Adirondacks%20Guide.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Adirondacks%20Guide.jpg?width=600",
+   "focal_point": [
+    0.36,
+    0.42
+   ]
   },
   {
    "title": "The Watcher, Tynemouth",
@@ -213,7 +265,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Watcher%2C%20Tynemouth.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Watcher%2C%20Tynemouth.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Watcher%2C%20Tynemouth.jpg?width=600",
+   "focal_point": [
+    0.32,
+    0.36
+   ]
   },
   {
    "title": "Boy in Boat, Gloucester",
@@ -228,7 +284,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Boy%20in%20Boat%2C%20Gloucester.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Boy%20in%20Boat%2C%20Gloucester.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Boy%20in%20Boat%2C%20Gloucester.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.62
+   ]
   },
   {
    "title": "Campfire, Adirondacks",
@@ -243,7 +303,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Campfire%2C%20Adirondacks.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Campfire%2C%20Adirondacks.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Campfire%2C%20Adirondacks.jpg?width=600",
+   "focal_point": [
+    0.48,
+    0.5
+   ]
   },
   {
    "title": "The Fountain, Villa Torlonia, Frascati, Italy",
@@ -258,7 +322,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20The%20Fountain%2C%20Villa%20Torlonia%2C%20Frascati%2C%20Italy%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20The%20Fountain%2C%20Villa%20Torlonia%2C%20Frascati%2C%20Italy%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20The%20Fountain%2C%20Villa%20Torlonia%2C%20Frascati%2C%20Italy%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.27,
+    0.36
+   ]
   },
   {
    "title": "Mrs. George Swinton (Elizabeth Ebsworth)",
@@ -273,7 +341,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20George%20Swinton%20%28Elizabeth%20Ebsworth%29%20-%201922.4450%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20George%20Swinton%20%28Elizabeth%20Ebsworth%29%20-%201922.4450%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20George%20Swinton%20%28Elizabeth%20Ebsworth%29%20-%201922.4450%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.2
+   ]
   },
   {
    "title": "Madame Paul Escudier (Louise Lefevre)",
@@ -288,7 +360,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Madame%20Paul%20Escudier%20%28Louise%20Lefevre%29%2C%201882%2C%202007.391.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Madame%20Paul%20Escudier%20%28Louise%20Lefevre%29%2C%201882%2C%202007.391.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Madame%20Paul%20Escudier%20%28Louise%20Lefevre%29%2C%201882%2C%202007.391.jpg?width=600",
+   "focal_point": [
+    0.59,
+    0.27
+   ]
   },
   {
    "title": "Life Study (Study of an Egyptian Girl)",
@@ -303,7 +379,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Life%20Study%20%28Study%20of%20an%20Egyptian%20Girl%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Life%20Study%20%28Study%20of%20an%20Egyptian%20Girl%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Life%20Study%20%28Study%20of%20an%20Egyptian%20Girl%29.jpg?width=600",
+   "focal_point": [
+    0.48,
+    0.16
+   ]
   },
   {
    "title": "Venetian Glass Workers",
@@ -318,7 +398,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Venetian%20Glass%20Workers%20-%201933.1217%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Venetian%20Glass%20Workers%20-%201933.1217%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Venetian%20Glass%20Workers%20-%201933.1217%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.86,
+    0.46
+   ]
   },
   {
    "title": "Thistles",
@@ -333,7 +417,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Thistles%20-%201996.446%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Thistles%20-%201996.446%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Thistles%20-%201996.446%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Mrs. Charles Gifford Dyer (Mary Anthony)",
@@ -348,7 +436,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chicago%20art%20inst%20singer%20sargent%20m%20dyer.JPG?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chicago%20art%20inst%20singer%20sargent%20m%20dyer.JPG?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chicago%20art%20inst%20singer%20sargent%20m%20dyer.JPG?width=600",
+   "focal_point": [
+    0.52,
+    0.26
+   ]
   },
   {
    "title": "Rehearsal of the Pasdeloup Orchestra at the Cirque d'Hiver",
@@ -363,7 +455,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Rehearsal%20of%20the%20Pasdeloup%20Orchestra%20at%20the%20Cirque%20d%27Hiver%20-%2081.1972%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Rehearsal%20of%20the%20Pasdeloup%20Orchestra%20at%20the%20Cirque%20d%27Hiver%20-%2081.1972%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Rehearsal%20of%20the%20Pasdeloup%20Orchestra%20at%20the%20Cirque%20d%27Hiver%20-%2081.1972%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.62,
+    0.78
+   ]
   },
   {
    "title": "Mrs. Charles Deering (Marion Denison Whipple)",
@@ -378,7 +474,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20Charles%20Deering%20%28Marion%20Denison%20Whipple%29%20-%209.2002%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20Charles%20Deering%20%28Marion%20Denison%20Whipple%29%20-%209.2002%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20Charles%20Deering%20%28Marion%20Denison%20Whipple%29%20-%209.2002%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.27
+   ]
   }
  ]
 }

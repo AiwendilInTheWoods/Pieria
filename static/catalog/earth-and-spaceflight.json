@@ -18,7 +18,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Blue%20Marble%2C%20AS17-148-22727.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Blue%20Marble%2C%20AS17-148-22727.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Blue%20Marble%2C%20AS17-148-22727.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Earthrise",
@@ -33,7 +37,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earthrise%20over%20Compton%20crater%20-LRO%20full%20res.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earthrise%20over%20Compton%20crater%20-LRO%20full%20res.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earthrise%20over%20Compton%20crater%20-LRO%20full%20res.jpg?width=600",
+   "focal_point": [
+    0.47,
+    0.27
+   ]
   },
   {
    "title": "Pale Blue Dot",
@@ -48,7 +56,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pale%20Blue%20Dot%20from%20Voyager%201%20-%20PIA23645.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pale%20Blue%20Dot%20from%20Voyager%201%20-%20PIA23645.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pale%20Blue%20Dot%20from%20Voyager%201%20-%20PIA23645.png?width=600",
+   "focal_point": [
+    0.62,
+    0.5
+   ]
   },
   {
    "title": "Buzz Aldrin on the Moon Apollo 11",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Buzz%20Aldrin%27s%20bootprint%20on%20the%20Moon%2C%20AS11-40-5877%20%2821472308758%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Buzz%20Aldrin%27s%20bootprint%20on%20the%20Moon%2C%20AS11-40-5877%20%2821472308758%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Buzz%20Aldrin%27s%20bootprint%20on%20the%20Moon%2C%20AS11-40-5877%20%2821472308758%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.6
+   ]
   },
   {
    "title": "Bruce McCandless spacewalk",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/STS41B-35-1613%20-%20Bruce%20McCandless%20II%20during%20EVA%20%28Raw%20scan%29.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/STS41B-35-1613%20-%20Bruce%20McCandless%20II%20during%20EVA%20%28Raw%20scan%29.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/STS41B-35-1613%20-%20Bruce%20McCandless%20II%20during%20EVA%20%28Raw%20scan%29.tif?width=600",
+   "focal_point": [
+    0.63,
+    0.26
+   ]
   },
   {
    "title": "Saturn from Cassini",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/PIA05380%20-%20Saturn%20from%20Cassini%20Orbiter%20%28square%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/PIA05380%20-%20Saturn%20from%20Cassini%20Orbiter%20%28square%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/PIA05380%20-%20Saturn%20from%20Cassini%20Orbiter%20%28square%29.jpg?width=600",
+   "focal_point": [
+    0.48,
+    0.53
+   ]
   },
   {
    "title": "The Earth seen from Apollo 17",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Earth%20seen%20from%20Apollo%2017.tiff?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Earth%20seen%20from%20Apollo%2017.tiff?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Earth%20seen%20from%20Apollo%2017.tiff?width=600",
+   "focal_point": [
+    0.5,
+    0.47
+   ]
   },
   {
    "title": "Apollo 11 bootprint on the Moon",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%2011%20bootprint.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%2011%20bootprint.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%2011%20bootprint.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.56
+   ]
   },
   {
    "title": "Blue Marble 2012",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Marble%202002.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Marble%202002.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Marble%202002.png?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "The Day the Earth Smiled",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Day%20the%20Earth%20Smiled-PIA17172.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Day%20the%20Earth%20Smiled-PIA17172.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Day%20the%20Earth%20Smiled-PIA17172.png?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Apollo 8 Crew Portrait",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%208%20primary%20crew%20and%20backup%20crew%20portrait%20%28jsc2008e049010%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%208%20primary%20crew%20and%20backup%20crew%20portrait%20%28jsc2008e049010%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%208%20primary%20crew%20and%20backup%20crew%20portrait%20%28jsc2008e049010%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.62
+   ]
   },
   {
    "title": "Apollo 11 Lunar Module Eagle",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%2011%20lunar%20module.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%2011%20lunar%20module.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo%2011%20lunar%20module.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.71
+   ]
   },
   {
    "title": "Curiosity Self-Portrait at Mars",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/PIA19142%20Curiosity%20Self-Portrait%20at%20%27Mojave%27%20Site%20on%20Mount%20Sharp.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/PIA19142%20Curiosity%20Self-Portrait%20at%20%27Mojave%27%20Site%20on%20Mount%20Sharp.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/PIA19142%20Curiosity%20Self-Portrait%20at%20%27Mojave%27%20Site%20on%20Mount%20Sharp.jpg?width=600",
+   "focal_point": [
+    0.53,
+    0.42
+   ]
   },
   {
    "title": "Perseverance Selfie with Ingenuity",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/FnIhdCQXoAAD6-z%20Perseverance%27s%20Three%20Forks%20Sample%20Depot%20Selfie%20containing%20ingenuity.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/FnIhdCQXoAAD6-z%20Perseverance%27s%20Three%20Forks%20Sample%20Depot%20Selfie%20containing%20ingenuity.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/FnIhdCQXoAAD6-z%20Perseverance%27s%20Three%20Forks%20Sample%20Depot%20Selfie%20containing%20ingenuity.jpg?width=600",
+   "focal_point": [
+    0.34,
+    0.52
+   ]
   },
   {
    "title": "Pluto New Horizons",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/This%20image%2C%20taken%20by%20New%20Horizons%20on%20July%2014%2C%202015%2C%20is%20the%20most%20accurate%20natural%20color%20image%20of%20Pluto.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/This%20image%2C%20taken%20by%20New%20Horizons%20on%20July%2014%2C%202015%2C%20is%20the%20most%20accurate%20natural%20color%20image%20of%20Pluto.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/This%20image%2C%20taken%20by%20New%20Horizons%20on%20July%2014%2C%202015%2C%20is%20the%20most%20accurate%20natural%20color%20image%20of%20Pluto.png?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Jupiter's Great Red Spot Juno",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jupiter%27s%20Great%20Red%20Spot%20-%20Juno%20Perijove%207.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jupiter%27s%20Great%20Red%20Spot%20-%20Juno%20Perijove%207.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jupiter%27s%20Great%20Red%20Spot%20-%20Juno%20Perijove%207.png?width=600",
+   "focal_point": [
+    0.45,
+    0.4
+   ]
   },
   {
    "title": "Voyager Family Portrait",
@@ -258,7 +322,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Family%20portrait%20%28Voyager%201%29.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Family%20portrait%20%28Voyager%201%29.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Family%20portrait%20%28Voyager%201%29.png?width=600",
+   "focal_point": [
+    0.1,
+    0.52
+   ]
   },
   {
    "title": "Hubble Space Telescope in Orbit",
@@ -273,7 +341,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20Webb%20Space%20Telescope%20Mirror37.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20Webb%20Space%20Telescope%20Mirror37.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20Webb%20Space%20Telescope%20Mirror37.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.42
+   ]
   }
  ]
 }

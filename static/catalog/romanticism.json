@@ -18,7 +18,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Distant%20View%20of%20Niagara%20Falls%201830%20Thomas%20Cole.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Distant%20View%20of%20Niagara%20Falls%201830%20Thomas%20Cole.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Distant%20View%20of%20Niagara%20Falls%201830%20Thomas%20Cole.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "New England Scenery",
@@ -33,7 +37,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Cole%20-%20New%20England%20Scenery%20-%201900.558%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Cole%20-%20New%20England%20Scenery%20-%201900.558%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Cole%20-%20New%20England%20Scenery%20-%201900.558%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.55
+   ]
   },
   {
    "title": "A Friendly Warning",
@@ -48,7 +56,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Hicks%20-%20A%20Friendly%20Warning%20-%201967.174%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Hicks%20-%20A%20Friendly%20Warning%20-%201967.174%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Hicks%20-%20A%20Friendly%20Warning%20-%201967.174%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.32
+   ]
   },
   {
    "title": "Capture of the Tripoli by the Enterprise",
@@ -63,7 +75,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Birch%20-%20Capture%20of%20the%20Tripoli%20by%20the%20Enterprise%20-%201991.30%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Birch%20-%20Capture%20of%20the%20Tripoli%20by%20the%20Enterprise%20-%201991.30%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Birch%20-%20Capture%20of%20the%20Tripoli%20by%20the%20Enterprise%20-%201991.30%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.55
+   ]
   },
   {
    "title": "Pergola with Oranges",
@@ -78,7 +94,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Fearnley%20-%20Pergola%20with%20Oranges%20-%20Art%20Institute%20of%20Chicago%20-%202002.599.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Fearnley%20-%20Pergola%20with%20Oranges%20-%20Art%20Institute%20of%20Chicago%20-%202002.599.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Fearnley%20-%20Pergola%20with%20Oranges%20-%20Art%20Institute%20of%20Chicago%20-%202002.599.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.6
+   ]
   },
   {
    "title": "Coming Squall (Nahant Beach with a Summer Shower)",
@@ -93,7 +113,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Coming%20Squall%20%28Nahant%20Beach%20with%20a%20Summer%20Shower%29%20-%202005.159%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Coming%20Squall%20%28Nahant%20Beach%20with%20a%20Summer%20Shower%29%20-%202005.159%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Coming%20Squall%20%28Nahant%20Beach%20with%20a%20Summer%20Shower%29%20-%202005.159%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.38,
+    0.57
+   ]
   },
   {
    "title": "Apollo and Marsyas",
@@ -108,7 +132,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hans%20Thoma%20-%20Apollo%20und%20Marsyas.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hans%20Thoma%20-%20Apollo%20und%20Marsyas.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hans%20Thoma%20-%20Apollo%20und%20Marsyas.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.68
+   ]
   },
   {
    "title": "Study for \"William Rush Carving His Allegorical Figure of the Schuylkill River\"",
@@ -123,7 +151,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Study%20for%20%22William%20Rush%20Carving%20His%20Allegorical%20Figure%20of%20the%20Schuylkill%20River%22%20-%201968.91%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Study%20for%20%22William%20Rush%20Carving%20His%20Allegorical%20Figure%20of%20the%20Schuylkill%20River%22%20-%201968.91%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Study%20for%20%22William%20Rush%20Carving%20His%20Allegorical%20Figure%20of%20the%20Schuylkill%20River%22%20-%201968.91%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.46,
+    0.33
+   ]
   },
   {
    "title": "Summit of the Sierras",
@@ -138,7 +170,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Summit%20of%20the%20Sierras%20by%20Thomas%20Moran.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Summit%20of%20the%20Sierras%20by%20Thomas%20Moran.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Summit%20of%20the%20Sierras%20by%20Thomas%20Moran.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.28
+   ]
   },
   {
    "title": "Portrait of Mary Adeline Williams",
@@ -153,7 +189,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Portrait%20of%20Mary%20Adeline%20Williams%20-%201939.548%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Portrait%20of%20Mary%20Adeline%20Williams%20-%201939.548%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Portrait%20of%20Mary%20Adeline%20Williams%20-%201939.548%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.28
+   ]
   },
   {
    "title": "Riter Fitzgerald",
@@ -168,7 +208,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Riter%20Fitzgerald%20-%201950.1511%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Riter%20Fitzgerald%20-%201950.1511%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Eakins%20-%20Riter%20Fitzgerald%20-%201950.1511%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.38,
+    0.3
+   ]
   },
   {
    "title": "Sarah Dupont",
@@ -183,7 +227,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mrs.%20Philip%20Dupont%2C%20c.%201778%2C%20by%20Thomas%20Gainsborough%20-%20Art%20Institute%20of%20Chicago%20-%20DSC09480.JPG?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mrs.%20Philip%20Dupont%2C%20c.%201778%2C%20by%20Thomas%20Gainsborough%20-%20Art%20Institute%20of%20Chicago%20-%20DSC09480.JPG?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mrs.%20Philip%20Dupont%2C%20c.%201778%2C%20by%20Thomas%20Gainsborough%20-%20Art%20Institute%20of%20Chicago%20-%20DSC09480.JPG?width=600",
+   "focal_point": [
+    0.48,
+    0.36
+   ]
   },
   {
    "title": "Landscape with Dog",
@@ -198,7 +246,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Landscape%20with%20Dog%20-%201990.485%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Landscape%20with%20Dog%20-%201990.485%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Doughty%20-%20Landscape%20with%20Dog%20-%201990.485%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.47,
+    0.47
+   ]
   },
   {
    "title": "Mrs. Klapp (Anna Milnor)",
@@ -213,7 +265,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Mrs.%20Klapp%20%28Anna%20Milnor%29%20-%201950.1362%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Mrs.%20Klapp%20%28Anna%20Milnor%29%20-%201950.1362%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Mrs.%20Klapp%20%28Anna%20Milnor%29%20-%201950.1362%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.48,
+    0.25
+   ]
   },
   {
    "title": "Dr. Joseph Klapp",
@@ -228,7 +284,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Dr.%20Joseph%20Klapp%20-%201950.1363%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Dr.%20Joseph%20Klapp%20-%201950.1363%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Thomas%20Sully%20-%20Dr.%20Joseph%20Klapp%20-%201950.1363%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.46,
+    0.27
+   ]
   },
   {
    "title": "Isabella Wolff",
@@ -243,7 +303,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Thomas%20Lawrence%20-%20Mrs.%20Jens%20Wolff%20-%201922.4461%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Thomas%20Lawrence%20-%20Mrs.%20Jens%20Wolff%20-%201922.4461%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Thomas%20Lawrence%20-%20Mrs.%20Jens%20Wolff%20-%201922.4461%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.3
+   ]
   },
   {
    "title": "Fishing Boats with Hucksters Bargaining for Fish",
@@ -258,7 +322,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Fishing%20Boats%20with%20Hucksters%20Bargaining%20for%20Fish%20-%201922.4472%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Fishing%20Boats%20with%20Hucksters%20Bargaining%20for%20Fish%20-%201922.4472%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Fishing%20Boats%20with%20Hucksters%20Bargaining%20for%20Fish%20-%201922.4472%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.27,
+    0.5
+   ]
   },
   {
    "title": "Valley of Aosta: Snowstorm, Avalanche, and Thunderstorm",
@@ -273,7 +341,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Valley%20of%20Aosta%2C%20Snowstorm%2C%20Avalanche%2C%20and%20Thunderstorm%20-%201947.513%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Valley%20of%20Aosta%2C%20Snowstorm%2C%20Avalanche%2C%20and%20Thunderstorm%20-%201947.513%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joseph%20Mallord%20William%20Turner%20-%20Valley%20of%20Aosta%2C%20Snowstorm%2C%20Avalanche%2C%20and%20Thunderstorm%20-%201947.513%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.35
+   ]
   },
   {
    "title": "Study for \"An Aragonese Smuggler\"",
@@ -288,7 +360,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/William%20Turner%20Dannat%20-%20Study%20for%20%22An%20Aragonese%20Smuggler%22%20-%201887.231%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/William%20Turner%20Dannat%20-%20Study%20for%20%22An%20Aragonese%20Smuggler%22%20-%201887.231%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/William%20Turner%20Dannat%20-%20Study%20for%20%22An%20Aragonese%20Smuggler%22%20-%201887.231%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.62,
+    0.69
+   ]
   }
  ]
 }

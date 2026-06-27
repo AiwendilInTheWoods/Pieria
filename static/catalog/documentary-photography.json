@@ -18,7 +18,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Migrant%20Mother%20by%20Dorothea%20Lange%20%28original%29.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Migrant%20Mother%20by%20Dorothea%20Lange%20%28original%29.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Migrant%20Mother%20by%20Dorothea%20Lange%20%28original%29.tif?width=600",
+   "focal_point": [
+    0.47,
+    0.28
+   ]
   },
   {
    "title": "Toward Los Angeles",
@@ -33,7 +37,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toward%20Los%20Angeles%2C%20California%2C%208b31801a.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toward%20Los%20Angeles%2C%20California%2C%208b31801a.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toward%20Los%20Angeles%2C%20California%2C%208b31801a.tif?width=600",
+   "focal_point": [
+    0.32,
+    0.45
+   ]
   },
   {
    "title": "Tractored Out, Childress County Texas",
@@ -48,7 +56,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Power%20farming%20displaces%20tenants%2C%20Childress%20County%2C%20Texas%20ppmsc00232u.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Power%20farming%20displaces%20tenants%2C%20Childress%20County%2C%20Texas%20ppmsc00232u.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Power%20farming%20displaces%20tenants%2C%20Childress%20County%2C%20Texas%20ppmsc00232u.jpg?width=600",
+   "focal_point": [
+    0.56,
+    0.36
+   ]
   },
   {
    "title": "The Steerage",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alfred%20Stieglitz%20-%20The%20Steerage%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alfred%20Stieglitz%20-%20The%20Steerage%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alfred%20Stieglitz%20-%20The%20Steerage%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.23
+   ]
   },
   {
    "title": "Floyd Burroughs, cotton sharecropper",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Floyd%20Burroughs%2C%20cotton%20sharecropper.%20Hale%20County%2C%20Alabama%2C%208c52247a.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Floyd%20Burroughs%2C%20cotton%20sharecropper.%20Hale%20County%2C%20Alabama%2C%208c52247a.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Floyd%20Burroughs%2C%20cotton%20sharecropper.%20Hale%20County%2C%20Alabama%2C%208c52247a.tif?width=600",
+   "focal_point": [
+    0.5,
+    0.33
+   ]
   },
   {
    "title": "Allie Mae Burroughs",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Allie%20Mae%20Burroughs%2C%208c52248u.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Allie%20Mae%20Burroughs%2C%208c52248u.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Allie%20Mae%20Burroughs%2C%208c52248u.tif?width=600",
+   "focal_point": [
+    0.48,
+    0.38
+   ]
   },
   {
    "title": "American Gothic, Washington, D.C.",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gordon%20Parks%20-%20American%20Gothic%20full.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gordon%20Parks%20-%20American%20Gothic%20full.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gordon%20Parks%20-%20American%20Gothic%20full.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   },
   {
    "title": "Power house mechanic working on steam pump",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lewis%20Hine%20Power%20house%20mechanic%20working%20on%20steam%20pump.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lewis%20Hine%20Power%20house%20mechanic%20working%20on%20steam%20pump.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lewis%20Hine%20Power%20house%20mechanic%20working%20on%20steam%20pump.jpg?width=600",
+   "focal_point": [
+    0.68,
+    0.5
+   ]
   },
   {
    "title": "Breaker Boys, Pennsylvania",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pennsylvania%20breaker%20boys%201911.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pennsylvania%20breaker%20boys%201911.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pennsylvania%20breaker%20boys%201911.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.55
+   ]
   },
   {
    "title": "Spinner in a Cotton Mill",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lewis%20Hine%2C%20Spinner%20in%20Globe%20Cotton%20Mill%2C%20Augusta%2C%20Georgia%2C%201909.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lewis%20Hine%2C%20Spinner%20in%20Globe%20Cotton%20Mill%2C%20Augusta%2C%20Georgia%2C%201909.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lewis%20Hine%2C%20Spinner%20in%20Globe%20Cotton%20Mill%2C%20Augusta%2C%20Georgia%2C%201909.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.27
+   ]
   },
   {
    "title": "Bandit's Roost",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacob%20Riis%20-%20Bandits%27%20Roost.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacob%20Riis%20-%20Bandits%27%20Roost.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacob%20Riis%20-%20Bandits%27%20Roost.jpg?width=600",
+   "focal_point": [
+    0.62,
+    0.33
+   ]
   },
   {
    "title": "A Harvest of Death, Gettysburg",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20harvest%20of%20death%2C%20Gettysburg%2C%20Pennsylvania%20-%20negative%20by%20T.H.%20O%27Sullivan%3B%20positive%20by%20A%20Gardner.%20LCCN2006685384.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20harvest%20of%20death%2C%20Gettysburg%2C%20Pennsylvania%20-%20negative%20by%20T.H.%20O%27Sullivan%3B%20positive%20by%20A%20Gardner.%20LCCN2006685384.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20harvest%20of%20death%2C%20Gettysburg%2C%20Pennsylvania%20-%20negative%20by%20T.H.%20O%27Sullivan%3B%20positive%20by%20A%20Gardner.%20LCCN2006685384.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.53
+   ]
   },
   {
    "title": "Home of a Rebel Sharpshooter",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Home%20of%20a%20rebel%20sharpshooter%20-%20Alex.%20Gardner%2C%20photographer.%20LCCN2006692502.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Home%20of%20a%20rebel%20sharpshooter%20-%20Alex.%20Gardner%2C%20photographer.%20LCCN2006692502.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Home%20of%20a%20rebel%20sharpshooter%20-%20Alex.%20Gardner%2C%20photographer.%20LCCN2006692502.tif?width=600",
+   "focal_point": [
+    0.45,
+    0.58
+   ]
   },
   {
    "title": "The Dead of Antietam",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/View%20on%20battle%20field%20of%20Antietam%20near%20Sherrick%27s%20house%2C%20where%20the%2079th%20New%20York%20Volunteers%20fought%20after%20they%20crossed%20the%20creek.%20Group%20of%20dead%20Confederates%2C%20by%20Gardner%2C%20Alexander%2C%201821-1882.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/View%20on%20battle%20field%20of%20Antietam%20near%20Sherrick%27s%20house%2C%20where%20the%2079th%20New%20York%20Volunteers%20fought%20after%20they%20crossed%20the%20creek.%20Group%20of%20dead%20Confederates%2C%20by%20Gardner%2C%20Alexander%2C%201821-1882.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/View%20on%20battle%20field%20of%20Antietam%20near%20Sherrick%27s%20house%2C%20where%20the%2079th%20New%20York%20Volunteers%20fought%20after%20they%20crossed%20the%20creek.%20Group%20of%20dead%20Confederates%2C%20by%20Gardner%2C%20Alexander%2C%201821-1882.jpg?width=600",
+   "focal_point": [
+    0.28,
+    0.5
+   ]
   },
   {
    "title": "Ancient Ruins in the Canyon de Chelly",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Timothy%20O%27Sullivan%2C%20Anasazi%20ruins%20%28the%20%22White%20House%22%29%2C%20Canyon%20de%20Chelly%2C%20Arizona%2C%201873.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Timothy%20O%27Sullivan%2C%20Anasazi%20ruins%20%28the%20%22White%20House%22%29%2C%20Canyon%20de%20Chelly%2C%20Arizona%2C%201873.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Timothy%20O%27Sullivan%2C%20Anasazi%20ruins%20%28the%20%22White%20House%22%29%2C%20Canyon%20de%20Chelly%2C%20Arizona%2C%201873.jpg?width=600",
+   "focal_point": [
+    0.27,
+    0.62
+   ]
   },
   {
    "title": "Cape Horn near Celilo",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cape%20Horn%2C%20near%20Celilo%2C%20Columbia%20River%2C%20by%20Watkins%2C%20Carleton%20E.%2C%201829-1916%203.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cape%20Horn%2C%20near%20Celilo%2C%20Columbia%20River%2C%20by%20Watkins%2C%20Carleton%20E.%2C%201829-1916%203.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cape%20Horn%2C%20near%20Celilo%2C%20Columbia%20River%2C%20by%20Watkins%2C%20Carleton%20E.%2C%201829-1916%203.jpg?width=600",
+   "focal_point": [
+    0.27,
+    0.33
+   ]
   },
   {
    "title": "Yosemite Valley from Inspiration Point",
@@ -258,7 +322,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Carleton%20Watkins%20%28American%20-%20Yosemite%20Valley%20from%20Inspiration%20Point%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Carleton%20Watkins%20%28American%20-%20Yosemite%20Valley%20from%20Inspiration%20Point%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Carleton%20Watkins%20%28American%20-%20Yosemite%20Valley%20from%20Inspiration%20Point%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.27,
+    0.32
+   ]
   },
   {
    "title": "Mountain of the Holy Cross",
@@ -273,7 +341,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mountain%20of%20the%20Holy%20Cross%2C%20by%20Jackson%2C%20William%20Henry%2C%201843-1942.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mountain%20of%20the%20Holy%20Cross%2C%20by%20Jackson%2C%20William%20Henry%2C%201843-1942.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mountain%20of%20the%20Holy%20Cross%2C%20by%20Jackson%2C%20William%20Henry%2C%201843-1942.jpg?width=600",
+   "focal_point": [
+    0.33,
+    0.31
+   ]
   },
   {
    "title": "Grand Canyon of the Yellowstone",
@@ -288,7 +360,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Grand%20Canyon%20of%20the%20Yellowstone%20River%20LCCN95514179.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Grand%20Canyon%20of%20the%20Yellowstone%20River%20LCCN95514179.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Grand%20Canyon%20of%20the%20Yellowstone%20River%20LCCN95514179.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "The Horse in Motion",
@@ -303,7 +379,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20horse%20in%20motion%2C%20illus.%20by%20Muybridge.%20%22Sallie%20Gardner%2C%22%20owned%20by%20Leland%20Stanford%2C%20running%20at%20a%201-40%20gait%20over%20the%20Palo%20Alto%20track%2C%2019%20June%201878-%202%20frames%20showing%20diagram%20of%20foot%20LCCN2007678037.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20horse%20in%20motion%2C%20illus.%20by%20Muybridge.%20%22Sallie%20Gardner%2C%22%20owned%20by%20Leland%20Stanford%2C%20running%20at%20a%201-40%20gait%20over%20the%20Palo%20Alto%20track%2C%2019%20June%201878-%202%20frames%20showing%20diagram%20of%20foot%20LCCN2007678037.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20horse%20in%20motion%2C%20illus.%20by%20Muybridge.%20%22Sallie%20Gardner%2C%22%20owned%20by%20Leland%20Stanford%2C%20running%20at%20a%201-40%20gait%20over%20the%20Palo%20Alto%20track%2C%2019%20June%201878-%202%20frames%20showing%20diagram%20of%20foot%20LCCN2007678037.tif?width=600",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   },
   {
    "title": "Boulevard du Temple",
@@ -318,7 +398,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Boulevard%20du%20Temple%20by%20Daguerre.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Boulevard%20du%20Temple%20by%20Daguerre.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Boulevard%20du%20Temple%20by%20Daguerre.jpg?width=600",
+   "focal_point": [
+    0.21,
+    0.78
+   ]
   },
   {
    "title": "The Open Door",
@@ -333,7 +417,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20open%20door%20-%20btv1b10023869v%20%281%20of%202%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20open%20door%20-%20btv1b10023869v%20%281%20of%202%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20open%20door%20-%20btv1b10023869v%20%281%20of%202%29.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.5
+   ]
   },
   {
    "title": "View from the Window at Le Gras",
@@ -348,7 +436,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/View%20from%20the%20Window%20at%20Le%20Gras%2C%20Joseph%20Nic%C3%A9phore%20Ni%C3%A9pce%2C%20uncompressed%20UMN%20source.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/View%20from%20the%20Window%20at%20Le%20Gras%2C%20Joseph%20Nic%C3%A9phore%20Ni%C3%A9pce%2C%20uncompressed%20UMN%20source.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/View%20from%20the%20Window%20at%20Le%20Gras%2C%20Joseph%20Nic%C3%A9phore%20Ni%C3%A9pce%2C%20uncompressed%20UMN%20source.png?width=600",
+   "focal_point": [
+    0.45,
+    0.5
+   ]
   },
   {
    "title": "Geronimo",
@@ -363,7 +455,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Geronimo%20by%20Edward%20Curtis%2C%201905.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Geronimo%20by%20Edward%20Curtis%2C%201905.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Geronimo%20by%20Edward%20Curtis%2C%201905.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   }
  ]
 }

@@ -18,7 +18,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/es/original/DT8910.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/es/web-large/DT8910.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/es/web-large/DT8910.jpg",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Sabine Houdon (1787–1836)",
@@ -33,7 +37,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/es/original/DP242660.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/es/web-large/DP242660.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/es/web-large/DP242660.jpg",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   },
   {
    "title": "Damascus Room",
@@ -48,7 +56,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/is/original/DP240367.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/is/web-large/DP240367.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/is/web-large/DP240367.jpg",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "The Death of Socrates",
@@ -63,7 +75,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-13139-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-13139-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-13139-001.jpg",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   },
   {
    "title": "Portrait of a Woman, Possibly a Nun of San Secondo; (verso) Scene in Grisaille",
@@ -78,7 +94,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/rl/original/DP221483.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP221483.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP221483.jpg",
+   "focal_point": [
+    0.45,
+    0.42
+   ]
   },
   {
    "title": "Portrait of Alvise Contarini(?); (verso) A Tethered Roebuck",
@@ -93,7 +113,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/rl/original/DP221485.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP221485.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP221485.jpg",
+   "focal_point": [
+    0.5,
+    0.38
+   ]
   },
   {
    "title": "Oedipus and the Sphinx",
@@ -108,7 +132,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-14201-023.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14201-023.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14201-023.jpg",
+   "focal_point": [
+    0.5,
+    0.33
+   ]
   },
   {
    "title": "The Jabach Family",
@@ -123,7 +151,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP352819.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP352819.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP352819.jpg",
+   "focal_point": [
+    0.42,
+    0.4
+   ]
   },
   {
    "title": "Tommaso di Folco Portinari (1428–1501); Maria Portinari (Maria Maddalena Baroncelli, born 1456)",
@@ -138,7 +170,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-44362-005.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-44362-005.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-44362-005.jpg",
+   "focal_point": [
+    0.5,
+    0.33
+   ]
   },
   {
    "title": "Standing Figure with Jeweled Headdress",
@@ -153,7 +189,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/is/original/DP235240.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/is/web-large/DP235240.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/is/web-large/DP235240.jpg",
+   "focal_point": [
+    0.5,
+    0.18
+   ]
   },
   {
    "title": "Bronze figure of a boy in Eastern dress",
@@ -168,7 +208,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/gr/original/DP-39819-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP-39819-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP-39819-001.jpg",
+   "focal_point": [
+    0.48,
+    0.23
+   ]
   },
   {
    "title": "Bronze statuette of a philosopher on a lamp stand",
@@ -183,7 +227,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/gr/original/DP337221.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP337221.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP337221.jpg",
+   "focal_point": [
+    0.52,
+    0.16
+   ]
   },
   {
    "title": "Marble torso of a boy",
@@ -198,7 +246,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/gr/original/DP-18346-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP-18346-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP-18346-001.jpg",
+   "focal_point": [
+    0.45,
+    0.4
+   ]
   },
   {
    "title": "Limestone statue of Aphrodite holding winged Eros",
@@ -213,7 +265,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/gr/original/DP-17234-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP-17234-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP-17234-001.jpg",
+   "focal_point": [
+    0.48,
+    0.22
+   ]
   },
   {
    "title": "The Horse Fair",
@@ -228,7 +284,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-23550-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-23550-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-23550-001.jpg",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   },
   {
    "title": "The Fieschi Morgan Staurotheke",
@@ -243,7 +303,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/md/original/DT119.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/md/web-large/DT119.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/md/web-large/DT119.jpg",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   },
   {
    "title": "Tobatsu Bishamonten",
@@ -258,7 +322,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/as/original/DP-27915-006.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/as/web-large/DP-27915-006.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/as/web-large/DP-27915-006.jpg",
+   "focal_point": [
+    0.46,
+    0.21
+   ]
   },
   {
    "title": "Self-Portrait",
@@ -273,7 +341,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP323414.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP323414.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP323414.jpg",
+   "focal_point": [
+    0.5,
+    0.35
+   ]
   },
   {
    "title": "Uraeus fitting from shrine",
@@ -288,7 +360,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/eg/original/41.160.110_EGDP014920.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/41.160.110_EGDP014920.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/41.160.110_EGDP014920.jpg",
+   "focal_point": [
+    0.45,
+    0.2
+   ]
   },
   {
    "title": "Marble portrait of the co-emperor Lucius Verus",
@@ -303,7 +379,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/gr/original/DP337237.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP337237.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP337237.jpg",
+   "focal_point": [
+    0.43,
+    0.38
+   ]
   },
   {
    "title": "Marble portrait bust of a woman",
@@ -318,7 +398,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/gr/original/DP345017.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP345017.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/gr/web-large/DP345017.jpg",
+   "focal_point": [
+    0.45,
+    0.32
+   ]
   },
   {
    "title": "The Storm",
@@ -333,7 +417,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DT11964.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DT11964.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DT11964.jpg",
+   "focal_point": [
+    0.45,
+    0.42
+   ]
   },
   {
    "title": "Miniature tabard",
@@ -348,7 +436,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ao/original/DP107700.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ao/web-large/DP107700.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ao/web-large/DP107700.jpg",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   },
   {
    "title": "Hercules and Achelous",
@@ -363,7 +455,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/es/original/DP234110.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/es/web-large/DP234110.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/es/web-large/DP234110.jpg",
+   "focal_point": [
+    0.42,
+    0.28
+   ]
   },
   {
    "title": "Venus de Milo",
@@ -378,7 +474,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ancient%20Greek%20Marble%20Aphrodite%20of%20Milos%20%28Venus%20de%20Milo%29%2C%20130-100%20BC%20%2828198787402%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ancient%20Greek%20Marble%20Aphrodite%20of%20Milos%20%28Venus%20de%20Milo%29%2C%20130-100%20BC%20%2828198787402%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ancient%20Greek%20Marble%20Aphrodite%20of%20Milos%20%28Venus%20de%20Milo%29%2C%20130-100%20BC%20%2828198787402%29.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.15
+   ]
   },
   {
    "title": "Winged Victory of Samothrace",
@@ -393,7 +493,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winged%20Victory%20of%20Samothrace%2C%20Marble%2C%20c.%20190%20BC%2C%20Louvre%2C%20Paris%20%2828265400246%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winged%20Victory%20of%20Samothrace%2C%20Marble%2C%20c.%20190%20BC%2C%20Louvre%2C%20Paris%20%2828265400246%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winged%20Victory%20of%20Samothrace%2C%20Marble%2C%20c.%20190%20BC%2C%20Louvre%2C%20Paris%20%2828265400246%29.jpg?width=600",
+   "focal_point": [
+    0.43,
+    0.27
+   ]
   },
   {
    "title": "Laocoön and His Sons",
@@ -408,7 +512,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Laoco%C3%B6n%20and%20his%20sons%20group.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Laoco%C3%B6n%20and%20his%20sons%20group.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Laoco%C3%B6n%20and%20his%20sons%20group.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.13
+   ]
   },
   {
    "title": "Pietà",
@@ -423,7 +531,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo%27s%20Piet%C3%A0%20Saint%20Peter%27s%20Basilica%20Vatican%20City.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo%27s%20Piet%C3%A0%20Saint%20Peter%27s%20Basilica%20Vatican%20City.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo%27s%20Piet%C3%A0%20Saint%20Peter%27s%20Basilica%20Vatican%20City.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.22
+   ]
   },
   {
    "title": "Moses",
@@ -438,7 +550,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Moses%20Michelangelo%202014%2001.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Moses%20Michelangelo%202014%2001.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Moses%20Michelangelo%202014%2001.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.36
+   ]
   },
   {
    "title": "Discobolus",
@@ -453,7 +569,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Discobolus%20face%20front.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Discobolus%20face%20front.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Discobolus%20face%20front.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   },
   {
    "title": "The Thinker",
@@ -468,7 +588,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Auguste%20Rodin%20-%20The%20Thinker%20-%201917.42%20-%20Cleveland%20Museum%20of%20Art.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Auguste%20Rodin%20-%20The%20Thinker%20-%201917.42%20-%20Cleveland%20Museum%20of%20Art.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Auguste%20Rodin%20-%20The%20Thinker%20-%201917.42%20-%20Cleveland%20Museum%20of%20Art.tif?width=600",
+   "focal_point": [
+    0.68,
+    0.27
+   ]
   },
   {
    "title": "The Kiss",
@@ -483,7 +607,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rodin%20The%20Kiss%2001.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rodin%20The%20Kiss%2001.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rodin%20The%20Kiss%2001.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.14
+   ]
   }
  ]
 }

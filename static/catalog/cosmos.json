@@ -18,7 +18,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pillars%20of%20Creation%20%28NIRCam%20Image%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pillars%20of%20Creation%20%28NIRCam%20Image%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pillars%20of%20Creation%20%28NIRCam%20Image%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Webb's First Deep Field",
@@ -33,7 +37,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Webb%27s%20First%20Deep%20Field%20%28MIRI%20and%20NIRCam%20Side-by-Side%20Compass%20Image%29%20%282022-035-01G7DDWW7FSRX0GAP43WFZ9JNH%29.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Webb%27s%20First%20Deep%20Field%20%28MIRI%20and%20NIRCam%20Side-by-Side%20Compass%20Image%29%20%282022-035-01G7DDWW7FSRX0GAP43WFZ9JNH%29.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Webb%27s%20First%20Deep%20Field%20%28MIRI%20and%20NIRCam%20Side-by-Side%20Compass%20Image%29%20%282022-035-01G7DDWW7FSRX0GAP43WFZ9JNH%29.png?width=600",
+   "focal_point": [
+    0.72,
+    0.5
+   ]
   },
   {
    "title": "Cosmic Cliffs Carina Nebula",
@@ -48,7 +56,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22Cosmic%20Cliffs%22%20in%20the%20Carina%20Nebula%20%28NIRCam%20Compass%20Image%29%20%282022-031%29.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22Cosmic%20Cliffs%22%20in%20the%20Carina%20Nebula%20%28NIRCam%20Compass%20Image%29%20%282022-031%29.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22Cosmic%20Cliffs%22%20in%20the%20Carina%20Nebula%20%28NIRCam%20Compass%20Image%29%20%282022-031%29.png?width=600",
+   "focal_point": [
+    0.4,
+    0.45
+   ]
   },
   {
    "title": "Hubble Ultra Deep Field",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble%20ultra%20deep%20field%20high%20rez%20edit1.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble%20ultra%20deep%20field%20high%20rez%20edit1.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble%20ultra%20deep%20field%20high%20rez%20edit1.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Sombrero Galaxy",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/M104%20ngc4594%20sombrero%20galaxy%20hi-res.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/M104%20ngc4594%20sombrero%20galaxy%20hi-res.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/M104%20ngc4594%20sombrero%20galaxy%20hi-res.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.52
+   ]
   },
   {
    "title": "Crab Nebula",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Crab%20Nebula.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Crab%20Nebula.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Crab%20Nebula.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.5
+   ]
   },
   {
    "title": "Horsehead Nebula",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Horsehead%20flame%20nebula%20logoga.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Horsehead%20flame%20nebula%20logoga.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Horsehead%20flame%20nebula%20logoga.jpg?width=600",
+   "focal_point": [
+    0.56,
+    0.46
+   ]
   },
   {
    "title": "Andromeda Galaxy",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Andromeda%20Galaxy%20Hubble%20M31Mosaic%202025%2042208x9870.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Andromeda%20Galaxy%20Hubble%20M31Mosaic%202025%2042208x9870.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Andromeda%20Galaxy%20Hubble%20M31Mosaic%202025%2042208x9870.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.55
+   ]
   },
   {
    "title": "Veil Nebula",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Veil%20Nebula%20Complex%20NGC%206960%2C%206992%2C%206995%2C%206974%2C%206979%2C%20IC%201340.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Veil%20Nebula%20Complex%20NGC%206960%2C%206992%2C%206995%2C%206974%2C%206979%2C%20IC%201340.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Veil%20Nebula%20Complex%20NGC%206960%2C%206992%2C%206995%2C%206974%2C%206979%2C%20IC%201340.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Southern Ring Nebula Webb",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Webb%20Space%20Telescope%20Studies%20the%20Southern%20Ring%20Nebula%20%28SVS31284%20-%2052551161139%20deec534918%20o%29.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Webb%20Space%20Telescope%20Studies%20the%20Southern%20Ring%20Nebula%20%28SVS31284%20-%2052551161139%20deec534918%20o%29.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Webb%20Space%20Telescope%20Studies%20the%20Southern%20Ring%20Nebula%20%28SVS31284%20-%2052551161139%20deec534918%20o%29.png?width=600",
+   "focal_point": [
+    0.28,
+    0.45
+   ]
   },
   {
    "title": "Stephan's Quintet Webb",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Stephan%27s%20Quintet%20taken%20by%20James%20Webb%20Space%20Telescope.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Stephan%27s%20Quintet%20taken%20by%20James%20Webb%20Space%20Telescope.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Stephan%27s%20Quintet%20taken%20by%20James%20Webb%20Space%20Telescope.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.45
+   ]
   },
   {
    "title": "Eagle Nebula",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fairy%20of%20Eagle%20Nebula.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fairy%20of%20Eagle%20Nebula.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fairy%20of%20Eagle%20Nebula.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.2
+   ]
   },
   {
    "title": "Tarantula Nebula Webb",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tarantula%20Nebula%20by%20JWST.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tarantula%20Nebula%20by%20JWST.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tarantula%20Nebula%20by%20JWST.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.55
+   ]
   },
   {
    "title": "Helix Nebula",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Comets%20Kick%20up%20Dust%20in%20Helix%20Nebula%20%28PIA09178%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Comets%20Kick%20up%20Dust%20in%20Helix%20Nebula%20%28PIA09178%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Comets%20Kick%20up%20Dust%20in%20Helix%20Nebula%20%28PIA09178%29.jpg?width=600",
+   "focal_point": [
+    0.47,
+    0.5
+   ]
   },
   {
    "title": "Ring Nebula",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble%20reveals%20the%20Ring%20Nebula%E2%80%99s%20true%20shape.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble%20reveals%20the%20Ring%20Nebula%E2%80%99s%20true%20shape.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hubble%20reveals%20the%20Ring%20Nebula%E2%80%99s%20true%20shape.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.52
+   ]
   },
   {
    "title": "Orion Nebula",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Orion%20Nebula%20-%20Hubble%202006%20mosaic%2018000.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Orion%20Nebula%20-%20Hubble%202006%20mosaic%2018000.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Orion%20Nebula%20-%20Hubble%202006%20mosaic%2018000.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.48
+   ]
   },
   {
    "title": "Pinwheel Galaxy",
@@ -258,7 +322,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pinwheel%20galaxy%20T%C3%B5rva.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pinwheel%20galaxy%20T%C3%B5rva.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pinwheel%20galaxy%20T%C3%B5rva.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.55
+   ]
   },
   {
    "title": "Antennae Galaxies",
@@ -273,7 +341,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Antennae%20galaxies%20xl.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Antennae%20galaxies%20xl.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Antennae%20galaxies%20xl.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.4
+   ]
   },
   {
    "title": "Mystic Mountain",
@@ -288,7 +360,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mystic%20mountaindddd.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mystic%20mountaindddd.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mystic%20mountaindddd.jpg?width=600",
+   "focal_point": [
+    0.47,
+    0.35
+   ]
   },
   {
    "title": "Butterfly Nebula NGC 6302",
@@ -303,7 +379,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/NGC%206302%20Hubble%202009.full.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/NGC%206302%20Hubble%202009.full.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/NGC%206302%20Hubble%202009.full.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Cartwheel Galaxy Webb",
@@ -318,7 +398,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cartwheel%20Galaxy%20%28NIRCam%20and%20MIRI%20Composite%20Image%29%20%28weic2211a%29.jpeg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cartwheel%20Galaxy%20%28NIRCam%20and%20MIRI%20Composite%20Image%29%20%28weic2211a%29.jpeg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cartwheel%20Galaxy%20%28NIRCam%20and%20MIRI%20Composite%20Image%29%20%28weic2211a%29.jpeg?width=600",
+   "focal_point": [
+    0.6,
+    0.55
+   ]
   },
   {
    "title": "Cosmic Reef",
@@ -333,7 +417,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Compass%20Image%20for%20Cosmic%20Reef%20%282020-16-4647%29.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Compass%20Image%20for%20Cosmic%20Reef%20%282020-16-4647%29.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Compass%20Image%20for%20Cosmic%20Reef%20%282020-16-4647%29.png?width=600",
+   "focal_point": [
+    0.55,
+    0.4
+   ]
   }
  ]
 }

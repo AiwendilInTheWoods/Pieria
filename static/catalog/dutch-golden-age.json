@@ -18,7 +18,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-30758-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-30758-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-30758-001.jpg",
+   "focal_point": [
+    0.55,
+    0.32
+   ]
   },
   {
    "title": "Portrait of a Man (\"The Auctioneer\")",
@@ -33,7 +37,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP145912.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145912.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145912.jpg",
+   "focal_point": [
+    0.4,
+    0.28
+   ]
   },
   {
    "title": "Herman Doomer (ca. 1595–1650)",
@@ -48,7 +56,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP145921.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145921.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145921.jpg",
+   "focal_point": [
+    0.48,
+    0.38
+   ]
   },
   {
    "title": "Portrait of Gerard de Lairesse",
@@ -63,7 +75,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/rl/original/DP121332.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP121332.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP121332.jpg",
+   "focal_point": [
+    0.52,
+    0.3
+   ]
   },
   {
    "title": "Self-Portrait",
@@ -78,7 +94,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-16323-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-16323-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-16323-001.jpg",
+   "focal_point": [
+    0.45,
+    0.32
+   ]
   },
   {
    "title": "Hendrickje Stoffels (1626–1663)",
@@ -93,7 +113,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP145920.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145920.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145920.jpg",
+   "focal_point": [
+    0.45,
+    0.38
+   ]
   },
   {
    "title": "Bellona",
@@ -108,7 +132,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP146454.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP146454.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP146454.jpg",
+   "focal_point": [
+    0.45,
+    0.28
+   ]
   },
   {
    "title": "Satire on Art Criticism",
@@ -123,7 +151,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/rl/original/DP359033.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP359033.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP359033.jpg",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "The Last Supper, after Leonardo da Vinci",
@@ -138,7 +170,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/rl/original/DP287735.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP287735.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP287735.jpg",
+   "focal_point": [
+    0.5,
+    0.55
+   ]
   },
   {
    "title": "Man in a Turban",
@@ -153,7 +189,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP146479.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP146479.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP146479.jpg",
+   "focal_point": [
+    0.5,
+    0.27
+   ]
   },
   {
    "title": "Cottage near the Entrance to a Wood",
@@ -168,7 +208,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/rl/original/DP-15506-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP-15506-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP-15506-001.jpg",
+   "focal_point": [
+    0.65,
+    0.55
+   ]
   },
   {
    "title": "Lucas van Uffel (died 1637)",
@@ -183,7 +227,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-27908-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-27908-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-27908-001.jpg",
+   "focal_point": [
+    0.55,
+    0.28
+   ]
   },
   {
    "title": "Cottage among Trees",
@@ -198,7 +246,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/dp/original/DP832659.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/dp/web-large/DP832659.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/dp/web-large/DP832659.jpg",
+   "focal_point": [
+    0.46,
+    0.6
+   ]
   },
   {
    "title": "Christ Crucified between the Two Thieves: The Three Crosses",
@@ -213,7 +265,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/dp/original/DT11821.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/dp/web-large/DT11821.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/dp/web-large/DT11821.jpg",
+   "focal_point": [
+    0.5,
+    0.35
+   ]
   },
   {
    "title": "Reclining Female Nude",
@@ -228,7 +284,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/dp/original/DP815606.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/dp/web-large/DP815606.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/dp/web-large/DP815606.jpg",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "A Maid Asleep",
@@ -243,7 +303,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP355525.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP355525.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP355525.jpg",
+   "focal_point": [
+    0.27,
+    0.45
+   ]
   },
   {
    "title": "Study of a Young Woman",
@@ -258,7 +322,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP353256.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP353256.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP353256.jpg",
+   "focal_point": [
+    0.47,
+    0.32
+   ]
   },
   {
    "title": "Charity",
@@ -273,7 +341,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DT10776.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DT10776.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DT10776.jpg",
+   "focal_point": [
+    0.43,
+    0.27
+   ]
   },
   {
    "title": "The Crucifixion with the Virgin and Saint John",
@@ -288,7 +360,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP146490.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP146490.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP146490.jpg",
+   "focal_point": [
+    0.5,
+    0.21
+   ]
   },
   {
    "title": "The Jabach Family",
@@ -303,7 +379,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP352819.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP352819.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP352819.jpg",
+   "focal_point": [
+    0.42,
+    0.4
+   ]
   },
   {
    "title": "The Fieschi Morgan Staurotheke",
@@ -318,7 +398,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/md/original/DT119.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/md/web-large/DT119.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/md/web-large/DT119.jpg",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   },
   {
    "title": "Portrait of a Woman, Possibly a Nun of San Secondo; (verso) Scene in Grisaille",
@@ -333,7 +417,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/rl/original/DP221483.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP221483.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP221483.jpg",
+   "focal_point": [
+    0.45,
+    0.42
+   ]
   },
   {
    "title": "Portrait of Alvise Contarini(?); (verso) A Tethered Roebuck",
@@ -348,7 +436,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/rl/original/DP221485.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP221485.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/rl/web-large/DP221485.jpg",
+   "focal_point": [
+    0.5,
+    0.38
+   ]
   },
   {
    "title": "The Japanese Robe",
@@ -363,7 +455,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-42347-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-42347-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-42347-001.jpg",
+   "focal_point": [
+    0.55,
+    0.28
+   ]
   },
   {
    "title": "The Death of Socrates",
@@ -378,7 +474,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-13139-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-13139-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-13139-001.jpg",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   },
   {
    "title": "Hermann von Wedigh III (died 1560)",
@@ -393,7 +493,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP164836.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP164836.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP164836.jpg",
+   "focal_point": [
+    0.58,
+    0.28
+   ]
   },
   {
    "title": "Don Gaspar de Guzmán (1587–1645), Count-Duke of Olivares",
@@ -408,7 +512,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-14936-011.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14936-011.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14936-011.jpg",
+   "focal_point": [
+    0.57,
+    0.22
+   ]
   },
   {
    "title": "Young Man and Woman in an Inn",
@@ -423,7 +531,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP145899.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145899.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145899.jpg",
+   "focal_point": [
+    0.4,
+    0.34
+   ]
   },
   {
    "title": "Boy with a Lute",
@@ -438,7 +550,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP145900.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145900.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145900.jpg",
+   "focal_point": [
+    0.5,
+    0.35
+   ]
   },
   {
    "title": "Petrus Scriverius (1576–1660)",
@@ -453,7 +569,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP247208.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP247208.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP247208.jpg",
+   "focal_point": [
+    0.45,
+    0.37
+   ]
   },
   {
    "title": "Jacob Willemsz van Veen (1456–1535), the Artist's Father",
@@ -468,7 +588,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-38857-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-38857-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-38857-001.jpg",
+   "focal_point": [
+    0.48,
+    0.33
+   ]
   },
   {
    "title": "The Smokers",
@@ -483,7 +607,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-15904-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-15904-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-15904-001.jpg",
+   "focal_point": [
+    0.42,
+    0.28
+   ]
   },
   {
    "title": "Portrait of a Young Man",
@@ -498,7 +626,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP-14286-011.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14286-011.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14286-011.jpg",
+   "focal_point": [
+    0.52,
+    0.21
+   ]
   },
   {
    "title": "The Annunciation",
@@ -513,7 +645,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DT1479.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DT1479.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DT1479.jpg",
+   "focal_point": [
+    0.72,
+    0.45
+   ]
   },
   {
    "title": "Landschap met stenen brug",
@@ -528,7 +664,11 @@
    "source": "Rijksmuseum",
    "license": "Public Domain",
    "source_url": "https://iiif.micr.io/hodeb/full/max/0/default.jpg",
-   "thumbnail_url": "https://iiif.micr.io/hodeb/full/400,/0/default.jpg"
+   "thumbnail_url": "https://iiif.micr.io/hodeb/full/400,/0/default.jpg",
+   "focal_point": [
+    0.42,
+    0.45
+   ]
   },
   {
    "title": "De Nachtwacht",
@@ -543,7 +683,11 @@
    "source": "Rijksmuseum",
    "license": "Public Domain",
    "source_url": "https://iiif.micr.io/PJEZO/full/max/0/default.jpg",
-   "thumbnail_url": "https://iiif.micr.io/PJEZO/full/400,/0/default.jpg"
+   "thumbnail_url": "https://iiif.micr.io/PJEZO/full/400,/0/default.jpg",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   }
  ]
 }

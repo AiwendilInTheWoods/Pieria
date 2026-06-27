@@ -18,7 +18,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Follower%20of%20Frans%20Hals%20-%20Portrait%20of%20an%20Artist%20-%201894.1023%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Follower%20of%20Frans%20Hals%20-%20Portrait%20of%20an%20Artist%20-%201894.1023%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Follower%20of%20Frans%20Hals%20-%20Portrait%20of%20an%20Artist%20-%201894.1023%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.49,
+    0.27
+   ]
   },
   {
    "title": "Self-Portrait",
@@ -33,7 +37,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Self-Portrait%20-%201954.326%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Self-Portrait%20-%201954.326%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Self-Portrait%20-%201954.326%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.34
+   ]
   },
   {
    "title": "The Captive Slave (Ira Aldridge)",
@@ -48,7 +56,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Philip%20Simpson%20-%20The%20Captive%20Slave%20-%202008.188%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Philip%20Simpson%20-%20The%20Captive%20Slave%20-%202008.188%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Philip%20Simpson%20-%20The%20Captive%20Slave%20-%202008.188%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.48,
+    0.29
+   ]
   },
   {
    "title": "Portrait of a Man with Gray Hair",
@@ -63,7 +75,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Henry%20Raeburn%20-%20Portrait%20of%20a%20Man%20with%20Gray%20Hair%20-%201962.961%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Henry%20Raeburn%20-%20Portrait%20of%20a%20Man%20with%20Gray%20Hair%20-%201962.961%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sir%20Henry%20Raeburn%20-%20Portrait%20of%20a%20Man%20with%20Gray%20Hair%20-%201962.961%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.48,
+    0.34
+   ]
   },
   {
    "title": "Édouard Manet",
@@ -78,7 +94,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Henri%20Fantin-Latour%20-%20%C3%89douard%20Manet%20-%201905.207%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Henri%20Fantin-Latour%20-%20%C3%89douard%20Manet%20-%201905.207%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Henri%20Fantin-Latour%20-%20%C3%89douard%20Manet%20-%201905.207%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.47,
+    0.22
+   ]
   },
   {
    "title": "Madame Cezanne in a Yellow Chair",
@@ -93,7 +113,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Madame%20C%C3%A9zanne%20in%20a%20Yellow%20Chair%20-%201948.54%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Madame%20C%C3%A9zanne%20in%20a%20Yellow%20Chair%20-%201948.54%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20C%C3%A9zanne%20-%20Madame%20C%C3%A9zanne%20in%20a%20Yellow%20Chair%20-%201948.54%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.21
+   ]
   },
   {
    "title": "Madame de Pastoret and Her Son",
@@ -108,7 +132,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20de%20Pastoret%20and%20Her%20Son%20-%201967.228%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20de%20Pastoret%20and%20Her%20Son%20-%201967.228%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20de%20Pastoret%20and%20Her%20Son%20-%201967.228%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.25
+   ]
   },
   {
    "title": "Madame Roulin Rocking the Cradle (La berceuse)",
@@ -123,7 +151,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Madame%20Roulin%20Rocking%20the%20Cradle%20%28La%20berceuse%29%20-%201926.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Madame%20Roulin%20Rocking%20the%20Cradle%20%28La%20berceuse%29%20-%201926.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vincent%20van%20Gogh%20-%20Madame%20Roulin%20Rocking%20the%20Cradle%20%28La%20berceuse%29%20-%201926.200%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.28
+   ]
   },
   {
    "title": "Old Man with a Gold Chain",
@@ -138,7 +170,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt%20Harmensz.%20van%20Rijn%20-%20Old%20Man%20with%20a%20Gold%20Chain%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt%20Harmensz.%20van%20Rijn%20-%20Old%20Man%20with%20a%20Gold%20Chain%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt%20Harmensz.%20van%20Rijn%20-%20Old%20Man%20with%20a%20Gold%20Chain%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.32
+   ]
   },
   {
    "title": "Young Woman at an Open Half-Door",
@@ -153,7 +189,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Samuel%20van%20Hoogstraten%20-%20Young%20woman%20at%20an%20open%20half-door%20%281645%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Samuel%20van%20Hoogstraten%20-%20Young%20woman%20at%20an%20open%20half-door%20%281645%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Samuel%20van%20Hoogstraten%20-%20Young%20woman%20at%20an%20open%20half-door%20%281645%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.28
+   ]
   },
   {
    "title": "The Child's Bath",
@@ -168,7 +208,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mary%20Cassatt%20-%20The%20Child%27s%20Bath%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mary%20Cassatt%20-%20The%20Child%27s%20Bath%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mary%20Cassatt%20-%20The%20Child%27s%20Bath%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.22
+   ]
   },
   {
    "title": "Interrupted Reading",
@@ -183,7 +227,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Camille%20Corot%20-%20Interrupted%20Reading%20-%201922.410%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Camille%20Corot%20-%20Interrupted%20Reading%20-%201922.410%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Camille%20Corot%20-%20Interrupted%20Reading%20-%201922.410%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.2
+   ]
   },
   {
    "title": "Madame François Buron",
@@ -198,7 +246,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20Fran%C3%A7ois%20Buron%20-%201963.205%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20Fran%C3%A7ois%20Buron%20-%201963.205%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacques%20Louis%20David%20-%20Madame%20Fran%C3%A7ois%20Buron%20-%201963.205%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.46,
+    0.33
+   ]
   },
   {
    "title": "Jean Renoir Sewing",
@@ -213,7 +265,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Jean%20Renoir%20Sewing%20-%201937.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Jean%20Renoir%20Sewing%20-%201937.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Jean%20Renoir%20Sewing%20-%201937.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.48,
+    0.33
+   ]
   },
   {
    "title": "Portrait of a Man with a Pink",
@@ -228,7 +284,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Quentin%20Massys%20-%20Portrait%20of%20a%20Man%20with%20a%20Pink%20-%201894.1025%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Quentin%20Massys%20-%20Portrait%20of%20a%20Man%20with%20a%20Pink%20-%201894.1025%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Quentin%20Massys%20-%20Portrait%20of%20a%20Man%20with%20a%20Pink%20-%201894.1025%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.38
+   ]
   },
   {
    "title": "Amédée-David, the Comte de Pastoret",
@@ -243,7 +303,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Auguste%20Dominique%20Ingres%20-%20Am%C3%A9d%C3%A9e-David%2C%20the%20Comte%20de%20Pastoret%20-%201971.452%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Auguste%20Dominique%20Ingres%20-%20Am%C3%A9d%C3%A9e-David%2C%20the%20Comte%20de%20Pastoret%20-%201971.452%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Auguste%20Dominique%20Ingres%20-%20Am%C3%A9d%C3%A9e-David%2C%20the%20Comte%20de%20Pastoret%20-%201971.452%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.46,
+    0.22
+   ]
   },
   {
    "title": "Lucie Berard (Child in White)",
@@ -258,7 +322,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Lucie%20Berard%20%28Child%20in%20White%29%20-%201933.1172%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Lucie%20Berard%20%28Child%20in%20White%29%20-%201933.1172%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pierre-Auguste%20Renoir%20-%20Lucie%20Berard%20%28Child%20in%20White%29%20-%201933.1172%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.28
+   ]
   },
   {
    "title": "Merahi metua no Tehamana (Tehamana Has Many Parents or The Ancestors of Tehamana)",
@@ -273,7 +341,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20Gauguin%20-%20The%20Ancestors%20of%20Tehamana%20OR%20Tehamana%20Has%20Many%20Parents%20%28Merahi%20metua%20no%20Tehamana%29%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20Gauguin%20-%20The%20Ancestors%20of%20Tehamana%20OR%20Tehamana%20Has%20Many%20Parents%20%28Merahi%20metua%20no%20Tehamana%29%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20Gauguin%20-%20The%20Ancestors%20of%20Tehamana%20OR%20Tehamana%20Has%20Many%20Parents%20%28Merahi%20metua%20no%20Tehamana%29%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.27
+   ]
   },
   {
    "title": "Francesco de' Medici",
@@ -288,7 +360,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alessandro%20Allori%20-%20Francesco%20de%27%20Medici%20-%201965.1179%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alessandro%20Allori%20-%20Francesco%20de%27%20Medici%20-%201965.1179%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alessandro%20Allori%20-%20Francesco%20de%27%20Medici%20-%201965.1179%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.21
+   ]
   },
   {
    "title": "Beggar with Oysters (Philosopher)",
@@ -303,7 +379,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%C3%89douard%20Manet%20-%20Beggar%20with%20Oysters%20%28Philosopher%29%20-%201931.504%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%C3%89douard%20Manet%20-%20Beggar%20with%20Oysters%20%28Philosopher%29%20-%201931.504%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%C3%89douard%20Manet%20-%20Beggar%20with%20Oysters%20%28Philosopher%29%20-%201931.504%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.43,
+    0.17
+   ]
   },
   {
    "title": "Polynesian Woman with Children",
@@ -318,7 +398,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Polynesian%20Woman%20with%20Children%201901%20Paul%20Gauguin.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Polynesian%20Woman%20with%20Children%201901%20Paul%20Gauguin.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Polynesian%20Woman%20with%20Children%201901%20Paul%20Gauguin.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.18
+   ]
   },
   {
    "title": "Portrait of General José Manuel Romero",
@@ -333,7 +417,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Francisco%20Jos%C3%A9%20de%20Goya%20y%20Lucientes%20-%20Portrait%20of%20General%20Jos%C3%A9%20Manuel%20Romero%20-%201970.1036%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Francisco%20Jos%C3%A9%20de%20Goya%20y%20Lucientes%20-%20Portrait%20of%20General%20Jos%C3%A9%20Manuel%20Romero%20-%201970.1036%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Francisco%20Jos%C3%A9%20de%20Goya%20y%20Lucientes%20-%20Portrait%20of%20General%20Jos%C3%A9%20Manuel%20Romero%20-%201970.1036%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.27
+   ]
   },
   {
    "title": "Portrait of Constance Pipelet",
@@ -348,7 +436,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Fran%C3%A7ois%20D%C3%A9soria%20-%20Portrait%20of%20Constance%20Pipelet%20-%201939.533%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Fran%C3%A7ois%20D%C3%A9soria%20-%20Portrait%20of%20Constance%20Pipelet%20-%201939.533%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Baptiste%20Fran%C3%A7ois%20D%C3%A9soria%20-%20Portrait%20of%20Constance%20Pipelet%20-%201939.533%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.43,
+    0.27
+   ]
   },
   {
    "title": "Winged Figure",
@@ -363,7 +455,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Abbott%20Handerson%20Thayer%20-%20Winged%20Figure%20-%201947.32%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Abbott%20Handerson%20Thayer%20-%20Winged%20Figure%20-%201947.32%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Abbott%20Handerson%20Thayer%20-%20Winged%20Figure%20-%201947.32%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.2
+   ]
   },
   {
    "title": "The Advance-Guard, or The Military Sacrifice (The Ambush)",
@@ -378,7 +474,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Frederic%20Remington%20-%20The%20Advance-Guard%2C%20or%20The%20Military%20Sacrifice%20%28The%20Ambush%29%20-%201982.802%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Frederic%20Remington%20-%20The%20Advance-Guard%2C%20or%20The%20Military%20Sacrifice%20%28The%20Ambush%29%20-%201982.802%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Frederic%20Remington%20-%20The%20Advance-Guard%2C%20or%20The%20Military%20Sacrifice%20%28The%20Ambush%29%20-%201982.802%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.33,
+    0.3
+   ]
   },
   {
    "title": "Mrs. Potter Palmer",
@@ -393,7 +493,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anders%20Zorn%20-%20Mrs.%20Potter%20Palmer%20-%201922.450%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anders%20Zorn%20-%20Mrs.%20Potter%20Palmer%20-%201922.450%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anders%20Zorn%20-%20Mrs.%20Potter%20Palmer%20-%201922.450%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.21
+   ]
   },
   {
    "title": "John Thomlinson and His Family",
@@ -408,7 +512,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Arthur%20Devis%20-%20John%20Thomlinson%20and%20His%20Family%20-%201956.130%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Arthur%20Devis%20-%20John%20Thomlinson%20and%20His%20Family%20-%201956.130%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Arthur%20Devis%20-%20John%20Thomlinson%20and%20His%20Family%20-%201956.130%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.4
+   ]
   },
   {
    "title": "Portrait of a Noblewoman Dressed in Mourning",
@@ -423,7 +531,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacopo%20da%20Empoli%20-%20Portrait%20of%20a%20Noblewoman%20Dressed%20in%20Mourning%20-%201960.1%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacopo%20da%20Empoli%20-%20Portrait%20of%20a%20Noblewoman%20Dressed%20in%20Mourning%20-%201960.1%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jacopo%20da%20Empoli%20-%20Portrait%20of%20a%20Noblewoman%20Dressed%20in%20Mourning%20-%201960.1%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.24
+   ]
   },
   {
    "title": "Helena Tromper Du Bois",
@@ -438,7 +550,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anthony%20van%20Dyck%20-%20Helena%20Leonora%20Sieveri%20-%201894.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anthony%20van%20Dyck%20-%20Helena%20Leonora%20Sieveri%20-%201894.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anthony%20van%20Dyck%20-%20Helena%20Leonora%20Sieveri%20-%201894.1027%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.21
+   ]
   },
   {
    "title": "Elaine",
@@ -453,7 +569,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toby%20Edward%20Rosenthal%20-%20Elaine%20-%201917.3%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toby%20Edward%20Rosenthal%20-%20Elaine%20-%201917.3%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toby%20Edward%20Rosenthal%20-%20Elaine%20-%201917.3%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.4,
+    0.42
+   ]
   },
   {
    "title": "Self-Portrait",
@@ -468,7 +588,11 @@
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fr%C3%A9d%C3%A9ric%20Bazille%20-%20Self-Portrait%20-%201962.336%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fr%C3%A9d%C3%A9ric%20Bazille%20-%20Self-Portrait%20-%201962.336%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fr%C3%A9d%C3%A9ric%20Bazille%20-%20Self-Portrait%20-%201962.336%20-%20Art%20Institute%20of%20Chicago.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.21
+   ]
   },
   {
    "title": "Portrait of a Woman with a Man at a Casement",
@@ -483,7 +607,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/ep/original/DP159891.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP159891.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/ep/web-large/DP159891.jpg",
+   "focal_point": [
+    0.55,
+    0.22
+   ]
   }
  ]
 }

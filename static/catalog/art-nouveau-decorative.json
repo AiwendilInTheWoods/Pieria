@@ -18,7 +18,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Nine%20Cartoons%20for%20the%20Stoclet%20Frieze-%20Part%204%2C%20Part%20of%20the%20tree%20of%20life%20%281910-11%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Nine%20Cartoons%20for%20the%20Stoclet%20Frieze-%20Part%204%2C%20Part%20of%20the%20tree%20of%20life%20%281910-11%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Nine%20Cartoons%20for%20the%20Stoclet%20Frieze-%20Part%204%2C%20Part%20of%20the%20tree%20of%20life%20%281910-11%29.jpg?width=600",
+   "focal_point": [
+    0.74,
+    0.49
+   ]
   },
   {
    "title": "Pallas Athene",
@@ -33,7 +37,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Pallas%20Athene.jpeg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Pallas%20Athene.jpeg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Pallas%20Athene.jpeg?width=600",
+   "focal_point": [
+    0.45,
+    0.27
+   ]
   },
   {
    "title": "Danaë",
@@ -48,7 +56,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Danae%20-%201907-08.jpeg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Danae%20-%201907-08.jpeg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Klimt%20-%20Danae%20-%201907-08.jpeg?width=600",
+   "focal_point": [
+    0.6,
+    0.22
+   ]
   },
   {
    "title": "The Beethoven Frieze",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustav-klimt-the-beethoven-frieze-the-hostile-powers.-far-wall.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustav-klimt-the-beethoven-frieze-the-hostile-powers.-far-wall.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gustav-klimt-the-beethoven-frieze-the-hostile-powers.-far-wall.jpg?width=600",
+   "focal_point": [
+    0.36,
+    0.28
+   ]
   },
   {
    "title": "The Slav Epic: The Apotheosis of the Slavs",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mucha%20Apoteoza.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mucha%20Apoteoza.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mucha%20Apoteoza.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.13
+   ]
   },
   {
    "title": "Strawberry Thief",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Textile%2C%20Strawberry%20Thief%2C%20designed%201883%2C%20printed%20ca.%201934%20%28CH%2018340065%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Textile%2C%20Strawberry%20Thief%2C%20designed%201883%2C%20printed%20ca.%201934%20%28CH%2018340065%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Textile%2C%20Strawberry%20Thief%2C%20designed%201883%2C%20printed%20ca.%201934%20%28CH%2018340065%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.32
+   ]
   },
   {
    "title": "Trellis",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Trellis%20MET%20DT255077.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Trellis%20MET%20DT255077.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Trellis%20MET%20DT255077.jpg?width=600",
+   "focal_point": [
+    0.25,
+    0.4
+   ]
   },
   {
    "title": "Acanthus",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Acanthus%20and%20Vine%20tapestry%2C%20designed%20and%20woven%20by%20William%20Morris%2C%20May-September%201879%20-%20Kelmscott%20Manor%20-%20Oxfordshire%2C%20England%20-%20DSC09975.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Acanthus%20and%20Vine%20tapestry%2C%20designed%20and%20woven%20by%20William%20Morris%2C%20May-September%201879%20-%20Kelmscott%20Manor%20-%20Oxfordshire%2C%20England%20-%20DSC09975.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Acanthus%20and%20Vine%20tapestry%2C%20designed%20and%20woven%20by%20William%20Morris%2C%20May-September%201879%20-%20Kelmscott%20Manor%20-%20Oxfordshire%2C%20England%20-%20DSC09975.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.35
+   ]
   },
   {
    "title": "Magnolia and Irises",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Magnolias%20and%20Irises%20MET%20DT280214.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Magnolias%20and%20Irises%20MET%20DT280214.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Magnolias%20and%20Irises%20MET%20DT280214.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.2
+   ]
   },
   {
    "title": "The Peacock Skirt",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Beardsley-peacockskirt.PNG?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Beardsley-peacockskirt.PNG?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Beardsley-peacockskirt.PNG?width=600",
+   "focal_point": [
+    0.5,
+    0.18
+   ]
   },
   {
    "title": "The Climax",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Climax%2C%20RP-P-2018-3317.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Climax%2C%20RP-P-2018-3317.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Climax%2C%20RP-P-2018-3317.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.27
+   ]
   },
   {
    "title": "The Dancer's Reward",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aubrey%20Beardsley%20-%20The%20Dancer%27s%20Reward.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aubrey%20Beardsley%20-%20The%20Dancer%27s%20Reward.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Aubrey%20Beardsley%20-%20The%20Dancer%27s%20Reward.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.12
+   ]
   },
   {
    "title": "Neptune's Horses",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Walter%20T.%20Crane%20-%20Neptune%27s%20Horses%20%28ca.1892%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Walter%20T.%20Crane%20-%20Neptune%27s%20Horses%20%28ca.1892%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Walter%20T.%20Crane%20-%20Neptune%27s%20Horses%20%28ca.1892%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.35
+   ]
   },
   {
    "title": "Grammar of Ornament: Moresque No. 1",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Owen%20Jones%20-%20Grammar%20of%20Ornament%20-%201868%20-%20plate%20043%20-%20600ppi.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Owen%20Jones%20-%20Grammar%20of%20Ornament%20-%201868%20-%20plate%20043%20-%20600ppi.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Owen%20Jones%20-%20Grammar%20of%20Ornament%20-%201868%20-%20plate%20043%20-%20600ppi.png?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Grammar of Ornament: Egyptian No. 1",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Amgueddfa%20Cymru%20-%20Grammar%20of%20Ornament.%20Plate%20IV.%20Egyptian%20No.%201%20-%2088212.jpeg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Amgueddfa%20Cymru%20-%20Grammar%20of%20Ornament.%20Plate%20IV.%20Egyptian%20No.%201%20-%2088212.jpeg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Amgueddfa%20Cymru%20-%20Grammar%20of%20Ornament.%20Plate%20IV.%20Egyptian%20No.%201%20-%2088212.jpeg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Ver Sacrum",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kolo%20Moser%20-%20Ver%20Sacrum%20-%201897.jpeg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kolo%20Moser%20-%20Ver%20Sacrum%20-%201897.jpeg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kolo%20Moser%20-%20Ver%20Sacrum%20-%201897.jpeg?width=600",
+   "focal_point": [
+    0.5,
+    0.35
+   ]
   }
  ]
 }

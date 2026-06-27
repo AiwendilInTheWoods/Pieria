@@ -18,7 +18,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio%20%E2%80%94%20The%20Calling%20of%20Saint%20Matthew.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio%20%E2%80%94%20The%20Calling%20of%20Saint%20Matthew.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio%20%E2%80%94%20The%20Calling%20of%20Saint%20Matthew.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.46
+   ]
   },
   {
    "title": "The Supper at Emmaus",
@@ -33,7 +37,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Supper%20at%20Emmaus-Caravaggio%20%281606%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Supper%20at%20Emmaus-Caravaggio%20%281606%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Supper%20at%20Emmaus-Caravaggio%20%281606%29.jpg?width=600",
+   "focal_point": [
+    0.37,
+    0.4
+   ]
   },
   {
    "title": "The Conversion of Saint Paul on the Way to Damascus",
@@ -48,7 +56,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio-The%20Conversion%20on%20the%20Way%20to%20Damascus.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio-The%20Conversion%20on%20the%20Way%20to%20Damascus.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio-The%20Conversion%20on%20the%20Way%20to%20Damascus.jpg?width=600",
+   "focal_point": [
+    0.66,
+    0.82
+   ]
   },
   {
    "title": "Bacchus",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bacchus%20by%20Caravaggio%201.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bacchus%20by%20Caravaggio%201.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bacchus%20by%20Caravaggio%201.jpg?width=600",
+   "focal_point": [
+    0.48,
+    0.27
+   ]
   },
   {
    "title": "Judith Beheading Holofernes",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Judith%20Beheading%20Holofernes-Caravaggio%20%28c.1598-9%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Judith%20Beheading%20Holofernes-Caravaggio%20%28c.1598-9%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Judith%20Beheading%20Holofernes-Caravaggio%20%28c.1598-9%29.jpg?width=600",
+   "focal_point": [
+    0.68,
+    0.22
+   ]
   },
   {
    "title": "David with the Head of Goliath",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/David%20with%20the%20Head%20of%20Goliath-Caravaggio%20%281610%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/David%20with%20the%20Head%20of%20Goliath-Caravaggio%20%281610%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/David%20with%20the%20Head%20of%20Goliath-Caravaggio%20%281610%29.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.27
+   ]
   },
   {
    "title": "Boy with a Basket of Fruit",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Boy%20with%20a%20Basket%20of%20Fruit-Caravaggio%20%281593%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Boy%20with%20a%20Basket%20of%20Fruit-Caravaggio%20%281593%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Boy%20with%20a%20Basket%20of%20Fruit-Caravaggio%20%281593%29.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.26
+   ]
   },
   {
    "title": "The Cardsharps",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio%20%28Michelangelo%20Merisi%29%20-%20The%20Cardsharps%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio%20%28Michelangelo%20Merisi%29%20-%20The%20Cardsharps%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio%20%28Michelangelo%20Merisi%29%20-%20The%20Cardsharps%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.27,
+    0.32
+   ]
   },
   {
    "title": "Judith Slaying Holofernes",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Judith%20Slaying%20Holofernes%20by%20Artemisia%20Gentileschi.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Judith%20Slaying%20Holofernes%20by%20Artemisia%20Gentileschi.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Judith%20Slaying%20Holofernes%20by%20Artemisia%20Gentileschi.jpg?width=600",
+   "focal_point": [
+    0.46,
+    0.35
+   ]
   },
   {
    "title": "Self-Portrait as the Allegory of Painting",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Self-Portrait%20as%20the%20Allegory%20of%20Painting%20%28La%20Pittura%29%20-%20Artemisia%20Gentileschi.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Self-Portrait%20as%20the%20Allegory%20of%20Painting%20%28La%20Pittura%29%20-%20Artemisia%20Gentileschi.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Self-Portrait%20as%20the%20Allegory%20of%20Painting%20%28La%20Pittura%29%20-%20Artemisia%20Gentileschi.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.28
+   ]
   },
   {
    "title": "The Descent from the Cross",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Paul%20Rubens%20-%20Descent%20from%20the%20Cross%20-%20WGA20212.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Paul%20Rubens%20-%20Descent%20from%20the%20Cross%20-%20WGA20212.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Paul%20Rubens%20-%20Descent%20from%20the%20Cross%20-%20WGA20212.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.39
+   ]
   },
   {
    "title": "The Garden of Love",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Paul%20Rubens%20and%20Workshop%20-%20The%20Garden%20of%20Love.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Paul%20Rubens%20and%20Workshop%20-%20The%20Garden%20of%20Love.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Paul%20Rubens%20and%20Workshop%20-%20The%20Garden%20of%20Love.jpg?width=600",
+   "focal_point": [
+    0.52,
+    0.66
+   ]
   },
   {
    "title": "Samson and Delilah",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Samson%20and%20Delilah%20by%20Rubens.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Samson%20and%20Delilah%20by%20Rubens.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Samson%20and%20Delilah%20by%20Rubens.jpg?width=600",
+   "focal_point": [
+    0.38,
+    0.5
+   ]
   },
   {
    "title": "The Three Graces",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Three%20Graces%2C%20by%20Peter%20Paul%20Rubens%2C%20from%20Prado%20in%20Google%20Earth.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Three%20Graces%2C%20by%20Peter%20Paul%20Rubens%2C%20from%20Prado%20in%20Google%20Earth.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Three%20Graces%2C%20by%20Peter%20Paul%20Rubens%2C%20from%20Prado%20in%20Google%20Earth.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.28
+   ]
   },
   {
    "title": "The Surrender of Breda",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Velazquez-The%20Surrender%20of%20Breda.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Velazquez-The%20Surrender%20of%20Breda.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Velazquez-The%20Surrender%20of%20Breda.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "The Toilet of Venus (Rokeby Venus)",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Diego%20Vel%C3%A1zquez%20-%20Rokeby%20Venus.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Diego%20Vel%C3%A1zquez%20-%20Rokeby%20Venus.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Diego%20Vel%C3%A1zquez%20-%20Rokeby%20Venus.jpg?width=600",
+   "focal_point": [
+    0.43,
+    0.4
+   ]
   },
   {
    "title": "Old Woman Frying Eggs",
@@ -258,7 +322,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/VEL%C3%81ZQUEZ%20-%20Vieja%20friendo%20huevos%20%28National%20Galleries%20of%20Scotland%2C%201618.%20%C3%93leo%20sobre%20lienzo%2C%20100.5%20x%20119.5%20cm%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/VEL%C3%81ZQUEZ%20-%20Vieja%20friendo%20huevos%20%28National%20Galleries%20of%20Scotland%2C%201618.%20%C3%93leo%20sobre%20lienzo%2C%20100.5%20x%20119.5%20cm%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/VEL%C3%81ZQUEZ%20-%20Vieja%20friendo%20huevos%20%28National%20Galleries%20of%20Scotland%2C%201618.%20%C3%93leo%20sobre%20lienzo%2C%20100.5%20x%20119.5%20cm%29.jpg?width=600",
+   "focal_point": [
+    0.66,
+    0.28
+   ]
   },
   {
    "title": "The Storm on the Sea of Galilee",
@@ -273,7 +341,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt%20van%20Rijn%20-%20Christ%20in%20the%20Storm%20on%20the%20Sea%20of%20Galilee%20-%20P21s24%20-%20private%20collection.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt%20van%20Rijn%20-%20Christ%20in%20the%20Storm%20on%20the%20Sea%20of%20Galilee%20-%20P21s24%20-%20private%20collection.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt%20van%20Rijn%20-%20Christ%20in%20the%20Storm%20on%20the%20Sea%20of%20Galilee%20-%20P21s24%20-%20private%20collection.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.7
+   ]
   },
   {
    "title": "The Penitent Magdalene",
@@ -288,7 +360,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Penitent%20Magdalen%20MET%20DT7252.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Penitent%20Magdalen%20MET%20DT7252.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Penitent%20Magdalen%20MET%20DT7252.jpg?width=600",
+   "focal_point": [
+    0.33,
+    0.16
+   ]
   },
   {
    "title": "Saint Francis in Meditation",
@@ -303,7 +379,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Francisco%20de%20Zurbar%C3%A1n%20053.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Francisco%20de%20Zurbar%C3%A1n%20053.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Francisco%20de%20Zurbar%C3%A1n%20053.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.16
+   ]
   },
   {
    "title": "Aurora",
@@ -318,7 +398,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fotoreproductie%20van%20%28vermoedelijk%29%20een%20fresco%20in%20het%20Palazzo%20Pallavicini-Rospigliosi%20door%20Guido%20Reni%2C%20voorstellend%20Aurora%20ROMA%20-%20Aurora%2C%20Guido%20Reni%2C%20Galleria%20Rospigliosi%20%28titel%20op%20object%29%2C%20RP-F-F01184-AQ.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fotoreproductie%20van%20%28vermoedelijk%29%20een%20fresco%20in%20het%20Palazzo%20Pallavicini-Rospigliosi%20door%20Guido%20Reni%2C%20voorstellend%20Aurora%20ROMA%20-%20Aurora%2C%20Guido%20Reni%2C%20Galleria%20Rospigliosi%20%28titel%20op%20object%29%2C%20RP-F-F01184-AQ.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fotoreproductie%20van%20%28vermoedelijk%29%20een%20fresco%20in%20het%20Palazzo%20Pallavicini-Rospigliosi%20door%20Guido%20Reni%2C%20voorstellend%20Aurora%20ROMA%20-%20Aurora%2C%20Guido%20Reni%2C%20Galleria%20Rospigliosi%20%28titel%20op%20object%29%2C%20RP-F-F01184-AQ.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   },
   {
    "title": "Et in Arcadia ego",
@@ -333,7 +417,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nicolas%20Poussin%20-%20Et%20in%20Arcadia%20ego%20%28deuxi%C3%A8me%20version%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nicolas%20Poussin%20-%20Et%20in%20Arcadia%20ego%20%28deuxi%C3%A8me%20version%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nicolas%20Poussin%20-%20Et%20in%20Arcadia%20ego%20%28deuxi%C3%A8me%20version%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Seaport with the Embarkation of the Queen of Sheba",
@@ -348,7 +436,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Claude%20Lorrain%20-%20Seaport%20with%20the%20Embarkation%20of%20the%20Queen%20of%20Sheba%20-%20WGA05002.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Claude%20Lorrain%20-%20Seaport%20with%20the%20Embarkation%20of%20the%20Queen%20of%20Sheba%20-%20WGA05002.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Claude%20Lorrain%20-%20Seaport%20with%20the%20Embarkation%20of%20the%20Queen%20of%20Sheba%20-%20WGA05002.jpg?width=600",
+   "focal_point": [
+    0.46,
+    0.5
+   ]
   },
   {
    "title": "The Martyrdom of Saint Philip",
@@ -363,7 +455,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jos%C3%A9%20de%20Ribera%20054.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jos%C3%A9%20de%20Ribera%20054.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Jos%C3%A9%20de%20Ribera%20054.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.45
+   ]
   },
   {
    "title": "The Immaculate Conception",
@@ -378,7 +474,11 @@
    "source": "Cleveland Museum of Art",
    "license": "Public Domain",
    "source_url": "https://openaccess-cdn.clevelandart.org/1959.189/1959.189_print.jpg",
-   "thumbnail_url": "https://openaccess-cdn.clevelandart.org/1959.189/1959.189_web.jpg"
+   "thumbnail_url": "https://openaccess-cdn.clevelandart.org/1959.189/1959.189_web.jpg",
+   "focal_point": [
+    0.5,
+    0.13
+   ]
   }
  ]
 }

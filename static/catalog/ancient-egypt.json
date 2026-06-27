@@ -18,7 +18,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/eg/original/DP248993.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/DP248993.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/DP248993.jpg",
+   "focal_point": [
+    0.66,
+    0.49
+   ]
   },
   {
    "title": "The Temple of Dendur",
@@ -33,7 +37,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/eg/original/DP240337.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/DP240337.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/DP240337.jpg",
+   "focal_point": [
+    0.6,
+    0.45
+   ]
   },
   {
    "title": "Canopic jar with falcon head",
@@ -48,7 +56,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/eg/original/28.3.59a-b_EGDP013259.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/28.3.59a-b_EGDP013259.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/28.3.59a-b_EGDP013259.jpg",
+   "focal_point": [
+    0.48,
+    0.27
+   ]
   },
   {
    "title": "Statuette of Amun",
@@ -63,7 +75,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/eg/original/DP-38626-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/DP-38626-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/eg/web-large/DP-38626-001.jpg",
+   "focal_point": [
+    0.5,
+    0.22
+   ]
   },
   {
    "title": "Head of a ruler",
@@ -78,7 +94,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/an/original/DP-23662-001.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/an/web-large/DP-23662-001.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/an/web-large/DP-23662-001.jpg",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Mask of Tutankhamun",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tutankhamun%20also%20referred%20to%20as%20king%20Tut%20was%20the%20pharaoh%20of%20the%2018th%20dynasty%20of%20ancient%20Egypt.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tutankhamun%20also%20referred%20to%20as%20king%20Tut%20was%20the%20pharaoh%20of%20the%2018th%20dynasty%20of%20ancient%20Egypt.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tutankhamun%20also%20referred%20to%20as%20king%20Tut%20was%20the%20pharaoh%20of%20the%2018th%20dynasty%20of%20ancient%20Egypt.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.52
+   ]
   },
   {
    "title": "Narmer Palette",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Egyptian%20Cast%20of%20Narmer%20Palette%20%2836571032376%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Egyptian%20Cast%20of%20Narmer%20Palette%20%2836571032376%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Egyptian%20Cast%20of%20Narmer%20Palette%20%2836571032376%29.jpg?width=600",
+   "focal_point": [
+    0.33,
+    0.62
+   ]
   },
   {
    "title": "Great Sphinx of Giza",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Great%20Sphinx%2C%20Pyramids%20of%20Gizeh-1839%29%20by%20David%20Roberts%2C%20RA.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Great%20Sphinx%2C%20Pyramids%20of%20Gizeh-1839%29%20by%20David%20Roberts%2C%20RA.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Great%20Sphinx%2C%20Pyramids%20of%20Gizeh-1839%29%20by%20David%20Roberts%2C%20RA.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Rosetta Stone",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Rosetta%20Stone.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Rosetta%20Stone.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Rosetta%20Stone.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Book of the Dead of Hunefer",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Book%20of%20the%20Dead%20of%20Hunefer%20sheet%202.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Book%20of%20the%20Dead%20of%20Hunefer%20sheet%202.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Book%20of%20the%20Dead%20of%20Hunefer%20sheet%202.jpg?width=600",
+   "focal_point": [
+    0.18,
+    0.6
+   ]
   },
   {
    "title": "Papyrus of Ani",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Papyrus%20of%20Ani%20BM%20Sheet%2012.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Papyrus%20of%20Ani%20BM%20Sheet%2012.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Papyrus%20of%20Ani%20BM%20Sheet%2012.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.5
+   ]
   },
   {
    "title": "Seated Scribe",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Scribe%20statuette%20MET%20DP240852.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Scribe%20statuette%20MET%20DP240852.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Scribe%20statuette%20MET%20DP240852.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Faience Sphinx of Amenhotep III",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sphinx%20of%20Amenhotep%20III%2C%20possibly%20from%20a%20Model%20of%20a%20Temple%20MET%20DT539.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sphinx%20of%20Amenhotep%20III%2C%20possibly%20from%20a%20Model%20of%20a%20Temple%20MET%20DT539.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sphinx%20of%20Amenhotep%20III%2C%20possibly%20from%20a%20Model%20of%20a%20Temple%20MET%20DT539.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.35
+   ]
   },
   {
    "title": "Wall Painting from the Tomb of Nebamun",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tomb%20of%20Nebamun.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tomb%20of%20Nebamun.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tomb%20of%20Nebamun.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.25
+   ]
   },
   {
    "title": "Code of Hammurabi Stele",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Prologue%20Hammurabi%20Code%20Louvre%20AO10237.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Prologue%20Hammurabi%20Code%20Louvre%20AO10237.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Prologue%20Hammurabi%20Code%20Louvre%20AO10237.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Human-Headed Winged Lion (Lamassu)",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Human-headed%20winged%20lion%20%28lamassu%29%20MET%20DP252320.jpeg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Human-headed%20winged%20lion%20%28lamassu%29%20MET%20DP252320.jpeg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Human-headed%20winged%20lion%20%28lamassu%29%20MET%20DP252320.jpeg?width=600",
+   "focal_point": [
+    0.35,
+    0.5
+   ]
   },
   {
    "title": "Relief of a Winged Genius",
@@ -258,7 +322,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Neo-Assyrian%20Bas%20Relief%20of%20Winged%20Genius%2C%20from%20North%20Palace%20at%20Nimrud%2C%20c.%20883-859%20BC%20%2848465099611%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Neo-Assyrian%20Bas%20Relief%20of%20Winged%20Genius%2C%20from%20North%20Palace%20at%20Nimrud%2C%20c.%20883-859%20BC%20%2848465099611%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Neo-Assyrian%20Bas%20Relief%20of%20Winged%20Genius%2C%20from%20North%20Palace%20at%20Nimrud%2C%20c.%20883-859%20BC%20%2848465099611%29.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.09
+   ]
   }
  ]
 }

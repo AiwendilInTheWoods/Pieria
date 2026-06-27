@@ -18,7 +18,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/as/original/DP151504_CRD.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/as/web-large/DP151504_CRD.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/as/web-large/DP151504_CRD.jpg",
+   "focal_point": [
+    0.53,
+    0.5
+   ]
   },
   {
    "title": "Old Trees, Level Distance",
@@ -33,7 +37,11 @@
    "source": "The Metropolitan Museum of Art",
    "license": "Public Domain",
    "source_url": "https://images.metmuseum.org/CRDImages/as/original/DP167812_CRD.jpg",
-   "thumbnail_url": "https://images.metmuseum.org/CRDImages/as/web-large/DP167812_CRD.jpg"
+   "thumbnail_url": "https://images.metmuseum.org/CRDImages/as/web-large/DP167812_CRD.jpg",
+   "focal_point": [
+    0.6,
+    0.5
+   ]
   },
   {
    "title": "Along the River During the Qingming Festival",
@@ -48,7 +56,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Along%20the%20River%20During%20the%20Qingming%20Festival%20%28Qing%20Court%20Version%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Along%20the%20River%20During%20the%20Qingming%20Festival%20%28Qing%20Court%20Version%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Along%20the%20River%20During%20the%20Qingming%20Festival%20%28Qing%20Court%20Version%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Travelers Among Mountains and Streams",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fan%20Kuan%20-%20Travelers%20Among%20Mountains%20and%20Streams%20-%20Google%20Art%20Project.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fan%20Kuan%20-%20Travelers%20Among%20Mountains%20and%20Streams%20-%20Google%20Art%20Project.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fan%20Kuan%20-%20Travelers%20Among%20Mountains%20and%20Streams%20-%20Google%20Art%20Project.jpg?width=600",
+   "focal_point": [
+    0.55,
+    0.38
+   ]
   },
   {
    "title": "A Thousand Li of Rivers and Mountains",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wang%20Ximeng.%20A%20Thousand%20Li%20of%20Rivers%20and%20Mountains.%20%28Complete%2C%2051%2C3x1191%2C5%20cm%29.%201113.%20Palace%20museum%2C%20Beijing.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wang%20Ximeng.%20A%20Thousand%20Li%20of%20Rivers%20and%20Mountains.%20%28Complete%2C%2051%2C3x1191%2C5%20cm%29.%201113.%20Palace%20museum%2C%20Beijing.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wang%20Ximeng.%20A%20Thousand%20Li%20of%20Rivers%20and%20Mountains.%20%28Complete%2C%2051%2C3x1191%2C5%20cm%29.%201113.%20Palace%20museum%2C%20Beijing.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Early Spring",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Guo%20Xi%20-%20Early%20Spring%2C%20upscaled%2C%20color-corrected.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Guo%20Xi%20-%20Early%20Spring%2C%20upscaled%2C%20color-corrected.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Guo%20Xi%20-%20Early%20Spring%2C%20upscaled%2C%20color-corrected.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Nine Dragons",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chen%20Rong%20-%20Nine%20Dragons.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chen%20Rong%20-%20Nine%20Dragons.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chen%20Rong%20-%20Nine%20Dragons.jpg?width=600",
+   "focal_point": [
+    0.78,
+    0.5
+   ]
   },
   {
    "title": "Night Revels of Han Xizai",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gu%20Hongzhong%27s%20Night%20Revels%201%20edit.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gu%20Hongzhong%27s%20Night%20Revels%201%20edit.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gu%20Hongzhong%27s%20Night%20Revels%201%20edit.jpg?width=600",
+   "focal_point": [
+    0.13,
+    0.42
+   ]
   },
   {
    "title": "Summer Mountains",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Qu%20Ding%2C%20Summer%20Mountains%2C%20Metmuseum%2C%20NY.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Qu%20Ding%2C%20Summer%20Mountains%2C%20Metmuseum%2C%20NY.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Qu%20Ding%2C%20Summer%20Mountains%2C%20Metmuseum%2C%20NY.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.35
+   ]
   },
   {
    "title": "The Court of Gayumars",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Court%20of%20Gayumars.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Court%20of%20Gayumars.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Court%20of%20Gayumars.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   },
   {
    "title": "Folio from the Shahnameh of Shah Tahmasp",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/FOLIO%20FROM%20THE%20SHAHNAMEH%20OF%20SHAH%20TAHMASP%2C%20ATTRIBUTED%20TO%20AQA%20MIRAK%2C%20CIRCA%201525-35%2C%20Sotheby%2Cs.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/FOLIO%20FROM%20THE%20SHAHNAMEH%20OF%20SHAH%20TAHMASP%2C%20ATTRIBUTED%20TO%20AQA%20MIRAK%2C%20CIRCA%201525-35%2C%20Sotheby%2Cs.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/FOLIO%20FROM%20THE%20SHAHNAMEH%20OF%20SHAH%20TAHMASP%2C%20ATTRIBUTED%20TO%20AQA%20MIRAK%2C%20CIRCA%201525-35%2C%20Sotheby%2Cs.jpg?width=600",
+   "focal_point": [
+    0.6,
+    0.5
+   ]
   },
   {
    "title": "Folio from the Hamzanama",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22%27Umar%20Walks%20around%20Fulad%20Castle%2C%20Meets%20a%20Foot%20Soldier%20and%20Kicks%20Him%20to%20the%20Ground%22%2C%20Folio%20from%20a%20Hamzanama%20%28The%20Adventures%20of%20Hamza%29%20MET%2055120.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22%27Umar%20Walks%20around%20Fulad%20Castle%2C%20Meets%20a%20Foot%20Soldier%20and%20Kicks%20Him%20to%20the%20Ground%22%2C%20Folio%20from%20a%20Hamzanama%20%28The%20Adventures%20of%20Hamza%29%20MET%2055120.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/%22%27Umar%20Walks%20around%20Fulad%20Castle%2C%20Meets%20a%20Foot%20Soldier%20and%20Kicks%20Him%20to%20the%20Ground%22%2C%20Folio%20from%20a%20Hamzanama%20%28The%20Adventures%20of%20Hamza%29%20MET%2055120.jpg?width=600",
+   "focal_point": [
+    0.62,
+    0.66
+   ]
   },
   {
    "title": "Krishna Lifting Mount Govardhan",
@@ -198,7 +246,11 @@
    "source": "Cleveland Museum of Art",
    "license": "Public Domain",
    "source_url": "https://openaccess-cdn.clevelandart.org/2001.45/2001.45_print.jpg",
-   "thumbnail_url": "https://openaccess-cdn.clevelandart.org/2001.45/2001.45_web.jpg"
+   "thumbnail_url": "https://openaccess-cdn.clevelandart.org/2001.45/2001.45_web.jpg",
+   "focal_point": [
+    0.45,
+    0.43
+   ]
   },
   {
    "title": "Pine Trees Screen",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hasegawa%20Tohaku%20-%20Pine%20Trees%20%28Sh%C5%8Drin-zu%20by%C5%8Dbu%29%20-%20left%20hand%20screen.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hasegawa%20Tohaku%20-%20Pine%20Trees%20%28Sh%C5%8Drin-zu%20by%C5%8Dbu%29%20-%20left%20hand%20screen.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hasegawa%20Tohaku%20-%20Pine%20Trees%20%28Sh%C5%8Drin-zu%20by%C5%8Dbu%29%20-%20left%20hand%20screen.jpg?width=600",
+   "focal_point": [
+    0.3,
+    0.4
+   ]
   },
   {
    "title": "Wind God and Thunder God",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tawaraya%20S%C5%8Dtatsu%20-%20God%20of%20Thunder%20%28Raijin%29%20-%202004.86%20-%20Cleveland%20Museum%20of%20Art.tif?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tawaraya%20S%C5%8Dtatsu%20-%20God%20of%20Thunder%20%28Raijin%29%20-%202004.86%20-%20Cleveland%20Museum%20of%20Art.tif?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tawaraya%20S%C5%8Dtatsu%20-%20God%20of%20Thunder%20%28Raijin%29%20-%202004.86%20-%20Cleveland%20Museum%20of%20Art.tif?width=600",
+   "focal_point": [
+    0.4,
+    0.22
+   ]
   },
   {
    "title": "Red and White Plum Blossoms",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ogata%20K%C5%8Drin%20-%20Red%20and%20White%20Plum%20Blossoms.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ogata%20K%C5%8Drin%20-%20Red%20and%20White%20Plum%20Blossoms.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Ogata%20K%C5%8Drin%20-%20Red%20and%20White%20Plum%20Blossoms.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Irises Screen",
@@ -258,7 +322,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Irises%20screen%202.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Irises%20screen%202.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Irises%20screen%202.jpg?width=600",
+   "focal_point": [
+    0.3,
+    0.4
+   ]
   },
   {
    "title": "David Vases",
@@ -273,7 +341,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20David%20Vases.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20David%20Vases.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20David%20Vases.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.42
+   ]
   }
  ]
 }

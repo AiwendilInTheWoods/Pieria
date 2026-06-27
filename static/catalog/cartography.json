@@ -18,7 +18,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Typus%20Orbis%20Terrarum%20drawn%20by%20Abraham%20Ortelius%20croped.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Typus%20Orbis%20Terrarum%20drawn%20by%20Abraham%20Ortelius%20croped.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Typus%20Orbis%20Terrarum%20drawn%20by%20Abraham%20Ortelius%20croped.png?width=600",
+   "focal_point": [
+    0.5,
+    0.48
+   ]
   },
   {
    "title": "Nova et Aucta Orbis Terrae Descriptio",
@@ -33,7 +37,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20et%20aucta%20orbis%20terrae%20descriptio%20ad%20usum%20navigantium%20emendate%20accomodata%20-%20illustriss...%20principi...%20Wilhelmo%20Duci%20juliae%2C%20Clivorum%20et%20Monti%20Opus%20hoc...%20eius%20auspiciis%20inchoatum...%20-%20Gerardus%20Mercator...%20-%20btv1b7200344k%20%2804%20of%2014%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20et%20aucta%20orbis%20terrae%20descriptio%20ad%20usum%20navigantium%20emendate%20accomodata%20-%20illustriss...%20principi...%20Wilhelmo%20Duci%20juliae%2C%20Clivorum%20et%20Monti%20Opus%20hoc...%20eius%20auspiciis%20inchoatum...%20-%20Gerardus%20Mercator...%20-%20btv1b7200344k%20%2804%20of%2014%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20et%20aucta%20orbis%20terrae%20descriptio%20ad%20usum%20navigantium%20emendate%20accomodata%20-%20illustriss...%20principi...%20Wilhelmo%20Duci%20juliae%2C%20Clivorum%20et%20Monti%20Opus%20hoc...%20eius%20auspiciis%20inchoatum...%20-%20Gerardus%20Mercator...%20-%20btv1b7200344k%20%2804%20of%2014%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.4
+   ]
   },
   {
    "title": "Universalis Cosmographia",
@@ -48,7 +56,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Reprodu%C3%A7%C3%A3o%20de%20Carta%20-%20Universalis%20Cosmographia%20%28Waldseem%C3%BCller%2C%20Martin%29%20-%201%20%281%29%2C%20Acervo%20do%20Museu%20Paulista%20da%20USP.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Reprodu%C3%A7%C3%A3o%20de%20Carta%20-%20Universalis%20Cosmographia%20%28Waldseem%C3%BCller%2C%20Martin%29%20-%201%20%281%29%2C%20Acervo%20do%20Museu%20Paulista%20da%20USP.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Reprodu%C3%A7%C3%A3o%20de%20Carta%20-%20Universalis%20Cosmographia%20%28Waldseem%C3%BCller%2C%20Martin%29%20-%201%20%281%29%2C%20Acervo%20do%20Museu%20Paulista%20da%20USP.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.45
+   ]
   },
   {
    "title": "Nova Totius Terrarum Orbis Geographica",
@@ -63,7 +75,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Willem%20Blaeu%2C%20NOVA%20TOTIUS%20TERRARUM%20ORBIS%20GEOGRAPHICA%20AC%20HYDROGRAPHICA%20TABULA%20%28FL184529063%202581042%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Willem%20Blaeu%2C%20NOVA%20TOTIUS%20TERRARUM%20ORBIS%20GEOGRAPHICA%20AC%20HYDROGRAPHICA%20TABULA%20%28FL184529063%202581042%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Willem%20Blaeu%2C%20NOVA%20TOTIUS%20TERRARUM%20ORBIS%20GEOGRAPHICA%20AC%20HYDROGRAPHICA%20TABULA%20%28FL184529063%202581042%29.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Americae Nova Tabula",
@@ -78,7 +94,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20et%20Acurata%20Totius%20Americae%20Tabula%20auct.%20G.I.%20Blaeu.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20et%20Acurata%20Totius%20Americae%20Tabula%20auct.%20G.I.%20Blaeu.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20et%20Acurata%20Totius%20Americae%20Tabula%20auct.%20G.I.%20Blaeu.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Fra Mauro map",
@@ -93,7 +113,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fra%20Mauro%20Map%20FactumArte.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fra%20Mauro%20Map%20FactumArte.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fra%20Mauro%20Map%20FactumArte.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Tabula Rogeriana",
@@ -108,7 +132,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tabula%20Rogeriana%201929%20copy%20by%20Konrad%20Miller.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tabula%20Rogeriana%201929%20copy%20by%20Konrad%20Miller.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tabula%20Rogeriana%201929%20copy%20by%20Konrad%20Miller.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Leo Belgicus",
@@ -123,7 +151,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joannes%20van%20Deutecum%20-%20Leo%20Belgicus%201650%20-%20published%20by%20Claes%20Jansz%20Visscher%20Amsterdam.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joannes%20van%20Deutecum%20-%20Leo%20Belgicus%201650%20-%20published%20by%20Claes%20Jansz%20Visscher%20Amsterdam.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Joannes%20van%20Deutecum%20-%20Leo%20Belgicus%201650%20-%20published%20by%20Claes%20Jansz%20Visscher%20Amsterdam.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Ptolemy world map",
@@ -138,7 +170,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/1482%20Ulm%20Ptolemy%20World%20Map.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/1482%20Ulm%20Ptolemy%20World%20Map.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/1482%20Ulm%20Ptolemy%20World%20Map.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Harmonia Macrocosmica: Planisphaerium Copernicanum",
@@ -153,7 +189,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Planisphaerium%20Copernicanum.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Planisphaerium%20Copernicanum.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Planisphaerium%20Copernicanum.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.52
+   ]
   },
   {
    "title": "Harmonia Macrocosmica: Planisphaerium Ptolemaicum",
@@ -168,7 +208,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Planisphaerium%20Ptolemaicum.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Planisphaerium%20Ptolemaicum.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Planisphaerium%20Ptolemaicum.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Harmonia Macrocosmica: Northern Constellations",
@@ -183,7 +227,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Haemisphaerium%20Stellatum%20Boreale%20cum%20Subjecto%20Haemisphaerio%20Terrestri.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Haemisphaerium%20Stellatum%20Boreale%20cum%20Subjecto%20Haemisphaerio%20Terrestri.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cellarius%20Harmonia%20Macrocosmica%20-%20Haemisphaerium%20Stellatum%20Boreale%20cum%20Subjecto%20Haemisphaerio%20Terrestri.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Uranometria: Orion",
@@ -198,7 +246,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Uranometria%20orion.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Uranometria%20orion.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Uranometria%20orion.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.32
+   ]
   },
   {
    "title": "Firmamentum Sobiescianum",
@@ -213,7 +265,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Johannes%20Hevelius%20-%20Prodromus%20Astronomia%20-%20Volume%20III%20%22Firmamentum%20Sobiescianum%2C%20sive%20uranographia%22%20-%20Tavola%20Emisfero%20Boreale.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Johannes%20Hevelius%20-%20Prodromus%20Astronomia%20-%20Volume%20III%20%22Firmamentum%20Sobiescianum%2C%20sive%20uranographia%22%20-%20Tavola%20Emisfero%20Boreale.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Johannes%20Hevelius%20-%20Prodromus%20Astronomia%20-%20Volume%20III%20%22Firmamentum%20Sobiescianum%2C%20sive%20uranographia%22%20-%20Tavola%20Emisfero%20Boreale.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "Atlas Coelestis",
@@ -228,7 +284,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Atlas%20Coelestis%20by%20John%20Flamsteed%20%281729%29%20022.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Atlas%20Coelestis%20by%20John%20Flamsteed%20%281729%29%20022.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Atlas%20Coelestis%20by%20John%20Flamsteed%20%281729%29%20022.jpg?width=600",
+   "focal_point": [
+    0.78,
+    0.25
+   ]
   },
   {
    "title": "Civitates Orbis Terrarum: Constantinople",
@@ -243,7 +303,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Frans%20Hogenberg%2C%20Byzantium%2C%20nunc%20Constantinopolis%20%28FL43895950%203943132%29.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Frans%20Hogenberg%2C%20Byzantium%2C%20nunc%20Constantinopolis%20%28FL43895950%203943132%29.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Frans%20Hogenberg%2C%20Byzantium%2C%20nunc%20Constantinopolis%20%28FL43895950%203943132%29.jpg?width=600",
+   "focal_point": [
+    0.42,
+    0.42
+   ]
   },
   {
    "title": "Carta Marina",
@@ -258,7 +322,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lucas%201898%20Plate%204%20Olaus%20Magnus%20Carta%20Marina%201539%20NW%20Portion%20annalsofvoyageso00luca%200273.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lucas%201898%20Plate%204%20Olaus%20Magnus%20Carta%20Marina%201539%20NW%20Portion%20annalsofvoyageso00luca%200273.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lucas%201898%20Plate%204%20Olaus%20Magnus%20Carta%20Marina%201539%20NW%20Portion%20annalsofvoyageso00luca%200273.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.5
+   ]
   },
   {
    "title": "A New and Accurate Map of the World",
@@ -273,7 +341,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20New%20And%20Accvrat%20Map%20Of%20The%20World.png?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20New%20And%20Accvrat%20Map%20Of%20The%20World.png?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/A%20New%20And%20Accvrat%20Map%20Of%20The%20World.png?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   },
   {
    "title": "Nova Belgica et Anglia Nova",
@@ -288,7 +360,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20Belgica%20Et%20Anglia%20Nova%20%28New%20Netherland%20and%20New%20England%29%20Blaeu%20Map%20c1634.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20Belgica%20Et%20Anglia%20Nova%20%28New%20Netherland%20and%20New%20England%29%20Blaeu%20Map%20c1634.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Nova%20Belgica%20Et%20Anglia%20Nova%20%28New%20Netherland%20and%20New%20England%29%20Blaeu%20Map%20c1634.jpg?width=600",
+   "focal_point": [
+    0.45,
+    0.5
+   ]
   },
   {
    "title": "Asiae Nova Descriptio",
@@ -303,7 +379,11 @@
    "source": "Wikimedia Commons",
    "license": "Public Domain",
    "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/B26056016D%20-%20Asiae%20nova%20descriptio.jpg?width=3840",
-   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/B26056016D%20-%20Asiae%20nova%20descriptio.jpg?width=600"
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/B26056016D%20-%20Asiae%20nova%20descriptio.jpg?width=600",
+   "focal_point": [
+    0.5,
+    0.45
+   ]
   }
  ]
 }
