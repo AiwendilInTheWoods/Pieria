@@ -195,7 +195,6 @@
             flex-direction: column;
             overflow-y: auto;
         }
-        .cropper-container { max-width: 800px; max-height: 500px; }
         .modal-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .modal-footer { margin-top: 20px; display: flex; justify-content: flex-end; gap: 15px; }
 
@@ -743,27 +742,6 @@
         </div>
     </main>
 
-    <!-- Cropping Modal -->
-    <div id="crop-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Define Static Crop</h3>
-                <div class="ratio-buttons">
-                    <button onclick="setRatio(16/9, this)">16:9</button>
-                    <button onclick="setRatio(9/16, this)">9:16</button>
-                    <button onclick="setRatio(NaN, this)" class="active">Freeform</button>
-                </div>
-            </div>
-            <div class="cropper-container">
-                <img id="cropper-image" src="">
-            </div>
-            <div class="modal-footer">
-                <button class="secondary" onclick="closeModal()">Cancel</button>
-                <button class="primary" onclick="saveCrop()">Save Crop Settings</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Library Picker Modal -->
     <div id="library-modal" class="modal">
         <div class="modal-content">
@@ -854,6 +832,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260627f"></script>
+    <script src="admin.js?v=20260627g"></script>
 </body>
 </html>

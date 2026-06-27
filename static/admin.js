@@ -12,8 +12,6 @@ let currentPlaylistId = null;
 let currentPlaylists = [];
 let fullLibrary = [];
 let discoveryQueue = [];
-let cropper = null;
-let currentArtworkId = null;
 let currentView = 'playlists';
 let pollInterval = null;
 let sortableInstance = null;
@@ -119,8 +117,7 @@ function startPolling() {
     if (pollInterval) clearInterval(pollInterval);
     pollInterval = setInterval(async () => {
         // Only refresh if no modal is open to avoid disrupting user interaction
-        const isModalOpen = document.getElementById('crop-modal').style.display === 'flex' ||
-                           document.getElementById('library-modal').style.display === 'flex' ||
+        const isModalOpen = document.getElementById('library-modal').style.display === 'flex' ||
                            document.getElementById('edit-overlay').classList.contains('open');
 
         if (!isModalOpen) {
@@ -1363,82 +1360,6 @@ function approveArtwork(id) {
     });
 }
 
-function openCropModal(id) {
-    currentArtworkId = id;
-    const modal = document.getElementById('crop-modal');
-    const image = document.getElementById('cropper-image');
-    let artwork = fullLibrary.find(a => a.id === id);
-    if (!artwork) {
-        for (let p of currentPlaylists) {
-            artwork = p.artworks.find(a => a.id === id);
-            if (artwork) break;
-        }
-    }
-    image.src = `${API_BASE}/artworks/${id}/preview?f=${encodeURIComponent(artwork.filename)}`;
-    modal.style.display = 'flex';
-    if (cropper) cropper.destroy();
-    cropper = new Cropper(image, {
-        viewMode: 1, dragMode: 'move', autoCropArea: 0.8,
-        restore: false, guides: true, center: true, highlight: false,
-        cropBoxMovable: true, cropBoxResizable: true,
-        data: (artwork && artwork.crop_width > 1) ? {
-            x: (artwork.crop_x / artwork.original_width) * 1920,
-            y: (artwork.crop_y / artwork.original_height) * (1920 * (artwork.original_height / artwork.original_width)),
-            width: (artwork.crop_width / artwork.original_width) * 1920,
-            height: (artwork.crop_height / artwork.original_height) * (1920 * (artwork.original_height / artwork.original_width))
-        } : null,
-        ready() {
-            const canvasData = cropper.getCanvasData();
-            const ratio = canvasData.naturalWidth / artwork.original_width;
-            if (artwork && artwork.crop_width > 1) {
-                cropper.setData({
-                    x: artwork.crop_x * ratio, y: artwork.crop_y * ratio,
-                    width: artwork.crop_width * ratio, height: artwork.crop_height * ratio
-                });
-            }
-        }
-    });
-}
-
-function setRatio(ratio, btn) {
-    if (!cropper) return;
-    cropper.setAspectRatio(ratio);
-    document.querySelectorAll('.ratio-buttons button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-}
-
-async function saveCrop() {
-    if (!cropper || !currentArtworkId) return;
-    const data = cropper.getData();
-    const canvasData = cropper.getCanvasData();
-    let artwork = fullLibrary.find(a => a.id === currentArtworkId);
-    if (!artwork) {
-        for (let p of currentPlaylists) {
-            artwork = p.artworks.find(a => a.id === currentArtworkId);
-            if (artwork) break;
-        }
-    }
-    const ratio = artwork.original_width / canvasData.naturalWidth;
-    try {
-        await fetch(`${API_BASE}/artworks/${currentArtworkId}/crop`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                crop_x: data.x * ratio, crop_y: data.y * ratio,
-                crop_width: data.width * ratio, crop_height: data.height * ratio
-            })
-        });
-        document.getElementById('crop-modal').style.display = 'none';
-        if (cropper) cropper.destroy();
-        await refreshData();
-    } catch (error) { console.error('[Admin] Save crop failed:', error); }
-}
-
-function closeModal() {
-    document.getElementById('crop-modal').style.display = 'none';
-    if (cropper) cropper.destroy();
-}
-
 // =============================================================================
 // Unified full-screen Edit landing — one screen to crop, set the focal point,
 // edit the placard, and re-enrich. Opened from Library + Collections (click the
@@ -1486,7 +1407,7 @@ function openEdit(id, ctx) {
     document.getElementById('edit-focal-img').src = `${API_BASE}/artworks/${id}/thumbnail?f=${encodeURIComponent(art.filename)}`;
     _editSetDot(art.focal_x ?? 0.5, art.focal_y ?? 0.5);
 
-    // Cropper on the full preview (reuses the crop-modal init logic).
+    // Cropper on the full preview, restoring any saved crop rect.
     const cimg = document.getElementById('edit-cropper-image');
     cimg.src = `${API_BASE}/artworks/${id}/preview?f=${encodeURIComponent(art.filename)}`;
     document.getElementById('edit-overlay').classList.add('open');
