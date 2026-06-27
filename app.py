@@ -709,6 +709,26 @@ async def suggest_caption(artwork_id: int, payload: CaptionRequest, db: Session 
         raise HTTPException(502, detail="The model didn't return a caption. Try again.")
     return {"caption": caption, "model_is_local": ai_client.is_local_base_url(cfg["base_url"])}
 
+
+class PersonalPhotoUpdate(BaseModel):
+    caption: Optional[str] = None
+    date: Optional[str] = None
+
+
+@app.patch("/api/studio/photo/{artwork_id}", response_model=ArtworkSchema)
+async def update_personal_photo(artwork_id: int, payload: PersonalPhotoUpdate, db: Session = Depends(get_db)):
+    """Studio → My Photos: save a personal photo's caption (title) and/or date. Restricted to personal
+    photos so it can't be used to edit museum/catalog metadata."""
+    art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
+    if not art or not art.is_personal:
+        raise HTTPException(404, detail="Personal photo not found")
+    if payload.caption is not None:
+        art.title = payload.caption.strip() or None
+    if payload.date is not None:
+        art.date_display = payload.date.strip() or None
+    db.commit(); db.refresh(art)
+    return art
+
 @app.get("/artworks/pending", response_model=List[ArtworkSchema])
 async def get_pending_artworks(db: Session = Depends(get_db)):
     return db.query(ArtworkModel).filter(ArtworkModel.status == 'pending_review').all()
@@ -2055,6 +2075,9 @@ async def get_admin_page(): return FileResponse(STATIC_DIR / "admin.html")
 
 @app.get("/help")
 async def get_help_page(): return FileResponse(STATIC_DIR / "help.html")
+
+@app.get("/studio")
+async def get_studio_page(): return FileResponse(STATIC_DIR / "studio.html")
 
 if STATIC_DIR.exists():
     app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")

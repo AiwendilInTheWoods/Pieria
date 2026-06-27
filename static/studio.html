@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>My Photos — Screen Docent</title>
+<style>
+  :root{
+    --bg:#0b1020; --card:#141a2e; --line:#26304a; --text:#e7ecf5; --muted:#93a0bd;
+    --accent:#5b8cff; --accent2:#3f6fe0; --ok:#34d399; --warn:#fbbf24;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5}
+  header{padding:22px 18px 8px;max-width:680px;margin:0 auto}
+  header h1{margin:0 0 4px;font-size:1.5rem}
+  .privacy{margin:0;color:var(--ok);font-size:.84rem}
+  main{max-width:680px;margin:0 auto;padding:12px 18px 60px}
+  .controls{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:14px 0}
+  label.field{display:flex;flex-direction:column;gap:5px;font-size:.78rem;color:var(--muted);flex:1;min-width:160px}
+  select,input[type=text]{background:#0f1626;border:1px solid var(--line);color:var(--text);
+       padding:11px 12px;border-radius:9px;font-size:.95rem;width:100%}
+  button{cursor:pointer;border:none;border-radius:9px;font-size:.9rem;font-weight:600}
+  .btn-secondary{background:#1b2440;border:1px solid var(--line);color:var(--text);padding:11px 16px}
+  .dropzone{display:block;margin:8px 0 18px;border:2px dashed var(--line);border-radius:16px;
+       padding:34px 18px;text-align:center;color:var(--muted);background:var(--card);transition:.15s}
+  .dropzone:hover,.dropzone.drag{border-color:var(--accent);color:var(--text);background:#16203a}
+  .dz-icon{display:block;font-size:2.4rem;color:var(--accent);line-height:1}
+  .dz-inner{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:16px}
+  .thumb-wrap{position:relative;width:100%;aspect-ratio:3/2;background:#0f1626;cursor:crosshair;overflow:hidden}
+  .thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+  .focal-dot{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;
+       border:3px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.5);
+       background:rgba(91,140,255,.45);pointer-events:none;transition:.12s ease}
+  .focal-hint{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:.72rem;
+       color:#dbe4ff;background:linear-gradient(transparent,rgba(0,0,0,.65));text-align:center}
+  .card-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+  .cap-row{display:flex;gap:8px}
+  .cap-row input{flex:1}
+  .suggest{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:0 14px;white-space:nowrap}
+  .suggest:disabled{opacity:.55;cursor:default}
+  .note{font-size:.74rem;color:var(--muted);min-height:1em}
+  .note.warn{color:var(--warn)} .note.ok{color:var(--ok)}
+  .saved{font-size:.74rem;color:var(--ok)}
+  footer{max-width:680px;margin:0 auto;padding:0 18px 40px;display:flex;gap:14px}
+  footer a{color:var(--accent);text-decoration:none;font-size:.9rem}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b2440;
+       border:1px solid var(--line);color:var(--text);padding:11px 18px;border-radius:10px;
+       font-size:.85rem;opacity:0;transition:.2s;pointer-events:none;max-width:90vw}
+  #toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>📸 My Photos</h1>
+  <p class="privacy">🔒 Your photos stay on your server — never uploaded to anyone's cloud.</p>
+</header>
+<main>
+  <div class="controls">
+    <label class="field">Album
+      <select id="album"></select>
+    </label>
+    <button class="btn-secondary" id="new-album">＋ New album</button>
+  </div>
+
+  <label class="dropzone" id="dropzone">
+    <input type="file" id="file-input" accept="image/*" multiple capture="environment" hidden>
+    <div class="dz-inner">
+      <span class="dz-icon">＋</span>
+      <span>Tap to add photos<br><small>or take a new one</small></span>
+    </div>
+  </label>
+
+  <div id="grid"></div>
+</main>
+<footer>
+  <a href="/">▶ View on the display</a>
+  <a href="/admin">⚙ Admin</a>
+</footer>
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const albumSel = $('#album'), grid = $('#grid'), fileInput = $('#file-input'), dz = $('#dropzone');
+let ai = { has_key:false, model_is_local:false, provider:'' };
+
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2600); }
+
+async function init(){
+  // AI status drives the ✨ Suggest button + its honest privacy note.
+  try{ ai = await (await fetch('/api/settings/ai')).json(); }catch(e){}
+  await loadAlbums();
+}
+
+async function loadAlbums(selectId){
+  let pls = [];
+  try{ pls = await (await fetch('/playlists')).json(); }catch(e){}
+  const hasMyPhotos = pls.some(p => p.name === 'My Photos');
+  albumSel.innerHTML = '';
+  // Default option: backend uses/creates "My Photos" when no playlist_id is sent.
+  if(!hasMyPhotos){ const o=document.createElement('option'); o.value=''; o.textContent='My Photos (default)'; albumSel.appendChild(o); }
+  pls.forEach(p => { const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; albumSel.appendChild(o); });
+  const nw=document.createElement('option'); nw.value='__new__'; nw.textContent='＋ New album…'; albumSel.appendChild(nw);
+  if(selectId) albumSel.value=String(selectId);
+  else albumSel.value = hasMyPhotos ? String(pls.find(p=>p.name==='My Photos').id) : '';
+}
+
+$('#new-album').onclick = async () => {
+  const name = (prompt('Name this album') || '').trim();
+  if(!name) return;
+  try{
+    const fd = new FormData(); fd.append('name', name);
+    const r = await fetch('/playlists', {method:'POST', body:fd});
+    if(!r.ok){ toast('Could not create album'); return; }
+    const p = await r.json(); await loadAlbums(p.id);
+  }catch(e){ toast('Could not create album'); }
+};
+
+function albumPlaylistId(){
+  const v = albumSel.value;
+  return (v === '' || v === '__new__') ? null : parseInt(v,10);
+}
+
+// --- drag & drop + file picker ---
+['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag');}));
+['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag');}));
+dz.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
+fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value=''; });
+
+async function handleFiles(files){
+  const pid = albumPlaylistId();
+  for(const file of files){
+    if(!file.type.startsWith('image/')) continue;
+    const card = makeCard(file);
+    grid.prepend(card.el);
+    try{
+      const fd = new FormData(); fd.append('file', file); if(pid) fd.append('playlist_id', pid);
+      const r = await fetch('/upload/personal', {method:'POST', body:fd});
+      if(!r.ok) throw new Error();
+      bindCard(card, await r.json());
+      if(!albumPlaylistId()) loadAlbums();   // first upload may have created "My Photos"
+    }catch(e){ card.note.textContent='✗ upload failed'; card.note.className='note warn'; }
+  }
+}
+
+function makeCard(file){
+  const el = document.createElement('div'); el.className='card';
+  const url = URL.createObjectURL(file);
+  el.innerHTML = `
+    <div class="thumb-wrap"><img alt="photo"><span class="focal-dot" hidden></span>
+      <span class="focal-hint">uploading…</span></div>
+    <div class="card-body">
+      <div class="cap-row">
+        <input type="text" class="cap" placeholder="Add a caption…" disabled>
+        <button class="suggest" disabled>✨</button>
+      </div>
+      <input type="text" class="date" placeholder="When? (optional, e.g. Summer 2026)" disabled>
+      <div class="note"></div>
+    </div>`;
+  el.querySelector('img').src = url;
+  return { el, img:el.querySelector('img'), dot:el.querySelector('.focal-dot'),
+           hint:el.querySelector('.focal-hint'), cap:el.querySelector('.cap'),
+           date:el.querySelector('.date'), suggest:el.querySelector('.suggest'),
+           note:el.querySelector('.note'), wrap:el.querySelector('.thumb-wrap') };
+}
+
+function bindCard(card, art){
+  const id = art.id;
+  card.hint.textContent = 'tap the photo to set the focus point';
+  setDot(card, art.focal_x ?? 0.5, art.focal_y ?? 0.5);
+  card.cap.disabled = card.date.disabled = false;
+  card.cap.value = art.title || '';
+  card.date.value = art.date_display || '';
+
+  // tap-to-set focal point (the framing anchor Ken Burns + e-ink use)
+  card.wrap.addEventListener('click', e => {
+    const r = card.wrap.getBoundingClientRect();
+    const fx = Math.min(1, Math.max(0, (e.clientX - r.left)/r.width));
+    const fy = Math.min(1, Math.max(0, (e.clientY - r.top)/r.height));
+    setDot(card, fx, fy);
+    patchCrop(id, fx, fy);
+  });
+
+  // save caption / date on change
+  card.cap.addEventListener('change', () => savePhoto(id, {caption:card.cap.value}, card));
+  card.date.addEventListener('change', () => savePhoto(id, {date:card.date.value}, card));
+
+  // ✨ Suggest — gated + honest privacy note
+  if(!ai.has_key){
+    card.suggest.title = 'Set up an AI model in Admin → AI Engine to auto-caption';
+    card.note.textContent = '✨ auto-caption needs an AI model (Admin → AI Engine)';
+  } else {
+    card.suggest.disabled = false;
+    card.note.className = 'note ' + (ai.model_is_local ? 'ok' : '');
+    card.note.textContent = ai.model_is_local
+      ? '✨ auto-caption runs on your local model — the photo stays on your device'
+      : `✨ auto-caption sends this photo to your AI provider${ai.provider ? ' ('+ai.provider+')' : ''}`;
+    card.suggest.addEventListener('click', () => suggest(id, card));
+  }
+}
+
+function setDot(card, fx, fy){
+  card.dot.hidden = false;
+  card.dot.style.left = (fx*100)+'%';
+  card.dot.style.top  = (fy*100)+'%';
+}
+
+function patchCrop(id, fx, fy){
+  fetch(`/artworks/${id}/crop`, {method:'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({crop_x:0,crop_y:0,crop_width:0,crop_height:0,focal_x:fx,focal_y:fy})})
+    .catch(()=>toast('Could not save focus point'));
+}
+
+async function savePhoto(id, fields, card){
+  try{
+    const r = await fetch(`/api/studio/photo/${id}`, {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(fields)});
+    if(r.ok && card){ card.note.className='note saved'; card.note.textContent='✓ saved'; }
+  }catch(e){ toast('Could not save'); }
+}
+
+async function suggest(id, card){
+  card.suggest.disabled = true; const old = card.suggest.textContent; card.suggest.textContent='✨…';
+  try{
+    const r = await fetch(`/api/studio/caption/${id}`, {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({hint: card.cap.value.trim() || null})});
+    const d = await r.json();
+    if(r.ok && d.caption){ card.cap.value = d.caption; await savePhoto(id, {caption:d.caption}, card); }
+    else { toast(d.detail || 'Could not suggest a caption'); }
+  }catch(e){ toast('Caption service unavailable'); }
+  finally{ card.suggest.disabled=false; card.suggest.textContent=old; }
+}
+
+init();
+</script>
+</body>
+</html>

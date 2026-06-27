@@ -170,3 +170,36 @@ def test_next_image_metadata_carries_is_personal(client):
     info = c.get("/next-image", params={"playlist_name": PERSONAL_PLAYLIST_NAME})
     assert info.status_code == 200, info.text
     assert info.json()["metadata"]["is_personal"] is True
+
+
+# --- My Photos studio: page + caption/date save (increment ⑥) ---
+
+def test_studio_page_served(client):
+    c, _ = client
+    r = c.get("/studio")
+    assert r.status_code == 200 and "My Photos" in r.text
+
+
+def test_update_personal_photo_caption_and_date(client):
+    c, _ = client
+    body = _upload(c).json()
+    r = c.patch(f"/api/studio/photo/{body['id']}", json={"caption": "Grandma's Garden", "date": "2025"})
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["title"] == "Grandma's Garden" and d["date_display"] == "2025"
+
+
+def test_update_personal_photo_partial_leaves_other(client):
+    c, db = client
+    body = _upload(c, caption="Original", date="2020").json()
+    c.patch(f"/api/studio/photo/{body['id']}", json={"caption": "Renamed"})  # date omitted
+    art = db.get(ArtworkModel, body["id"])
+    assert art.title == "Renamed" and art.date_display == "2020"
+
+
+def test_update_rejects_non_personal(client):
+    c, db = client
+    art = ArtworkModel(filename="m.jpg", original_width=10, original_height=10,
+                       status="approved", is_personal=False)
+    db.add(art); db.commit(); db.refresh(art)
+    assert c.patch(f"/api/studio/photo/{art.id}", json={"caption": "x"}).status_code == 404
