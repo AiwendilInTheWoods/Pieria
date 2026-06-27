@@ -49,6 +49,12 @@
         h2 { font-size: 0.9rem; text-transform: uppercase; color: #94a3b8; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
 
         .nav-tabs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .nav-section { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12rem; color: #64748b; font-weight: 600; margin: 14px 4px 0; }
+        .nav-section:first-child { margin-top: 0; }
+        .scope-toggle { display: inline-flex; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .scope-btn { background: transparent; border: none; color: #94a3b8; padding: 9px 16px; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
+        .scope-btn.active { background: var(--accent-color); color: #fff; }
+        .scope-btn + .scope-btn { border-left: 1px solid var(--border-color); }
         .nav-btn {
             background: transparent; border: 1px solid var(--border-color);
             color: var(--text-color); padding: 12px; border-radius: 8px;
@@ -318,22 +324,26 @@
         </div>
         
         <div class="nav-tabs">
-            <button id="nav-library" class="nav-btn" onclick="switchView('library')">
-                Full Library <span id="library-count" class="badge">0</span>
+            <div class="nav-section">Get Art</div>
+            <button id="nav-museum" class="nav-btn" onclick="switchView('museum')">
+                🏛️ Museum Art <span id="catalog-count" class="badge">0</span>
             </button>
+            <a href="/studio" class="nav-btn" style="text-decoration: none;">
+                📸 My Photos
+            </a>
+
+            <div class="nav-section">My Library</div>
             <button id="nav-playlists" class="nav-btn active" onclick="switchView('playlists')">
                 Collections <span id="playlist-count" class="badge">0</span>
+            </button>
+            <button id="nav-library" class="nav-btn" onclick="switchView('library')">
+                Full Library <span id="library-count" class="badge">0</span>
             </button>
             <button id="nav-review" class="nav-btn" onclick="switchView('review')">
                 Review Queue <span id="review-count" class="badge">0</span>
             </button>
-            <button id="nav-discover" class="nav-btn" onclick="switchView('discover')">
-                Discover <span id="discover-count" class="badge">0</span>
-            </button>
-            <button id="nav-catalog" class="nav-btn" onclick="switchView('catalog')">
-                Browse Catalog <span id="catalog-count" class="badge">0</span>
-            </button>
-            <button id="nav-settings" class="nav-btn" onclick="switchView('settings')">
+
+            <button id="nav-settings" class="nav-btn" onclick="switchView('settings')" style="margin-top: 14px;">
                 ⚙ Settings
             </button>
             <a href="/help" class="nav-btn" style="text-decoration: none; margin-top: auto; border-style: dashed; opacity: 0.7;">
@@ -385,91 +395,97 @@
             <div id="review-list"></div>
         </div>
 
-        <!-- Discover View -->
-        <div id="view-discover" class="hidden">
-            <div class="mission-control" style="position: sticky; top: 0; z-index: 20; background: var(--sidebar-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin: 40px 0 20px;">
-                <h3 style="margin-top: 0; color: var(--accent-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1rem;">Art Scout Mission Control</h3>
-                
-                <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;">
-                    <div style="flex-grow: 1;">
-                        <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Search Query (Optional)</label>
-                        <input type="text" id="scout-search" placeholder="e.g. 'Van Gogh', 'Impressionism', 'Japan'..." style="width: 100%; box-sizing: border-box;">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Results</label>
-                        <select id="scout-limit" style="background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem;">
-                            <option value="5">5</option>
-                            <option value="10" selected>10</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Target Repositories</label>
-                        <div id="scout-sources" style="display: flex; flex-wrap: wrap; gap: 15px; background: #0f172a; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="chicago" checked style="width: auto; margin: 0;"> Chicago
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="met" checked style="width: auto; margin: 0;"> The Met
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="cleveland" checked style="width: auto; margin: 0;"> Cleveland
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="smk" checked style="width: auto; margin: 0;"> SMK
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="rijks" checked style="width: auto; margin: 0;"> Rijksmuseum
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="nasa" checked style="width: auto; margin: 0;"> NASA
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
-                                <input type="checkbox" name="scout-source" value="wikimedia" checked style="width: auto; margin: 0;"> Wikimedia Commons
-                            </label>
-                        </div>
-                        
-                        <label style="display: block; margin-top: 15px; margin-bottom: 8px; font-size: 0.8rem; color: #f59e0b;">Premium Collections (Require Free API Key)</label>
-                        <div id="premium-scouts" style="display: flex; flex-wrap: wrap; gap: 15px; background: #0f172a; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <label id="premium-harvard" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('harvard', 'Harvard Art Museums', 'https://harvardartmuseums.org/collections/api')">
-                                🔒 Harvard Art Museums
-                            </label>
-                            <label id="premium-smithsonian" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('smithsonian', 'Smithsonian', 'https://api.data.gov/signup/')">
-                                🔒 Smithsonian
-                            </label>
-                            <label id="premium-europeana" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('europeana', 'Europeana', 'https://pro.europeana.eu/page/get-api')">
-                                🔒 Europeana
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <button class="primary" id="deploy-scout-btn" onclick="dispatchScouts()" style="padding: 12px 25px; font-weight: 600;">
-                        Deploy Scout
-                    </button>
-                    <button class="secondary" title="Remove all pending discover items for a fresh start." onclick="clearPendingDiscoveries()" style="padding: 12px 20px; border-color: #8b5cf6; color: #8b5cf6;">
-                        Clear All Pending
-                    </button>
+        <!-- Museum Art View — Browse Catalog + live Discover, unified behind one search box. -->
+        <div id="view-museum" class="hidden">
+            <div class="museum-bar" style="position: sticky; top: 0; z-index: 20; background: var(--sidebar-bg); padding: 22px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin: 30px 0 20px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <input type="text" id="scout-search" placeholder="Search the catalog — or anything across the world's museums…"
+                           onkeydown="if (event.key === 'Enter') museumSearch();"
+                           style="flex: 1 1 280px; box-sizing: border-box; padding: 12px 14px;">
+                    <button class="primary" id="museum-search-btn" onclick="museumSearch()" style="padding: 12px 24px; font-weight: 600;">Search</button>
                 </div>
-                
+
+                <!-- Source scope — lets the grid show only curated, or only live results. -->
+                <div class="scope-toggle" style="margin-top: 14px;">
+                    <button id="scope-curated" class="scope-btn active" onclick="setMuseumScope('curated')">🏛️ Curated catalog</button>
+                    <button id="scope-live" class="scope-btn" onclick="setMuseumScope('live')">🌐 Live museum search</button>
+                </div>
+
+                <p id="museum-live-note" class="hidden" style="margin: 12px 0 0; font-size: 0.78rem; color: #94a3b8;">
+                    🌐 Live results are queued to your <strong style="color:var(--text-color);">Review Queue</strong> — nothing publishes until you approve it. Curated catalog items add instantly.
+                </p>
+
+                <!-- Live-only: repositories &amp; options, tucked away so the default stays clean. -->
+                <details id="museum-advanced" class="hidden" style="margin-top: 12px;">
+                    <summary style="cursor: pointer; font-size: 0.8rem; color: var(--accent-color);">Advanced sources &amp; options</summary>
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-top: 14px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Results / source</label>
+                            <select id="scout-limit" style="background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem;">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-size: 0.8rem; color: #94a3b8;">Target Repositories</label>
+                            <div id="scout-sources" style="display: flex; flex-wrap: wrap; gap: 15px; background: #0f172a; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                    <input type="checkbox" name="scout-source" value="chicago" checked style="width: auto; margin: 0;"> Chicago
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                    <input type="checkbox" name="scout-source" value="met" checked style="width: auto; margin: 0;"> The Met
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                    <input type="checkbox" name="scout-source" value="cleveland" checked style="width: auto; margin: 0;"> Cleveland
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                    <input type="checkbox" name="scout-source" value="smk" checked style="width: auto; margin: 0;"> SMK
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                    <input type="checkbox" name="scout-source" value="rijks" checked style="width: auto; margin: 0;"> Rijksmuseum
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                    <input type="checkbox" name="scout-source" value="nasa" checked style="width: auto; margin: 0;"> NASA
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer;">
+                                    <input type="checkbox" name="scout-source" value="wikimedia" checked style="width: auto; margin: 0;"> Wikimedia Commons
+                                </label>
+                            </div>
+
+                            <label style="display: block; margin-top: 15px; margin-bottom: 8px; font-size: 0.8rem; color: #f59e0b;">Premium Collections (Require Free API Key)</label>
+                            <div id="premium-scouts" style="display: flex; flex-wrap: wrap; gap: 15px; background: #0f172a; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <label id="premium-harvard" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('harvard', 'Harvard Art Museums', 'https://harvardartmuseums.org/collections/api')">
+                                    🔒 Harvard Art Museums
+                                </label>
+                                <label id="premium-smithsonian" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('smithsonian', 'Smithsonian', 'https://api.data.gov/signup/')">
+                                    🔒 Smithsonian
+                                </label>
+                                <label id="premium-europeana" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; cursor: pointer; color: #94a3b8;" onclick="promptApiKey('europeana', 'Europeana', 'https://pro.europeana.eu/page/get-api')">
+                                    🔒 Europeana
+                                </label>
+                            </div>
+                        </div>
+                        <button class="secondary" title="Remove all pending discover items for a fresh start." onclick="clearPendingDiscoveries()" style="padding: 10px 18px; border-color: #8b5cf6; color: #8b5cf6; align-self: flex-end;">
+                            Clear All Pending
+                        </button>
+                    </div>
+                </details>
+
+                <!-- Hidden — dispatchScouts() still drives this button's disabled state. -->
+                <button id="deploy-scout-btn" onclick="dispatchScouts()" style="display: none;"></button>
+
                 <div id="scout-status" style="margin-top: 15px; font-size: 0.75rem; color: #94a3b8; display: none;">
                     <span class="spinner" style="display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(59, 130, 246, 0.3); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px;"></span>
                     <span id="scout-status-text">Scout is hunting for masterpieces...</span>
                 </div>
             </div>
 
-            <div id="discover-grid" class="artwork-grid"></div>
+            <!-- Grid area: curated browse / curated search render into #catalog-container; live results into #discover-grid. -->
+            <div id="catalog-container"></div>
+            <div id="discover-grid" class="artwork-grid hidden"></div>
             <button id="load-more-btn" class="secondary" onclick="loadMoreDiscoveries()" style="display:none; width:100%; margin-top:20px; padding: 14px; font-size: 0.9rem; border-color: var(--accent-color); color: var(--accent-color);">
                 Load More Results
             </button>
-        </div>
-
-        <!-- Browse Catalog View -->
-        <div id="view-catalog" class="hidden">
-            <div style="margin: 30px 0 10px;">
-                <h2 style="color: var(--accent-color); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1rem; margin: 0;">Browse Catalog</h2>
-                <p style="font-size: 0.82rem; color: #94a3b8; margin: 8px 0 0;">Curated public-domain art with ready-made placards. Browsing is free &amp; instant — the full-resolution image only downloads when you <strong>Add</strong> a piece to your library.</p>
-            </div>
-            <div id="catalog-container"></div>
         </div>
 
         <!-- Settings View -->
@@ -719,6 +735,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260627a"></script>
+    <script src="admin.js?v=20260627c"></script>
 </body>
 </html>

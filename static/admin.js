@@ -55,8 +55,10 @@ async function init() {
     loadCatalogSource();   // non-blocking: populate the Catalog Source panel
 
     // Restore the view the user was last on (survives a browser refresh).
-    const savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
-    const validViews = ['playlists', 'library', 'review', 'discover', 'catalog', 'settings'];
+    let savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
+    // Migrate the old split Discover/Browse-Catalog views to the merged Museum Art view.
+    if (savedView === 'catalog' || savedView === 'discover') savedView = 'museum';
+    const validViews = ['playlists', 'library', 'review', 'museum', 'settings'];
     if (savedView && validViews.includes(savedView)) {
         switchView(savedView);
     }
@@ -144,15 +146,13 @@ function switchView(view) {
     document.getElementById('nav-playlists').classList.toggle('active', view === 'playlists');
     document.getElementById('nav-library').classList.toggle('active', view === 'library');
     document.getElementById('nav-review').classList.toggle('active', view === 'review');
-    document.getElementById('nav-discover').classList.toggle('active', view === 'discover');
-    document.getElementById('nav-catalog').classList.toggle('active', view === 'catalog');
+    document.getElementById('nav-museum').classList.toggle('active', view === 'museum');
     document.getElementById('nav-settings').classList.toggle('active', view === 'settings');
 
     document.getElementById('view-playlists').classList.toggle('hidden', view !== 'playlists');
     document.getElementById('view-library').classList.toggle('hidden', view !== 'library');
     document.getElementById('view-review').classList.toggle('hidden', view !== 'review');
-    document.getElementById('view-discover').classList.toggle('hidden', view !== 'discover');
-    document.getElementById('view-catalog').classList.toggle('hidden', view !== 'catalog');
+    document.getElementById('view-museum').classList.toggle('hidden', view !== 'museum');
     document.getElementById('view-settings').classList.toggle('hidden', view !== 'settings');
 
     document.getElementById('sidebar-playlists').classList.toggle('hidden', view !== 'playlists');
@@ -160,7 +160,7 @@ function switchView(view) {
     // On mobile, picking a view closes the slide-in drawer.
     document.body.classList.remove('sidebar-open');
 
-    if (view === 'catalog') renderCatalog();
+    if (view === 'museum') enterMuseum();
 }
 
 // Mobile-only: toggle the slide-in sidebar drawer (no-op visual on desktop).
@@ -317,7 +317,7 @@ async function addSubscription() {
         input.value = '';
         showToast(`Subscribed to ${data.title || 'collection'} ✓`, 'success');
         loadSubscriptions();
-        if (currentView === 'catalog') renderCatalog();
+        if (currentView === 'museum') enterMuseum();
     } catch (e) { showToast('Network error subscribing.', 'error'); }
 }
 
@@ -338,7 +338,7 @@ async function removeSubscription(id, name) {
         await fetch(`${API_BASE}/api/subscriptions/${id}`, { method: 'DELETE' });
         showToast('Unsubscribed.', 'success');
         loadSubscriptions();
-        if (currentView === 'catalog') renderCatalog();
+        if (currentView === 'museum') enterMuseum();
     } catch (e) { showToast('Network error.', 'error'); }
 }
 window.addSubscription = addSubscription;
@@ -421,7 +421,9 @@ async function fetchDiscoveryQueue() {
     try {
         const response = await fetch(`${API_BASE}/api/discover/queue`);
         const data = await response.json();
-        document.getElementById('discover-count').textContent = data.length;
+        // The standalone Discover-count badge folded into Museum Art; update it only if present.
+        const dc = document.getElementById('discover-count');
+        if (dc) dc.textContent = data.length;
         if (data.length !== discoveryQueue.length) {
             discoveryQueue = data;
             renderDiscoveryGrid();
@@ -1746,6 +1748,105 @@ function _esc(s) {
 }
 
 // Level 1: the collections grid (covers + counts). Items load only when a collection is opened.
+// ===== Museum Art — unified Browse-Catalog (curated) + live Discover, behind one search box =====
+// `museumScope` decides which source the grid shows: 'curated' (the bundled catalog) or 'live' (a
+// live scout search whose hits go to the Review Queue). The two backends are untouched — this is
+// purely the shared front door.
+let museumScope = 'curated';
+
+function enterMuseum() {
+    // Entering or returning to the view: render whichever scope is active.
+    setMuseumScope(museumScope, true);
+}
+
+function setMuseumScope(scope, forceRerender) {
+    const changed = scope !== museumScope || forceRerender;
+    museumScope = scope;
+    document.getElementById('scope-curated').classList.toggle('active', scope === 'curated');
+    document.getElementById('scope-live').classList.toggle('active', scope === 'live');
+    // Live-only chrome: the repositories disclosure + the "goes to Review Queue" note.
+    document.getElementById('museum-advanced').classList.toggle('hidden', scope !== 'live');
+    document.getElementById('museum-live-note').classList.toggle('hidden', scope !== 'live');
+    // Grid panes: curated browse/search lives in #catalog-container, live results in #discover-grid.
+    document.getElementById('catalog-container').classList.toggle('hidden', scope !== 'curated');
+    document.getElementById('discover-grid').classList.toggle('hidden', scope !== 'live');
+    if (scope !== 'live') document.getElementById('load-more-btn').style.display = 'none';
+    const btn = document.getElementById('museum-search-btn');
+    if (btn) btn.textContent = scope === 'live' ? 'Search museums' : 'Search';
+    if (!changed) return;
+    if (scope === 'curated') {
+        const q = (document.getElementById('scout-search').value || '').trim();
+        if (q) renderCuratedSearch(q); else renderCatalog();
+    } else {
+        renderDiscoveryGrid();  // show whatever's already queued; new hits arrive via refreshData()
+    }
+}
+
+function museumSearch() {
+    const q = (document.getElementById('scout-search').value || '').trim();
+    if (museumScope === 'live') {
+        if (!q) { showToast('Type something to search the live museums.', 'error'); return; }
+        dispatchScouts();
+    } else {
+        if (q) renderCuratedSearch(q); else renderCatalog();
+    }
+}
+
+// Flat curated search across all collections (server-side), rendered with the same card + add-path
+// as a single collection — each result carries its own collection_id + item_index.
+async function renderCuratedSearch(q) {
+    const container = document.getElementById('catalog-container');
+    if (!container) return;
+    container.innerHTML = '<p style="color:#94a3b8;">Searching the catalog…</p>';
+    try {
+        const data = await (await fetch(`${API_BASE}/api/catalog/search?q=${encodeURIComponent(q)}`)).json();
+        const results = data.results || [];
+        const head = document.createElement('div');
+        head.style.cssText = 'margin: 4px 0 16px;';
+        head.innerHTML = `
+            <button class="secondary" onclick="clearMuseumSearch()" style="font-size:0.75rem; padding:6px 12px; margin-bottom:10px;">← All collections</button>
+            <div style="font-size:0.85rem; color:#94a3b8;">${results.length} curated ${results.length === 1 ? 'match' : 'matches'} for “${_esc(q)}”.
+                <a href="#" onclick="setMuseumScope('live'); museumSearch(); return false;" style="color:var(--accent-color); margin-left:6px;">Search live museums →</a>
+            </div>`;
+        container.innerHTML = '';
+        container.appendChild(head);
+        if (results.length) {
+            const grid = document.createElement('div');
+            grid.className = 'artwork-grid';
+            results.forEach(it => {
+                const card = document.createElement('div');
+                card.className = 'artwork-card';
+                const added = !!it.added;
+                card.innerHTML = `
+                    <img loading="lazy" src="${_esc(it.thumbnail_url)}" alt="${_esc(it.title)}" style="background:#0f172a;">
+                    <div class="info">
+                        <strong>${_esc(it.title || 'Untitled')}</strong><br>
+                        <small>${_esc(it.agent_name || 'Unknown')}</small><br>
+                        <small style="opacity:0.6">${_esc(it.collection_title || '')}</small>
+                    </div>
+                    <div class="actions">
+                        <button class="success" ${added ? 'disabled' : ''} onclick="addCatalogItem('${_esc(it.collection_id)}', ${it.item_index}, this)">${added ? 'Added ✓' : 'Add to Library'}</button>
+                    </div>`;
+                grid.appendChild(card);
+            });
+            container.appendChild(grid);
+        } else {
+            const none = document.createElement('p');
+            none.style.cssText = 'color:#94a3b8;';
+            none.innerHTML = `No curated works match “${_esc(q)}”. Try the <a href="#" onclick="setMuseumScope('live'); museumSearch(); return false;" style="color:var(--accent-color);">live museum search →</a>`;
+            container.appendChild(none);
+        }
+    } catch (e) {
+        console.error('[Museum] curated search failed:', e);
+        container.innerHTML = '<p style="color:#ef4444;">Search failed.</p>';
+    }
+}
+
+function clearMuseumSearch() {
+    document.getElementById('scout-search').value = '';
+    renderCatalog();
+}
+
 async function renderCatalog() {
     const container = document.getElementById('catalog-container');
     if (!container) return;

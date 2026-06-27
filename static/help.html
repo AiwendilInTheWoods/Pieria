@@ -228,33 +228,34 @@ docker compose up -d --build</code></pre>
 
         <section id="adding-art">
             <h2>Adding Art</h2>
-            <p>Three ways to fill your walls. The first two need <strong>no AI key at all</strong> — only
-               auto-analysis of your own uploads does.</p>
+            <p>Three ways to fill your walls. <strong>Museum Art</strong> needs <strong>no AI key at all</strong> —
+               only auto-analysis of your own uploads does.</p>
 
-            <h3>1. Browse Catalog — the fastest way</h3>
-            <p>The <strong>Browse Catalog</strong> tab is a curated, collection-first library of public-domain
-               art (museums, NASA, the Library of Congress) with ready-made museum placards. Pick a collection,
-               then click <strong>Add to Library</strong> on any piece — only then does its full-resolution image
-               download. Browsing itself is instant (just text + thumbnails).</p>
+            <h3>1. Museum Art — one place for the world's art</h3>
+            <p>The <strong>🏛️ Museum Art</strong> tab is a single front door with one search box and a
+               <strong>source toggle</strong> that decides where the grid looks:</p>
+            <ul>
+                <li><strong>🏛️ Curated catalog</strong> — a hand-picked, collection-first library of public-domain
+                   art (museums, NASA, the Library of Congress) with ready-made museum placards. Browse the
+                   collections, or type to search across all of them. Click <strong>Add to Library</strong> on any
+                   piece and <em>only then</em> does its full-resolution image download — browsing itself is instant
+                   (just text + thumbnails), and curated pieces add <strong>straight to your library</strong>.</li>
+                <li><strong>🌐 Live museum search</strong> — the same box, pointed at world-class open collections for
+                   a specific artist, subject, or era: the Met, Art Institute of Chicago, Cleveland, Rijksmuseum, SMK,
+                   <strong>NASA</strong> (space photography), and <strong>Wikimedia Commons</strong> (the broadest
+                   public-domain pool). Pick which repositories to search under <em>Advanced sources</em>. Live finds
+                   are sent to your <strong>Review Queue</strong> to approve before they reach your walls. NASA and
+                   Wikimedia need no key; Wikimedia results are filtered to public-domain works at display-grade
+                   resolution (≥2000px). A model just makes the search smarter for ambiguous queries.</li>
+            </ul>
+            <p>Searching the curated catalog and coming up empty? There's a one-click <em>“Search live museums →”</em>
+               link to widen the same query to the live scope.</p>
             <figure>
                 <img class="shot" src="/docs/catalog-add.gif" alt="Browsing the catalog: collections grid, opening a collection, and adding a piece">
-                <figcaption>Browse collections → open one → Add to Library. The high-res image downloads only on Add.</figcaption>
+                <figcaption>Curated scope: browse collections → open one → Add to Library. The high-res image downloads only on Add.</figcaption>
             </figure>
 
-            <h3>2. Discover — search the world's museums</h3>
-            <p>The <strong>Discover</strong> tab searches world-class open collections for a specific artist,
-               subject, or era — the Met, Art Institute of Chicago, Cleveland, Rijksmuseum, SMK,
-               <strong>NASA</strong> (space photography), and <strong>Wikimedia Commons</strong> (the broadest
-               public-domain pool: famous paintings, posters, and photographs). Tick the repositories you want,
-               approve what you like, and it joins your library. NASA and Wikimedia need no key; Wikimedia results
-               are filtered to public-domain works at display-grade resolution (≥2000px). Works without an AI key —
-               a model just makes the search smarter for ambiguous queries.</p>
-            <figure>
-                <img class="shot" src="/docs/discover.png" alt="The Discover tab with the Art Scout mission control panel">
-                <figcaption>Art Scout mission control — search across museum collections and approve finds.</figcaption>
-            </figure>
-
-            <h3>3. Upload your own</h3>
+            <h3>2. Upload your own</h3>
             <p>Drag &amp; drop images into the <strong>Full Library</strong> or a collection. If a model is
                connected, each upload is auto-analyzed (title, a 2-sentence blurb, tags) and lands in the
                <strong>Review Queue</strong>; if not, you simply fill in the details yourself there and
@@ -279,7 +280,7 @@ docker compose up -d --build</code></pre>
                 tells you which case you're in before you use it.
             </div>
 
-            <h3>4. Subscribe to a collection <span style="font-weight:normal; color:#94a3b8;">(beta)</span></h3>
+            <h3>3. Subscribe to a collection <span style="font-weight:normal; color:#94a3b8;">(beta)</span></h3>
             <p>In <strong>Settings → 🌐 Subscriptions</strong>, paste a publisher's collection URL to browse
                their art alongside your catalog. Each feed is tagged <strong>Community</strong> (added by
                URL) or <strong>Verified</strong> (a signed feed whose publisher is in our registry); the
@@ -294,7 +295,7 @@ docker compose up -d --build</code></pre>
             </div>
 
             <h3 id="catalog">Hosting the catalog remotely (grow it without rebuilding)</h3>
-            <p>The Browse Catalog ships <em>bundled</em> inside the app. To expand or update it without
+            <p>The curated catalog ships <em>bundled</em> inside the app. To expand or update it without
                rebuilding the image, host the catalog files on any static URL and point the app at them in
                <strong>Settings → 📚 Catalog Source</strong>. The app fetches the remote
                <code>index.json</code> + per-collection files and <strong>falls back to the bundled catalog
@@ -321,7 +322,7 @@ docker compose up -d --build</code></pre>
 
         <section id="ai-engine">
             <h2>Connecting a Model (AI Engine)</h2>
-            <p>A model is <strong>optional</strong> — the catalog, Discover, and manual metadata all work without
+            <p>A model is <strong>optional</strong> — Museum Art (curated + live search) and manual metadata all work without
                one. Connect a model to unlock <strong>auto-curation</strong>: metadata generation on upload,
                Wikipedia-grounded enrichment, and smarter search.</p>
             <figure>

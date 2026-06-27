@@ -1947,6 +1947,38 @@ async def get_catalog(db: Session = Depends(get_db)):
     """Collection summaries (cover + count) for the Browse Catalog grid. Items load per-collection."""
     return await _catalog_index(db)
 
+@app.get("/api/catalog/search")
+async def search_catalog(q: str = "", db: Session = Depends(get_db)):
+    """Flat keyword search across every bundled + subscribed catalog collection. Each hit is tagged
+    with its `collection_id` + `item_index` so the existing add-path (`POST /api/catalog/add`) works
+    unchanged. All whitespace-separated query tokens must match (AND) across title / artist / date /
+    collection title. Defined *before* the `/{collection_id}` route so "search" isn't swallowed as a
+    collection id. Capped to keep the payload small."""
+    tokens = [t for t in q.lower().split() if t]
+    if not tokens:
+        return {"query": q, "results": []}
+    added = {row[0] for row in db.query(ArtworkModel.source_url).filter(ArtworkModel.source_url.isnot(None)).all()}
+    index = await _catalog_index(db)
+    results = []
+    CAP = 200
+    for c in index.get("collections", []):
+        cid = c.get("id")
+        col = await _catalog_collection(db, cid)
+        if not col:
+            continue
+        ctitle = col.get("title", "")
+        for idx, it in enumerate(col.get("items", [])):
+            hay = " ".join(str(it.get(k, "") or "") for k in ("title", "agent_name", "date_display"))
+            hay = (hay + " " + ctitle).lower()
+            if all(t in hay for t in tokens):
+                results.append({**it, "collection_id": cid, "collection_title": ctitle,
+                                "item_index": idx, "added": it.get("source_url") in added})
+                if len(results) >= CAP:
+                    break
+        if len(results) >= CAP:
+            break
+    return {"query": q, "count": len(results), "results": results}
+
 @app.get("/api/catalog/{collection_id}")
 async def get_catalog_collection(collection_id: str, db: Session = Depends(get_db)):
     """One collection's items — prefilled placard metadata + hotlinked thumbnail_url + an `added`

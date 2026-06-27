@@ -142,6 +142,49 @@ def test_add_unknown_index_404(client):
     assert c.post("/api/catalog/add", json={"collection_id": "demo", "item_index": 99}).status_code == 404
 
 
+# --- Flat curated search (Museum Art unified search box) ---
+
+def test_search_finds_by_title_and_tags_collection_and_index(client):
+    c, _ = client
+    r = c.get("/api/catalog/search", params={"q": "sunrise"})
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["count"] == 1
+    hit = data["results"][0]
+    # Each hit must carry the coordinates the add-path needs, unchanged.
+    assert hit["title"] == "Test Sunrise"
+    assert hit["collection_id"] == "demo" and hit["item_index"] == 0
+    assert hit["collection_title"] == "Demo" and hit["added"] is False
+
+
+def test_search_matches_artist_and_is_and_across_tokens(client):
+    c, _ = client
+    # "painter" (artist) AND "sunrise" (title) both live in ITEM_A's haystack → 1 hit.
+    assert c.get("/api/catalog/search", params={"q": "painter sunrise"}).json()["count"] == 1
+    # No single item contains both "sunrise" and "dusk" → AND semantics yield nothing.
+    assert c.get("/api/catalog/search", params={"q": "sunrise dusk"}).json()["count"] == 0
+    # A shared token ("test" is in both titles) returns both.
+    assert c.get("/api/catalog/search", params={"q": "test"}).json()["count"] == 2
+
+
+def test_search_empty_query_returns_empty(client):
+    c, _ = client
+    assert c.get("/api/catalog/search", params={"q": "   "}).json()["results"] == []
+
+
+def test_search_route_not_shadowed_by_collection_id(client):
+    # Defined before /api/catalog/{collection_id}, so "search" isn't treated as a collection (404).
+    c, _ = client
+    assert c.get("/api/catalog/search", params={"q": "sunrise"}).status_code == 200
+
+
+def test_search_reflects_added_flag(client):
+    c, _ = client
+    c.post("/api/catalog/add", json={"collection_id": "demo", "item_index": 0})
+    hits = {h["title"]: h["added"] for h in c.get("/api/catalog/search", params={"q": "test"}).json()["results"]}
+    assert hits == {"Test Sunrise": True, "Test Dusk": False}
+
+
 # --- Remote catalog source (Settings → Catalog Source) ---
 
 def test_catalog_source_defaults_to_bundled(client):
