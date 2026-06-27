@@ -481,6 +481,10 @@ class PlaylistUpdate(BaseModel):
 class ReorderRequest(BaseModel):
     artwork_ids: List[int]
 
+class ArtworkIds(BaseModel):
+    """A list of artwork ids, for the bulk multi-select actions (add/remove/delete)."""
+    artwork_ids: List[int]
+
 class RemoteChangeRequest(BaseModel):
     target_display: str
     action: str
@@ -559,6 +563,24 @@ async def unlink_artwork_from_playlist(playlist_id: int, artwork_id: int, db: Se
         playlist_artwork.c.artwork_id == artwork_id
     ))
     db.commit(); return {"status": "unlinked"}
+
+@app.post("/playlists/{playlist_id}/artworks")
+async def link_artworks_to_playlist(playlist_id: int, payload: ArtworkIds, db: Session = Depends(get_db)):
+    """Bulk add: link many library artworks to a playlist in one call (the multi-select 'Add from
+    Library'). Idempotent per artwork — reuses _link_artwork_to_playlist, which skips existing links
+    and appends in order. A distinct path from the single /{artwork_id} POST, so no route collision."""
+    for aid in payload.artwork_ids:
+        _link_artwork_to_playlist(db, playlist_id, aid)
+    return {"status": "linked", "count": len(payload.artwork_ids)}
+
+@app.delete("/playlists/{playlist_id}/artworks")
+async def unlink_artworks_from_playlist(playlist_id: int, payload: ArtworkIds, db: Session = Depends(get_db)):
+    """Bulk remove: unlink many artworks from a playlist (multi-select Remove). Removes only the
+    association — the artworks stay in the library."""
+    n = db.execute(delete(playlist_artwork).where(
+        playlist_artwork.c.playlist_id == playlist_id,
+        playlist_artwork.c.artwork_id.in_(payload.artwork_ids or [-1]))).rowcount
+    db.commit(); return {"status": "unlinked", "count": n}
 
 @app.post("/playlists/{playlist_id}/reorder")
 async def reorder_playlist(playlist_id: int, request: ReorderRequest, db: Session = Depends(get_db)):
@@ -731,6 +753,39 @@ async def update_personal_photo(artwork_id: int, payload: PersonalPhotoUpdate, d
     db.commit(); db.refresh(art)
     return art
 
+
+@app.get("/api/studio/photos")
+async def list_personal_photos(db: Session = Depends(get_db)):
+    """Studio gallery: every personal photo (`is_personal`) grouped by album, so the user can find and
+    re-edit a photo they uploaded earlier (Studio was previously upload-only). A photo with no album
+    lands in an "Unfiled" group; one in several albums appears under each. Newest first within a group."""
+    photos = db.query(ArtworkModel).filter(
+        ArtworkModel.is_personal.is_(True)).order_by(ArtworkModel.id.desc()).all()
+    names = {p.id: p.name for p in db.query(PlaylistModel).all()}
+    by_art: dict[int, list[int]] = {}
+    for pid, aid in db.execute(select(
+            playlist_artwork.c.playlist_id, playlist_artwork.c.artwork_id)).all():
+        by_art.setdefault(aid, []).append(pid)
+
+    def _photo(a):
+        return {"id": a.id, "title": a.title, "date_display": a.date_display,
+                "focal_x": a.focal_x, "focal_y": a.focal_y, "filename": a.filename}
+
+    albums: dict[int, dict] = {}
+    unfiled: list[dict] = []
+    for a in photos:
+        pids = [pid for pid in by_art.get(a.id, []) if pid in names]
+        if not pids:
+            unfiled.append(_photo(a))
+        for pid in pids:
+            albums.setdefault(pid, {"playlist_id": pid, "name": names[pid], "photos": []})
+            albums[pid]["photos"].append(_photo(a))
+    out = sorted(albums.values(), key=lambda x: x["name"].lower())
+    if unfiled:
+        out.append({"playlist_id": None, "name": "Unfiled", "photos": unfiled})
+    return {"albums": out, "count": len(photos)}
+
+
 @app.get("/artworks/pending", response_model=List[ArtworkSchema])
 async def get_pending_artworks(db: Session = Depends(get_db)):
     return db.query(ArtworkModel).filter(ArtworkModel.status == 'pending_review').all()
@@ -740,6 +795,16 @@ async def approve_artwork(artwork_id: int, data: ArtworkApproval, db: Session = 
     art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
     if not art: raise HTTPException(404)
     art.title, art.agent_name, art.agent_role, art.creation_date, art.cultural_context, art.medium, art.date_display, art.description_narrative, art.tags, art.status = data.title, data.agent_name, data.agent_role, data.creation_date, data.cultural_context, data.medium, data.date_display, data.description_narrative, data.tags, 'approved'
+    db.commit(); db.refresh(art); return art
+
+@app.patch("/artworks/{artwork_id}/metadata", response_model=ArtworkSchema)
+async def update_artwork_metadata(artwork_id: int, data: ArtworkApproval, db: Session = Depends(get_db)):
+    """Edit an already-approved artwork's placard metadata in place — the Edit landing's Save for
+    museum/catalog works. Unlike /approve (the Review-Queue publish step), this does NOT touch status,
+    so an approved piece stays approved. Personal photos edit via /api/studio/photo instead."""
+    art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
+    if not art: raise HTTPException(404)
+    art.title, art.agent_name, art.agent_role, art.creation_date, art.cultural_context, art.medium, art.date_display, art.description_narrative, art.tags = data.title, data.agent_name, data.agent_role, data.creation_date, data.cultural_context, data.medium, data.date_display, data.description_narrative, data.tags
     db.commit(); db.refresh(art); return art
 
 @app.post("/api/curate/regenerate/{artwork_id}", response_model=ArtworkSchema)
@@ -1074,13 +1139,29 @@ async def update_artwork_crop(artwork_id: int, payload: CropPayload, db: Session
     db.commit(); db.refresh(art)
     return art
 
+def _wipe_artwork(db: Session, art: ArtworkModel) -> None:
+    """Delete an artwork's library file + DB row (playlist associations cascade). Shared by the single
+    and bulk delete paths so they can't drift."""
+    f_path = LIBRARY_DIR / art.filename
+    if f_path.is_symlink() or f_path.exists():
+        try: f_path.unlink()
+        except Exception as e: logger.warning(f"[Delete] could not unlink {f_path}: {e}")
+    db.delete(art)
+
 @app.delete("/artworks/{artwork_id}")
 async def permanent_delete_artwork(artwork_id: int, db: Session = Depends(get_db)):
     art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
     if not art: raise HTTPException(404)
-    f_path = LIBRARY_DIR / art.filename
-    if f_path.exists(): f_path.unlink()
-    db.delete(art); db.commit(); return {"status": "wiped"}
+    _wipe_artwork(db, art); db.commit(); return {"status": "wiped"}
+
+@app.post("/artworks/delete")
+async def bulk_delete_artworks(payload: ArtworkIds, db: Session = Depends(get_db)):
+    """Bulk permanent delete (multi-select Delete in the Library). POST (not DELETE) so the id list
+    rides in the body without colliding with DELETE /artworks/{id}. Skips ids that no longer exist."""
+    arts = db.query(ArtworkModel).filter(ArtworkModel.id.in_(payload.artwork_ids or [-1])).all()
+    for art in arts:
+        _wipe_artwork(db, art)
+    db.commit(); return {"status": "wiped", "count": len(arts)}
 
 @app.get("/next-image")
 async def get_next_image(

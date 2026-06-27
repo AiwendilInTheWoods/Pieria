@@ -119,9 +119,10 @@ function startPolling() {
     if (pollInterval) clearInterval(pollInterval);
     pollInterval = setInterval(async () => {
         // Only refresh if no modal is open to avoid disrupting user interaction
-        const isModalOpen = document.getElementById('crop-modal').style.display === 'flex' || 
-                           document.getElementById('library-modal').style.display === 'flex';
-        
+        const isModalOpen = document.getElementById('crop-modal').style.display === 'flex' ||
+                           document.getElementById('library-modal').style.display === 'flex' ||
+                           document.getElementById('edit-overlay').classList.contains('open');
+
         if (!isModalOpen) {
             await refreshData();
         }
@@ -139,6 +140,7 @@ async function refreshData() {
 }
 
 function switchView(view) {
+    if (gridSelectMode) exitSelectMode();   // leaving a grid cancels any multi-selection
     currentView = view;
     // Remember the active view so a browser refresh returns here instead of
     // snapping back to the default Collections screen.
@@ -717,6 +719,14 @@ async function reenrichArtwork(id) {
     } catch (error) { console.error('[Admin] Re-enrich failed:', error); }
 }
 
+// Card subtitle line. Personal photos have no artist — the caption IS the title, so the subtitle
+// shows the date (or nothing), matching the jargon-free display placard (app.js is_personal branch).
+// Museum works show the artist, falling back to "Unknown".
+function cardSubtitle(art) {
+    if (art.is_personal) return art.date_display || '';
+    return art.agent_name || 'Unknown';
+}
+
 function renderLibraryGrid() {
     const grid = document.getElementById('library-grid');
     
@@ -747,15 +757,14 @@ function renderLibraryGrid() {
             card.className = 'artwork-card';
             card.dataset.id = art.id;
             card.innerHTML = `
-                <img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}" alt="${art.filename}">
+                <img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}" alt="${art.filename}" onclick="openEdit(${art.id})" style="cursor: pointer;">
                 <div class="info">
                     <strong>${art.title || art.filename}</strong><br>
-                    <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
+                    <small>${cardSubtitle(art)}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
                 </div>
-                <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
-                    <button onclick="openCropModal(${art.id})">Crop</button>
-                    <button data-ai-action="1" onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
-                    <button onclick="deleteArtworkPermanently(${art.id})" style="color: #ef4444;">Delete</button>
+                <div class="actions" style="grid-template-columns: 1fr auto;">
+                    <button onclick="openEdit(${art.id}, 'library')">Edit</button>
+                    <button onclick="deleteArtworkPermanently(${art.id})" title="Delete from library" style="color: #ef4444;">✕</button>
                 </div>
             `;
             if (currentDOMIndex < grid.children.length) {
@@ -798,15 +807,14 @@ function renderArtworkGrid(artworks) {
             card.className = 'artwork-card';
             card.dataset.id = art.id;
             card.innerHTML = `
-                <img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}" alt="${art.filename}">
+                <img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}" alt="${art.filename}" onclick="openEdit(${art.id})" style="cursor: pointer;">
                 <div class="info">
                     <strong>${art.title || art.filename}</strong><br>
-                    <small>${art.agent_name || 'Unknown'}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
+                    <small>${cardSubtitle(art)}</small>${art.is_seed ? '<br><span style="color: #10b981; font-weight: bold; font-size: 0.75rem;">🌱 Built-In</span>' : ''}
                 </div>
-                <div class="actions" style="grid-template-columns: 1fr 1fr 1fr;">
-                    <button onclick="openCropModal(${art.id})">Crop</button>
-                    <button data-ai-action="1" onclick="reenrichArtwork(${art.id})" style="color: #3b82f6;">Enrich</button>
-                    <button onclick="removeArtworkFromPlaylist(${art.id})" style="color: #f59e0b;">Remove</button>
+                <div class="actions" style="grid-template-columns: 1fr auto;">
+                    <button onclick="openEdit(${art.id}, 'collection')">Edit</button>
+                    <button onclick="removeArtworkFromPlaylist(${art.id})" title="Remove from this collection" style="color: #f59e0b;">✕</button>
                 </div>
             `;
             if (currentDOMIndex < grid.children.length) {
@@ -838,36 +846,145 @@ async function deleteArtworkPermanently(id) {
     });
 }
 
+// Library picker is now multi-select: tap cards to toggle, then "Add N to collection" in one call.
+let pickerSelected = new Set();
+
 function openLibraryPicker() {
     const modal = document.getElementById('library-modal');
     const grid = document.getElementById('library-picker-grid');
     grid.innerHTML = '';
-    
+    pickerSelected = new Set();
+
     const playlist = currentPlaylists.find(p => p.id === currentPlaylistId);
     const existingIds = new Set(playlist.artworks.map(a => a.id));
 
     fullLibrary.filter(art => !existingIds.has(art.id)).forEach(art => {
         const card = document.createElement('div');
         card.className = 'picker-card';
-        card.onclick = () => addExistingToPlaylist(art.id);
+        card.onclick = () => {
+            if (pickerSelected.has(art.id)) { pickerSelected.delete(art.id); card.classList.remove('selected'); }
+            else { pickerSelected.add(art.id); card.classList.add('selected'); }
+            _renderPickerCount();
+        };
         card.innerHTML = `
             <img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}">
             <p>${art.title || art.filename}</p>
         `;
         grid.appendChild(card);
     });
+    _renderPickerCount();
     modal.style.display = 'flex';
 }
 
-async function addExistingToPlaylist(artworkId) {
-    try {
-        await fetch(`${API_BASE}/playlists/${currentPlaylistId}/artworks/${artworkId}`, { method: 'POST' });
-        closeLibraryPicker();
-        await refreshData();
-    } catch (error) { console.error('[Admin] Link failed:', error); }
+function _renderPickerCount() {
+    const n = pickerSelected.size;
+    document.getElementById('picker-count').textContent = `${n} selected`;
+    const btn = document.getElementById('picker-add-btn');
+    btn.disabled = n === 0;
+    btn.textContent = n ? `Add ${n} to collection` : 'Add selected';
 }
 
-function closeLibraryPicker() { document.getElementById('library-modal').style.display = 'none'; }
+async function addSelectedToPlaylist() {
+    if (!pickerSelected.size) return;
+    const n = pickerSelected.size;
+    try {
+        await fetch(`${API_BASE}/playlists/${currentPlaylistId}/artworks`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ artwork_ids: [...pickerSelected] }) });
+        closeLibraryPicker();
+        showToast(`Added ${n} to the collection ✓`, 'success');
+        await refreshData();
+    } catch (error) { console.error('[Admin] bulk add failed:', error); showToast('Add failed.', 'error'); }
+}
+
+function closeLibraryPicker() { document.getElementById('library-modal').style.display = 'none'; pickerSelected = new Set(); }
+
+// ===== Grid multi-select: bulk add-to-collection / remove / delete =====
+let gridSelectMode = false;
+const gridSelected = new Set();
+
+function toggleSelectMode() { gridSelectMode ? exitSelectMode() : enterSelectMode(); }
+
+function enterSelectMode() {
+    gridSelectMode = true;
+    gridSelected.clear();
+    document.body.classList.add('selecting');
+    updateBulkBar();
+    document.getElementById('bulk-bar').classList.add('open');
+}
+
+function exitSelectMode() {
+    gridSelectMode = false;
+    gridSelected.clear();
+    document.body.classList.remove('selecting');
+    document.getElementById('bulk-bar').classList.remove('open');
+    document.querySelectorAll('.artwork-card.selected').forEach(c => c.classList.remove('selected'));
+}
+
+// Capture-phase so a click in select mode toggles selection instead of opening Edit / firing ✕.
+function _gridSelectClick(e) {
+    if (!gridSelectMode) return;
+    const card = e.target.closest('.artwork-card');
+    if (!card || !card.dataset.id) return;
+    e.stopPropagation(); e.preventDefault();
+    const id = parseInt(card.dataset.id, 10);
+    if (gridSelected.has(id)) { gridSelected.delete(id); card.classList.remove('selected'); }
+    else { gridSelected.add(id); card.classList.add('selected'); }
+    updateBulkBar();
+}
+
+function updateBulkBar() {
+    document.getElementById('bulk-count').textContent = `${gridSelected.size} selected`;
+    const inLibrary = currentView === 'library';
+    document.getElementById('bulk-remove-btn').style.display = inLibrary ? 'none' : '';
+    document.getElementById('bulk-delete-btn').style.display = inLibrary ? '' : 'none';
+    const sel = document.getElementById('bulk-add-target');
+    sel.innerHTML = '<option value="">Add to collection…</option>' +
+        (currentPlaylists || [])
+            .filter(p => !(currentView === 'playlists' && p.id === currentPlaylistId))
+            .map(p => `<option value="${p.id}">Add to: ${p.name}</option>`).join('');
+}
+
+async function bulkAddToCollection(pid) {
+    const sel = document.getElementById('bulk-add-target');
+    if (!pid || !gridSelected.size) { sel.value = ''; return; }
+    const n = gridSelected.size;
+    try {
+        await fetch(`${API_BASE}/playlists/${pid}/artworks`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ artwork_ids: [...gridSelected] }) });
+        showToast(`Added ${n} ✓`, 'success');
+        exitSelectMode(); await refreshData();
+    } catch (e) { console.error('[Admin] bulk add failed:', e); showToast('Add failed.', 'error'); }
+    sel.value = '';
+}
+
+async function bulkRemoveFromCollection() {
+    if (!gridSelected.size) return;
+    if (!(await confirmModal(`Remove ${gridSelected.size} from this collection? They stay in your library.`, { confirmText: 'Remove' }))) return;
+    try {
+        await fetch(`${API_BASE}/playlists/${currentPlaylistId}/artworks`, {
+            method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ artwork_ids: [...gridSelected] }) });
+        showToast('Removed ✓', 'success'); exitSelectMode(); await refreshData();
+    } catch (e) { console.error('[Admin] bulk remove failed:', e); showToast('Remove failed.', 'error'); }
+}
+
+async function bulkDeleteSelected() {
+    if (!gridSelected.size) return;
+    if (!(await confirmModal(`Permanently delete ${gridSelected.size} artwork(s) from the library and all collections? This wipes the files.`, { confirmText: 'Delete', danger: true }))) return;
+    try {
+        await fetch(`${API_BASE}/artworks/delete`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ artwork_ids: [...gridSelected] }) });
+        showToast('Deleted ✓', 'success'); exitSelectMode(); await refreshData();
+    } catch (e) { console.error('[Admin] bulk delete failed:', e); showToast('Delete failed.', 'error'); }
+}
+
+['library-grid', 'artwork-grid'].forEach(gid => {
+    const g = document.getElementById(gid);
+    if (g) g.addEventListener('click', _gridSelectClick, true);
+});
 
 function renderSidebar() {
     const list = document.getElementById('playlist-list');
@@ -1320,6 +1437,159 @@ async function saveCrop() {
 function closeModal() {
     document.getElementById('crop-modal').style.display = 'none';
     if (cropper) cropper.destroy();
+}
+
+// =============================================================================
+// Unified full-screen Edit landing — one screen to crop, set the focal point,
+// edit the placard, and re-enrich. Opened from Library + Collections (click the
+// thumbnail or Edit). Branches on is_personal: museum = full metadata; personal
+// = jargon-free caption + date. Both backends are reused, so no behaviour drift.
+// =============================================================================
+let editCropper = null, editId = null, editCtx = 'library', editIsPersonal = false;
+let editFocalX = 0.5, editFocalY = 0.5;
+const EDIT_MUSEUM_FIELDS = ['title','agent_name','agent_role','creation_date','date_display',
+                            'cultural_context','medium','tags','description_narrative'];
+
+function _findArt(id) {
+    let a = fullLibrary.find(x => x.id === id);
+    if (!a) { for (const p of (currentPlaylists || [])) { a = (p.artworks || []).find(x => x.id === id); if (a) break; } }
+    return a;
+}
+
+function openEdit(id, ctx) {
+    const art = _findArt(id);
+    if (!art) { showToast('Could not load that artwork.', 'error'); return; }
+    // Context decides the danger action: Delete (whole library) vs Remove (this collection only).
+    editId = id; editCtx = ctx || (currentView === 'library' ? 'library' : 'collection'); editIsPersonal = !!art.is_personal;
+
+    document.getElementById('edit-head-title').textContent = editIsPersonal ? 'Edit photo' : 'Edit artwork';
+    document.getElementById('edit-museum').style.display = editIsPersonal ? 'none' : '';
+    document.getElementById('edit-personal').style.display = editIsPersonal ? '' : 'none';
+
+    if (editIsPersonal) {
+        document.getElementById('edit-p-caption').value = art.title || '';
+        document.getElementById('edit-p-date').value = art.date_display || '';
+        document.getElementById('edit-personal-note').textContent = aiConfigured
+            ? '✨ Suggest writes a short, album-style caption.'
+            : '✨ auto-caption needs an AI model (Settings → AI Engine).';
+    } else {
+        EDIT_MUSEUM_FIELDS.forEach(k => { document.getElementById('edit-f-' + k).value = art[k] || ''; });
+    }
+
+    // Danger button: Delete (library) vs Remove from collection.
+    const danger = document.getElementById('edit-danger');
+    const dangerCtx = editCtx;   // capture for the async handler
+    danger.textContent = dangerCtx === 'collection' ? 'Remove from collection' : 'Delete';
+    danger.onclick = async () => { closeEdit(); if (dangerCtx === 'collection') await removeArtworkFromPlaylist(id); else await deleteArtworkPermanently(id); };
+
+    // Focal mini-picker (thumbnail + draggable dot).
+    document.getElementById('edit-focal-img').src = `${API_BASE}/artworks/${id}/thumbnail?f=${encodeURIComponent(art.filename)}`;
+    _editSetDot(art.focal_x ?? 0.5, art.focal_y ?? 0.5);
+
+    // Cropper on the full preview (reuses the crop-modal init logic).
+    const cimg = document.getElementById('edit-cropper-image');
+    cimg.src = `${API_BASE}/artworks/${id}/preview?f=${encodeURIComponent(art.filename)}`;
+    document.getElementById('edit-overlay').classList.add('open');
+    if (editCropper) editCropper.destroy();
+    editCropper = new Cropper(cimg, {
+        viewMode: 1, dragMode: 'move', autoCropArea: 0.9, restore: false,
+        guides: true, center: true, highlight: false,
+        ready() {
+            if (art.crop_width > 1) {
+                const cd = editCropper.getCanvasData();
+                const r = cd.naturalWidth / art.original_width;
+                editCropper.setData({ x: art.crop_x * r, y: art.crop_y * r, width: art.crop_width * r, height: art.crop_height * r });
+            }
+        }
+    });
+    document.querySelectorAll('#edit-ratios button').forEach((b, i) => b.classList.toggle('active', i === 2));
+}
+
+function editSetRatio(ratio, btn) {
+    if (!editCropper) return;
+    editCropper.setAspectRatio(ratio);
+    document.querySelectorAll('#edit-ratios button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function _editSetDot(fx, fy) {
+    editFocalX = Math.min(1, Math.max(0, fx)); editFocalY = Math.min(1, Math.max(0, fy));
+    const dot = document.getElementById('edit-focal-dot');
+    dot.style.left = (editFocalX * 100) + '%'; dot.style.top = (editFocalY * 100) + '%';
+}
+
+// Wire the focal picker once (the element lives in static HTML).
+(function wireEditFocal() {
+    const wrap = document.getElementById('edit-focal-wrap');
+    if (!wrap) return;
+    let dragging = false;
+    const set = e => {
+        const r = wrap.getBoundingClientRect();
+        const p = e.touches ? e.touches[0] : e;
+        _editSetDot((p.clientX - r.left) / r.width, (p.clientY - r.top) / r.height);
+    };
+    wrap.addEventListener('mousedown', e => { dragging = true; set(e); });
+    window.addEventListener('mousemove', e => { if (dragging) set(e); });
+    window.addEventListener('mouseup', () => { dragging = false; });
+    wrap.addEventListener('touchstart', e => { set(e); e.preventDefault(); }, { passive: false });
+    wrap.addEventListener('touchmove', e => { set(e); e.preventDefault(); }, { passive: false });
+})();
+
+async function saveEdit() {
+    if (editId == null) return;
+    const id = editId;
+    try {
+        // Crop + focal in one /crop call (it already accepts both).
+        const body = { crop_x: 0, crop_y: 0, crop_width: 0, crop_height: 0, focal_x: editFocalX, focal_y: editFocalY };
+        if (editCropper) {
+            const data = editCropper.getData();
+            const cd = editCropper.getCanvasData();
+            const art = _findArt(id);
+            const r = art.original_width / cd.naturalWidth;
+            body.crop_x = data.x * r; body.crop_y = data.y * r; body.crop_width = data.width * r; body.crop_height = data.height * r;
+        }
+        await fetch(`${API_BASE}/artworks/${id}/crop`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+
+        if (editIsPersonal) {
+            await fetch(`${API_BASE}/api/studio/photo/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ caption: document.getElementById('edit-p-caption').value, date: document.getElementById('edit-p-date').value }) });
+        } else {
+            const meta = {};
+            EDIT_MUSEUM_FIELDS.forEach(k => { meta[k] = document.getElementById('edit-f-' + k).value || ''; });
+            await fetch(`${API_BASE}/artworks/${id}/metadata`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(meta) });
+        }
+        showToast('Saved ✓', 'success');
+        closeEdit();
+        await refreshData();
+    } catch (e) { console.error('[Edit] save failed:', e); showToast('Save failed.', 'error'); }
+}
+
+function closeEdit() {
+    document.getElementById('edit-overlay').classList.remove('open');
+    if (editCropper) { editCropper.destroy(); editCropper = null; }
+    editId = null;
+}
+
+async function editReenrich() {
+    if (!aiConfigured) { nudgeConnectModel(); closeEdit(); return; }
+    const id = editId;
+    closeEdit();
+    await reenrichArtwork(id);   // re-enriches via AI and bounces the item to the Review Queue
+}
+
+async function editSuggest() {
+    if (!aiConfigured) { nudgeConnectModel(); return; }
+    const id = editId;
+    const btn = document.getElementById('edit-suggest');
+    btn.disabled = true; const old = btn.textContent; btn.textContent = '✨…';
+    try {
+        const cap = document.getElementById('edit-p-caption').value.trim();
+        const r = await fetch(`${API_BASE}/api/studio/caption/${id}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ hint: cap || null }) });
+        const d = await r.json();
+        if (r.ok && d.caption) document.getElementById('edit-p-caption').value = d.caption;
+        else showToast(d.detail || 'Could not suggest a caption.', 'error');
+    } catch (e) { showToast('Caption service unavailable.', 'error'); }
+    finally { btn.disabled = false; btn.textContent = old; }
 }
 
 document.addEventListener('DOMContentLoaded', init);

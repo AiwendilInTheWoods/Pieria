@@ -43,6 +43,8 @@
   .note{font-size:.74rem;color:var(--muted);min-height:1em}
   .note.warn{color:var(--warn)} .note.ok{color:var(--ok)}
   .saved{font-size:.74rem;color:var(--ok)}
+  .album-h{font-size:.8rem;text-transform:uppercase;letter-spacing:.08rem;color:var(--muted);
+       margin:22px 2px 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
   footer{max-width:680px;margin:0 auto;padding:0 18px 40px;display:flex;gap:14px}
   footer a{color:var(--accent);text-decoration:none;font-size:.9rem}
   #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b2440;
@@ -73,6 +75,7 @@
   </label>
 
   <div id="grid"></div>
+  <section id="gallery"></section>
 </main>
 <footer>
   <a href="/">▶ View on the display</a>
@@ -91,6 +94,7 @@ async function init(){
   // AI status drives the ✨ Suggest button + its honest privacy note.
   try{ ai = await (await fetch('/api/settings/ai')).json(); }catch(e){}
   await loadAlbums();
+  await loadPhotos();
 }
 
 async function loadAlbums(selectId){
@@ -144,9 +148,9 @@ async function handleFiles(files){
   }
 }
 
-function makeCard(file){
+// Build an empty photo card (no image source yet) + return its element refs.
+function blankCard(){
   const el = document.createElement('div'); el.className='card';
-  const url = URL.createObjectURL(file);
   el.innerHTML = `
     <div class="thumb-wrap"><img alt="photo"><span class="focal-dot" hidden></span>
       <span class="focal-hint">uploading…</span></div>
@@ -158,11 +162,47 @@ function makeCard(file){
       <input type="text" class="date" placeholder="When? (optional, e.g. Summer 2026)" disabled>
       <div class="note"></div>
     </div>`;
-  el.querySelector('img').src = url;
   return { el, img:el.querySelector('img'), dot:el.querySelector('.focal-dot'),
            hint:el.querySelector('.focal-hint'), cap:el.querySelector('.cap'),
            date:el.querySelector('.date'), suggest:el.querySelector('.suggest'),
            note:el.querySelector('.note'), wrap:el.querySelector('.thumb-wrap') };
+}
+
+// New-upload card (local preview from the File until the server responds).
+function makeCard(file){
+  const card = blankCard();
+  card.img.src = URL.createObjectURL(file);
+  return card;
+}
+
+// Existing-photo card (thumbnail from the server) — reuses the same editor via bindCard().
+function makeCardFromArtwork(art){
+  const card = blankCard();
+  card.img.src = `/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename || '')}`;
+  return card;
+}
+
+// Studio gallery: load every personal photo, grouped by album, each re-editable via bindCard().
+async function loadPhotos(){
+  let data;
+  try{ data = await (await fetch('/api/studio/photos')).json(); }catch(e){ return; }
+  const gallery = $('#gallery');
+  gallery.innerHTML = '';
+  if(!data.count){
+    gallery.innerHTML = '<p class="note" style="text-align:center;margin-top:18px;">No photos yet — add some above and they\'ll show here to edit anytime.</p>';
+    return;
+  }
+  for(const album of (data.albums || [])){
+    const h = document.createElement('h2');
+    h.className = 'album-h';
+    h.textContent = album.name;
+    gallery.appendChild(h);
+    for(const art of album.photos){
+      const card = makeCardFromArtwork(art);
+      gallery.appendChild(card.el);
+      bindCard(card, art);
+    }
+  }
 }
 
 function bindCard(card, art){

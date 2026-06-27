@@ -203,3 +203,69 @@ def test_update_rejects_non_personal(client):
                        status="approved", is_personal=False)
     db.add(art); db.commit(); db.refresh(art)
     assert c.patch(f"/api/studio/photo/{art.id}", json={"caption": "x"}).status_code == 404
+
+
+# --- Studio gallery: GET /api/studio/photos (Inc 2) ---
+
+def test_studio_photos_groups_by_album_and_excludes_museum(client):
+    c, db = client
+    # two personal photos in a named album, one in the default "My Photos"
+    pl = PlaylistModel(name="Stuff"); db.add(pl); db.commit(); db.refresh(pl)
+    _upload(c, caption="Canal", playlist_id=pl.id)
+    _upload(c, caption="Bridge", playlist_id=pl.id)
+    _upload(c, caption="Default One")           # auto "My Photos"
+    # a museum artwork must NOT appear in the personal gallery
+    db.add(ArtworkModel(filename="museum.jpg", original_width=10, original_height=10,
+                        status="approved", is_personal=False, title="Mona Lisa")); db.commit()
+
+    data = c.get("/api/studio/photos").json()
+    assert data["count"] == 3
+    by_name = {a["name"]: a for a in data["albums"]}
+    assert set(by_name) == {"Stuff", PERSONAL_PLAYLIST_NAME}
+    assert {p["title"] for p in by_name["Stuff"]["photos"]} == {"Canal", "Bridge"}
+    # carries the fields the gallery card needs
+    p = by_name["Stuff"]["photos"][0]
+    assert {"id", "title", "date_display", "focal_x", "focal_y", "filename"} <= set(p)
+    assert "Mona Lisa" not in [pp["title"] for al in data["albums"] for pp in al["photos"]]
+
+
+def test_studio_photos_unfiled_group(client):
+    c, db = client
+    # a personal photo with no playlist link → "Unfiled"
+    db.add(ArtworkModel(filename="loose.jpg", original_width=10, original_height=10,
+                        status="approved", is_personal=True, title="Loose")); db.commit()
+    data = c.get("/api/studio/photos").json()
+    assert data["count"] == 1
+    assert data["albums"][-1]["name"] == "Unfiled"
+    assert data["albums"][-1]["playlist_id"] is None
+
+
+def test_studio_photos_empty(client):
+    c, _ = client
+    assert c.get("/api/studio/photos").json() == {"albums": [], "count": 0}
+
+
+# --- Edit landing: PATCH /artworks/{id}/metadata (Inc 3) ---
+
+_META = {"title": "Edited", "agent_name": "A. Artist", "agent_role": "Painter",
+         "creation_date": "1900", "cultural_context": "Modernism", "medium": "Oil",
+         "date_display": "1900", "description_narrative": "A new blurb.", "tags": "a, b"}
+
+
+def test_update_artwork_metadata_edits_in_place_keeps_status(client):
+    c, db = client
+    art = ArtworkModel(filename="m.jpg", original_width=10, original_height=10,
+                       status="approved", is_personal=False, title="Old")
+    db.add(art); db.commit(); db.refresh(art)
+    r = c.patch(f"/artworks/{art.id}/metadata", json=_META)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["title"] == "Edited" and body["agent_name"] == "A. Artist"
+    assert body["status"] == "approved"      # NOT bounced back to pending_review
+    db.refresh(art)
+    assert art.description_narrative == "A new blurb." and art.status == "approved"
+
+
+def test_update_artwork_metadata_404(client):
+    c, _ = client
+    assert c.patch("/artworks/99999/metadata", json=_META).status_code == 404

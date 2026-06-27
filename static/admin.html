@@ -199,6 +199,42 @@
         .modal-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .modal-footer { margin-top: 20px; display: flex; justify-content: flex-end; gap: 15px; }
 
+        /* --- Unified full-screen Edit landing --- */
+        .edit-overlay { display: none; position: fixed; inset: 0; background: rgba(2,6,20,0.92); z-index: 1100; padding: 24px; overflow-y: auto; }
+        .edit-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+        .edit-panel { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; width: min(1100px, 100%); margin: auto; display: flex; flex-direction: column; max-height: calc(100vh - 48px); }
+        .edit-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid var(--border-color); }
+        .edit-head h3 { margin: 0; font-size: 1.05rem; color: var(--accent-color); }
+        .edit-body { display: flex; gap: 24px; padding: 22px; overflow-y: auto; }
+        .edit-left { flex: 1 1 46%; min-width: 0; }
+        .edit-right { flex: 1 1 54%; min-width: 0; display: flex; flex-direction: column; }
+        .edit-cropper-wrap { background: #0f172a; border-radius: 8px; overflow: hidden; max-height: 46vh; }
+        .edit-cropper-wrap img { max-width: 100%; display: block; }
+        .ratio-buttons { display: flex; gap: 8px; margin-bottom: 10px; }
+        .ratio-buttons button { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .ratio-buttons button.active { background: var(--accent-color); border-color: var(--accent-color); }
+        .edit-focal { margin-top: 16px; }
+        .edit-focal-wrap { position: relative; width: 220px; max-width: 64%; aspect-ratio: 3/2; background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; cursor: crosshair; margin-top: 6px; }
+        .edit-focal-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .edit-focal-dot { position: absolute; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,.55); background: rgba(59,130,246,.45); pointer-events: none; }
+        .edit-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 11px; }
+        .edit-field > label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05rem; }
+        .edit-field input, .edit-field textarea { background: #0f172a; border: 1px solid var(--border-color); color: var(--text-color); padding: 9px 11px; border-radius: 6px; font-size: 0.88rem; width: 100%; box-sizing: border-box; }
+        .edit-field textarea { min-height: 92px; resize: vertical; }
+        .edit-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .edit-foot { display: flex; align-items: center; gap: 12px; padding: 16px 22px; border-top: 1px solid var(--border-color); }
+        .edit-note { font-size: 0.74rem; color: #94a3b8; }
+        @media (max-width: 760px) { .edit-body { flex-direction: column; } .edit-focal-wrap { width: 160px; } }
+
+        /* --- Bulk multi-select --- */
+        .bulk-bar { display: none; position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--accent-color); border-radius: 12px; padding: 12px 18px; gap: 14px; align-items: center; z-index: 1050; box-shadow: 0 8px 30px rgba(0,0,0,.5); flex-wrap: wrap; max-width: 92vw; }
+        .bulk-bar.open { display: flex; }
+        .bulk-bar select { background: #0f172a; border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; }
+        .artwork-card.selected { position: relative; outline: 3px solid var(--accent-color); outline-offset: -3px; }
+        .artwork-card.selected::after { content: '✓'; position: absolute; top: 8px; right: 8px; background: var(--accent-color); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
+        body.selecting #library-grid .artwork-card, body.selecting #artwork-grid .artwork-card, body.selecting #library-grid .artwork-card img, body.selecting #artwork-grid .artwork-card img { cursor: pointer; }
+        .picker-card.selected { position: relative; outline: 3px solid var(--accent-color); outline-offset: -3px; }
+
         button.primary { background: var(--accent-color); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
         button.success { background: var(--success-color); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         button.secondary { background: transparent; border: 1px solid var(--border-color); color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
@@ -370,6 +406,7 @@
                     Drag & Drop or Click to Add to Library
                     <input type="file" id="library-file-input" hidden multiple onchange="uploadFiles(this.files, null)">
                 </div>
+                <button class="secondary" onclick="toggleSelectMode()" style="white-space:nowrap; margin-left:20px;">☑ Select</button>
             </div>
             <div id="library-grid" class="artwork-grid"></div>
         </div>
@@ -381,7 +418,10 @@
                     Upload New <span id="target-playlist-name">to a collection</span>
                     <input type="file" id="file-input" hidden multiple>
                 </div>
-                <button class="primary" style="margin-left: 20px;" onclick="openLibraryPicker()">Add from Library</button>
+                <div style="display:flex; gap:12px; margin-left:20px;">
+                    <button class="primary" onclick="openLibraryPicker()">Add from Library</button>
+                    <button class="secondary" onclick="toggleSelectMode()" style="white-space:nowrap;">☑ Select</button>
+                </div>
             </div>
             <div id="artwork-grid" class="artwork-grid"></div>
         </div>
@@ -732,9 +772,88 @@
                 <button class="secondary" onclick="closeLibraryPicker()">×</button>
             </div>
             <div id="library-picker-grid" class="library-picker-grid"></div>
+            <div class="modal-footer">
+                <span id="picker-count" style="margin-right:auto; color:#94a3b8; font-size:0.85rem;">0 selected</span>
+                <button class="secondary" onclick="closeLibraryPicker()">Cancel</button>
+                <button class="primary" id="picker-add-btn" onclick="addSelectedToPlaylist()" disabled>Add selected</button>
+            </div>
         </div>
     </div>
 
-    <script src="admin.js?v=20260627c"></script>
+    <!-- Bulk multi-select action bar (Library / Collections) -->
+    <div id="bulk-bar" class="bulk-bar">
+        <span id="bulk-count">0 selected</span>
+        <select id="bulk-add-target" onchange="bulkAddToCollection(this.value)"><option value="">Add to collection…</option></select>
+        <button class="secondary" id="bulk-remove-btn" onclick="bulkRemoveFromCollection()">Remove from collection</button>
+        <button class="secondary" id="bulk-delete-btn" onclick="bulkDeleteSelected()" style="color:#ef4444;">Delete</button>
+        <button class="secondary" onclick="exitSelectMode()">Done</button>
+    </div>
+
+    <!-- Unified full-screen Edit landing (Library / Collections; branches on is_personal) -->
+    <div id="edit-overlay" class="edit-overlay">
+        <div class="edit-panel">
+            <div class="edit-head">
+                <h3 id="edit-head-title">Edit</h3>
+                <button class="secondary" onclick="closeEdit()" style="padding:6px 12px;">✕</button>
+            </div>
+            <div class="edit-body">
+                <div class="edit-left">
+                    <div class="ratio-buttons" id="edit-ratios">
+                        <button onclick="editSetRatio(16/9, this)">16:9</button>
+                        <button onclick="editSetRatio(9/16, this)">9:16</button>
+                        <button onclick="editSetRatio(NaN, this)" class="active">Freeform</button>
+                    </div>
+                    <div class="edit-cropper-wrap"><img id="edit-cropper-image" src=""></div>
+                    <div class="edit-focal">
+                        <label style="font-size:0.7rem; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05rem;">Focus point</label>
+                        <div class="edit-focal-wrap" id="edit-focal-wrap">
+                            <img id="edit-focal-img" src=""><span class="edit-focal-dot" id="edit-focal-dot"></span>
+                        </div>
+                        <p class="edit-note" style="margin:6px 0 0;">Tap or drag to set where Ken Burns &amp; e-ink keep the subject.</p>
+                    </div>
+                </div>
+                <div class="edit-right">
+                    <!-- Museum / catalog metadata -->
+                    <div id="edit-museum">
+                        <div class="edit-field"><label>Title</label><input id="edit-f-title" type="text"></div>
+                        <div class="edit-grid2">
+                            <div class="edit-field"><label>Artist</label><input id="edit-f-agent_name" type="text"></div>
+                            <div class="edit-field"><label>Role</label><input id="edit-f-agent_role" type="text"></div>
+                        </div>
+                        <div class="edit-grid2">
+                            <div class="edit-field"><label>Date</label><input id="edit-f-creation_date" type="text"></div>
+                            <div class="edit-field"><label>Date (display)</label><input id="edit-f-date_display" type="text"></div>
+                        </div>
+                        <div class="edit-grid2">
+                            <div class="edit-field"><label>Cultural context</label><input id="edit-f-cultural_context" type="text"></div>
+                            <div class="edit-field"><label>Medium</label><input id="edit-f-medium" type="text"></div>
+                        </div>
+                        <div class="edit-field"><label>Tags</label><input id="edit-f-tags" type="text"></div>
+                        <div class="edit-field"><label>Description</label><textarea id="edit-f-description_narrative"></textarea></div>
+                        <button class="secondary" id="edit-reenrich" data-ai-action="1" onclick="editReenrich()" style="color:#3b82f6;">✨ Re-enrich with AI <span style="color:#94a3b8; font-size:0.72rem;">(→ Review Queue)</span></button>
+                    </div>
+                    <!-- Personal photo (jargon-free) -->
+                    <div id="edit-personal" style="display:none;">
+                        <div class="edit-field"><label>Caption</label>
+                            <div style="display:flex; gap:8px;">
+                                <input id="edit-p-caption" type="text" placeholder="Add a caption…">
+                                <button class="secondary" id="edit-suggest" data-ai-action="1" onclick="editSuggest()" style="white-space:nowrap;">✨</button>
+                            </div>
+                        </div>
+                        <div class="edit-field"><label>When (optional)</label><input id="edit-p-date" type="text" placeholder="e.g. Summer 2026"></div>
+                        <p class="edit-note" id="edit-personal-note"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-foot">
+                <button class="secondary" id="edit-danger" style="color:#ef4444;">Delete</button>
+                <div style="flex:1;"></div>
+                <button class="secondary" onclick="closeEdit()">Cancel</button>
+                <button class="primary" onclick="saveEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js?v=20260627f"></script>
 </body>
 </html>
