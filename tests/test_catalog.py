@@ -140,3 +140,80 @@ def test_add_with_playlist_links_it(client):
 def test_add_unknown_index_404(client):
     c, _ = client
     assert c.post("/api/catalog/add", json={"collection_id": "demo", "item_index": 99}).status_code == 404
+
+
+# --- Remote catalog source (Settings → Catalog Source) ---
+
+def test_catalog_source_defaults_to_bundled(client):
+    c, _ = client
+    r = c.get("/api/settings/catalog")
+    assert r.status_code == 200
+    assert r.json() == {"catalog_url": "", "using_remote": False}
+
+
+def test_catalog_source_rejects_non_http(client):
+    c, _ = client
+    r = c.post("/api/settings/catalog", json={"catalog_url": "ftp://example.test/catalog"})
+    assert r.status_code == 400
+
+
+def test_catalog_source_saves_and_reports_count(client, monkeypatch):
+    c, _ = client
+
+    async def _fake_fetch(base, name):
+        assert name == "index.json"
+        return {"version": 1, "collections": [{"id": "x"}, {"id": "y"}]}
+    monkeypatch.setattr(app_module, "_fetch_remote_json", _fake_fetch)
+
+    r = c.post("/api/settings/catalog", json={"catalog_url": "https://cdn.test/catalog/"})
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["using_remote"] is True
+    assert data["catalog_url"] == "https://cdn.test/catalog"  # trailing slash trimmed
+    assert "2 collection" in data["message"]
+    # persisted + reflected by GET
+    g = c.get("/api/settings/catalog").json()
+    assert g == {"catalog_url": "https://cdn.test/catalog", "using_remote": True}
+
+
+def test_catalog_source_saves_with_warning_when_unreachable(client, monkeypatch):
+    c, _ = client
+
+    async def _boom(base, name):
+        raise RuntimeError("HTTP 503")
+    monkeypatch.setattr(app_module, "_fetch_remote_json", _boom)
+
+    r = c.post("/api/settings/catalog", json={"catalog_url": "https://down.test/cat"})
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["using_remote"] is True and "warning" in data
+    # still persisted despite being unreachable now (runtime falls back to bundled)
+    assert c.get("/api/settings/catalog").json()["catalog_url"] == "https://down.test/cat"
+
+
+def test_catalog_source_clear_reverts_to_bundled(client, monkeypatch):
+    c, _ = client
+
+    async def _fake_fetch(base, name):
+        return {"version": 1, "collections": [{"id": "x"}]}
+    monkeypatch.setattr(app_module, "_fetch_remote_json", _fake_fetch)
+
+    c.post("/api/settings/catalog", json={"catalog_url": "https://cdn.test/catalog"})
+    r = c.post("/api/settings/catalog", json={"catalog_url": ""})
+    assert r.status_code == 200 and r.json()["using_remote"] is False
+    assert c.get("/api/settings/catalog").json() == {"catalog_url": "", "using_remote": False}
+
+
+def test_remote_index_serves_over_bundled(client, monkeypatch):
+    """With a catalog_url set, /api/catalog fetches the remote index instead of the bundled one."""
+    c, _ = client
+
+    async def _fake_fetch(base, name):
+        if name == "index.json":
+            return {"version": 1, "collections": [{"id": "remote-col", "title": "Remote", "count": 1}]}
+        raise RuntimeError("only index fetched in this test")
+    monkeypatch.setattr(app_module, "_fetch_remote_json", _fake_fetch)
+
+    c.post("/api/settings/catalog", json={"catalog_url": "https://cdn.test/catalog"})
+    ids = [col["id"] for col in c.get("/api/catalog").json()["collections"]]
+    assert "remote-col" in ids and "demo" not in ids  # remote replaced bundled

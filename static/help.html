@@ -277,8 +277,32 @@ docker compose up -d --build</code></pre>
             <div class="tip">
                 <strong>Publishing your own?</strong> Collections are an open
                 <a href="https://github.com/AiwendilInTheWoods/Screen-Docent/blob/main/docs/manifest-v2.md" target="_blank" style="color:var(--accent-color);">Manifest&nbsp;v2</a>
-                format — host a JSON file anywhere and share the URL. (A guided "Studio" for building and
-                signing collections is on the roadmap.)
+                format — host a JSON file anywhere and share the URL.
+            </div>
+
+            <h3 id="catalog">Hosting the catalog remotely (grow it without rebuilding)</h3>
+            <p>The Browse Catalog ships <em>bundled</em> inside the app. To expand or update it without
+               rebuilding the image, host the catalog files on any static URL and point the app at them in
+               <strong>Settings → 📚 Catalog Source</strong>. The app fetches the remote
+               <code>index.json</code> + per-collection files and <strong>falls back to the bundled catalog
+               automatically</strong> if the URL is ever unreachable.</p>
+            <ol style="font-size:0.92rem; line-height:1.7;">
+                <li><strong>Generate the files.</strong> Run the offline builder
+                    <code>python -m tools.build_catalog</code> — it writes <code>index.json</code> plus one
+                    <code>&lt;collection&gt;.json</code> per collection into <code>static/catalog/</code>.</li>
+                <li><strong>Host them</strong> on any static host — a GitHub repo's <code>raw</code> URL, an
+                    S3/R2 bucket, Netlify, or any plain web server. Keep <code>index.json</code> and the
+                    per-collection files together under one base path.</li>
+                <li><strong>Point the app</strong> at the <em>base</em> URL (the folder, not
+                    <code>index.json</code> itself) in Settings → 📚 Catalog Source, then
+                    <strong>Test&nbsp;&amp;&nbsp;Save</strong>. It confirms the URL and reports how many
+                    collections it found.</li>
+            </ol>
+            <div class="tip">
+                <strong>Note:</strong> a remote catalog only changes <em>where the list comes from</em> —
+                images are still hotlinked from wherever the manifest points, and the full-resolution file
+                downloads only when you <strong>Add</strong> a piece (same as the bundled catalog).
+                <strong>Reset to bundled</strong> clears it anytime.
             </div>
         </section>
 

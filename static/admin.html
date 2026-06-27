@@ -497,6 +497,7 @@
                         Subscribe to a publisher's collection by URL. We index pointers — images stay on the
                         publisher's server, and a feed is checked and validated before it's added. Browse it
                         alongside your catalog, tagged <strong>Community</strong> (or <strong>Verified</strong>).
+                        <span style="display:block; margin-top:8px;">This <em>adds</em> collections alongside the bundled set. To <em>replace</em> the whole catalog with one you host yourself, use <strong>📚 Catalog Source</strong> below.</span>
                     </p>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <input type="url" id="subscription-url" placeholder="https://publisher.example/collection.json"
@@ -634,6 +635,32 @@
                     </div>
                 </div>
 
+                <!-- Catalog Source — point Browse Catalog at a remotely-hosted manifest -->
+                <div id="catalog-source-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">📚 Catalog Source</h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 18px;">
+                        Browse Catalog ships with a bundled set of public-domain collections. To grow it without
+                        rebuilding the app, host the catalog files on any static URL (GitHub raw, an object store,
+                        any web server) and point here. Leave blank to use the bundled catalog.
+                        <span style="display:block; margin-top:8px;">This <em>replaces</em> the catalog source. To <em>add</em> individual third-party collections alongside the bundled set, use <strong>🌐 Subscriptions</strong> above.</span>
+                        <span id="catalog-source-status" style="display:block; margin-top:8px; color:#94a3b8;"></span>
+                    </p>
+
+                    <div style="display:grid; gap:14px;">
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-size:0.8rem; color:#94a3b8;">Remote catalog base URL</label>
+                            <input type="text" id="catalog-url" placeholder="e.g. https://example.com/catalog" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem;">
+                            <p style="font-size:0.72rem; color:#64748b; margin:6px 0 0;">The base path that serves <code>index.json</code> + per-collection files. See <a href="/help#catalog" target="_blank" style="color:var(--accent-color);">Help → Remote catalog</a>.</p>
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                            <button class="primary" id="catalog-save-btn" onclick="saveCatalogSource()" style="padding:12px 22px; font-weight:600;">Test &amp; Save</button>
+                            <button class="secondary" id="catalog-reset-btn" onclick="resetCatalogSource()" style="padding:12px 20px;">Reset to bundled</button>
+                            <span id="catalog-source-result" style="font-size:0.8rem;"></span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Discovery Maintenance -->
                 <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
                     <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">Discovery Queue Maintenance</h3>
@@ -692,6 +719,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260621e"></script>
+    <script src="admin.js?v=20260627a"></script>
 </body>
 </html>

@@ -52,6 +52,7 @@ async function init() {
     await handleOAuthCallback();   // catch an OpenRouter OAuth redirect (?code=…)
     await loadAiSettings();
     loadFrameSettings();   // non-blocking: populate the Frame TV panel
+    loadCatalogSource();   // non-blocking: populate the Catalog Source panel
 
     // Restore the view the user was last on (survives a browser refresh).
     const savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
@@ -1641,6 +1642,44 @@ async function testFramePush() {
         else { result.textContent = '✗ ' + (data.reason || 'push failed'); result.style.color = '#ef4444'; }
     } catch (e) { result.textContent = '✗ Network error'; result.style.color = '#ef4444'; }
     finally { btn.disabled = false; btn.textContent = orig; }
+}
+
+// --- Catalog Source (remote-hosted manifest) ---
+async function loadCatalogSource() {
+    try {
+        const resp = await fetch(`${API_BASE}/api/settings/catalog`);
+        if (!resp.ok) return;
+        const cfg = await resp.json();
+        document.getElementById('catalog-url').value = cfg.catalog_url || '';
+        const status = document.getElementById('catalog-source-status');
+        status.textContent = cfg.using_remote
+            ? `Currently serving a remote catalog from ${cfg.catalog_url}.`
+            : 'Currently serving the bundled catalog.';
+    } catch (e) { /* non-fatal: panel just shows defaults */ }
+}
+
+async function saveCatalogSource() {
+    const result = document.getElementById('catalog-source-result');
+    const btn = document.getElementById('catalog-save-btn');
+    const url = document.getElementById('catalog-url').value.trim();
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = '⏳ Testing…'; result.textContent = '';
+    try {
+        const resp = await fetch(`${API_BASE}/api/settings/catalog`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ catalog_url: url })
+        });
+        const data = await resp.json();
+        if (!resp.ok) { result.textContent = '✗ ' + (data.detail || 'Save failed'); result.style.color = '#ef4444'; }
+        else if (data.warning) { result.textContent = '⚠ ' + data.warning; result.style.color = '#f59e0b'; await loadCatalogSource(); }
+        else { result.textContent = '✓ ' + (data.message || 'Saved'); result.style.color = '#34d399'; await loadCatalogSource(); }
+    } catch (e) { result.textContent = '✗ Network error'; result.style.color = '#ef4444'; }
+    finally { btn.disabled = false; btn.textContent = orig; }
+}
+
+async function resetCatalogSource() {
+    document.getElementById('catalog-url').value = '';
+    await saveCatalogSource();   // empty URL ⇒ backend reverts to the bundled catalog
 }
 
 // --- OpenRouter OAuth (PKCE) ---

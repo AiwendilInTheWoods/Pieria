@@ -1685,6 +1685,58 @@ async def test_frame_push(db: Session = Depends(get_db)):
     return await frame_push.run_test_push(_frame_select)
 
 
+class CatalogSourcePayload(BaseModel):
+    catalog_url: Optional[str] = ""
+
+
+@app.get("/api/settings/catalog")
+async def get_catalog_source(db: Session = Depends(get_db)):
+    """Current remote catalog base URL (empty ⇒ serving the bundled catalog)."""
+    base = await _catalog_remote_base(db)
+    return {"catalog_url": base or "", "using_remote": bool(base)}
+
+
+@app.post("/api/settings/catalog")
+async def save_catalog_source(payload: CatalogSourcePayload, db: Session = Depends(get_db)):
+    """Set or clear the remote catalog base URL — a static host serving `index.json` + per-collection
+    files (no server required). Validation is advisory: we test-fetch `index.json` and report the
+    collection count, but still persist a currently-unreachable URL (the runtime fetch falls back to
+    bundled on any failure) so the GUI can warn rather than block. An empty value reverts to bundled."""
+    url = (payload.catalog_url or "").strip().rstrip("/")
+    if not url:
+        row = db.query(SettingsModel).filter(SettingsModel.setting_key == "catalog_url").first()
+        if row:
+            db.delete(row); db.commit()
+        return {"status": "success", "catalog_url": "", "using_remote": False,
+                "message": "Reverted to the bundled catalog."}
+    if not url.startswith(("http://", "https://")):
+        raise HTTPException(400, "Catalog URL must start with http:// or https://")
+
+    warning = None
+    collections = 0
+    try:
+        index = await _fetch_remote_json(url, "index.json")
+        if not isinstance(index, dict) or "collections" not in index:
+            raise HTTPException(400, "Reached the URL, but it doesn't look like a catalog index "
+                                     "(no 'collections' key). Point at the base path that serves "
+                                     "index.json.")
+        collections = len(index.get("collections") or [])
+    except HTTPException:
+        raise
+    except Exception as e:
+        warning = (f"Saved, but couldn't reach {url}/index.json right now ({e}). The app will keep "
+                   f"using the bundled catalog until it becomes reachable.")
+
+    _upsert_setting(db, "catalog_url", url)
+    db.commit()
+    result = {"status": "success", "catalog_url": url, "using_remote": True}
+    if warning:
+        result["warning"] = warning
+    else:
+        result["message"] = f"Connected — {collections} collection(s) found."
+    return result
+
+
 @app.get("/api/catalog")
 async def get_catalog(db: Session = Depends(get_db)):
     """Collection summaries (cover + count) for the Browse Catalog grid. Items load per-collection."""
