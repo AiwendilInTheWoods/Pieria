@@ -37,7 +37,7 @@ from fastapi import (
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
-from PIL import Image
+from PIL import Image, ImageOps
 from pydantic import BaseModel
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session
@@ -580,6 +580,87 @@ async def upload_artwork(background_tasks: BackgroundTasks, file: UploadFile = F
         db.commit()
     background_tasks.add_task(run_ai_pipeline, new_a.id)
     return new_a
+
+
+PERSONAL_PLAYLIST_NAME = "My Photos"
+
+
+def _get_or_create_playlist(db: Session, name: str) -> PlaylistModel:
+    pl = db.query(PlaylistModel).filter(PlaylistModel.name == name).first()
+    if not pl:
+        pl = PlaylistModel(name=name)
+        db.add(pl); db.commit(); db.refresh(pl)
+    return pl
+
+
+def _link_artwork_to_playlist(db: Session, playlist_id: int, artwork_id: int) -> None:
+    """Append an artwork to a playlist (idempotent), preserving append order."""
+    exists = db.execute(select(playlist_artwork).where(
+        playlist_artwork.c.playlist_id == playlist_id,
+        playlist_artwork.c.artwork_id == artwork_id)).first()
+    if exists:
+        return
+    order = len(db.execute(select(playlist_artwork.c.artwork_id).where(
+        playlist_artwork.c.playlist_id == playlist_id)).all())
+    db.execute(playlist_artwork.insert().values(
+        playlist_id=playlist_id, artwork_id=artwork_id, display_order=order))
+    db.commit()
+
+
+@app.post("/upload/personal", response_model=ArtworkSchema)
+async def upload_personal_photo(
+    file: UploadFile = File(...),
+    caption: Optional[str] = Form(None),
+    date: Optional[str] = Form(None),
+    playlist_id: Optional[int] = Form(None),
+    db: Session = Depends(get_db),
+):
+    """Studio → My Photos: add one of the user's OWN photos to the local library. Unlike /upload, this
+    deliberately skips the museum AI pipeline (the photo is never sent to a model — the privacy
+    headline) and the review queue: it lands `approved` with `is_personal=True`. EXIF orientation is
+    baked in so phone photos display upright; caption/date are optional (shown on a stripped placard).
+    Links into the given playlist, or an auto-created "My Photos" playlist."""
+    if not LIBRARY_DIR.exists():
+        LIBRARY_DIR.mkdir(parents=True)
+    raw = await file.read()
+    try:
+        with Image.open(io.BytesIO(raw)) as src:
+            fmt = (src.format or "JPEG").upper()
+            img = ImageOps.exif_transpose(src)   # bake phone orientation; drops the EXIF tag
+    except Exception:
+        raise HTTPException(400, detail="That file isn't a readable image.")
+
+    ext = {"PNG": ".png", "WEBP": ".webp"}.get(fmt, ".jpg")
+    stem = Path(file.filename or "").stem
+    base = "".join(c for c in (caption or stem or "photo") if c.isalnum() or c in " _-").strip()
+    base = (base.replace(" ", "_")[:24] or "photo").lower()
+    safe = f"personal_{base}{ext}"
+    dest = LIBRARY_DIR / safe
+    n = 1
+    while dest.exists():
+        safe = f"personal_{base}_{n}{ext}"; dest = LIBRARY_DIR / safe; n += 1
+
+    if ext == ".jpg":
+        if img.mode not in ("RGB", "L"):
+            img = img.convert("RGB")
+        img.save(dest, quality=92)
+    else:
+        img.save(dest)
+    w, h = img.size
+
+    art = ArtworkModel(
+        filename=safe, original_width=w, original_height=h,
+        crop_width=float(w), crop_height=float(h),
+        title=(caption or None), date_display=(date or None),
+        is_personal=True, status="approved",
+    )
+    db.add(art); db.commit(); db.refresh(art)
+
+    pl = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first() if playlist_id else None
+    if pl is None:
+        pl = _get_or_create_playlist(db, PERSONAL_PLAYLIST_NAME)
+    _link_artwork_to_playlist(db, pl.id, art.id)
+    return art
 
 @app.get("/artworks/pending", response_model=List[ArtworkSchema])
 async def get_pending_artworks(db: Session = Depends(get_db)):
