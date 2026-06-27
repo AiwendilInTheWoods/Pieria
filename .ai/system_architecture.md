@@ -112,7 +112,7 @@ Uvicorn runs 4 workers (separate memory). Cross-worker coordination via SQLite:
 - **Federation (`federation.py` + Manifest v2):** subscribe to a third-party collection by URL.
   - **`docs/manifest-v2.md`** is the spec; **`tools/manifest_validator.py`** the executable validator
     (pure-Python, strict on required/types/**per-asset licensing**, tolerant of unknown fields →
-    forward-compatible with the Living Docent's `interpretation` block + `image.focal_point`).
+    forward-compatible with optional `interpretation` + `image.focal_point` assets).
   - **Safety (we index pointers, never host bytes):** SSRF guard (blocks private/loopback/link-local
     IPs), redirects disabled, size cap + content-type/JSON check + timeout, strict validation, a
     host/publisher blocklist. Untrusted strings are escaped at render time.

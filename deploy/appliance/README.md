@@ -10,9 +10,7 @@ monitor — point it at your Screen Docent server and forget it.
 > production setup, not just a first cut:** the display device only runs the
 > Chromium kiosk, so it stays cheap, cool (~5–7 W), and small enough to tuck
 > behind the panel. Running the server *on the same Pi* ("all-in-one") is also
-> supported (see [below](#all-in-one-mode-server--display-on-one-box)); a
-> pre-baked flashable `.img` remains a future addition. See
-> [`/ROADMAP.md`](../../ROADMAP.md) (Track A).
+> supported (see [below](#all-in-one-mode-server--display-on-one-box)).
 
 ---
 
@@ -179,9 +177,9 @@ These are intentionally flagged rather than guessed; verify on the Pi OS build y
 Some smart displays can point their own browser at the server and skip the Pi entirely — *if* that
 browser is current enough to render the Canvas app. In practice many aren't: the **Samsung QMR's
 Tizen MagicINFO URL Launcher is too old** and fails to render the app (which is exactly why this
-appliance exists). When the built-in browser can't do it, this thin-client Pi is the fix. Longer
-term, a Screen Docent **e-ink image endpoint** ([`/ROADMAP.md`](../../ROADMAP.md) Track B) may let
-such limited panels show art by fetching a server-rendered *image* instead of running the app.
+appliance exists). When the built-in browser can't do it, this thin-client Pi is the fix.
+Screen Docent's **e-ink image endpoint** also lets such limited panels show art by fetching a
+server-rendered *image* instead of running the app — see the main README's e-ink section.
 
 ## Fallback: X11 instead of cage
 

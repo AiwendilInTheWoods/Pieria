@@ -33,5 +33,6 @@ tools/.artic_cache.json
 # Local-only dev docs (kept on disk, not published).
 # .ai/ is private-by-default; only the system architecture doc is tracked.
 PRD.md
+ROADMAP.md
 .ai/*
 !.ai/system_architecture.md

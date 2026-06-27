@@ -4,8 +4,8 @@
 > (`tools/manifest_validator.py`) is the executable source of truth; this doc explains intent.
 
 Manifest v2 generalizes the v1 split catalog (`index.json` + per-collection files) into a
-**federated** format any publisher can produce, and makes it **forward-compatible** with the
-planned interactive "Living Docent" without a future breaking change.
+**federated** format any publisher can produce, and makes it **forward-compatible** with
+optional future interpretation assets, without a breaking change.
 
 ## Why v2 differs from v1
 
@@ -26,7 +26,7 @@ public-domain image.
 
 1. Every manifest carries `manifest_version` (currently `2`).
 2. **Validators MUST ignore unknown fields** (object keys they don't recognize) rather than reject —
-   so future docent/marketplace fields can be added additively.
+   so future optional fields can be added additively.
 3. New *required* fields are only ever introduced under a bumped `manifest_version`.
 4. The `interpretation` block is fully specified now but OPTIONAL and unpopulated in v2.0.
 
@@ -71,11 +71,11 @@ public-domain image.
 | `thumbnail_url` | | string | |
 | `width` / `height` | | int | pixels; the app prefers ≥2000px long-edge for 4K displays |
 | `format` | | string | MIME, e.g. `image/jpeg` |
-| `focal_point` | | `[x, y]` | normalized 0–1 — the "most important point" the renderer keeps in frame when cropping to any panel aspect (16:9 TV, portrait e-ink, Frame). Authored in the Manifest Entry Builder Studio. A later `crops` map (explicit per-aspect bboxes) can extend this additively. |
+| `focal_point` | | `[x, y]` | normalized 0–1 — the "most important point" the renderer keeps in frame when cropping to any panel aspect (16:9 TV, portrait e-ink, Frame). A `crops` map (explicit per-aspect bboxes) can extend this additively. |
 | `attribution` | ✓ when license is `CC-BY*`/`CC-BY-SA*` | string | |
 | `rights_holder` | | string | |
 
-### `interpretation` asset (OPTIONAL — the Living Docent layer)
+### `interpretation` asset (OPTIONAL)
 
 Independently authored/licensed from the image.
 
@@ -95,8 +95,8 @@ Independently authored/licensed from the image.
 - We **index pointers, never host** the bytes, and touch no money in v1 — so the creator keeps 100%
   and full control (broken/removed URL degrades gracefully).
 
-## Phasing
+## Status
 
-- **v2.0 (now):** `image` + placard + per-asset license; `interpretation` specified but unused.
-  Federation core (subscribe-by-URL, signed manifests, registry) builds on this.
-- **Later:** populate `interpretation` as the Living Docent ships — additive, no schema break.
+- **v2.0 (now):** `image` + placard + per-asset license; `interpretation` is specified but
+  optional and unpopulated. Federation core (subscribe-by-URL, signed manifests, registry) builds on this.
+- The `interpretation` block may be populated by future tooling — additively, with no schema break.

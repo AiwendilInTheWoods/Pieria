@@ -77,8 +77,8 @@ OpenRouter** for one-click setup), and click **Test & Save** — validated live,
 The easiest way to drive a TV or monitor is the **Docent Appliance**: flash a
 Raspberry Pi, point it at your server, and it boots straight into the fullscreen
 display — no Fully Kiosk, no browser chrome, no URL typing. See
-[`deploy/appliance/`](deploy/appliance/README.md). For the broader display
-strategy (and e-ink support), see [`ROADMAP.md`](ROADMAP.md).
+[`deploy/appliance/`](deploy/appliance/README.md). For low-power panels, see the
+**e-ink & BYOS frames** section below.
 
 ## 🖼️ e-ink & BYOS frames (image API)
 
@@ -97,8 +97,6 @@ frame how long (seconds) to deep-sleep before the next fetch; each GET advances 
 - **Formats:** `.png` (default) or `.bmp` (firmware without a PNG decoder).
 - **Fit:** `fit=cover` (fill, default) or `fit=contain` (letterbox on white).
 
-See [`ROADMAP.md`](ROADMAP.md) (Track B).
-
 ## 🔌 Integrations
 
 Thin clients that render the same curation brain on platforms people already run:
@@ -110,8 +108,6 @@ Thin clients that render the same curation brain on platforms people already run
 - **[MagicMirror²](integrations/MMM-ScreenDocent/)** — the `MMM-ScreenDocent` module turns a slot on a
   smart mirror into a rotating museum wall (current artwork + placard from your server). Front-end
   only, no extra setup; includes a `preview.html` to try it in any browser without MagicMirror.
-
-More integrations (Home Assistant, TRMNL/Inky) are on the [roadmap](ROADMAP.md).
 
 ## 🏛️ VRA Core Metadata Architecture
 
