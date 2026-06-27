@@ -6,21 +6,6 @@
  "license": "Public Domain",
  "items": [
   {
-   "title": "The Gulf Stream",
-   "agent_name": "Winslow Homer",
-   "agent_role": "Artist",
-   "creation_date": "probably 1899, dated by the artist \"1889\"",
-   "cultural_context": "American Realism, late 19th century",
-   "medium": "Transparent watercolor, with touches of opaque watercolor and traces of blotting, over graphite, on moderately thick, moderately textured, ivory wove paper (lower edge trimmed)",
-   "date_display": "probably 1899, dated by the artist \"1889\"",
-   "description_narrative": "Winslow Homer's 'The Gulf Stream' depicts a lone man adrift in a dismasted sailboat, surrounded by circling sharks on a turbulent sea. Executed primarily in transparent watercolor, this work vividly captures a dramatic struggle for survival against the forces of nature.",
-   "tags": "maritime, survival, nature, realism, watercolor, dramatic, American art",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/4a076002-dffe-54e9-5256-0691c3a65c3b/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/4a076002-dffe-54e9-5256-0691c3a65c3b/full/400,/0/default.jpg"
-  },
-  {
    "title": "The Herring Net",
    "agent_name": "Winslow Homer",
    "agent_role": "Artist",
@@ -32,8 +17,8 @@
    "tags": "maritime, realism, american art, fishing, labor, ocean, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/5dca7347-c6dc-24dd-d073-d705b9cdc575/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/5dca7347-c6dc-24dd-d073-d705b9cdc575/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Herring%20Net%20-%20Google%20Art%20Project.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Herring%20Net%20-%20Google%20Art%20Project.jpg?width=600"
   },
   {
    "title": "After the Hurricane, Bahamas",
@@ -47,8 +32,8 @@
    "tags": "hurricane, bahamas, seascape, aftermath, watercolor, realism, solitude, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/b34de958-1cbe-065f-4941-c34f64d2b366/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/b34de958-1cbe-065f-4941-c34f64d2b366/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20After%20the%20Hurricane%2C%20Bahamas%20%281899%29.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20After%20the%20Hurricane%2C%20Bahamas%20%281899%29.jpg?width=600"
   },
   {
    "title": "Croquet Scene",
@@ -62,8 +47,8 @@
    "tags": "croquet, leisure, social scene, 19th century, American art, genre painting, Winslow Homer, realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/f7b2db45-f393-653c-07ef-84319b0cdb92/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/f7b2db45-f393-653c-07ef-84319b0cdb92/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Croquet%20Scene%20-%20Google%20Art%20Project.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Croquet%20Scene%20-%20Google%20Art%20Project.jpg?width=600"
   },
   {
    "title": "The Water Fan",
@@ -77,8 +62,8 @@
    "tags": "watercolor, seascape, ocean, nature, American art, late 19th century, realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/1de73bb7-52d6-e099-f4e1-763e201e78fa/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/1de73bb7-52d6-e099-f4e1-763e201e78fa/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Water%20Fan.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Water%20Fan.jpg?width=600"
   },
   {
    "title": "Life-Size Black Bass",
@@ -92,8 +77,8 @@
    "tags": "fish, bass, wildlife, watercolor, realism, nature, american art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2a4794cd-a78e-b43d-06e8-65573bf812e9/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2a4794cd-a78e-b43d-06e8-65573bf812e9/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Life-Size%20Black%20Bass.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Life-Size%20Black%20Bass.jpg?width=600"
   },
   {
    "title": "Stowing Sail",
@@ -107,8 +92,8 @@
    "tags": "maritime, sailing, watercolor, american art, sea, labor, early 20th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/7daaf950-882c-d8cb-4bc3-b8b5aa77b988/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/7daaf950-882c-d8cb-4bc3-b8b5aa77b988/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Stowing%20Sail.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Stowing%20Sail.jpg?width=600"
   },
   {
    "title": "North Woods Club, Adirondacks (The Interrupted Tete-a-Tete)",
@@ -122,8 +107,8 @@
    "tags": "adirondacks, nature, wilderness, watercolor, american art, 19th century, realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/996f1f28-2e9f-a7fa-0e45-5058e3b418ef/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/996f1f28-2e9f-a7fa-0e45-5058e3b418ef/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20North%20Woods%20Club%2C%20Adirondacks%20%28The%20Interrupted%20Tete-a-Tete%29.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20North%20Woods%20Club%2C%20Adirondacks%20%28The%20Interrupted%20Tete-a-Tete%29.jpg?width=600"
   },
   {
    "title": "Mount Washington",
@@ -137,8 +122,8 @@
    "tags": "mountain, landscape, nature, american art, realism, grandeur, new england",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/ad02b33a-4aac-03cc-88e4-7db2cc03b854/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/ad02b33a-4aac-03cc-88e4-7db2cc03b854/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Washington%2C%20by%20Winslow%20Homer%20%28Chicago%20Art%20Institute%201951.313%29%20B.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Washington%2C%20by%20Winslow%20Homer%20%28Chicago%20Art%20Institute%201951.313%29%20B.jpg?width=600"
   },
   {
    "title": "Peach Blossoms",
@@ -152,8 +137,8 @@
    "tags": "landscape, nature, american art, 19th century, realism, painting",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/6efc1bea-c900-28c5-e02a-c14189b10fb3/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/6efc1bea-c900-28c5-e02a-c14189b10fb3/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Peach%20Blossoms%2C%201878.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Peach%20Blossoms%2C%201878.jpg?width=600"
   },
   {
    "title": "Coast of Maine",
@@ -167,38 +152,8 @@
    "tags": "maine, coastline, ocean, realism, american art, landscape, marine art, nature",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/de060306-b5a3-5139-cad9-57e9c274d7c3/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/de060306-b5a3-5139-cad9-57e9c274d7c3/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Breaking Storm, Coast of Maine",
-   "agent_name": "Winslow Homer",
-   "agent_role": "Artist",
-   "creation_date": "1894",
-   "cultural_context": "American Realism, Late 19th Century",
-   "medium": "Transparent watercolor, with touches of opaque watercolor, rewetting, blotting and traces of scraping, on thick, rough-textured, ivory wove paper",
-   "date_display": "1894",
-   "description_narrative": "Winslow Homer's \"Breaking Storm, Coast of Maine\" vividly captures the raw power of nature as a tempestuous sea crashes against a rugged shore. Executed in 1894, this watercolor employs transparent and opaque pigments, rewetting, and scraping to convey the dynamic atmospheric effects of an approaching storm.",
-   "tags": "seascape, storm, marine art, watercolor, realism, American art, late 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/6794f986-98db-4e2e-9b38-8d13b7201d10/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/6794f986-98db-4e2e-9b38-8d13b7201d10/full/400,/0/default.jpg"
-  },
-  {
-   "title": "For to Be a Farmer's Boy",
-   "agent_name": "Winslow Homer",
-   "agent_role": "Artist",
-   "creation_date": "1887",
-   "cultural_context": "American Realism, American",
-   "medium": "Transparent and opaque watercolor, with rewetting, blotting, and scraping, heightened with gum glaze, over graphite, on thick, rough-textured ivory wove paper (lower edge trimmed)",
-   "date_display": "1887",
-   "description_narrative": "Winslow Homer's 'For to Be a Farmer's Boy,' created in 1887, exemplifies his innovative approach to watercolor. The artist masterfully employs transparent and opaque pigments, rewetting, blotting, and scraping techniques, heightened with gum glaze, on thick, rough-textured ivory wove paper.",
-   "tags": "american art, watercolor, rural life, realism, 19th century, genre scene",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/0010bff3-4f51-8e35-46ee-0c46184354f6/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/0010bff3-4f51-8e35-46ee-0c46184354f6/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Coast%20of%20Maine%20-%201931.505%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Coast%20of%20Maine%20-%201931.505%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "The Rapids, Hudson River, Adirondacks",
@@ -212,23 +167,8 @@
    "tags": "watercolor, landscape, american art, nature, realism, hudson river, adirondacks",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/5873d7d7-732d-6e45-2bc0-8402afd7c0f0/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/5873d7d7-732d-6e45-2bc0-8402afd7c0f0/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Netting the Fish",
-   "agent_name": "Winslow Homer",
-   "agent_role": "Artist",
-   "creation_date": "1889",
-   "cultural_context": "American art, 19th century",
-   "medium": "Transparent watercolor, heightened with opaque white watercolor, with rewetting, blotting, and scraping, over graphite, on moderately thick, slightly textured, cream wove paper",
-   "date_display": "1889",
-   "description_narrative": "Winslow Homer's \"Netting the Fish\" captures a dynamic scene of maritime life, depicting the intense labor involved in gathering a catch from the sea. Rendered in watercolor, the work highlights the artist's mastery in portraying both the powerful movement of water and the human struggle against natural elements.",
-   "tags": "fishing, maritime, watercolor, american art, 19th century, realism, sea",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3d3c78e3-3360-f2d1-894d-556b5e289dab/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3d3c78e3-3360-f2d1-894d-556b5e289dab/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Rapids%2C%20Hudson%20River%2C%20Adirondacks.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Rapids%2C%20Hudson%20River%2C%20Adirondacks.jpg?width=600"
   },
   {
    "title": "Fishing off Scarborough",
@@ -242,8 +182,8 @@
    "tags": "fishing, marine, coast, watercolor, drawing, American art, realism",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3d6db404-4216-ae99-75cb-989e8e915305/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3d6db404-4216-ae99-75cb-989e8e915305/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Fishing%20off%20Scarborough%2C%201882.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Fishing%20off%20Scarborough%2C%201882.jpg?width=600"
   },
   {
    "title": "Adirondacks Guide",
@@ -257,8 +197,8 @@
    "tags": "adirondacks, guide, nature, watercolor, winslow homer, american art, realism, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/df7155be-b189-9ef6-b86e-c2eb140e1e1d/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/df7155be-b189-9ef6-b86e-c2eb140e1e1d/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Adirondacks%20Guide.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Adirondacks%20Guide.jpg?width=600"
   },
   {
    "title": "The Watcher, Tynemouth",
@@ -272,8 +212,8 @@
    "tags": "seascape, watercolor, realism, coast, figure, observer, Tynemouth",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/a6808add-86d2-bd2a-0c0d-adec7ca85025/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/a6808add-86d2-bd2a-0c0d-adec7ca85025/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Watcher%2C%20Tynemouth.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20The%20Watcher%2C%20Tynemouth.jpg?width=600"
   },
   {
    "title": "Boy in Boat, Gloucester",
@@ -287,23 +227,8 @@
    "tags": "american art, watercolor, maritime, realism, gloucester, boy, boat",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/2ba29e23-e11f-1346-971f-a8c63f94bc54/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/2ba29e23-e11f-1346-971f-a8c63f94bc54/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Flamborough Head, England",
-   "agent_name": "Winslow Homer",
-   "agent_role": "Artist",
-   "creation_date": "1882",
-   "cultural_context": "American Realism, American",
-   "medium": "Graphite and opaque white watercolor on medium thick, slightly textured, tan laid paper with red and blue fibers",
-   "date_display": "1882",
-   "description_narrative": "Winslow Homer's 'Flamborough Head, England' captures the dramatic coastal landscape of Yorkshire. Executed in graphite and opaque white watercolor, the work highlights the rugged cliffs and atmospheric qualities of the scene.",
-   "tags": "seascape, english coast, nature, american realism, watercolor, graphite, 19th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/680d3efd-2cf9-36f4-6454-806af8b79d98/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/680d3efd-2cf9-36f4-6454-806af8b79d98/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Boy%20in%20Boat%2C%20Gloucester.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Boy%20in%20Boat%2C%20Gloucester.jpg?width=600"
   },
   {
    "title": "Campfire, Adirondacks",
@@ -317,23 +242,8 @@
    "tags": "campfire, adirondacks, nature, wilderness, american realism, watercolor, night scene",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/9f7e21db-5949-5566-7d77-1871a41916c7/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/9f7e21db-5949-5566-7d77-1871a41916c7/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Prout's Neck, Breakers",
-   "agent_name": "Winslow Homer",
-   "agent_role": "Artist",
-   "creation_date": "1883",
-   "cultural_context": "American Realism, late 19th century, American",
-   "medium": "Watercolor, with blotting and sanding, over charcoal, on moderately thick, moderately textured, ivory wove paper",
-   "date_display": "1883",
-   "description_narrative": "Winslow Homer vividly captures the raw power of the ocean in 'Prout's Neck, Breakers,' depicting waves crashing against the rugged coast. Through his masterful use of watercolor, incorporating blotting and sanding over charcoal, Homer conveys the dynamic texture and movement of the water.",
-   "tags": "seascape, ocean, nature, american art, watercolor, realism, coastal",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/1f68e1a0-567a-e829-3e2f-ff9857942f9e/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/1f68e1a0-567a-e829-3e2f-ff9857942f9e/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Campfire%2C%20Adirondacks.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Winslow%20Homer%20-%20Campfire%2C%20Adirondacks.jpg?width=600"
   },
   {
    "title": "The Fountain, Villa Torlonia, Frascati, Italy",
@@ -347,8 +257,8 @@
    "tags": "landscape, Italy, fountain, villa, oil painting, light, Edwardian, architecture",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/3f9aa9db-61e1-7060-fdb0-bfd7e41ddd08/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/3f9aa9db-61e1-7060-fdb0-bfd7e41ddd08/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20The%20Fountain%2C%20Villa%20Torlonia%2C%20Frascati%2C%20Italy%20-%20Google%20Art%20Project.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20The%20Fountain%2C%20Villa%20Torlonia%2C%20Frascati%2C%20Italy%20-%20Google%20Art%20Project.jpg?width=600"
   },
   {
    "title": "Mrs. George Swinton (Elizabeth Ebsworth)",
@@ -362,8 +272,8 @@
    "tags": "portrait, oil painting, society portraiture, gilded age, elegance, late 19th century, realism, london society",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/074c1b1b-fe92-01ce-9e62-cc99369142dd/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/074c1b1b-fe92-01ce-9e62-cc99369142dd/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20George%20Swinton%20%28Elizabeth%20Ebsworth%29%20-%201922.4450%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20George%20Swinton%20%28Elizabeth%20Ebsworth%29%20-%201922.4450%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Madame Paul Escudier (Louise Lefevre)",
@@ -377,8 +287,8 @@
    "tags": "portrait, woman, society portraiture, realism, elegant, 19th century, american art",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/c6da9f8c-643b-f331-0f8f-a9b6a844caf6/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/c6da9f8c-643b-f331-0f8f-a9b6a844caf6/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Madame%20Paul%20Escudier%20%28Louise%20Lefevre%29%2C%201882%2C%202007.391.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Madame%20Paul%20Escudier%20%28Louise%20Lefevre%29%2C%201882%2C%202007.391.jpg?width=600"
   },
   {
    "title": "Life Study (Study of an Egyptian Girl)",
@@ -392,8 +302,8 @@
    "tags": "portrait, life study, egyptian, female figure, oil painting, john singer sargent, realism, late 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/e6dd6199-c245-d1b4-a997-ce89eafb48ca/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/e6dd6199-c245-d1b4-a997-ce89eafb48ca/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Life%20Study%20%28Study%20of%20an%20Egyptian%20Girl%29.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sargent%20-%20Life%20Study%20%28Study%20of%20an%20Egyptian%20Girl%29.jpg?width=600"
   },
   {
    "title": "Venetian Glass Workers",
@@ -407,8 +317,8 @@
    "tags": "venetian, glassblowing, workers, genre scene, realism, industrial, light, craftsmanship",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/8cdc812d-5db0-63a1-8579-eb64fc6884ca/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/8cdc812d-5db0-63a1-8579-eb64fc6884ca/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Venetian%20Glass%20Workers%20-%201933.1217%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Venetian%20Glass%20Workers%20-%201933.1217%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Thistles",
@@ -422,8 +332,8 @@
    "tags": "thistles, botanical study, nature, oil painting, american art, late 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/79b94ddd-e208-1993-01ab-98f75174fe88/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/79b94ddd-e208-1993-01ab-98f75174fe88/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Thistles%20-%201996.446%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Thistles%20-%201996.446%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Mrs. Charles Gifford Dyer (Mary Anthony)",
@@ -437,68 +347,8 @@
    "tags": "portrait, oil painting, American art, female sitter, elegance, realism, society portraiture",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/59221fa2-45f9-5674-4fbd-9da3eb648d68/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/59221fa2-45f9-5674-4fbd-9da3eb648d68/full/400,/0/default.jpg"
-  },
-  {
-   "title": "An Artist at His Easel",
-   "agent_name": "John Singer Sargent",
-   "agent_role": "Artist",
-   "creation_date": "1914",
-   "cultural_context": "American Art, Early 20th Century",
-   "medium": "Watercolor over traces of graphite on ivory wove paper",
-   "date_display": "1914",
-   "description_narrative": "This watercolor by John Singer Sargent depicts an artist, likely Sargent himself, at his easel, engaged in the act of painting. The fluid application of watercolor over graphite traces captures a moment of creative focus and the play of light.",
-   "tags": "watercolor, portrait, artist, easel, early 20th century, american art, impressionistic",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/645c2079-016a-998d-411f-b0869349d9c0/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/645c2079-016a-998d-411f-b0869349d9c0/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Olive Trees, Corfu",
-   "agent_name": "John Singer Sargent",
-   "agent_role": "Artist",
-   "creation_date": "1909",
-   "cultural_context": "Early 20th century, American",
-   "medium": "Watercolor and opaque watercolor with scraping and wax resist over graphite on ivory wove paper",
-   "date_display": "1909",
-   "description_narrative": "John Singer Sargent's 'Olive Trees, Corfu' showcases his mastery of watercolor, capturing the sun-drenched landscape with dynamic brushwork. Through scraping and wax resist, Sargent evokes the texture and light filtering through the ancient olive groves on the island of Corfu.",
-   "tags": "landscape, watercolor, olive trees, Corfu, impressionistic, early 20th century, luminous",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/d6a6ee14-75f4-c6b8-3d14-a0c0a8344be5/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/d6a6ee14-75f4-c6b8-3d14-a0c0a8344be5/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Bound Man (recto); Sketch of Bound Man (verso)",
-   "agent_name": "John Singer Sargent",
-   "agent_role": "Artist",
-   "creation_date": "1917/21",
-   "cultural_context": "Early 20th century, American",
-   "medium": "Charcoal with stumping and graphite (recto and verso) on cream laid paper",
-   "date_display": "1917/21",
-   "description_narrative": "This drawing, titled 'Bound Man', uses charcoal with stumping and graphite to depict a figure. Created by John Singer Sargent between 1917 and 1921, it also features a related sketch on its verso.",
-   "tags": "bound man, figure study, charcoal, graphite, drawing, sketch, early 20th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/abf56ad2-a03d-40b4-8679-3edff2e4dbbd/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/abf56ad2-a03d-40b4-8679-3edff2e4dbbd/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Workmen at Carrara",
-   "agent_name": "John Singer Sargent",
-   "agent_role": "Artist",
-   "creation_date": "1911",
-   "cultural_context": "American art, early 20th century",
-   "medium": "Watercolor with touches of opaque watercolor and scraping over graphite on ivory wove paper",
-   "date_display": "1911",
-   "description_narrative": "This dynamic watercolor by John Singer Sargent captures the arduous work of quarrymen at Carrara. Executed in 1911, the artwork showcases Sargent's masterful use of the medium to depict industrial labor with vigor and immediacy.",
-   "tags": "labor, watercolor, American art, industrial, quarry, early 20th century",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/f471b95a-2677-d98b-c449-bca661ab965e/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/f471b95a-2677-d98b-c449-bca661ab965e/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chicago%20art%20inst%20singer%20sargent%20m%20dyer.JPG?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chicago%20art%20inst%20singer%20sargent%20m%20dyer.JPG?width=600"
   },
   {
    "title": "Rehearsal of the Pasdeloup Orchestra at the Cirque d'Hiver",
@@ -512,8 +362,8 @@
    "tags": "orchestra, rehearsal, music, parisian life, candid, realism, 19th century",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/f7ef1f0f-c5c9-6794-9283-2e7ebcde95cd/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/f7ef1f0f-c5c9-6794-9283-2e7ebcde95cd/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Rehearsal%20of%20the%20Pasdeloup%20Orchestra%20at%20the%20Cirque%20d%27Hiver%20-%2081.1972%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Rehearsal%20of%20the%20Pasdeloup%20Orchestra%20at%20the%20Cirque%20d%27Hiver%20-%2081.1972%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   },
   {
    "title": "Mrs. Charles Deering (Marion Denison Whipple)",
@@ -527,23 +377,8 @@
    "tags": "portrait, oil painting, woman, elegant, realist, late 19th century, american artist, society portrait",
    "source": "Art Institute of Chicago",
    "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/60d5826b-aaa0-68ba-9d6c-fc0bc55c2227/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/60d5826b-aaa0-68ba-9d6c-fc0bc55c2227/full/400,/0/default.jpg"
-  },
-  {
-   "title": "Sketches of Legs and Feet",
-   "agent_name": "John Singer Sargent",
-   "agent_role": "Artist",
-   "creation_date": "1917/21",
-   "cultural_context": "American, Early 20th Century",
-   "medium": "Charcoal with stumping and graphite on cream laid paper",
-   "date_display": "1917/21",
-   "description_narrative": "This expressive drawing by John Singer Sargent showcases a series of focused studies of legs and feet. Rendered in charcoal with stumping and graphite, it highlights the artist's masterful observation of human anatomy and form.",
-   "tags": "charcoal, drawing, figure study, anatomy, academic, sketch, human form",
-   "source": "Art Institute of Chicago",
-   "license": "Public Domain",
-   "source_url": "https://www.artic.edu/iiif/2/ea2a2d71-d080-7edf-50be-2950be4621b8/full/max/0/default.jpg",
-   "thumbnail_url": "https://www.artic.edu/iiif/2/ea2a2d71-d080-7edf-50be-2950be4621b8/full/400,/0/default.jpg"
+   "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20Charles%20Deering%20%28Marion%20Denison%20Whipple%29%20-%209.2002%20-%20Art%20Institute%20of%20Chicago.jpg?width=3840",
+   "thumbnail_url": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20Singer%20Sargent%20-%20Mrs.%20Charles%20Deering%20%28Marion%20Denison%20Whipple%29%20-%209.2002%20-%20Art%20Institute%20of%20Chicago.jpg?width=600"
   }
  ]
 }

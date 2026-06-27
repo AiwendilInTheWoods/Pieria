@@ -28,6 +28,7 @@ __pycache__/
 
 # Catalog builder incremental cache (regenerable)
 tools/.catalog_cache.json
+tools/.artic_cache.json
 
 # Local-only dev docs (kept on disk, not published).
 # .ai/ is private-by-default; only the system architecture doc is tracked.

@@ -5,10 +5,11 @@
 # Scope here is seed + catalog (the things we ship). Subscriptions are intentionally excluded:
 # they live in a user's local DB, which doesn't exist in CI — run `--scope subscriptions` locally.
 #
-# NOTE: this job is EXPECTED RED until the catalog is re-sourced. The Art Institute of Chicago
-# (artic.edu, 403/Cloudflare) and Cleveland CDN currently block server-side fetches, so their
-# catalog items fail. That red is the regime correctly flagging catalog rot to fix — not a broken
-# workflow. The factory seed (the part that blocks a fresh install) is green.
+# As of 2026-06-26 this job is EXPECTED GREEN. The Art-Institute-of-Chicago catalog items were
+# re-sourced onto Wikimedia Commons (tools/resource_artic.py) after AIC's IIIF host went behind a
+# Cloudflare challenge; Cleveland turned out fine (a transient earlier blip). 163 unmatched AIC works
+# are PARKED in static/catalog/_pending_artic.json (not shipped), so they can't fail this check. If
+# this goes red, an external source rotted again — investigate, don't suppress.
 name: Verify Sources
 
 on:
