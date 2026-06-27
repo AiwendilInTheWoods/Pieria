@@ -266,6 +266,19 @@ docker compose up -d --build</code></pre>
                 (if a model is connected), or just type the details and publish.
             </div>
 
+            <h3>Put your <em>own</em> photos up — My Photos (Studio)</h3>
+            <p>For family, pet, and vacation photos there's a separate, phone-friendly front door at
+               <a href="/studio" style="color:var(--accent-color);">/studio</a>. Add or snap photos, give each a
+               caption (or tap <strong>✨ Suggest</strong> for an AI one in a warm photo-album voice), tap the
+               photo to set its <strong>focus point</strong>, and they go straight to a <strong>My Photos</strong>
+               playlist — no review queue, no museum jargon, just a clean caption on the wall.</p>
+            <div class="tip">
+                <strong>Privacy:</strong> your photos stay <strong>on your server</strong> — never uploaded to
+                anyone's cloud, never indexed. AI captioning is opt-in; if your AI Engine points at a
+                <em>local</em> model (Ollama / LM Studio) the photo never leaves your network, and the Studio
+                tells you which case you're in before you use it.
+            </div>
+
             <h3>4. Subscribe to a collection <span style="font-weight:normal; color:#94a3b8;">(beta)</span></h3>
             <p>In <strong>Settings → 🌐 Subscriptions</strong>, paste a publisher's collection URL to browse
                their art alongside your catalog. Each feed is tagged <strong>Community</strong> (added by
@@ -349,7 +362,7 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
                automatically and stays awake — no browser chrome, no manual refresh.</p>
             <h3>Rendering modes</h3>
             <ul>
-                <li><strong>Ken Burns</strong> (<code>ken-burns</code>) — slow cinematic pan &amp; zoom across the piece.</li>
+                <li><strong>Ken Burns</strong> (<code>ken-burns</code>) — slow cinematic pan &amp; zoom, <strong>anchored on each piece's focus point</strong> so faces and key subjects stay in frame (off-center subjects get a gentler zoom; centered ones get the full drift).</li>
                 <li><strong>Static crop</strong> (<code>static-crop</code>) — a fixed, user-defined crop (set per-artwork in the admin).</li>
                 <li><strong>Contain matte</strong> (<code>contain-matte</code>) — the whole piece, letterboxed on a blurred matte.</li>
             </ul>

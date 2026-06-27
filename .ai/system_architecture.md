@@ -64,7 +64,9 @@ adapter for Samsung Frame TVs — and is growing a **federated catalog** so anyo
 - **Route:** `/` → `static/index.html` + `static/app.js`. Zero-chrome full-screen viewer for Fire TV /
   Android TV / kiosk browsers.
 - WebSocket `/ws/{display_id}` for targeted remote commands; auto-cycles via `/next-image`.
-- Three render modes: **Ken Burns pan** (GPU), **static crop**, **contain + blurred matte**.
+- Three render modes: **Ken Burns pan** (GPU, **focal-adaptive** — anchors the zoom/drift on the
+  artwork's focal point via the Web Animations API so off-center subjects aren't panned out of frame),
+  **static crop**, **contain + blurred matte**.
 - **Museum placard** with metadata + a **QR code → `/art/{id}`** (server-hosted "Learn More" page,
   works offline; no Google hand-off).
 - **Empty-state** overlay ("No art yet — add it at <host>/admin") instead of a black screen; a
@@ -75,7 +77,7 @@ adapter for Samsung Frame TVs — and is growing a **federated catalog** so anyo
 
 ### Output target 2 — e-ink / BYOS frames (`epaper.py`)
 - **Stateless pull-on-wake:** `GET /display/{id}/current.{png,bmp}?w=&h=&palette=`. Reuses
-  `get_next_image()` selection, then EXIF-orient → RGB-normalise → cover/contain crop → contrast/sat
+  `get_next_image()` selection, then EXIF-orient → RGB-normalise → **focal-anchored** cover/contain crop → contrast/sat
   pre-boost → palette quantize + Floyd–Steinberg dither. Palettes: `spectra6`/`acep7`/`gray4`/`gray16`.
   Returns `X-Refresh-After` as the sleep hint; upserts `active_displays`.
 
@@ -85,14 +87,35 @@ adapter for Samsung Frame TVs — and is growing a **federated catalog** so anyo
   TV hidden behind a `FrameClient` ABC (`SamsungFrameClient` + `FakeFrameClient`) — all logic tested
   against the fake; real-hardware path in `integrations/frame-tv/`.
 
+### Framing — per-artwork focal points
+- Every artwork carries a normalized **`focal_x`/`focal_y`** (default `0.5,0.5` = center = prior behavior)
+  — the visual subject the renderer keeps in frame. **One point feeds all three outputs:** the Canvas
+  Ken Burns (transform-origin + background-position + focal-adaptive drift), and `epaper._fit_rgb`'s
+  `ImageOps.fit` centering for e-ink + Frame.
+- **Derived, baked once:** AI sets it during enrichment (`agents`/`curator`, shared
+  `FOCAL_POINT_INSTRUCTION`/`apply_focal_point`); the bundled catalog + seed ship **pre-baked**
+  `focal_point` (offline `tools/backfill_focal_*` — an in-IDE Claude-agent vision pass, no app API key);
+  catalog/seed add + the seed loader copy it via `_focal_xy`. Settable per-artwork via
+  `PATCH /artworks/{id}/crop` (which also persists the manual Cropper crop).
+
 ### The Admin & Mobile Remote
 - **Admin** `/admin` (`admin.html`+`admin.js`): library/playlist CRUD, crop editing, **Review Queue**
   (live-enriching), **Discover** (8 museum scouts + NASA + Wikimedia), **Browse Catalog** (+ collection
   picker), **Settings** (📡 This Server · 🧠 AI Engine BYO-model · 🖼️ Frame TV · 🌐 Subscriptions ·
-  premium museum keys · Maintenance). **Responsive** (slide-in drawer under 768px). Themed
-  toast/modal pattern (no native `alert/confirm/prompt`).
+  📚 Catalog Source · premium museum keys · Maintenance). **Responsive** (slide-in drawer under 768px).
+  Themed toast/modal pattern (no native `alert/confirm/prompt`).
 - **Remote** `/remote` (`remote.html`): mobile PWA; targets specific Canvas displays via
   `active_displays` + `remote_commands` (cross-worker, see below).
+
+### Studio — "My Photos" (personal photos)
+- **`/studio`** (`studio.html`): a phone-first front door for a user's OWN photos — multi-upload (+camera
+  capture), optional **AI caption** (evocative photo-album voice; `is_local_base_url()` gives an honest
+  on-device-vs-cloud privacy note), and **tap-to-set focal point**.
+- **`POST /upload/personal`:** local-only, EXIF-oriented, `is_personal=True`, `status=approved` — it
+  **deliberately skips the museum AI pipeline** (the photo is never sent to a model — the privacy
+  headline) and the Review Queue; auto-files into a "My Photos" playlist. `is_personal` also drives a
+  **jargon-free placard** (caption + date only, no QR) on the Canvas and `/art/{id}`. Caption/date saved
+  via `PATCH /api/studio/photo/{id}` (personal-only); a remote `catalog_url` is configurable separately.
 
 ### Multi-Worker Concurrency Model
 Uvicorn runs 4 workers (separate memory). Cross-worker coordination via SQLite:
@@ -107,8 +130,10 @@ Uvicorn runs 4 workers (separate memory). Cross-worker coordination via SQLite:
 ## Catalog & Federation
 
 - **Bundled catalog:** `static/catalog/` — a split manifest (`index.json` + per-collection files,
-  687 curated PD items / 24 collections) built offline by `tools/` (`catalog_spec.py` → `sources.py`
-  resolvers → `build_catalog.py`, display-gated to ≥2000px). Loaded **from disk** — `origin: bundled`.
+  524 served PD items / 24 collections, each carrying a baked **`focal_point`**) built offline by `tools/`
+  (`catalog_spec.py` → `sources.py` resolvers → `build_catalog.py`, display-gated to ≥2000px). Loaded
+  **from disk** — `origin: bundled`. A remote **`catalog_url`** (Settings → 📚 Catalog Source) can
+  override it with a static-hosted manifest, falling back to bundled on any fetch failure.
 - **Federation (`federation.py` + Manifest v2):** subscribe to a third-party collection by URL.
   - **`docs/manifest-v2.md`** is the spec; **`tools/manifest_validator.py`** the executable validator
     (pure-Python, strict on required/types/**per-asset licensing**, tolerant of unknown fields →
@@ -152,16 +177,18 @@ Screen-Docent/
 │
 ├── tools/              # OFFLINE/dev (runtime-independent)
 │   ├── catalog_spec.py · sources.py · build_catalog.py   # bundled catalog builder
+│   ├── backfill_focal_fetch.py · backfill_focal_bake.py  # focal-point backfill (in-IDE agent vision)
 │   ├── manifest_validator.py   # Manifest v2 validator (also imported at runtime by federation)
 │   ├── sign_manifest.py        # publisher keygen + sign CLI
 │   └── make_gif.py
 ├── registry/trusted_publishers.json  # curated verified-publisher Ed25519 keys (federation)
 ├── docs/manifest-v2.md           # Manifest v2 spec
 │
-├── migrations/versions/  # Alembic revisions (… → add_subscriptions)
+├── migrations/versions/  # Alembic revisions (… → add_focal_point_and_is_personal)
 ├── static/
-│   ├── index.html · app.js · styles.css     # Canvas + empty-state + manage-hint + /art QR
+│   ├── index.html · app.js · styles.css     # Canvas + focal-adaptive Ken Burns + /art QR
 │   ├── admin.html · admin.js                # admin (responsive, toast/modal, subs panel, badges)
+│   ├── studio.html                          # "My Photos" personal-photo front door (/studio)
 │   ├── remote.html · help.html · logo.svg · factory_seed.json
 │   ├── catalog/            # bundled split manifest (index.json + per-collection)
 │   ├── vendor/             # Cropper / Sortable / QRCode (vendored, offline)
@@ -171,8 +198,9 @@ Screen-Docent/
 ├── Artwork/_Library/      # canonical image store      ·  data/artwork.db  (volume-mapped)
 ├── Dockerfile · docker-compose.yml · requirements.txt · requirements-dev.txt
 ├── pyproject.toml (Ruff) · .pre-commit-config.yaml
-├── tests/                 # pytest (130): scouts, resolvers, catalog, epaper, frame_push, ai_client,
-│                          #   download, ranker, detail_page, manifest_validator, federation, signing
+├── tests/                 # pytest (223): scouts, resolvers, catalog, epaper, frame_push, ai_client,
+│                          #   download, ranker, detail_page, manifest_validator, federation, signing,
+│                          #   personal (Studio), focal
 └── .ai/                   # dev context (system_architecture.md tracked; active_context + decision_log local)
 ```
 
@@ -218,4 +246,7 @@ Screen-Docent/
 - **Catalog** — `GET /api/catalog` (index, origin-tagged) · `GET /api/catalog/{id}` · `POST /api/catalog/add`.
 - **Federation** — `GET/POST/DELETE /api/subscriptions` · `POST /api/subscriptions/{id}/sync`.
 - **Display image** — `GET /display/{id}/current.{png,bmp}` (e-ink). **Detail** — `GET /art/{id}`.
-- **Settings** — `GET/POST /api/settings/ai` (+OAuth) · `/api/settings/frame` (+test) · premium keys.
+- **Studio** — `/studio` page · `POST /upload/personal` · `POST /api/studio/caption/{id}` ·
+  `PATCH /api/studio/photo/{id}` · `PATCH /artworks/{id}/crop` (crop + focal point).
+- **Settings** — `GET/POST /api/settings/ai` (+OAuth) · `/api/settings/frame` (+test) ·
+  `/api/settings/catalog` (remote catalog source) · premium keys.
