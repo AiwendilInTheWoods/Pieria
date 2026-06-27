@@ -34,6 +34,37 @@ def _colors(data: bytes):
     return {c for _, c in im.getcolors(maxcolors=1 << 24)}
 
 
+def test_focal_changes_cover_crop(tmp_path):
+    # Tall source: top half red, bottom half blue. A wide cover-crop keeps a horizontal band,
+    # so the focal Y selects which half survives.
+    img = Image.new("RGB", (200, 400))
+    px = img.load()
+    for y in range(400):
+        for x in range(200):
+            px[x, y] = (220, 20, 20) if y < 200 else (20, 20, 220)
+    src = tmp_path / "split.png"
+    img.save(src)
+
+    top = render_for_epaper(src, 400, 100, palette="spectra6", fit="cover", focal=(0.5, 0.0), fmt="png")
+    bot = render_for_epaper(src, 400, 100, palette="spectra6", fit="cover", focal=(0.5, 1.0), fmt="png")
+    assert top != bot  # focal moved which band was kept
+
+    def dominant(data):
+        im = Image.open(io.BytesIO(data)).convert("RGB")
+        return max(im.getcolors(maxcolors=1 << 24))[1]
+    rt, _, bt = dominant(top)
+    rb, _, bb = dominant(bot)
+    assert rt > bt   # top focal kept the red band
+    assert bb > rb   # bottom focal kept the blue band
+
+
+def test_focal_default_is_centered(tmp_path):
+    src = _make_image(tmp_path)
+    a = render_for_epaper(src, 300, 300, palette="gray4", fit="cover", fmt="png")
+    b = render_for_epaper(src, 300, 300, palette="gray4", fit="cover", focal=(0.5, 0.5), fmt="png")
+    assert a == b   # omitting focal == explicit center
+
+
 def test_cover_exact_size_png(tmp_path):
     data = render_for_epaper(_make_image(tmp_path), 600, 400, palette="spectra6", fit="cover", fmt="png")
     im = Image.open(io.BytesIO(data))

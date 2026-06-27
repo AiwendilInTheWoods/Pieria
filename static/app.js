@@ -56,6 +56,7 @@ let controlsTimeout = null;
 let currentImageUrl = '';
 let currentDisplayTime = 30000; 
 let currentCropData = null;
+let currentFocal = null;
 let cycleTimeout = null;
 let currentPlaylists = [];
 let socket = null;
@@ -345,6 +346,7 @@ async function fetchAndTransition(direction = 1, isSkipped = false) {
         currentImageIndex = data.index;
         currentImageUrl = `${API_BASE}${data.image_url}`;
         currentCropData = data.crop;
+        currentFocal = data.focal_point || { x: 0.5, y: 0.5 };
         
         // Update Telemetry state for the newly fetched image
         activeArtworkId = data.metadata.id;
@@ -362,7 +364,7 @@ async function fetchAndTransition(direction = 1, isSkipped = false) {
         }
 
         updatePlacard(data.metadata);
-        performCrossfade(currentImageUrl, data.crop);
+        performCrossfade(currentImageUrl, data.crop, currentFocal);
 
         // Automatic Placard Flow
         const waitTime = globalConfig.placard_wait !== null ? globalConfig.placard_wait : (data.placard_wait !== undefined ? data.placard_wait : DEFAULT_SETTINGS.placard_wait);
@@ -416,7 +418,7 @@ function updatePlacard(metadata) {
     });
 }
 
-function performCrossfade(imageUrl, cropData) {
+function performCrossfade(imageUrl, cropData, focal) {
     const targetLayerId = activeLayerId === 1 ? 2 : 1;
     const activeLayer = document.getElementById(`artwork-${activeLayerId}`);
     const targetLayer = document.getElementById(`artwork-${targetLayerId}`);
@@ -426,7 +428,7 @@ function performCrossfade(imageUrl, cropData) {
         const matteLayer = document.getElementById('matte-layer');
         if (displayMode === 'contain-matte') matteLayer.style.backgroundImage = `url('${imageUrl}')`;
         targetLayer.style.backgroundImage = `url('${imageUrl}')`;
-        applyModeStyles(targetLayer, img, cropData);
+        applyModeStyles(targetLayer, img, cropData, focal);
         targetLayer.classList.add('active');
         activeLayer.classList.remove('active');
         activeLayerId = targetLayerId;
@@ -435,8 +437,18 @@ function performCrossfade(imageUrl, cropData) {
     };
 }
 
-function applyModeStyles(element, img, cropData) {
+function applyModeStyles(element, img, cropData, focal) {
+    const fx = (focal && typeof focal.x === 'number') ? focal.x : 0.5;
+    const fy = (focal && typeof focal.y === 'number') ? focal.y : 0.5;
     const hasValidCrop = cropData && cropData.width > 1;
+
+    // Stop any Ken Burns animation left running on this layer from a previous render.
+    if (element._kbAnim) { element._kbAnim.cancel(); element._kbAnim = null; }
+
+    if (displayMode === 'ken-burns') {
+        startKenBurns(element, fx, fy);
+        return;
+    }
     if (displayMode === 'static-crop' && hasValidCrop) {
         const zoomX = (img.naturalWidth / cropData.width) * 100;
         const zoomY = (img.naturalHeight / cropData.height) * 100;
@@ -445,11 +457,41 @@ function applyModeStyles(element, img, cropData) {
         element.style.backgroundSize = `${zoomX}% ${zoomY}%`;
         element.style.backgroundPosition = `${posX}% ${posY}%`;
         element.style.transform = 'none';
+        element.style.transformOrigin = '';
     } else {
         element.style.backgroundSize = displayMode === 'contain-matte' ? 'contain' : 'cover';
-        element.style.backgroundPosition = 'center';
+        // Anchor a plain cover-crop on the focal point too, so an off-center subject isn't sliced
+        // on a mismatched aspect ratio. (contain shows the whole image, so it stays centered.)
+        element.style.backgroundPosition = displayMode === 'contain-matte'
+            ? 'center'
+            : `${(fx * 100).toFixed(1)}% ${(fy * 100).toFixed(1)}%`;
         element.style.transform = 'none';
+        element.style.transformOrigin = '';
     }
+}
+
+// Focal-adaptive Ken Burns, driven per-image via the Web Animations API (replaces a fixed CSS
+// keyframe). The pan/zoom anchors on the artwork's focal point, and the DRIFT scales with how
+// central that point is — full cinematic drift for centered subjects, near-pure zoom for edge
+// subjects, so a portrait's head is never panned out of frame. Default focal (0.5, 0.5) ⇒ the
+// prior centered zoom-and-drift.
+function startKenBurns(element, fx, fy) {
+    const SCALE = 1.12, BASE_DRIFT = 4;           // zoom depth + max drift (% of layer)
+    const cx = 1 - 2 * Math.abs(fx - 0.5);        // centrality: 1 at center → 0 at the edge
+    const cy = 1 - 2 * Math.abs(fy - 0.5);
+    const ox = (fx * 100).toFixed(1), oy = (fy * 100).toFixed(1);
+    const dx = (-BASE_DRIFT * cx).toFixed(2), dy = (-BASE_DRIFT * cy).toFixed(2);
+    element.style.backgroundSize = 'cover';
+    element.style.backgroundPosition = `${ox}% ${oy}%`;
+    element.style.transformOrigin = `${ox}% ${oy}%`;
+    element.style.transform = 'none';
+    element._kbAnim = element.animate(
+        [
+            { transform: 'scale(1) translate(0%, 0%)' },
+            { transform: `scale(${SCALE}) translate(${dx}%, ${dy}%)` },
+        ],
+        { duration: 45000, iterations: Infinity, direction: 'alternate', easing: 'linear' }
+    );
 }
 
 function initNavButtons() {
@@ -478,7 +520,7 @@ function setMode(mode) {
     const urlMatch = activeLayer.style.backgroundImage.match(/url\(['"]?(.*?)['"]?\)/);
     if (urlMatch && urlMatch[1]) {
         activeImg.src = urlMatch[1];
-        activeImg.onload = () => applyModeStyles(activeLayer, activeImg, currentCropData);
+        activeImg.onload = () => applyModeStyles(activeLayer, activeImg, currentCropData, currentFocal);
     }
     const matteLayer = document.getElementById('matte-layer');
     if (mode === 'contain-matte') {

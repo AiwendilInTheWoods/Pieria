@@ -118,6 +118,9 @@ class ArtworkModel(Base):
     description_narrative: Mapped[Optional[str]] = mapped_column(Text)
     tags: Mapped[Optional[str]] = mapped_column(String)   # comma-separated
     is_seed: Mapped[bool] = mapped_column(Boolean, default=False)
+    # A personal photo (Studio → My Photos), not museum/catalog art: gates the jargon-free placard,
+    # skips the museum AI pipeline, and keeps it out of Discover/publish.
+    is_personal: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Provenance: where a seed/catalog/discovered work was fetched from (enables
     # re-download, dedup, and "already added" detection for the browseable catalog).
@@ -131,6 +134,12 @@ class ArtworkModel(Base):
     crop_y: Mapped[Optional[float]] = mapped_column(Float, default=0.0)
     crop_width: Mapped[Optional[float]] = mapped_column(Float, default=0.0)
     crop_height: Mapped[Optional[float]] = mapped_column(Float, default=0.0)
+
+    # Focal point (normalized 0..1) — the visual subject the renderer keeps in frame when cropping
+    # or panning to any aspect: the Ken Burns anchor + drift origin, and e-ink/Frame crop centering.
+    # Default (0.5, 0.5) = image center = prior behavior (no regression for un-derived art).
+    focal_x: Mapped[float] = mapped_column(Float, default=0.5)
+    focal_y: Mapped[float] = mapped_column(Float, default=0.5)
 
     def __repr__(self) -> str:
         return f"<Artwork(filename='{self.filename}', status='{self.status}')>"

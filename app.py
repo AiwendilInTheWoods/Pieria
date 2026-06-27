@@ -442,6 +442,9 @@ class ArtworkSchema(BaseModel):
     crop_y: float
     crop_width: float
     crop_height: float
+    focal_x: float = 0.5
+    focal_y: float = 0.5
+    is_personal: bool = False
     model_config = {"from_attributes": True}
 
 class PlaylistSchema(BaseModel):
@@ -888,6 +891,33 @@ async def artwork_detail_page(artwork_id: int, db: Session = Depends(get_db)):
  <div class=brand><img src="/logo.svg" alt=""> Presented by Screen Docent</div>
 </div></body></html>""")
 
+class CropPayload(BaseModel):
+    crop_x: float = 0.0
+    crop_y: float = 0.0
+    crop_width: float = 0.0
+    crop_height: float = 0.0
+    focal_x: Optional[float] = None
+    focal_y: Optional[float] = None
+
+@app.patch("/artworks/{artwork_id}/crop", response_model=ArtworkSchema)
+async def update_artwork_crop(artwork_id: int, payload: CropPayload, db: Session = Depends(get_db)):
+    """Persist a manual crop rectangle (original pixels) from the admin Cropper, plus optionally the
+    normalized focal point (the Ken Burns / e-ink framing anchor). The admin crop modal calls this;
+    it was previously missing, so manual crop-saves silently failed."""
+    art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
+    if not art:
+        raise HTTPException(404)
+    art.crop_x = payload.crop_x
+    art.crop_y = payload.crop_y
+    art.crop_width = payload.crop_width
+    art.crop_height = payload.crop_height
+    if payload.focal_x is not None:
+        art.focal_x = min(1.0, max(0.0, payload.focal_x))
+    if payload.focal_y is not None:
+        art.focal_y = min(1.0, max(0.0, payload.focal_y))
+    db.commit(); db.refresh(art)
+    return art
+
 @app.delete("/artworks/{artwork_id}")
 async def permanent_delete_artwork(artwork_id: int, db: Session = Depends(get_db)):
     art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
@@ -990,6 +1020,7 @@ async def get_next_image(
         "placard_show": p.placard_initial_show_sec,
         "placard_manual": p.placard_interaction_show_sec,
         "crop": {"x": selected_art.crop_x, "y": selected_art.crop_y, "width": selected_art.crop_width, "height": selected_art.crop_height},
+        "focal_point": {"x": selected_art.focal_x, "y": selected_art.focal_y},
         "metadata": {
             "id": selected_art.id,
             "title": selected_art.title, "agent_name": selected_art.agent_name, "agent_role": selected_art.agent_role,
@@ -1061,7 +1092,8 @@ async def get_display_image(
         raise HTTPException(404, detail="Artwork file missing")
 
     try:
-        data = render_for_epaper(path, w, h, palette=palette, fit=fit, fmt=ext)
+        data = render_for_epaper(path, w, h, palette=palette, fit=fit,
+                                 focal=(art.focal_x, art.focal_y), fmt=ext)
     except Exception as e:
         logger.error(f"[epaper] render failed for {path.name}: {e}", exc_info=True)
         raise HTTPException(500, detail="Render failed")
@@ -1564,9 +1596,20 @@ async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnai
     filename = f"{filename_prefix}_{title.replace(' ', '_').lower()[:18]}"
     dest_path, safe_name, w, h = await _download_image_to_library(source_url, filename=filename)
 
+    # A baked catalog / federated manifest item may carry image.focal_point as [x, y] (normalized
+    # 0..1) — the Ken Burns / crop framing anchor. Absent ⇒ stays centered (0.5, 0.5).
+    fx, fy = 0.5, 0.5
+    fp = metadata.get("focal_point")
+    if isinstance(fp, (list, tuple)) and len(fp) == 2:
+        try:
+            fx = min(1.0, max(0.0, float(fp[0]))); fy = min(1.0, max(0.0, float(fp[1])))
+        except (TypeError, ValueError):
+            pass
+
     artwork = ArtworkModel(
         filename=safe_name, original_width=w, original_height=h,
         crop_width=float(w), crop_height=float(h),
+        focal_x=fx, focal_y=fy,
         status='approved',
         title=metadata.get("title"), agent_name=metadata.get("agent_name"),
         agent_role=metadata.get("agent_role", "Artist"), creation_date=metadata.get("creation_date"),
@@ -1623,7 +1666,7 @@ async def _frame_select(playlist: str):
         art = db.query(ArtworkModel).filter(ArtworkModel.id == art_id).first()
         if not art:
             return None
-        return (LIBRARY_DIR / art.filename, art_id)
+        return (LIBRARY_DIR / art.filename, art_id, (art.focal_x, art.focal_y))
     except Exception as e:
         logger.warning(f"[Frame] selection failed: {e}")
         return None

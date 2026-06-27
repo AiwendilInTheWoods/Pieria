@@ -172,6 +172,7 @@ def manifest_item_to_catalog(item: dict) -> dict:
         "license": img.get("license"),
         "source_url": img.get("full_url"),
         "thumbnail_url": img.get("thumbnail_url") or img.get("full_url"),
+        "focal_point": img.get("focal_point"),
     }
 
 

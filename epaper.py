@@ -48,10 +48,12 @@ VALID_FITS = ("cover", "contain")
 _PALETTE_IMAGE_CACHE: dict = {}
 
 
-def _fit_rgb(image_path: Path, w: int, h: int, fit: str = "cover") -> Image.Image:
+def _fit_rgb(image_path: Path, w: int, h: int, fit: str = "cover",
+             focal: tuple = (0.5, 0.5)) -> Image.Image:
     """Open a source image, honour EXIF orientation, normalise ANY input mode
     (JPEG/PNG/WebP, incl. CMYK / RGBA / palette / greyscale) to RGB, and fit it to
-    exactly w x h — cover-crop (centered) or contain (letterbox onto white).
+    exactly w x h — cover-crop (anchored on the normalized focal point, default
+    centered) or contain (letterbox onto white).
 
     Shared by the e-ink renderer and the full-colour (Frame TV) renderer so the
     orient/crop behaviour can't drift between outputs.
@@ -63,7 +65,7 @@ def _fit_rgb(image_path: Path, w: int, h: int, fit: str = "cover") -> Image.Imag
         img = img.convert("RGB")
         if fit == "cover":
             return ImageOps.fit(
-                img, (w, h), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5)
+                img, (w, h), method=Image.Resampling.LANCZOS, centering=focal
             )
         # contain — letterbox onto white "paper"
         scaled = img.copy()
@@ -95,6 +97,7 @@ def render_for_epaper(
     h: int,
     palette: str = "spectra6",
     fit: str = "cover",
+    focal: tuple = (0.5, 0.5),
     fmt: str = "png",
     enhance: bool = True,
 ) -> bytes:
@@ -111,7 +114,7 @@ def render_for_epaper(
     if fit not in VALID_FITS:
         fit = "cover"
 
-    fitted = _fit_rgb(image_path, w, h, fit)
+    fitted = _fit_rgb(image_path, w, h, fit, focal)
 
     if enhance:
         # Gentle pre-boost so the tiny palette doesn't read as muddy.
@@ -141,13 +144,14 @@ def render_fullcolor(
     w: int,
     h: int,
     fit: str = "cover",
+    focal: tuple = (0.5, 0.5),
     quality: int = 90,
 ) -> bytes:
     """Render a source image to a full-colour JPEG sized exactly w x h, for displays
     that want a normal image (e.g. a Samsung Frame TV's Art Mode at 3840x2160) — same
     EXIF-orient + cover/contain framing as the e-ink path, but no palette quantization
     or dithering. Cached on its arguments like render_for_epaper()."""
-    fitted = _fit_rgb(image_path, w, h, fit)
+    fitted = _fit_rgb(image_path, w, h, fit, focal)
     buf = io.BytesIO()
     fitted.save(buf, format="JPEG", quality=quality)
     return buf.getvalue()

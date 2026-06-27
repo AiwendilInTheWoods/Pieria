@@ -51,12 +51,8 @@ body.force-portrait .ui-overlay-wrapper {
 
 .ken-burns .artwork-item {
     background-size: cover;
-    animation: kenburns 45s linear infinite alternate;
-}
-
-@keyframes kenburns {
-    0% { transform: scale(1) translate(0%, 0%); }
-    100% { transform: scale(1.15) translate(-2%, -2%); }
+    /* Ken Burns is driven per-image via the Web Animations API in app.js — a focal-adaptive
+       zoom + drift anchored on the artwork's focal point (see startKenBurns). */
 }
 
 .static-crop .artwork-item {

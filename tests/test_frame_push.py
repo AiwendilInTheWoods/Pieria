@@ -33,7 +33,7 @@ def _cfg(**over):
 
 # ------------------------------------------------------------------ render
 def test_render_fullcolor_is_rgb_jpeg_exact_size(tmp_path):
-    data = render_fullcolor(_make_image(tmp_path), 1920, 1080, "cover", 90)
+    data = render_fullcolor(_make_image(tmp_path), 1920, 1080, "cover", quality=90)
     im = Image.open(io.BytesIO(data))
     assert im.size == (1920, 1080)
     assert im.format == "JPEG"
@@ -47,7 +47,7 @@ def test_push_once_uploads_shows_and_sets_artmode(tmp_path):
     client = fp.FakeFrameClient()
 
     async def select(_pl):
-        return (path, 42)
+        return (path, 42, (0.5, 0.5))
 
     res = asyncio.run(fp.push_once(_cfg(), select, client, persist=lambda c, a: captured.append((c, a))))
     assert res["status"] == "pushed"
@@ -65,7 +65,7 @@ def test_push_once_dedupes_unchanged_artwork(tmp_path):
     client = fp.FakeFrameClient()
 
     async def select(_pl):
-        return (path, 7)
+        return (path, 7, (0.5, 0.5))
 
     cfg = _cfg(last_artwork_id=7, last_content_id="MY-PREV")
     res = asyncio.run(fp.push_once(cfg, select, client, persist=lambda *a: None))
@@ -78,7 +78,7 @@ def test_push_once_force_overrides_dedupe(tmp_path):
     client = fp.FakeFrameClient()
 
     async def select(_pl):
-        return (path, 7)
+        return (path, 7, (0.5, 0.5))
 
     cfg = _cfg(last_artwork_id=7, last_content_id="MY-PREV")
     res = asyncio.run(fp.push_once(cfg, select, client, force=True, persist=lambda *a: None))
@@ -92,7 +92,7 @@ def test_push_once_deletes_prior_upload_on_change(tmp_path):
     client = fp.FakeFrameClient()
 
     async def select(_pl):
-        return (path, 99)
+        return (path, 99, (0.5, 0.5))
 
     cfg = _cfg(last_artwork_id=1, last_content_id="OLD-CID")
     res = asyncio.run(fp.push_once(cfg, select, client, persist=lambda *a: None))
@@ -117,7 +117,7 @@ def test_push_once_error_does_not_persist(tmp_path):
     captured = []
 
     async def select(_pl):
-        return (path, 5)
+        return (path, 5, (0.5, 0.5))
 
     with pytest.raises(RuntimeError):
         asyncio.run(fp.push_once(_cfg(), select, client, persist=lambda c, a: captured.append((c, a))))
@@ -143,7 +143,7 @@ def test_run_test_push_pushes_with_fake_client(tmp_path, monkeypatch):
     monkeypatch.setattr(fp, "_persist_state", lambda c, a: None)  # don't touch the real DB
 
     async def select(_pl):
-        return (path, 3)
+        return (path, 3, (0.5, 0.5))
 
     res = asyncio.run(fp.run_test_push(select, client_factory=lambda cfg: fp.FakeFrameClient()))
     assert res["status"] == "pushed"

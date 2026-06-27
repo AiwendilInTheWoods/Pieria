@@ -28,7 +28,7 @@ ITEM_A = {
     "source_url": "https://example.test/a/full.jpg", "thumbnail_url": "https://example.test/a/thumb.jpg",
 }
 ITEM_B = dict(ITEM_A, title="Test Dusk", source_url="https://example.test/b/full.jpg",
-              thumbnail_url="https://example.test/b/thumb.jpg")
+              thumbnail_url="https://example.test/b/thumb.jpg", focal_point=[0.25, 0.75])
 
 
 @pytest.fixture
@@ -217,3 +217,52 @@ def test_remote_index_serves_over_bundled(client, monkeypatch):
     c.post("/api/settings/catalog", json={"catalog_url": "https://cdn.test/catalog"})
     ids = [col["id"] for col in c.get("/api/catalog").json()["collections"]]
     assert "remote-col" in ids and "demo" not in ids  # remote replaced bundled
+
+
+# --- Focal point (increment ①) ---
+
+def test_add_copies_focal_point(client):
+    c, db = client
+    r = c.post("/api/catalog/add", json={"collection_id": "demo", "item_index": 1})  # ITEM_B
+    assert r.status_code == 200, r.text
+    art = db.query(ArtworkModel).filter(ArtworkModel.source_url == ITEM_B["source_url"]).first()
+    assert art is not None and art.focal_x == 0.25 and art.focal_y == 0.75
+
+
+def test_add_without_focal_defaults_centered(client):
+    c, db = client
+    c.post("/api/catalog/add", json={"collection_id": "demo", "item_index": 0})  # ITEM_A, no focal
+    art = db.query(ArtworkModel).filter(ArtworkModel.source_url == ITEM_A["source_url"]).first()
+    assert art is not None and art.focal_x == 0.5 and art.focal_y == 0.5
+
+
+def test_crop_patch_persists_crop_and_focal(client):
+    c, db = client
+    art = ArtworkModel(filename="x.jpg", original_width=100, original_height=100, status="approved")
+    db.add(art); db.commit(); db.refresh(art)
+    r = c.patch(f"/artworks/{art.id}/crop", json={
+        "crop_x": 10, "crop_y": 20, "crop_width": 50, "crop_height": 60,
+        "focal_x": 0.3, "focal_y": 0.8})
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["crop_width"] == 50 and data["focal_x"] == 0.3 and data["focal_y"] == 0.8
+    db.refresh(art)
+    assert art.crop_width == 50 and art.focal_x == 0.3 and art.focal_y == 0.8
+
+
+def test_crop_patch_clamps_focal_and_leaves_omitted_untouched(client):
+    c, db = client
+    art = ArtworkModel(filename="y.jpg", original_width=100, original_height=100, status="approved")
+    db.add(art); db.commit(); db.refresh(art)
+    # focal_x out of range → clamped to 1.0; focal_y omitted → stays at the 0.5 default.
+    r = c.patch(f"/artworks/{art.id}/crop",
+                json={"crop_x": 0, "crop_y": 0, "crop_width": 10, "crop_height": 10, "focal_x": 1.7})
+    assert r.status_code == 200, r.text
+    db.refresh(art)
+    assert art.focal_x == 1.0 and art.focal_y == 0.5
+
+
+def test_crop_patch_unknown_artwork_404(client):
+    c, _ = client
+    r = c.patch("/artworks/9999/crop", json={"crop_x": 0, "crop_y": 0, "crop_width": 1, "crop_height": 1})
+    assert r.status_code == 404

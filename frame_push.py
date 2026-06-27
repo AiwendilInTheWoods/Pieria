@@ -50,9 +50,10 @@ _DEFAULTS = {
     "frame_display_id": "frame-tv",
 }
 
-# select_fn(playlist_name) -> (image_path, artwork_id) or None. Injected by app.py so this module
-# never imports app (avoids a circular import) and stays unit-testable.
-SelectFn = Callable[[str], Awaitable[Optional[Tuple[Path, int]]]]
+# select_fn(playlist_name) -> (image_path, artwork_id, focal) or None, where focal is the normalized
+# (x, y) framing anchor. Injected by app.py so this module never imports app (avoids a circular
+# import) and stays unit-testable.
+SelectFn = Callable[[str], Awaitable[Optional[Tuple[Path, int, Tuple[float, float]]]]]
 
 # --------------------------------------------------------------------------- config
 
@@ -268,13 +269,13 @@ async def push_once(
     sel = await select_fn(cfg.get("playlist", ""))
     if not sel:
         return {"status": "skipped", "reason": "no artwork available"}
-    path, artwork_id = sel
+    path, artwork_id, focal = sel
 
     if not force and artwork_id == cfg.get("last_artwork_id") and cfg.get("last_content_id"):
         return {"status": "unchanged", "artwork_id": artwork_id}
 
     image = await asyncio.to_thread(
-        render_fullcolor, Path(path), cfg["width"], cfg["height"], "cover", 90
+        render_fullcolor, Path(path), cfg["width"], cfg["height"], "cover", focal, 90
     )
     content_id = await client.push(image, "jpg", cfg.get("matte", "none"))
     await client.show(content_id)
