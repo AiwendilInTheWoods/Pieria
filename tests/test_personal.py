@@ -148,3 +148,25 @@ def test_caption_requires_configured_model(client, monkeypatch):
 def test_caption_unknown_artwork_404(client):
     c, _ = client
     assert c.post("/api/studio/caption/99999", json={}).status_code == 404
+
+
+# --- Jargon-free placard / detail page (increment ⑤) ---
+
+def test_art_detail_page_personal_strips_jargon(client):
+    c, _ = client
+    body = _upload(c, caption="Beach Day", date="2024").json()
+    page = c.get(f"/art/{body['id']}")
+    assert page.status_code == 200
+    html = page.text
+    assert "Beach Day" in html            # the caption is the title
+    assert "Unknown artist" not in html   # no museum artist line
+    assert "View original source" not in html
+
+
+def test_next_image_metadata_carries_is_personal(client):
+    c, _ = client
+    # _upload auto-creates + links a "My Photos" playlist, so /next-image has something to select.
+    _upload(c, caption="Pet Nap")
+    info = c.get("/next-image", params={"playlist_name": PERSONAL_PLAYLIST_NAME})
+    assert info.status_code == 200, info.text
+    assert info.json()["metadata"]["is_personal"] is True

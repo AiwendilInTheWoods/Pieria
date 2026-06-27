@@ -391,14 +391,36 @@ function updatePlacard(metadata) {
     const placard = document.getElementById('placard');
     if (!metadata || !metadata.title) { placard.classList.add('hidden'); return; }
     placard.classList.remove('hidden');
+
+    const isPersonal = !!metadata.is_personal;
+    placard.classList.toggle('personal', isPersonal);
+
     document.getElementById('art-title').textContent = metadata.title;
-    document.getElementById('art-agent-date').textContent = `${metadata.agent_name || 'Unknown Artist'} ${metadata.agent_role && metadata.agent_role !== 'Artist' ? '(' + metadata.agent_role + ')' : ''} ${metadata.creation_date ? '• ' + metadata.creation_date : ''}`;
-    
-    const details = [metadata.cultural_context, metadata.medium, metadata.date_display].filter(Boolean).join(' | ');
-    document.getElementById('art-museum-details').textContent = details;
-    document.getElementById('art-description').textContent = metadata.description || '';
+    const agentDate = document.getElementById('art-agent-date');
+    const museumDetails = document.getElementById('art-museum-details');
+    const description = document.getElementById('art-description');
     const tagsContainer = document.getElementById('art-tags');
+    const qrContainer = document.getElementById('qrcode-container');
+    const qrEl = document.getElementById('qrcode');
     tagsContainer.innerHTML = '';
+    qrEl.innerHTML = '';
+
+    if (isPersonal) {
+        // Personal photo: just the caption + an optional date. No artist/medium/culture/museum
+        // jargon, no tags, and no "Learn More" QR (there's nothing to look up).
+        agentDate.textContent = metadata.date_display || metadata.creation_date || '';
+        museumDetails.textContent = '';
+        description.textContent = '';
+        qrContainer.style.display = 'none';
+        return;
+    }
+
+    qrContainer.style.display = '';
+    agentDate.textContent = `${metadata.agent_name || 'Unknown Artist'} ${metadata.agent_role && metadata.agent_role !== 'Artist' ? '(' + metadata.agent_role + ')' : ''} ${metadata.creation_date ? '• ' + metadata.creation_date : ''}`;
+
+    const details = [metadata.cultural_context, metadata.medium, metadata.date_display].filter(Boolean).join(' | ');
+    museumDetails.textContent = details;
+    description.textContent = metadata.description || '';
     if (metadata.tags) {
         metadata.tags.split(',').forEach(tag => {
             const span = document.createElement('span');
@@ -406,8 +428,6 @@ function updatePlacard(metadata) {
             tagsContainer.appendChild(span);
         });
     }
-    const qrEl = document.getElementById('qrcode');
-    qrEl.innerHTML = '';
     // Point at our own server-hosted detail page (works offline; no Google hand-off).
     const learnUrl = metadata.id
         ? `${window.location.origin}/art/${metadata.id}`

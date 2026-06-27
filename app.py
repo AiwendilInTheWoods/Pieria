@@ -983,15 +983,21 @@ async def artwork_detail_page(artwork_id: int, db: Session = Depends(get_db)):
         return HTMLResponse("<body style='font-family:sans-serif;background:#0b1020;color:#e2e8f0;padding:40px'>"
                             "<h1>Artwork not found</h1></body>", status_code=404)
     e = html.escape
-    title = e(art.title or "Untitled")
-    role = e(art.agent_role) if art.agent_role and art.agent_role != "Artist" else ""
-    date = e(art.date_display or art.creation_date or "")
-    artist_line = e(art.agent_name or "Unknown artist") + (f" · {role}" if role else "") + (f" · {date}" if date else "")
-    meta_bits = " · ".join(b for b in [e(art.cultural_context or ""), e(art.medium or "")] if b)
-    desc = e(art.description_narrative or "")
-    tag_html = "".join(f"<span class=tag>{e(t.strip())}</span>" for t in (art.tags or "").split(",") if t.strip())
-    source = (f"<a class=source href='{e(art.source_url)}' target=_blank rel=noopener>View original source ↗</a>"
-              if art.source_url else "")
+    if art.is_personal:
+        # Personal photo: caption + optional date only — no artist/medium/culture/tags/source jargon.
+        title = e(art.title or "My Photo")
+        artist_line = e(art.date_display or art.creation_date or "")
+        meta_bits = desc = tag_html = source = ""
+    else:
+        title = e(art.title or "Untitled")
+        role = e(art.agent_role) if art.agent_role and art.agent_role != "Artist" else ""
+        date = e(art.date_display or art.creation_date or "")
+        artist_line = e(art.agent_name or "Unknown artist") + (f" · {role}" if role else "") + (f" · {date}" if date else "")
+        meta_bits = " · ".join(b for b in [e(art.cultural_context or ""), e(art.medium or "")] if b)
+        desc = e(art.description_narrative or "")
+        tag_html = "".join(f"<span class=tag>{e(t.strip())}</span>" for t in (art.tags or "").split(",") if t.strip())
+        source = (f"<a class=source href='{e(art.source_url)}' target=_blank rel=noopener>View original source ↗</a>"
+                  if art.source_url else "")
     return HTMLResponse(f"""<!DOCTYPE html><html lang=en><head>
 <meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1">
 <title>{title} — Screen Docent</title><style>
@@ -1151,6 +1157,7 @@ async def get_next_image(
         "focal_point": {"x": selected_art.focal_x, "y": selected_art.focal_y},
         "metadata": {
             "id": selected_art.id,
+            "is_personal": selected_art.is_personal,
             "title": selected_art.title, "agent_name": selected_art.agent_name, "agent_role": selected_art.agent_role,
             "creation_date": selected_art.creation_date, "cultural_context": selected_art.cultural_context,
             "medium": selected_art.medium, "date_display": selected_art.date_display,
