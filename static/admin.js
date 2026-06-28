@@ -423,8 +423,10 @@ async function fetchDiscoveryQueue() {
         // The standalone Discover-count badge folded into Museum Art; update it only if present.
         const dc = document.getElementById('discover-count');
         if (dc) dc.textContent = data.length;
-        if (data.length !== discoveryQueue.length) {
-            discoveryQueue = data;
+        // Drop items currently expanded inline so a poll can't re-add a card for one we've consumed.
+        const filtered = data.filter(it => !inlineDiscoveryIds.has(it.id));
+        if (filtered.length !== discoveryQueue.length) {
+            discoveryQueue = filtered;
             renderDiscoveryGrid();
         }
     } catch (error) { console.error('[Admin] Fetch discovery failed:', error); }
@@ -468,7 +470,7 @@ function renderDiscoveryGrid() {
                     <small style="opacity:0.6">${item.source_api}</small>
                 </div>
                 <div class="actions" style="grid-template-columns: 1fr 1fr;">
-                    <button onclick="approveDiscovery(${item.id}, this)" class="success" title="Send to the Review Queue to finalize and publish">Review →</button>
+                    <button onclick="reviewDiscoveryInline(${item.id}, this)" class="success" title="Finalize &amp; publish right here — no tab hop">Review</button>
                     <button onclick="rejectDiscovery(${item.id}, this)" style="color: #ef4444;">Reject</button>
                 </div>
             `;
@@ -617,6 +619,82 @@ function rejectDiscovery(id, btn) {
     enqueueAction(async () => {
         await fetch(`${API_BASE}/api/discover/reject/${id}`, { method: 'POST' });
     });
+}
+
+// ===== Inline review (Inc 4): finalize a live find without leaving Museum Art =====
+// "Review" creates the artwork (which kicks off RAG enrichment) and expands the discovery card in
+// place into the review form — Approve/Delete happen right here, no Review-Queue tab hop. The new
+// artwork is shielded from both polls: its discovery id from fetchDiscoveryQueue (inlineDiscoveryIds)
+// and its artwork id from the Review Queue (inlineReviewing — which instead streams enrichment into
+// the inline card via renderReviewQueue).
+const inlineReviewing = new Set();     // artwork ids currently expanded inline
+const inlineDiscoveryIds = new Set();  // discovery-queue ids consumed by an inline expansion
+
+function reviewDiscoveryInline(discoveryId, btn) {
+    const card = btn.closest('.artwork-card');
+    const item = discoveryQueue.find(it => it.id === discoveryId) || {};
+    btn.disabled = true; btn.textContent = 'Opening…';
+    enqueueAction(async () => {
+        let res, data = null;
+        try {
+            res = await fetch(`${API_BASE}/api/discover/approve/${discoveryId}`, { method: 'POST' });
+            data = await res.json();
+        } catch (e) { res = null; }
+        if (!res || !res.ok || !data || !data.artwork_id) {
+            showToast("Couldn't fetch that artwork — the museum server may be busy.", 'error');
+            btn.disabled = false; btn.textContent = 'Review';
+            return;
+        }
+        const artId = data.artwork_id;
+        inlineReviewing.add(artId);
+        inlineDiscoveryIds.add(discoveryId);
+        discoveryQueue = discoveryQueue.filter(it => it.id !== discoveryId);
+        expandDiscoveryCard(card, discoveryId, artId, {
+            id: artId, filename: '', title: item.proposed_title || '', agent_name: item.proposed_artist || '',
+        });
+    });
+}
+
+function expandDiscoveryCard(card, discoveryId, artId, seed) {
+    delete card.dataset.id;                 // hide from renderDiscoveryGrid reconciliation
+    card.dataset.inlineArt = artId;
+    card.dataset.discId = discoveryId;
+    card.className = 'review-card inline-review';
+    card.style.gridColumn = '1 / -1';       // span the whole grid row
+    card.innerHTML = `
+        <div class="inline-review-spinner">✨ Writing the placard… you can edit as it lands.</div>
+        <div class="inline-review-body">${reviewFormHTML(seed)}</div>`;
+    // Treat the seeded proposed values as the server baseline, so enrichment cleanly replaces them
+    // (unless the user edits first) — see syncReviewCardFields' data-server logic.
+    REVIEW_FIELDS.forEach(([prefix]) => {
+        const el = card.querySelector(`#${prefix}-${artId}`);
+        if (el) el.dataset.server = el.value;
+    });
+    // Re-target the two actions so they also collapse the inline card.
+    const actions = card.querySelector('.review-actions');
+    const approveBtn = actions.querySelector('.success');
+    const deleteBtn = actions.querySelector('.secondary');
+    approveBtn.setAttribute('onclick', ''); approveBtn.onclick = () => approveInline(artId, card);
+    deleteBtn.setAttribute('onclick', '');  deleteBtn.onclick = () => rejectInline(artId, card);
+}
+
+function _collapseInline(card) {
+    inlineReviewing.delete(parseInt(card.dataset.inlineArt, 10));
+    inlineDiscoveryIds.delete(parseInt(card.dataset.discId, 10));
+    card.remove();
+}
+
+function approveInline(artId, card) {
+    approveArtwork(artId);   // reads the inline fields synchronously, then PATCHes approve in the background
+    _collapseInline(card);
+    showToast('Published ✓', 'success');
+}
+
+async function rejectInline(artId, card) {
+    if (!(await confirmModal('Discard this find? It removes the downloaded artwork.', { confirmText: 'Discard', danger: true }))) return;
+    _collapseInline(card);
+    try { await fetch(`${API_BASE}/artworks/${artId}`, { method: 'DELETE' }); }
+    catch (e) { console.error('[Admin] inline discard failed:', e); }
 }
 
 async function clearRejectedHistory() {
@@ -1321,9 +1399,50 @@ function syncReviewCardFields(art) {
     });
 }
 
+// The review card's image + editable form (everything but the bulk-select checkbox). Shared by the
+// Review Queue and the inline discovery review (Inc 4), so both use identical fields, ids, and the
+// same approve/regenerate/sync wiring.
+function reviewFormHTML(art) {
+    return `
+                <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename || '')}"></div>
+                <div class="review-form">
+                    <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
+                    <div class="form-group"><label>Agent/Artist</label><input type="text" id="agent-${art.id}" value="${art.agent_name || ''}"></div>
+                    <div class="form-group"><label>Role</label><input type="text" id="role-${art.id}" value="${art.agent_role || ''}"></div>
+                    <div class="form-group"><label>Date/Year</label><input type="text" id="date-${art.id}" value="${_fmtDate(art.creation_date)}"></div>
+                    <div class="form-group"><label>Context</label><input type="text" id="context-${art.id}" value="${art.cultural_context || ''}"></div>
+                    <div class="form-group"><label>Medium</label><input type="text" id="medium-${art.id}" value="${art.medium || ''}"></div>
+                    <div class="form-group"><label>Display Date</label><input type="text" id="date-display-${art.id}" value="${art.date_display || ''}"></div>
+                    <div class="form-group"><label>Tags</label><input type="text" id="tags-${art.id}" value="${art.tags || ''}"></div>
+                    <div class="form-group full"><label>Narrative Description</label><textarea id="desc-${art.id}" rows="3">${art.description_narrative || ''}</textarea></div>
+                    <div class="form-group full" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 5px;">
+                        <label>AI Guidance (Optional)</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="hint-${art.id}" placeholder="e.g., 'This is my dog Buster in 2021'" style="flex-grow: 1;">
+                            <button class="primary" data-ai-action="1" id="regen-btn-${art.id}" onclick="regenerateArtworkMetadata(${art.id})" style="padding: 10px 20px;">
+                                <span id="regen-text-${art.id}">Regenerate</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="review-actions">
+                        <button class="secondary" onclick="deleteArtworkPermanently(${art.id})">Delete</button>
+                        <button class="success" onclick="approveArtwork(${art.id})">Approve & Publish</button>
+                    </div>
+                </div>`;
+}
+
 function renderReviewQueue(artworks) {
     const list = document.getElementById('review-list');
-    
+
+    // Items being reviewed inline (in the Museum discovery grid, Inc 4) are finalized there — stream
+    // their enrichment into the inline card and keep them out of the Review-Queue list entirely.
+    artworks.filter(a => inlineReviewing.has(a.id)).forEach(a => {
+        syncReviewCardFields(a);
+        const ic = document.querySelector(`.inline-review[data-inline-art="${a.id}"]`);
+        if (ic) { const sp = ic.querySelector('.inline-review-spinner'); if (sp) sp.remove(); }
+    });
+    artworks = artworks.filter(a => !inlineReviewing.has(a.id));
+
     // Clear any empty message if artworks exist
     if (artworks.length > 0 && list.innerHTML.includes('Queue is empty')) {
         list.innerHTML = '';
@@ -1361,31 +1480,7 @@ function renderReviewQueue(artworks) {
             card.dataset.id = art.id;
             card.innerHTML = `
                 <label class="review-select" title="Select for bulk approve"><input type="checkbox" onchange="_reviewSelectToggle(${art.id}, this.checked)"></label>
-                <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}"></div>
-                <div class="review-form">
-                    <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
-                    <div class="form-group"><label>Agent/Artist</label><input type="text" id="agent-${art.id}" value="${art.agent_name || ''}"></div>
-                    <div class="form-group"><label>Role</label><input type="text" id="role-${art.id}" value="${art.agent_role || ''}"></div>
-                    <div class="form-group"><label>Date/Year</label><input type="text" id="date-${art.id}" value="${_fmtDate(art.creation_date)}"></div>
-                    <div class="form-group"><label>Context</label><input type="text" id="context-${art.id}" value="${art.cultural_context || ''}"></div>
-                    <div class="form-group"><label>Medium</label><input type="text" id="medium-${art.id}" value="${art.medium || ''}"></div>
-                    <div class="form-group"><label>Display Date</label><input type="text" id="date-display-${art.id}" value="${art.date_display || ''}"></div>
-                    <div class="form-group"><label>Tags</label><input type="text" id="tags-${art.id}" value="${art.tags || ''}"></div>
-                    <div class="form-group full"><label>Narrative Description</label><textarea id="desc-${art.id}" rows="3">${art.description_narrative || ''}</textarea></div>
-                    <div class="form-group full" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 5px;">
-                        <label>AI Guidance (Optional)</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="hint-${art.id}" placeholder="e.g., 'This is my dog Buster in 2021'" style="flex-grow: 1;">
-                            <button class="primary" data-ai-action="1" id="regen-btn-${art.id}" onclick="regenerateArtworkMetadata(${art.id})" style="padding: 10px 20px;">
-                                <span id="regen-text-${art.id}">Regenerate</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="review-actions">
-                        <button class="secondary" onclick="deleteArtworkPermanently(${art.id})">Delete</button>
-                        <button class="success" onclick="approveArtwork(${art.id})">Approve & Publish</button>
-                    </div>
-                </div>
+                ${reviewFormHTML(art)}
             `;
             if (currentDOMIndex < list.children.length) {
                 list.insertBefore(card, list.children[currentDOMIndex]);
