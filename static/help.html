@@ -402,6 +402,19 @@ GEMINI_API_KEY=your_free_key_here</code></pre>
             <p>Set a mode globally, per-collection, or per-screen via the <a href="#params" style="color:var(--accent-color);">URL parameters</a>.
                Each piece shows an auto-generated <strong>museum placard</strong> (title, artist, blurb) and a
                QR code for details.</p>
+            <h3>Image resolution &amp; first-display loading</h3>
+            <p>Museum originals can be enormous — a single public-domain scan is often 40–110&nbsp;MB and 150+
+               megapixels. That's far more than any screen shows, and more than a low-power browser (a Raspberry
+               Pi, a TV stick) can decode and paint. So the display loads a <strong>resolution-capped copy</strong>
+               (up to 8K on the long edge — still well beyond 4K, with headroom for cropping and Ken Burns zoom),
+               while the <strong>full-resolution original stays on disk untouched</strong>.</p>
+            <div class="tip">
+                <strong>First time a brand-new piece appears, it may take a few seconds to paint</strong> on
+                low-power hardware — the capped copy is generated once, on demand, then cached permanently, so
+                every later showing is instant. With a normal rotation (a piece stays up for minutes), you'll
+                never notice it; it's only visible if you flip through many never-seen pieces rapidly. Restarting
+                or rebuilding the server keeps the cache.
+            </div>
         </section>
 
         <section id="remote">
