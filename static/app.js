@@ -27,6 +27,22 @@ const API_BASE = (window.location.origin === 'null' || window.location.protocol 
 const DISPLAY_ID = urlParams.get('display') || 'default';
 const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/${DISPLAY_ID}`;
 
+// Hide the mouse cursor on the display Canvas — reveal it briefly on movement, then
+// re-hide. A kiosk never moves the mouse, so the cursor stays gone (no stray pointer
+// sitting on the TV); a real viewer still gets it back the moment they wiggle the mouse.
+(() => {
+    let t;
+    const hide = () => { if (document.body) document.body.style.cursor = 'none'; };
+    const show = () => {
+        if (document.body) document.body.style.cursor = '';
+        clearTimeout(t);
+        t = setTimeout(hide, 3000);
+    };
+    window.addEventListener('mousemove', show, { passive: true });
+    window.addEventListener('DOMContentLoaded', hide);
+    hide();
+})();
+
 // Global Defaults & URL Overrides
 const globalConfig = {
     cycle_time: parseInt(urlParams.get('cycle_time')) || null,
