@@ -51,6 +51,7 @@ async function init() {
     await loadAiSettings();
     loadFrameSettings();   // non-blocking: populate the Frame TV panel
     loadCatalogSource();   // non-blocking: populate the Catalog Source panel
+    loadDefaultPlaylist(); // non-blocking: populate the Default Playlist panel
 
     // Restore the view the user was last on (survives a browser refresh).
     let savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
@@ -2095,6 +2096,45 @@ async function saveCatalogSource() {
 async function resetCatalogSource() {
     document.getElementById('catalog-url').value = '';
     await saveCatalogSource();   // empty URL ⇒ backend reverts to the bundled catalog
+}
+
+async function loadDefaultPlaylist() {
+    const sel = document.getElementById('default-playlist-select');
+    if (!sel) return;
+    try {
+        const [plsResp, defResp] = await Promise.all([
+            fetch(`${API_BASE}/playlists`),
+            fetch(`${API_BASE}/api/settings/default-playlist`)
+        ]);
+        const pls = await plsResp.json();
+        const cur = (await defResp.json()).default_playlist || '';
+        // Rebuild options (keep the leading "automatic" choice), then restore the saved selection.
+        sel.length = 1;
+        pls.forEach(p => {
+            const o = document.createElement('option');
+            o.value = p.name; o.textContent = `${p.name} (${p.artworks?.length || 0})`;
+            sel.appendChild(o);
+        });
+        sel.value = cur;
+    } catch (e) { /* non-fatal: panel just shows the automatic default */ }
+}
+
+async function saveDefaultPlaylist() {
+    const sel = document.getElementById('default-playlist-select');
+    const result = document.getElementById('default-playlist-result');
+    const btn = document.getElementById('default-playlist-save-btn');
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = '⏳ Saving…'; result.textContent = '';
+    try {
+        const resp = await fetch(`${API_BASE}/api/settings/default-playlist`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ default_playlist: sel.value })
+        });
+        const data = await resp.json();
+        if (!resp.ok) { result.textContent = '✗ ' + (data.detail || 'Save failed'); result.style.color = '#ef4444'; }
+        else { result.textContent = sel.value ? `✓ Boots to “${sel.value}”` : '✓ Automatic'; result.style.color = '#34d399'; }
+    } catch (e) { result.textContent = '✗ Network error'; result.style.color = '#ef4444'; }
+    finally { btn.disabled = false; btn.textContent = orig; }
 }
 
 // --- OpenRouter OAuth (PKCE) ---

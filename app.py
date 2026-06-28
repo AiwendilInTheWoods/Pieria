@@ -192,6 +192,43 @@ def render_canvas_image(src: Path, art_id: int) -> bytes:
     os.replace(tmp, dst)
     return data
 
+
+def warm_canvas_cache_async(art_id: int, filename: str) -> None:
+    """Fire-and-forget: pre-render the capped display derivative in the background so the Canvas never
+    pays the one-time encode (up to several seconds for a 150 MP original) on first display. Best-effort;
+    a missing loop or a bad file is swallowed (the lazy path + the boot sweep are the backstops)."""
+    async def _run():
+        try:
+            await run_in_threadpool(render_canvas_image, LIBRARY_DIR / filename, art_id)
+        except Exception as e:
+            logger.warning(f"[Warm] could not pre-render display image for art {art_id}: {e}")
+    try:
+        asyncio.get_running_loop().create_task(_run())
+    except RuntimeError:
+        pass  # no running loop (sync context) — the boot sweep will catch it
+
+
+async def warm_all_canvas_cache() -> None:
+    """Leader boot task: pre-render the capped display image for every approved artwork so the Canvas
+    never stalls on first display (esp. huge museum originals on a Pi). Sequential — one encode at a
+    time — to avoid a CPU storm while the server is also serving; `render_canvas_image` skips anything
+    already cached, so reruns are cheap. Best-effort per item."""
+    db = SessionLocal()
+    try:
+        arts = (db.query(ArtworkModel.id, ArtworkModel.filename)
+                .filter(ArtworkModel.status == "approved").all())
+    finally:
+        db.close()
+    logger.info(f"[Warm] pre-rendering display derivatives for {len(arts)} artworks...")
+    done = 0
+    for art_id, filename in arts:
+        try:
+            await run_in_threadpool(render_canvas_image, LIBRARY_DIR / filename, art_id)
+            done += 1
+        except Exception as e:
+            logger.warning(f"[Warm] art {art_id} ({filename}): {e}")
+    logger.info(f"[Warm] display cache warm complete ({done}/{len(arts)}).")
+
 async def run_ai_pipeline(artwork_id: int):
     db = SessionLocal()
     try:
@@ -423,6 +460,10 @@ async def lifespan(app: FastAPI):
             await run_factory_seed(db)
         finally:
             db.close()
+
+        # Pre-render the capped Canvas derivatives in the background so the display never stalls on
+        # the one-time encode of a huge original (leader-only; runs while the server serves traffic).
+        asyncio.create_task(warm_all_canvas_cache())
 
         # Leader-only: the Samsung Frame TV pusher. Running it solely in the leader avoids
         # firing it once per uvicorn worker. No-op until enabled in Settings → Frame TV.
@@ -746,6 +787,7 @@ async def upload_personal_photo(
         is_personal=True, status="approved",
     )
     db.add(art); db.commit(); db.refresh(art)
+    warm_canvas_cache_async(art.id, safe)   # pre-render the display image so it's warm by display time
 
     pl = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first() if playlist_id else None
     if pl is None:
@@ -1261,6 +1303,43 @@ async def bulk_delete_artworks(payload: ArtworkIds, db: Session = Depends(get_db
         _wipe_artwork(db, art)
     db.commit(); return {"status": "wiped", "count": len(arts)}
 
+def _playlist_name_if_playable(db: Session, name: Optional[str]) -> Optional[str]:
+    """Return `name` only if that playlist still exists AND has at least one artwork; else None."""
+    if not name:
+        return None
+    pl = db.query(PlaylistModel).filter(PlaylistModel.name == name).first()
+    return name if (pl and len(pl.artworks) > 0) else None
+
+@app.get("/api/displays/{display_id}/preferred-playlist")
+async def get_preferred_playlist(display_id: str, db: Session = Depends(get_db)):
+    """Which playlist a freshly-loaded display (no ?playlist= given) should show. Precedence:
+    last-played for THIS display → the global `default_playlist` fallback → null (Canvas then picks the
+    first non-empty). Only ever returns a playlist that still exists and has art."""
+    last = db.query(SettingsModel).filter(SettingsModel.setting_key == f"last_playlist:{display_id}").first()
+    default = db.query(SettingsModel).filter(SettingsModel.setting_key == "default_playlist").first()
+    name = (_playlist_name_if_playable(db, last.setting_value if last else None)
+            or _playlist_name_if_playable(db, default.setting_value if default else None))
+    return {"playlist": name}
+
+class DefaultPlaylistPayload(BaseModel):
+    default_playlist: Optional[str] = None
+
+@app.get("/api/settings/default-playlist")
+async def get_default_playlist(db: Session = Depends(get_db)):
+    row = db.query(SettingsModel).filter(SettingsModel.setting_key == "default_playlist").first()
+    return {"default_playlist": row.setting_value if row else None}
+
+@app.post("/api/settings/default-playlist")
+async def set_default_playlist(payload: DefaultPlaylistPayload, db: Session = Depends(get_db)):
+    """Pin the fallback playlist a display boots to when it has no last-played history (e.g. a brand-new
+    wall display). Empty string clears it. Validated against existing playlists."""
+    name = (payload.default_playlist or "").strip()
+    if name and not db.query(PlaylistModel).filter(PlaylistModel.name == name).first():
+        raise HTTPException(400, detail=f"No playlist named '{name}'")
+    _upsert_setting(db, "default_playlist", name)
+    db.commit()
+    return {"default_playlist": name}
+
 @app.get("/next-image")
 async def get_next_image(
     playlist_name: str,
@@ -1275,6 +1354,16 @@ async def get_next_image(
     """
     p = db.query(PlaylistModel).filter(PlaylistModel.name == playlist_name).first()
     if not p: raise HTTPException(404)
+
+    # Remember the active playlist for this display so a reboot resumes it (not the first playlist).
+    # Guarded so it only writes on change; rides the session-state commit below.
+    if display_id and display_id != "default":
+        _lp_key = f"last_playlist:{display_id}"
+        _lp_row = db.query(SettingsModel).filter(SettingsModel.setting_key == _lp_key).first()
+        if _lp_row is None:
+            db.add(SettingsModel(setting_key=_lp_key, setting_value=playlist_name))
+        elif _lp_row.setting_value != playlist_name:
+            _lp_row.setting_value = playlist_name
 
     # Resolve Shuffle Hierarchy (URL override > Playlist setting)
     resolved_shuffle = shuffle if shuffle is not None else p.shuffle
@@ -1967,6 +2056,7 @@ async def _download_and_create_artwork(db: Session, *, source_url: str, thumbnai
         tags=metadata.get("tags"), source_url=source_url, thumbnail_url=thumbnail_url, is_seed=False,
     )
     db.add(artwork); db.commit(); db.refresh(artwork)
+    warm_canvas_cache_async(artwork.id, safe_name)   # pre-render the display image so it's warm by display time
 
     if playlist_id:
         playlist = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first()

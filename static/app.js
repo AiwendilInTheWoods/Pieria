@@ -240,7 +240,15 @@ async function refreshPlaylists(isInitial = false) {
                 const requestedPlaylistName = urlParams.get('playlist');
                 let activePlaylist = playlists.find(p => p.name === requestedPlaylistName);
                 if (!activePlaylist) {
-                    activePlaylist = playlists.find(p => (p.artworks?.length || 0) > 0) || playlists[0];
+                    // No explicit ?playlist= — ask the server what THIS display should resume
+                    // (last-played → configured default), then fall back to the first non-empty.
+                    let preferredName = null;
+                    try {
+                        const pref = await fetch(`${API_BASE}/api/displays/${encodeURIComponent(DISPLAY_ID)}/preferred-playlist`).then(r => r.json());
+                        preferredName = pref.playlist;
+                    } catch (e) { /* offline/early boot — fall through to default below */ }
+                    activePlaylist = playlists.find(p => p.name === preferredName)
+                                  || playlists.find(p => (p.artworks?.length || 0) > 0) || playlists[0];
                 }
                 currentPlaylist = activePlaylist.name;
                 currentDisplayTime = activePlaylist.display_time * 1000;

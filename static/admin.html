@@ -735,6 +735,23 @@
                     </div>
                 </div>
 
+                <!-- Default Playlist — what a display boots to when it has no last-played history -->
+                <div id="default-playlist-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">▶️ Default Playlist (on reboot)</h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 18px;">
+                        A display reboots to whatever it was last showing. This is the fallback it uses when it has
+                        <em>no</em> history yet — e.g. a brand-new wall display's first boot. Leave as “First non-empty”
+                        to let it pick automatically.
+                    </p>
+                    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                        <select id="default-playlist-select" style="background:#0f172a; border:1px solid var(--border-color); color:white; padding:10px 12px; border-radius:6px; font-size:0.85rem; min-width:220px;">
+                            <option value="">First non-empty (automatic)</option>
+                        </select>
+                        <button class="primary" id="default-playlist-save-btn" onclick="saveDefaultPlaylist()" style="padding:12px 22px; font-weight:600;">Save</button>
+                        <span id="default-playlist-result" style="font-size:0.8rem;"></span>
+                    </div>
+                </div>
+
                 <!-- Discovery Maintenance -->
                 <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
                     <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">Discovery Queue Maintenance</h3>
@@ -861,6 +878,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260627l"></script>
+    <script src="admin.js?v=20260628a"></script>
 </body>
 </html>

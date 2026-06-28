@@ -89,7 +89,8 @@ def test_small_image_passes_through(make_artwork):
 
 def test_derivative_is_cached_on_disk(make_artwork):
     c, art = make_artwork("_test_cache.jpg", (9000, 6000))
-    assert not list(app_module.DERIVATIVES_DIR.glob(f"{art.id}-*"))
+    for d in app_module.DERIVATIVES_DIR.glob(f"{art.id}-*"):   # ignore leftovers from other tests (shared dir, id reused)
+        d.unlink(missing_ok=True)
     c.get(f"/artworks/{art.id}/display.jpg")
     assert list(app_module.DERIVATIVES_DIR.glob(f"{art.id}-*"))   # written through to disk
 
