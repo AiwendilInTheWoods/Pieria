@@ -1,6 +1,6 @@
 # Screen Docent — System Architecture
 
-> **Version:** 0.9.0 · **Last Updated:** 2026-06-21
+> **Version:** 0.9.1 · **Last Updated:** 2026-06-27
 
 ---
 
@@ -22,7 +22,7 @@ adapter for Samsung Frame TVs — and is growing a **federated catalog** so anyo
 | **Migrations** | Alembic 1.13 | Versioned schema migrations (`migrations/versions/`) |
 | **AI (BYO model)** | `ai_client.py` — one **OpenAI-compatible** client | Any provider (Gemini-compat, OpenAI, Anthropic, OpenRouter, local Ollama) = base_url + api_key + model. Configured in-GUI; `google-generativeai` **dropped**. |
 | **RAG Context** | Wikipedia API (`wikipedia` 1.4) | Ground-truth context for the curator pipeline |
-| **Image Processing** | Pillow 10.3 | Optimisation, EXIF-orient, crop, e-ink palette-quantize + Floyd–Steinberg dither |
+| **Image Processing** | Pillow 10.3 + pillow-heif 0.18 | Optimisation, EXIF-orient, crop, e-ink palette-quantize + Floyd–Steinberg dither; **HEIC/HEIF decode** (iPhone uploads, transcoded to JPEG on ingest). pillow-heif pinned to hold Pillow 10.3 (manylinux wheel bundles libheif → no apt) |
 | **HTTP Client** | httpx 0.27 | Async museum/image/manifest fetches |
 | **Crypto** | PyNaCl 1.6 (Ed25519) | Federation: signed-manifest verification (verified-publisher tier) |
 | **Frame TV** | `samsungtvws` 3.0 | Push render adapter (LAN Art Mode, no Samsung account) |
@@ -99,11 +99,17 @@ adapter for Samsung Frame TVs — and is growing a **federated catalog** so anyo
   `PATCH /artworks/{id}/crop` (which also persists the manual Cropper crop).
 
 ### The Admin & Mobile Remote
-- **Admin** `/admin` (`admin.html`+`admin.js`): library/playlist CRUD, crop editing, **Review Queue**
-  (live-enriching), **Discover** (8 museum scouts + NASA + Wikimedia), **Browse Catalog** (+ collection
-  picker), **Settings** (📡 This Server · 🧠 AI Engine BYO-model · 🖼️ Frame TV · 🌐 Subscriptions ·
-  📚 Catalog Source · premium museum keys · Maintenance). **Responsive** (slide-in drawer under 768px).
-  Themed toast/modal pattern (no native `alert/confirm/prompt`).
+- **Admin** `/admin` (`admin.html`+`admin.js`): library/playlist CRUD, a full-screen **Edit** landing
+  (crop + focal + placard + Re-enrich), and **Museum Art** — one search box (with catalog **autocomplete**
+  via `<datalist>` ← `/api/catalog/suggest`) over a **Curated / Live** source toggle. Curated = browse/
+  flat-search the bundled 524, add straight to library; thin/empty results surface a prominent **live-search
+  escalation** of the same query. Live = 8 museum scouts + NASA + Wikimedia, finalized via **inline review**
+  (the discovery card expands in place into the review form — enrichment streams in, Approve/Discard right
+  there; no Review-Queue hop). **Bulk ☑ Select** across Library/Collections (add/remove/delete), the
+  **Review Queue** (Approve & Publish a batch), and the curated grid (Add selected). **Review Queue**
+  (live-enriching) remains the batch catch-all. **Settings** (📡 This Server · 🧠 AI Engine BYO-model ·
+  🖼️ Frame TV · 🌐 Subscriptions · 📚 Catalog Source · premium museum keys · Maintenance). **Responsive**
+  (slide-in drawer under 768px). Themed toast/modal pattern (no native `alert/confirm/prompt`).
 - **Remote** `/remote` (`remote.html`): mobile PWA; targets specific Canvas displays via
   `active_displays` + `remote_commands` (cross-worker, see below).
 
@@ -111,9 +117,11 @@ adapter for Samsung Frame TVs — and is growing a **federated catalog** so anyo
 - **`/studio`** (`studio.html`): a phone-first front door for a user's OWN photos — multi-upload (+camera
   capture), optional **AI caption** (evocative photo-album voice; `is_local_base_url()` gives an honest
   on-device-vs-cloud privacy note), and **tap-to-set focal point**.
-- **`POST /upload/personal`:** local-only, EXIF-oriented, `is_personal=True`, `status=approved` — it
-  **deliberately skips the museum AI pipeline** (the photo is never sent to a model — the privacy
-  headline) and the Review Queue; auto-files into a "My Photos" playlist. `is_personal` also drives a
+- **`POST /upload/personal`:** local-only, EXIF-oriented, **HEIC→JPEG transcoded** (iPhone default
+  format; browsers can't render HEIC), `is_personal=True`, `status=approved` — it **deliberately skips
+  the museum AI pipeline** (the photo is never sent to a model — the privacy headline) and the Review
+  Queue; auto-files into a "My Photos" playlist. (The museum `POST /upload` also transcodes HEIC→JPEG
+  while leaving other formats byte-identical.) `is_personal` also drives a
   **jargon-free placard** (caption + date only, no QR) on the Canvas and `/art/{id}`. Caption/date saved
   via `PATCH /api/studio/photo/{id}` (personal-only); a remote `catalog_url` is configurable separately.
 
@@ -198,9 +206,9 @@ Screen-Docent/
 ├── Artwork/_Library/      # canonical image store      ·  data/artwork.db  (volume-mapped)
 ├── Dockerfile · docker-compose.yml · requirements.txt · requirements-dev.txt
 ├── pyproject.toml (Ruff) · .pre-commit-config.yaml
-├── tests/                 # pytest (223): scouts, resolvers, catalog, epaper, frame_push, ai_client,
-│                          #   download, ranker, detail_page, manifest_validator, federation, signing,
-│                          #   personal (Studio), focal
+├── tests/                 # pytest (253): scouts, resolvers, catalog (+search/suggest/bulk-add), epaper,
+│                          #   frame_push, ai_client, download, ranker, detail_page, manifest_validator,
+│                          #   federation, signing, personal (Studio +HEIC), bulk (approve/link/delete), focal
 └── .ai/                   # dev context (system_architecture.md tracked; active_context + decision_log local)
 ```
 
@@ -243,7 +251,12 @@ Screen-Docent/
 
 - **Factory Reset** `POST /api/admin/factory-reset` (body `"RESET"`) — wipe non-seed data.
 - **Discover maintenance** — clear pending / rejected history / orphaned approvals.
-- **Catalog** — `GET /api/catalog` (index, origin-tagged) · `GET /api/catalog/{id}` · `POST /api/catalog/add`.
+- **Catalog** — `GET /api/catalog` (index, origin-tagged) · `GET /api/catalog/{id}` · `GET /api/catalog/search`
+  (flat AND-token) · `GET /api/catalog/suggest` (autocomplete) · `POST /api/catalog/add` · `POST /api/catalog/add-bulk`.
+  *(search/suggest declared before `/{collection_id}` to avoid route-shadowing.)*
+- **Review/library bulk** — `PATCH /artworks/{id}/approve` · `POST /artworks/approve-bulk` (pending→approved,
+  status-guarded) · `PATCH /artworks/{id}/metadata` (edit approved in place) · `POST /artworks/delete` ·
+  `POST`/`DELETE /playlists/{id}/artworks` (bulk link/unlink).
 - **Federation** — `GET/POST/DELETE /api/subscriptions` · `POST /api/subscriptions/{id}/sync`.
 - **Display image** — `GET /display/{id}/current.{png,bmp}` (e-ink). **Detail** — `GET /art/{id}`.
 - **Studio** — `/studio` page · `POST /upload/personal` · `POST /api/studio/caption/{id}` ·

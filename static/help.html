@@ -234,23 +234,29 @@ docker compose up -d --build</code></pre>
 
             <h3>1. Museum Art — one place for the world's art</h3>
             <p>The <strong>🏛️ Museum Art</strong> tab is a single front door with one search box and a
-               <strong>source toggle</strong> that decides where the grid looks:</p>
+               <strong>source toggle</strong> that decides where the grid looks. As you type, the box
+               <strong>suggests matching artists and titles</strong> from the catalog.</p>
             <ul>
                 <li><strong>🏛️ Curated catalog</strong> — a hand-picked, collection-first library of public-domain
                    art (museums, NASA, the Library of Congress) with ready-made museum placards. Browse the
                    collections, or type to search across all of them. Click <strong>Add to Library</strong> on any
                    piece and <em>only then</em> does its full-resolution image download — browsing itself is instant
-                   (just text + thumbnails), and curated pieces add <strong>straight to your library</strong>.</li>
+                   (just text + thumbnails), and curated pieces add <strong>straight to your library</strong>. To add
+                   several at once, hit <strong>☑ Select</strong>, tap the pieces you want, and
+                   <strong>Add selected</strong> (optionally into a collection).</li>
                 <li><strong>🌐 Live museum search</strong> — the same box, pointed at world-class open collections for
                    a specific artist, subject, or era: the Met, Art Institute of Chicago, Cleveland, Rijksmuseum, SMK,
                    <strong>NASA</strong> (space photography), and <strong>Wikimedia Commons</strong> (the broadest
-                   public-domain pool). Pick which repositories to search under <em>Advanced sources</em>. Live finds
-                   are sent to your <strong>Review Queue</strong> to approve before they reach your walls. NASA and
-                   Wikimedia need no key; Wikimedia results are filtered to public-domain works at display-grade
-                   resolution (≥2000px). A model just makes the search smarter for ambiguous queries.</li>
+                   public-domain pool). Pick which repositories to search under <em>Advanced sources</em>. Click
+                   <strong>Review</strong> on a find and its card <strong>expands right there</strong> into an editable
+                   placard — the AI writes the details in as you watch, and you <strong>Approve &amp; Publish</strong>
+                   (or <strong>Discard</strong>) without ever leaving the page. (Anything you'd rather batch still
+                   collects in the <strong>Review Queue</strong> tab.) NASA and Wikimedia need no key; Wikimedia
+                   results are filtered to public-domain works at display-grade resolution (≥2000px). A model just
+                   makes the search smarter for ambiguous queries.</li>
             </ul>
-            <p>Searching the curated catalog and coming up empty? There's a one-click <em>“Search live museums →”</em>
-               link to widen the same query to the live scope.</p>
+            <p>Searching the curated catalog and coming up short? When there are few or no matches, a clear
+               <em>“Search live museums →”</em> prompt offers to widen the very same query to the live scope.</p>
             <figure>
                 <img class="shot" src="/docs/catalog-add.gif" alt="Browsing the catalog: collections grid, opening a collection, and adding a piece">
                 <figcaption>Curated scope: browse collections → open one → Add to Library. The high-res image downloads only on Add.</figcaption>
@@ -275,7 +281,8 @@ docker compose up -d --build</code></pre>
                photo to set its <strong>focus point</strong>, and they go straight to a <strong>My Photos</strong>
                playlist — no review queue, no museum jargon, just a clean caption on the wall. Every photo
                you've added shows in a gallery below the uploader, <strong>grouped by album</strong> — tap any
-               one to re-edit its caption, date, or focus point anytime.</p>
+               one to re-edit its caption, date, or focus point anytime. <strong>iPhone photos work as-is</strong>:
+               Apple's HEIC format is converted to a standard image automatically on upload.</p>
             <div class="tip">
                 <strong>Privacy:</strong> your photos stay <strong>on your server</strong> — never uploaded to
                 anyone's cloud, never indexed. AI captioning is opt-in; if your AI Engine points at a
@@ -337,7 +344,9 @@ docker compose up -d --build</code></pre>
                collection, tap the works you want, then use the action bar to <strong>Add to a collection</strong>,
                <strong>Remove</strong> them from the current collection, or <strong>Delete</strong> them from the
                library. The <strong>Add from Library</strong> picker is multi-select too — tick everything you
-               want and add it in one go.</p>
+               want and add it in one go. The same <strong>☑ Select</strong> mode is in the <strong>Review
+               Queue</strong> (<strong>Approve &amp; Publish</strong> a batch at once) and on the curated
+               <strong>Museum Art</strong> grid (<strong>Add selected</strong> to your library).</p>
         </section>
 
         <section id="ai-engine">
