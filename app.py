@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import quote
 
+import pillow_heif
 from dotenv import load_dotenv
 from fastapi import (
     BackgroundTasks,
@@ -44,6 +45,11 @@ from sqlalchemy.orm import Session
 
 # Load environment variables
 load_dotenv()
+
+# Teach Pillow to read HEIC/HEIF so iPhone photos (the default capture format) decode through the
+# normal Image.open() path everywhere. Upload handlers transcode to a browser-renderable format —
+# browsers can't display HEIC either, so decode alone isn't enough.
+pillow_heif.register_heif_opener()
 
 # -----------------------------------------------------------------------------
 # 1. Configuration, Logging & Targeted WebSocket Manager
@@ -594,10 +600,25 @@ async def reorder_playlist(playlist_id: int, request: ReorderRequest, db: Sessio
 @app.post("/upload", response_model=ArtworkSchema)
 async def upload_artwork(background_tasks: BackgroundTasks, file: UploadFile = File(...), playlist_id: Optional[int] = Form(None), db: Session = Depends(get_db)):
     if not LIBRARY_DIR.exists(): LIBRARY_DIR.mkdir(parents=True)
-    f_path = LIBRARY_DIR / file.filename
-    with open(f_path, "wb") as b: shutil.copyfileobj(file.file, b)
-    with Image.open(f_path) as img: w, h = img.size
-    new_a = ArtworkModel(filename=file.filename, original_width=w, original_height=h, status='pending_review')
+    raw = await file.read()
+    try:
+        with Image.open(io.BytesIO(raw)) as src:
+            fmt = (src.format or "").upper()
+            if fmt in ("HEIF", "HEIC"):
+                # Browsers can't render HEIC — transcode to JPEG (orientation baked) and rename .heic→.jpg.
+                img = ImageOps.exif_transpose(src)
+                if img.mode not in ("RGB", "L"): img = img.convert("RGB")
+                fname = f"{Path(file.filename or 'photo').stem}.jpg"
+                img.save(LIBRARY_DIR / fname, format="JPEG", quality=92)
+                w, h = img.size
+            else:
+                # Every other format keeps its exact original bytes (and orientation) as before.
+                fname = file.filename
+                (LIBRARY_DIR / fname).write_bytes(raw)
+                w, h = src.size
+    except Exception:
+        raise HTTPException(400, detail="That file isn't a readable image.")
+    new_a = ArtworkModel(filename=fname, original_width=w, original_height=h, status='pending_review')
     db.add(new_a); db.commit(); db.refresh(new_a)
     if playlist_id:
         db.execute(playlist_artwork.insert().values(playlist_id=playlist_id, artwork_id=new_a.id))

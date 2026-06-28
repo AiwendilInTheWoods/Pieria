@@ -95,6 +95,52 @@ def test_personal_upload_rejects_non_image(client):
     assert r.status_code == 400
 
 
+# --- HEIC (the iPhone default capture format) ---
+
+def _heic_bytes(size=(80, 60), color=(200, 100, 50)):
+    """A real HEIC payload — only decodable because app.py registers the pillow-heif opener."""
+    buf = io.BytesIO()
+    Image.new("RGB", size, color).save(buf, format="HEIF")
+    return buf.getvalue()
+
+
+def test_personal_upload_heic_transcodes_to_jpeg(client):
+    c, db = client
+    r = c.post("/upload/personal",
+               files={"file": ("IMG_2025.HEIC", _heic_bytes((80, 60)), "image/heic")},
+               data={"caption": "From my iPhone"})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["is_personal"] is True and body["status"] == "approved"
+    art = db.get(ArtworkModel, body["id"])
+    # Stored as a browser-renderable JPEG, not the unrenderable .heic.
+    assert art.filename.endswith(".jpg")
+    with Image.open(app_module.LIBRARY_DIR / art.filename) as im:
+        assert im.format == "JPEG" and im.size == (80, 60)
+
+
+def test_museum_upload_heic_transcodes_to_jpeg(client, monkeypatch):
+    c, db = client
+    monkeypatch.setattr(app_module, "run_ai_pipeline", lambda *a, **k: None)
+    r = c.post("/upload", files={"file": ("photo.heic", _heic_bytes((50, 40)), "image/heic")})
+    assert r.status_code == 200, r.text
+    art = db.get(ArtworkModel, r.json()["id"])
+    assert art.filename.endswith(".jpg") and art.status == "pending_review"
+    with Image.open(app_module.LIBRARY_DIR / art.filename) as im:
+        assert im.format == "JPEG" and im.size == (50, 40)
+
+
+def test_museum_upload_png_preserves_original(client, monkeypatch):
+    """Regression: the non-HEIC museum path keeps the exact original file + name as before."""
+    c, db = client
+    monkeypatch.setattr(app_module, "run_ai_pipeline", lambda *a, **k: None)
+    r = c.post("/upload", files={"file": ("art.png", _png_bytes((70, 50)), "image/png")})
+    assert r.status_code == 200, r.text
+    art = db.get(ArtworkModel, r.json()["id"])
+    assert art.filename == "art.png"
+    assert art.original_width == 70 and art.original_height == 50
+
+
 # --- AI auto-caption (increment ④) ---
 
 @pytest.mark.parametrize("url,local", [
