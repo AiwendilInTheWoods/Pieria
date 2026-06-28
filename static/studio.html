@@ -132,10 +132,13 @@ function albumPlaylistId(){
 dz.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
 fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value=''; });
 
+// Accept by extension too: HEIC/HEIF (the iPhone default) reports an empty/unrecognized MIME type
+// in most browsers, so a type-only check would silently skip it. The server validates + transcodes.
+const IMG_EXT = /\.(jpe?g|png|gif|webp|bmp|tiff?|heic|heif|avif)$/i;
 async function handleFiles(files){
   const pid = albumPlaylistId();
   for(const file of files){
-    if(!file.type.startsWith('image/')) continue;
+    if(!(file.type.startsWith('image/') || IMG_EXT.test(file.name))) continue;
     const card = makeCard(file);
     grid.prepend(card.el);
     try{
@@ -207,6 +210,10 @@ async function loadPhotos(){
 
 function bindCard(card, art){
   const id = art.id;
+  // Swap the local preview for the server-rendered thumbnail — a real JPEG even for HEIC uploads,
+  // which the browser can't preview locally (so the blob: URL would show a broken image).
+  if (card.img.src.startsWith('blob:')) URL.revokeObjectURL(card.img.src);
+  card.img.src = `/artworks/${id}/thumbnail?f=${encodeURIComponent(art.filename || '')}`;
   card.hint.textContent = 'tap the photo to set the focus point';
   setDot(card, art.focal_x ?? 0.5, art.focal_y ?? 0.5);
   card.cap.disabled = card.date.disabled = false;
