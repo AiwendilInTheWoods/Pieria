@@ -23,6 +23,8 @@ CONF="$(find_conf)" || {
 SERVER_URL="${SERVER_URL:-http://localhost:8000}"
 DISPLAY_ID="${DISPLAY_ID:-default}"
 WAIT_TIMEOUT="${WAIT_TIMEOUT:-0}"
+ROTATE="${ROTATE:-}"             # blank/normal = landscape; 90|180|270 for portrait/rotated panels
+OUTPUT="${OUTPUT:-HDMI-A-1}"     # which HDMI port to rotate (HDMI-A-1 = nearest USB-C on a Pi 5)
 
 # Build the Canvas URL. Hierarchical overrides (mode, cycle_time) are optional;
 # blank values are omitted so the playlist/server defaults win.
@@ -54,10 +56,32 @@ CHROME_FLAGS=(
 # Don't paint Chromium until the server is reachable (0 = wait forever).
 sd-wait-for-server "$SERVER_URL" "$WAIT_TIMEOUT" || true
 
+# What cage runs. For a portrait/rotated panel we rotate at the COMPOSITOR (the
+# responsive Canvas then just fills the rotated viewport — pixel-exact, no panel
+# scaling). cage itself has no rotation flag, so we apply it with wlr-randr inside
+# the session right before Chromium, retrying briefly in case the output isn't up
+# yet at cold boot. The kernel `rotate=` cmdline option only rotates the text
+# console, NOT the compositor, so it is deliberately not used here.
+APP=( "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" )
+if [ -n "$ROTATE" ] && [ "$ROTATE" != "normal" ]; then
+  if command -v wlr-randr >/dev/null 2>&1; then
+    APP=( bash -c '
+      for _ in 1 2 3 4 5; do
+        wlr-randr --output "$1" --transform "$2" && break
+        sleep 0.4
+      done
+      shift 2
+      exec "$@"
+    ' _ "$OUTPUT" "$ROTATE" "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" )
+  else
+    echo "sd-kiosk-launch: ROTATE=$ROTATE set but wlr-randr is not installed; running unrotated" >&2
+  fi
+fi
+
 # Crash-recovery: if cage or Chromium exits, relaunch after a short pause.
 while true; do
-  echo "sd-kiosk-launch: starting cage -> $URL" >&2
-  cage -- "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" || true
+  echo "sd-kiosk-launch: starting cage -> $URL (rotate=${ROTATE:-normal})" >&2
+  cage -- "${APP[@]}" || true
   echo "sd-kiosk-launch: session exited, restarting in 3s" >&2
   sleep 3
 done

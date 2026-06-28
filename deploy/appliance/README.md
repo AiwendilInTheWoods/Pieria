@@ -83,7 +83,16 @@ DISPLAY_ID=living_room                # unique name shown in the mobile remote
 MODE=                                 # optional: ken-burns|static-crop|contain-matte
 CYCLE_TIME=                           # optional: seconds per image
 WAIT_TIMEOUT=0                        # 0 = wait forever for the server at boot
+ROTATE=                               # portrait panel? 90 or 270 (blank = landscape)
+OUTPUT=HDMI-A-1                       # which HDMI port ROTATE applies to
 ```
+
+> **Portrait (or upside-down) displays:** set `ROTATE=90` (or `270` if it comes up
+> upside-down; `180` flips a landscape panel). The rotation is done by the compositor,
+> so the picture stays pixel-exact — for a commercial panel like a Samsung QMR, also set
+> the **TV's own** orientation to **Landscape/Normal** and Picture Size to **"Just Scan"**
+> so it passes the HDMI signal 1:1 instead of stretching it. (The TV's built-in "portrait"
+> mode is for its internal player and will deform an external source.)
 
 Then `sudo reboot`. The Pi comes up fullscreen on the Canvas. If the server
 isn't reachable yet, the screen stays black and paints automatically once it is.

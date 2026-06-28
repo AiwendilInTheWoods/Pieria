@@ -21,6 +21,18 @@ MODE=
 # CYCLE_TIME: seconds per image
 CYCLE_TIME=
 
+# ROTATE: display orientation. Most panels are landscape — leave blank for that.
+# For a TV physically mounted in PORTRAIT, set 90 or 270 (try one; if the picture
+# is upside-down, use the other). 180 flips a landscape panel. Rotation is done at
+# the compositor, so the image stays pixel-exact — also set the TV's OWN orientation
+# to Landscape/Normal and Picture Size to "Just Scan" so it passes the signal 1:1.
+# Values: 90 | 180 | 270   (blank = normal landscape)
+ROTATE=
+
+# OUTPUT: which HDMI port ROTATE applies to (ignored if ROTATE is blank).
+# HDMI-A-1 is the port nearest the USB-C power on a Pi 5; HDMI-A-2 is the other.
+OUTPUT=HDMI-A-1
+
 # How long (seconds) to wait for the server at boot before launching the
 # browser anyway. 0 = wait forever (the screen stays black until the server is
 # reachable, then paints automatically). Recommended: 0 for a home server.

@@ -34,12 +34,13 @@ for d in /boot/firmware /boot /etc; do
   fi
 done
 
-echo "==> Installing packages (cage, seatd, chromium, curl, avahi)"
+echo "==> Installing packages (cage, seatd, chromium, curl, avahi, wlr-randr)"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 # chromium-browser is the Raspberry Pi OS package; plain `chromium` on others.
 # avahi-daemon powers <hostname>.local (mDNS) so users reach the box by name, not IP.
-apt-get install -y --no-install-recommends cage seatd curl avahi-daemon \
+# wlr-randr applies the ROTATE= display rotation for portrait/rotated panels.
+apt-get install -y --no-install-recommends cage seatd curl avahi-daemon wlr-randr \
   || { echo "package install failed" >&2; exit 1; }
 if ! apt-get install -y --no-install-recommends chromium-browser; then
   apt-get install -y --no-install-recommends chromium
