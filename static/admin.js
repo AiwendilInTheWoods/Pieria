@@ -1983,6 +1983,24 @@ function museumSearch() {
     }
 }
 
+// Prominent "go live" call-to-action, shown when the curated catalog has few/no matches for a
+// query. This is escalation, not a blend: curated stays instant-first, and the same query is
+// handed to the live scouts only when the user asks. #scout-search still holds q, so the
+// setMuseumScope('live') → museumSearch() handoff carries the query verbatim — one motion.
+const MUSEUM_THIN_THRESHOLD = 3;  // ≤ this many curated hits → surface the prominent live CTA
+function museumEscalateCTA(q) {
+    return `
+        <div style="margin-top:18px; padding:16px 18px; background:rgba(59,130,246,0.08);
+                    border:1px solid var(--accent-color); border-radius:10px; display:flex;
+                    flex-wrap:wrap; align-items:center; gap:12px; justify-content:space-between;">
+            <div style="font-size:0.85rem; color:var(--text-color);">
+                Not in the collection? Search the world's live museum APIs for “${_esc(q)}”.
+            </div>
+            <button class="success" onclick="setMuseumScope('live'); museumSearch(); return false;"
+                    style="white-space:nowrap;">🌐 Search live museums →</button>
+        </div>`;
+}
+
 // Flat curated search across all collections (server-side), rendered with the same card + add-path
 // as a single collection — each result carries its own collection_id + item_index.
 async function renderCuratedSearch(q) {
@@ -2021,10 +2039,15 @@ async function renderCuratedSearch(q) {
                 grid.appendChild(card);
             });
             container.appendChild(grid);
+            // Thin curated coverage → make the live escalation a real CTA, not just the header link.
+            if (results.length <= MUSEUM_THIN_THRESHOLD) {
+                const cta = document.createElement('div');
+                cta.innerHTML = museumEscalateCTA(q);
+                container.appendChild(cta.firstElementChild);
+            }
         } else {
-            const none = document.createElement('p');
-            none.style.cssText = 'color:#94a3b8;';
-            none.innerHTML = `No curated works match “${_esc(q)}”. Try the <a href="#" onclick="setMuseumScope('live'); museumSearch(); return false;" style="color:var(--accent-color);">live museum search →</a>`;
+            const none = document.createElement('div');
+            none.innerHTML = `<p style="color:#94a3b8; margin:0 0 4px;">No curated works match “${_esc(q)}”.</p>` + museumEscalateCTA(q);
             container.appendChild(none);
         }
     } catch (e) {
