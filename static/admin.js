@@ -2195,6 +2195,22 @@ function setMuseumScope(scope, forceRerender) {
     }
 }
 
+// Autocomplete (BTW #1): suggest distinct catalog titles + artist names as the user types, via the
+// native <datalist>. Debounced so a fast typist doesn't fire a request per keystroke.
+let _suggestTimer = null;
+function museumSuggest(value) {
+    clearTimeout(_suggestTimer);
+    const q = (value || '').trim();
+    if (q.length < 2) { document.getElementById('catalog-suggest').innerHTML = ''; return; }
+    _suggestTimer = setTimeout(async () => {
+        try {
+            const data = await (await fetch(`${API_BASE}/api/catalog/suggest?q=${encodeURIComponent(q)}`)).json();
+            document.getElementById('catalog-suggest').innerHTML =
+                (data.suggestions || []).map(s => `<option value="${_esc(s)}"></option>`).join('');
+        } catch (e) { /* suggestions are best-effort — never block typing */ }
+    }, 180);
+}
+
 function museumSearch() {
     const q = (document.getElementById('scout-search').value || '').trim();
     if (museumScope === 'live') {

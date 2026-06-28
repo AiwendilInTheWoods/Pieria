@@ -194,6 +194,32 @@ def test_bulk_add_idempotent_no_duplicate_rows(client):
     assert db.query(ArtworkModel).count() == 1   # dedup on source_url
 
 
+# --- Search autocomplete (suggest) ---
+
+def test_suggest_returns_titles(client):
+    c, _ = client
+    sugg = c.get("/api/catalog/suggest", params={"q": "test"}).json()["suggestions"]
+    assert "Test Sunrise" in sugg and "Test Dusk" in sugg
+
+
+def test_suggest_matches_artist_and_dedupes(client):
+    c, _ = client
+    # Both items share artist "A. Painter" → suggested once, matched on substring "paint".
+    sugg = c.get("/api/catalog/suggest", params={"q": "paint"}).json()["suggestions"]
+    assert sugg.count("A. Painter") == 1
+
+
+def test_suggest_short_query_is_empty(client):
+    c, _ = client
+    assert c.get("/api/catalog/suggest", params={"q": "t"}).json()["suggestions"] == []
+
+
+def test_suggest_route_not_shadowed_by_collection_id(client):
+    # Declared before /api/catalog/{collection_id}, so "suggest" isn't treated as a collection (404).
+    c, _ = client
+    assert c.get("/api/catalog/suggest", params={"q": "sun"}).status_code == 200
+
+
 # --- Flat curated search (Museum Art unified search box) ---
 
 def test_search_finds_by_title_and_tags_collection_and_index(client):

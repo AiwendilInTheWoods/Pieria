@@ -2094,6 +2094,31 @@ async def search_catalog(q: str = "", db: Session = Depends(get_db)):
             break
     return {"query": q, "count": len(results), "results": results}
 
+@app.get("/api/catalog/suggest")
+async def suggest_catalog(q: str = "", db: Session = Depends(get_db)):
+    """Lightweight autocomplete for the Museum search box — distinct artist names + titles from the
+    catalog whose text contains the typed query, startswith matches ranked first. Reuses the cached
+    catalog (no per-keystroke disk work). Defined *before* the `/{collection_id}` route so "suggest"
+    isn't swallowed as a collection id."""
+    ql = q.strip().lower()
+    if len(ql) < 2:
+        return {"query": q, "suggestions": []}
+    index = await _catalog_index(db)
+    seen, starts, contains = set(), [], []
+    for c in index.get("collections", []):
+        col = await _catalog_collection(db, c.get("id"))
+        if not col:
+            continue
+        for it in col.get("items", []):
+            for key in ("agent_name", "title"):   # artist first — the higher-signal suggestion
+                term = (it.get(key) or "").strip()
+                tl = term.lower()
+                if not term or ql not in tl or tl in seen:
+                    continue
+                seen.add(tl)
+                (starts if tl.startswith(ql) else contains).append(term)
+    return {"query": q, "suggestions": (starts + contains)[:10]}
+
 @app.get("/api/catalog/{collection_id}")
 async def get_catalog_collection(collection_id: str, db: Session = Depends(get_db)):
     """One collection's items — prefilled placard metadata + hotlinked thumbnail_url + an `added`

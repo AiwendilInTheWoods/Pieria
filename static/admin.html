@@ -456,8 +456,10 @@
             <div class="museum-bar" style="position: sticky; top: 0; z-index: 20; background: var(--sidebar-bg); padding: 22px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin: 30px 0 20px;">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                     <input type="text" id="scout-search" placeholder="Search the catalog — or anything across the world's museums…"
-                           onkeydown="if (event.key === 'Enter') museumSearch();"
+                           list="catalog-suggest" autocomplete="off"
+                           onkeydown="if (event.key === 'Enter') museumSearch();" oninput="museumSuggest(this.value)"
                            style="flex: 1 1 280px; box-sizing: border-box; padding: 12px 14px;">
+                    <datalist id="catalog-suggest"></datalist>
                     <button class="primary" id="museum-search-btn" onclick="museumSearch()" style="padding: 12px 24px; font-weight: 600;">Search</button>
                 </div>
 
@@ -859,6 +861,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260627k"></script>
+    <script src="admin.js?v=20260627l"></script>
 </body>
 </html>
