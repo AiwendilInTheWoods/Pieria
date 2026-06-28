@@ -18,7 +18,6 @@ from datetime import UTC, datetime, timedelta
 from functools import lru_cache
 from pathlib import Path
 from typing import Dict, List, Optional
-from urllib.parse import quote
 
 import pillow_heif
 from dotenv import load_dotenv
@@ -35,6 +34,7 @@ from fastapi import (
     WebSocket,
     WebSocketDisconnect,
 )
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -147,6 +147,50 @@ def get_optimized_image(image_path: Path, size: tuple, quality: int = 85) -> byt
         buf = io.BytesIO()
         img.save(buf, format="JPEG", quality=quality)
         return buf.getvalue()
+
+# --- Canvas display image (resolution-capped) -------------------------------
+# The Canvas <img> previously loaded the full-res original via /media. Museum
+# originals can be 40–110 MB / 150+ MP — too big for a Pi-class browser to decode
+# and GPU-texture (GL_MAX_TEXTURE_SIZE is commonly 8192), so the placard cycles
+# while the image never paints. We serve a capped derivative instead; the full-res
+# original stays on disk untouched (focal/crop quality unaffected). 7680 px long
+# edge keeps ~4K detail even after a portrait→landscape cover-crop + Ken Burns
+# zoom, while staying under the 8192 texture ceiling.
+DISPLAY_MAX_EDGE = 7680
+DISPLAY_QUALITY = 90
+DERIVATIVES_DIR = ARTWORK_ROOT / "_derivatives"
+
+
+def render_canvas_image(src: Path, art_id: int) -> bytes:
+    """Resolution-capped, EXIF-baked JPEG for the Canvas; disk-cached per source mtime.
+
+    Heavy (decode + LANCZOS downscale + encode of a 150 MP original) — call via
+    run_in_threadpool so it never blocks the event loop. The derivative is written
+    once and then served from disk on every later request; the cap is only applied
+    when the source actually exceeds it (smaller originals are re-encoded as-is)."""
+    DERIVATIVES_DIR.mkdir(exist_ok=True)
+    mtime = int(src.stat().st_mtime)
+    dst = DERIVATIVES_DIR / f"{art_id}-{mtime}-{DISPLAY_MAX_EDGE}.jpg"
+    if dst.exists():
+        return dst.read_bytes()
+    with Image.open(src) as img:
+        img = ImageOps.exif_transpose(img)   # bake orientation — a re-encode drops the EXIF tag
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+        if max(img.size) > DISPLAY_MAX_EDGE:
+            img.thumbnail((DISPLAY_MAX_EDGE, DISPLAY_MAX_EDGE), Image.Resampling.LANCZOS)
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=DISPLAY_QUALITY, progressive=True)
+        data = buf.getvalue()
+    # Prune stale derivatives for this artwork (an earlier crop/replace → new mtime).
+    for old in DERIVATIVES_DIR.glob(f"{art_id}-*.jpg"):
+        if old != dst:
+            try: old.unlink()
+            except OSError: pass
+    tmp = dst.with_suffix(".tmp")          # atomic publish so a concurrent reader never sees a partial file
+    tmp.write_bytes(data)
+    os.replace(tmp, dst)
+    return data
 
 async def run_ai_pipeline(artwork_id: int):
     db = SessionLocal()
@@ -1073,6 +1117,12 @@ async def factory_reset(db: Session = Depends(get_db)):
     from scout import _search_sessions
     _search_sessions.clear()
 
+    # 7. Drop cached Canvas display derivatives (regenerated on demand from originals)
+    if DERIVATIVES_DIR.exists():
+        for d in DERIVATIVES_DIR.glob("*.jpg"):
+            try: d.unlink()
+            except OSError: pass
+
     db.commit()
 
     logger.info(f"[Factory Reset] Removed {art_count} + {seed_count} seed artworks, {files_deleted} files, {discover_count} queue items. Seeds will re-download on restart.")
@@ -1097,6 +1147,18 @@ async def get_artwork_preview(artwork_id: int, db: Session = Depends(get_db)):
     if not art: raise HTTPException(404)
     path = LIBRARY_DIR / art.filename
     return Response(content=get_optimized_image(path, (1920, 1080), quality=85), media_type="image/jpeg")
+
+@app.get("/artworks/{artwork_id}/display.jpg")
+async def get_artwork_display(artwork_id: int, db: Session = Depends(get_db)):
+    """Resolution-capped image the Canvas loads instead of the full-res original
+    (see render_canvas_image). Ends in .jpg → inherits the immutable media cache tier;
+    the ?v=<mtime> query the caller appends busts that cache when the source changes."""
+    art = db.query(ArtworkModel).filter(ArtworkModel.id == artwork_id).first()
+    if not art: raise HTTPException(404)
+    path = LIBRARY_DIR / art.filename
+    if not path.exists(): raise HTTPException(404)
+    data = await run_in_threadpool(render_canvas_image, path, art.id)
+    return Response(content=data, media_type="image/jpeg")
 
 @app.get("/art/{artwork_id}", response_class=HTMLResponse)
 async def artwork_detail_page(artwork_id: int, db: Session = Depends(get_db)):
@@ -1282,9 +1344,16 @@ async def get_next_image(
 
     db.commit()
 
+    try:
+        _ver = int((LIBRARY_DIR / selected_art.filename).stat().st_mtime)
+    except OSError:
+        _ver = 0
+
     return {
         "index": selected_idx,
-        "image_url": f"/media/_Library/{quote(selected_art.filename)}",
+        # Resolution-capped derivative (not the full-res original) so a Pi-class browser
+        # can actually decode/paint it; ?v=mtime busts the immutable cache on re-crop/replace.
+        "image_url": f"/artworks/{selected_art.id}/display.jpg?v={_ver}",
         "playlist": playlist_name,
         "display_time": p.display_time,
         "default_mode": p.default_mode,
