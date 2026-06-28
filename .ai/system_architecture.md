@@ -67,6 +67,18 @@ adapter for Samsung Frame TVs — and is growing a **federated catalog** so anyo
 - Three render modes: **Ken Burns pan** (GPU, **focal-adaptive** — anchors the zoom/drift on the
   artwork's focal point via the Web Animations API so off-center subjects aren't panned out of frame),
   **static crop**, **contain + blurred matte**.
+- **Resolution-capped image delivery (NOT full-res).** `/next-image` hands the Canvas
+  `/artworks/{id}/display.jpg?v=<mtime>` — a derivative capped at **`DISPLAY_MAX_EDGE` = 7680 px**
+  (8K) long edge, EXIF-baked, JPEG q90 (`render_canvas_image`). Museum originals run 40–110 MB / 150+ MP,
+  which a Pi-class browser can't decode/GPU-texture (over the common 8192 `GL_MAX_TEXTURE_SIZE`) — so the
+  placard would cycle while the image never painted. 7680 keeps ~4K detail after a portrait→landscape
+  cover-crop + Ken Burns zoom while staying under that texture ceiling. **The full-res original is kept on
+  disk untouched** (crop/focal quality unaffected; the cap is a one-line bump). Derivatives are
+  **disk-cached** at `Artwork/_derivatives/{id}-{mtime}-7680.jpg` (atomic, mtime-keyed → self-busting on
+  re-crop) and generated off the event loop via `run_in_threadpool`. They're **pre-warmed**: a leader-only
+  boot sweep (`warm_all_canvas_cache`) renders every approved artwork, and the add paths fire a
+  fire-and-forget warm — so the one-time multi-second encode never lands on the display path. (e-ink/Frame
+  are unaffected — they render from the original via `get_next_image`.)
 - **Museum placard** with metadata + a **QR code → `/art/{id}`** (server-hosted "Learn More" page,
   works offline; no Google hand-off).
 - **Empty-state** overlay ("No art yet — add it at <host>/admin") instead of a black screen; a
@@ -74,6 +86,11 @@ adapter for Samsung Frame TVs — and is growing a **federated catalog** so anyo
 - **Sleep defeater:** a hidden looping **local** `static/assets/keepawake.mp4` (vendored — was a
   w3schools URL) so it works offline.
 - Hierarchical config: URL param → Playlist DB default → Global default.
+- **Reboot resumes the last-played playlist.** With no `?playlist=`, the Canvas asks
+  `GET /api/displays/{id}/preferred-playlist`, which resolves **last-played for this display →
+  `default_playlist` setting → null** (then the Canvas falls back to first-non-empty). `/next-image`
+  records `last_playlist:<display_id>`; the fallback is pinnable in Admin → Settings → **Default Playlist**.
+  (Both stored in the Settings KV table — no migration.)
 
 ### Output target 2 — e-ink / BYOS frames (`epaper.py`)
 - **Stateless pull-on-wake:** `GET /display/{id}/current.{png,bmp}?w=&h=&palette=`. Reuses
@@ -204,6 +221,7 @@ Screen-Docent/
 ├── integrations/          # MMM-ScreenDocent (MagicMirror²) · frame-tv (push_once CLI)
 │
 ├── Artwork/_Library/      # canonical image store      ·  data/artwork.db  (volume-mapped)
+│   └── Artwork/_derivatives/  # resolution-capped Canvas display cache (regenerable; internal _-dir)
 ├── Dockerfile · docker-compose.yml · requirements.txt · requirements-dev.txt
 ├── pyproject.toml (Ruff) · .pre-commit-config.yaml
 ├── tests/                 # pytest (253): scouts, resolvers, catalog (+search/suggest/bulk-add), epaper,
@@ -231,6 +249,10 @@ Screen-Docent/
 9. **WebSocket commands are targeted by `display_id` across workers via the DB** (`remote_commands` +
    `active_displays`); never assume in-process state is shared.
 10. **All artwork lives in `Artwork/_Library/`** (canonical); playlist dirs are symlink/organisation only.
+    **Every other dir directly under `Artwork/` is treated as a collection** by `sync_db_with_filesystem`
+    (it mints a playlist and absorbs `.jpg`s into the library). Internal caches MUST be **underscore-prefixed**
+    (`_Library`, `_derivatives`) — the enumeration guards skip `name.startswith("_")`. Never put a non-collection
+    dir under `Artwork/` without the `_` prefix (this bit us: the `_derivatives` cache got absorbed as 97 bogus artworks).
 11. **One robust downloader.** New image-download paths use `_download_image_to_library` (UA + 429 retry +
     validation) — don't hand-roll a bare `httpx.get` (default UA → Wikimedia/NASA 403).
 12. **Rate-limit + progressive-fallback external APIs**; **log background-task errors** (`exc_info=True`).
