@@ -142,6 +142,58 @@ def test_add_unknown_index_404(client):
     assert c.post("/api/catalog/add", json={"collection_id": "demo", "item_index": 99}).status_code == 404
 
 
+# --- Bulk catalog add (multi-select Add from the curated grid) ---
+
+def test_bulk_add_creates_many_and_flips_added(client):
+    c, db = client
+    r = c.post("/api/catalog/add-bulk", json={"items": [
+        {"collection_id": "demo", "item_index": 0},
+        {"collection_id": "demo", "item_index": 1},
+    ]})
+    assert r.status_code == 200, r.text
+    assert r.json()["added"] == 2 and r.json()["failed"] == 0
+    assert db.query(ArtworkModel).count() == 2
+    items = c.get("/api/catalog/demo").json()["items"]
+    assert items[0]["added"] is True and items[1]["added"] is True
+
+
+def test_bulk_add_links_all_to_playlist(client):
+    c, db = client
+    pl = PlaylistModel(name="Wall"); db.add(pl); db.commit(); db.refresh(pl)
+    r = c.post("/api/catalog/add-bulk", json={"playlist_id": pl.id, "items": [
+        {"collection_id": "demo", "item_index": 0},
+        {"collection_id": "demo", "item_index": 1},
+    ]})
+    assert r.json()["added"] == 2
+    links = db.execute(playlist_artwork.select().where(playlist_artwork.c.playlist_id == pl.id)).all()
+    assert len(links) == 2
+
+
+def test_bulk_add_is_best_effort_past_bad_items(client):
+    c, db = client
+    r = c.post("/api/catalog/add-bulk", json={"items": [
+        {"collection_id": "demo", "item_index": 0},    # ok
+        {"collection_id": "demo", "item_index": 99},   # bad index
+        {"collection_id": "nope", "item_index": 0},    # unknown collection
+    ]})
+    assert r.json()["added"] == 1 and r.json()["failed"] == 2
+    assert db.query(ArtworkModel).count() == 1
+
+
+def test_bulk_add_empty_items(client):
+    c, db = client
+    assert c.post("/api/catalog/add-bulk", json={"items": []}).json() == {"status": "done", "added": 0, "failed": 0}
+    assert db.query(ArtworkModel).count() == 0
+
+
+def test_bulk_add_idempotent_no_duplicate_rows(client):
+    c, db = client
+    payload = {"items": [{"collection_id": "demo", "item_index": 0}]}
+    c.post("/api/catalog/add-bulk", json=payload)
+    c.post("/api/catalog/add-bulk", json=payload)
+    assert db.query(ArtworkModel).count() == 1   # dedup on source_url
+
+
 # --- Flat curated search (Museum Art unified search box) ---
 
 def test_search_finds_by_title_and_tags_collection_and_index(client):

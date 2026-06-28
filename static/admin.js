@@ -1011,6 +1011,101 @@ async function bulkDeleteSelected() {
     if (g) g.addEventListener('click', _gridSelectClick, true);
 });
 
+// ===== Curated-catalog multi-select (Inc 3) =====
+// Catalog items aren't artworks yet — they're keyed by collection_id + item_index — so they get
+// their own selection separate from gridSelected (which holds artwork ids). Items can span
+// collections (flat search), so the value carries both halves for the bulk payload.
+let catalogSelectMode = false;
+const catalogSelected = new Map();  // "cid:idx" -> { collection_id, item_index }
+
+function toggleCatalogSelect() { catalogSelectMode ? exitCatalogSelect() : enterCatalogSelect(); }
+
+function enterCatalogSelect() {
+    catalogSelectMode = true;
+    catalogSelected.clear();
+    document.body.classList.add('selecting');
+    populateCatalogBulkTarget();
+    updateCatalogBulkBar();
+    document.getElementById('catalog-bulk-bar').classList.add('open');
+    syncCatalogSelectButtons();
+}
+
+function exitCatalogSelect() {
+    catalogSelectMode = false;
+    catalogSelected.clear();
+    document.body.classList.remove('selecting');
+    const bar = document.getElementById('catalog-bulk-bar');
+    if (bar) bar.classList.remove('open');
+    document.querySelectorAll('#catalog-container .artwork-card.selected').forEach(c => c.classList.remove('selected'));
+    syncCatalogSelectButtons();
+}
+
+function syncCatalogSelectButtons() {
+    document.querySelectorAll('.catalog-select-btn').forEach(b => {
+        b.textContent = catalogSelectMode ? '✕ Cancel select' : '☑ Select';
+    });
+}
+
+function populateCatalogBulkTarget() {
+    const sel = document.getElementById('catalog-bulk-target');
+    if (sel) sel.innerHTML = '<option value="">Library only</option>' +
+        (currentPlaylists || []).map(p => `<option value="${p.id}">Add to: ${_esc(p.name)}</option>`).join('');
+}
+
+function updateCatalogBulkBar() {
+    const el = document.getElementById('catalog-bulk-count');
+    if (el) el.textContent = `${catalogSelected.size} selected`;
+}
+
+// Capture-phase so a click in select mode toggles selection instead of firing the card's Add button.
+// Only item cards carry data-cidx; collection-cover cards (level 1) are ignored, so their open-click
+// still works even if select mode somehow lingers.
+function _catalogSelectClick(e) {
+    if (!catalogSelectMode) return;
+    const card = e.target.closest('.artwork-card[data-cidx]');
+    if (!card) return;
+    if (card.dataset.added === '1') return;  // already in the library — not selectable
+    e.stopPropagation(); e.preventDefault();
+    const key = card.dataset.cidx;
+    if (catalogSelected.has(key)) { catalogSelected.delete(key); card.classList.remove('selected'); }
+    else { catalogSelected.set(key, { collection_id: card.dataset.cid, item_index: parseInt(card.dataset.idx, 10) }); card.classList.add('selected'); }
+    updateCatalogBulkBar();
+}
+const _catContainer = document.getElementById('catalog-container');
+if (_catContainer) _catContainer.addEventListener('click', _catalogSelectClick, true);
+
+async function catalogBulkAdd() {
+    if (!catalogSelected.size) return;
+    const sel = document.getElementById('catalog-bulk-target');
+    const playlistId = sel && sel.value ? parseInt(sel.value, 10) : null;
+    const destName = sel && sel.value ? sel.options[sel.selectedIndex].text.replace(/^Add to: /, '') : 'the Library';
+    const items = [...catalogSelected.values()];
+    const keys = [...catalogSelected.keys()];
+    const payload = { items };
+    if (playlistId) payload.playlist_id = playlistId;
+    const btn = document.getElementById('catalog-bulk-add-btn');
+    btn.disabled = true; btn.textContent = '⏳ Adding…';
+    try {
+        const resp = await fetch(`${API_BASE}/api/catalog/add-bulk`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload) });
+        const data = await resp.json();
+        // Mark the added cards in place (preserves scroll/place) rather than re-rendering the grid.
+        keys.forEach(key => {
+            const card = document.querySelector(`#catalog-container .artwork-card[data-cidx="${CSS.escape(key)}"]`);
+            if (!card) return;
+            card.dataset.added = '1';
+            const b = card.querySelector('.actions button');
+            if (b) { b.disabled = true; b.textContent = 'Added ✓'; }
+        });
+        showToast(`Added ${data.added} to ${destName}${data.failed ? ` · ${data.failed} failed` : ''} ✓`, data.failed ? 'error' : 'success');
+        exitCatalogSelect();
+        fetchLibrary();
+    } catch (e) {
+        console.error('[Catalog] bulk add failed:', e); showToast('Bulk add failed.', 'error');
+    } finally { btn.disabled = false; btn.textContent = 'Add selected'; }
+}
+
 function renderSidebar() {
     const list = document.getElementById('playlist-list');
     list.innerHTML = '';
@@ -2036,6 +2131,7 @@ function museumEscalateCTA(q) {
 // Flat curated search across all collections (server-side), rendered with the same card + add-path
 // as a single collection — each result carries its own collection_id + item_index.
 async function renderCuratedSearch(q) {
+    if (catalogSelectMode) exitCatalogSelect();  // clean slate when navigating between catalog views
     const container = document.getElementById('catalog-container');
     if (!container) return;
     container.innerHTML = '<p style="color:#94a3b8;">Searching the catalog…</p>';
@@ -2046,8 +2142,10 @@ async function renderCuratedSearch(q) {
         head.style.cssText = 'margin: 4px 0 16px;';
         head.innerHTML = `
             <button class="secondary" onclick="clearMuseumSearch()" style="font-size:0.75rem; padding:6px 12px; margin-bottom:10px;">← All collections</button>
-            <div style="font-size:0.85rem; color:#94a3b8;">${results.length} curated ${results.length === 1 ? 'match' : 'matches'} for “${_esc(q)}”.
-                <a href="#" onclick="setMuseumScope('live'); museumSearch(); return false;" style="color:var(--accent-color); margin-left:6px;">Search live museums →</a>
+            <div style="font-size:0.85rem; color:#94a3b8; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span>${results.length} curated ${results.length === 1 ? 'match' : 'matches'} for “${_esc(q)}”.</span>
+                <a href="#" onclick="setMuseumScope('live'); museumSearch(); return false;" style="color:var(--accent-color);">Search live museums →</a>
+                ${results.length ? `<button class="secondary catalog-select-btn" onclick="toggleCatalogSelect()" style="font-size:0.72rem; padding:5px 10px; margin-left:auto;">☑ Select</button>` : ''}
             </div>`;
         container.innerHTML = '';
         container.appendChild(head);
@@ -2058,6 +2156,10 @@ async function renderCuratedSearch(q) {
                 const card = document.createElement('div');
                 card.className = 'artwork-card';
                 const added = !!it.added;
+                card.dataset.cid = it.collection_id;
+                card.dataset.idx = it.item_index;
+                card.dataset.cidx = `${it.collection_id}:${it.item_index}`;
+                if (added) card.dataset.added = '1';
                 card.innerHTML = `
                     <img loading="lazy" src="${_esc(it.thumbnail_url)}" alt="${_esc(it.title)}" style="background:#0f172a;">
                     <div class="info">
@@ -2094,6 +2196,7 @@ function clearMuseumSearch() {
 }
 
 async function renderCatalog() {
+    if (catalogSelectMode) exitCatalogSelect();  // clean slate when navigating between catalog views
     const container = document.getElementById('catalog-container');
     if (!container) return;
     container.innerHTML = '<p style="color:#94a3b8;">Loading catalog…</p>';
@@ -2134,6 +2237,7 @@ async function renderCatalog() {
 
 // Level 2: one collection's items (lazy — only this collection's thumbnails load).
 async function openCatalogCollection(collectionId) {
+    if (catalogSelectMode) exitCatalogSelect();  // clean slate when navigating between catalog views
     const container = document.getElementById('catalog-container');
     if (!container) return;
     container.innerHTML = '<p style="color:#94a3b8;">Loading…</p>';
@@ -2156,6 +2260,7 @@ async function openCatalogCollection(collectionId) {
                     <option value="">Library only</option>
                     ${(currentPlaylists || []).map(p => `<option value="${p.id}">${_esc(p.name)}</option>`).join('')}
                 </select>
+                ${items.length ? `<button class="secondary catalog-select-btn" onclick="toggleCatalogSelect()" style="font-size:0.75rem; padding:6px 12px; margin-left:auto;">☑ Select</button>` : ''}
             </div>`;
 
         const grid = document.createElement('div');
@@ -2164,6 +2269,10 @@ async function openCatalogCollection(collectionId) {
             const card = document.createElement('div');
             card.className = 'artwork-card';
             const added = !!it.added;
+            card.dataset.cid = col.id;
+            card.dataset.idx = idx;
+            card.dataset.cidx = `${col.id}:${idx}`;
+            if (added) card.dataset.added = '1';
             card.innerHTML = `
                 <img loading="lazy" src="${_esc(it.thumbnail_url)}" alt="${_esc(it.title)}" style="background:#0f172a;">
                 <div class="info">

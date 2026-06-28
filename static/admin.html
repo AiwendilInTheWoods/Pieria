@@ -778,6 +778,15 @@
         <button class="secondary" onclick="exitSelectMode()">Done</button>
     </div>
 
+    <!-- Curated-catalog multi-select bar (Inc 3) — separate from #bulk-bar because catalog items are
+         keyed by collection_id+item_index, not artwork ids, and add (not link/delete). -->
+    <div id="catalog-bulk-bar" class="bulk-bar">
+        <span id="catalog-bulk-count">0 selected</span>
+        <select id="catalog-bulk-target"><option value="">Library only</option></select>
+        <button class="success" id="catalog-bulk-add-btn" onclick="catalogBulkAdd()">Add selected</button>
+        <button class="secondary" onclick="exitCatalogSelect()">Done</button>
+    </div>
+
     <!-- Unified full-screen Edit landing (Library / Collections; branches on is_personal) -->
     <div id="edit-overlay" class="edit-overlay">
         <div class="edit-panel">
@@ -843,6 +852,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260627i"></script>
+    <script src="admin.js?v=20260627j"></script>
 </body>
 </html>

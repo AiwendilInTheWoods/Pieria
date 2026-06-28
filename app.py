@@ -2113,6 +2113,42 @@ async def add_catalog_item(payload: CatalogAddPayload, db: Session = Depends(get
         metadata=item, playlist_id=payload.playlist_id)
     return {"status": "added", "artwork_id": art.id, "title": art.title}
 
+class CatalogAddBulkPayload(BaseModel):
+    items: List[CatalogAddPayload]      # each carries collection_id + item_index; per-item playlist ignored
+    playlist_id: Optional[int] = None
+
+@app.post("/api/catalog/add-bulk")
+async def add_catalog_items_bulk(payload: CatalogAddBulkPayload, db: Session = Depends(get_db)):
+    """Bulk version of /api/catalog/add — multi-select Add from the curated grid. Items may span
+    collections (flat search results), so each carries its own collection_id + item_index. Best-effort:
+    continues past individual failures; idempotent per source_url like the single add. Collections are
+    resolved once and cached so a big batch from one collection doesn't re-load the manifest per item."""
+    cache: dict = {}
+    added, failed = 0, 0
+    for it in payload.items:
+        if it.collection_id not in cache:
+            cache[it.collection_id] = await _catalog_collection(db, it.collection_id)
+        col = cache[it.collection_id]
+        items = col.get("items", []) if col else []
+        if it.item_index < 0 or it.item_index >= len(items):
+            failed += 1; continue
+        item = items[it.item_index]
+        # Federated items are third-party — SSRF-guard the image URL before the server fetches it.
+        if it.collection_id.startswith(SUB_PREFIX):
+            try:
+                federation._assert_public_url(item["source_url"])
+            except federation.FederationError:
+                failed += 1; continue
+        try:
+            await _download_and_create_artwork(
+                db, source_url=item["source_url"], thumbnail_url=item.get("thumbnail_url"),
+                metadata=item, playlist_id=payload.playlist_id)
+            added += 1
+        except Exception as e:
+            failed += 1
+            logger.warning(f"[Catalog] add-bulk item failed: {e}")
+    return {"status": "done", "added": added, "failed": failed}
+
 class CatalogAddCollectionPayload(BaseModel):
     collection_id: str
     playlist_id: Optional[int] = None
