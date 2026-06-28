@@ -114,3 +114,27 @@ def test_next_image_records_last_playlist(client):
     c.get("/next-image", params={"playlist_name": "Summer", "display_id": "wall"})
     row = db.query(SettingsModel).filter(SettingsModel.setting_key == "last_playlist:wall").first()
     assert row is not None and row.setting_value == "Summer"
+
+
+# ---- filesystem sync ignores internal dirs (regression: _derivatives-as-collection) ----
+
+def test_sync_ignores_underscore_dirs(client):
+    """An underscore-prefixed internal dir (e.g. the _derivatives display cache) must never become a
+    collection or have its .jpg files absorbed into the library as artworks."""
+    from PIL import Image
+
+    from app import sync_db_with_filesystem
+    from config import ARTWORK_ROOT
+    c, db = client
+    cache = ARTWORK_ROOT / "_derivtest"
+    cache.mkdir(parents=True, exist_ok=True)
+    Image.new("RGB", (10, 10)).save(cache / "5-123-7680.jpg", "JPEG")
+    try:
+        sync_db_with_filesystem(db)
+        assert "_derivtest" not in [p.name for p in db.query(PlaylistModel).all()]      # no bogus collection
+        assert db.query(ArtworkModel).filter(ArtworkModel.filename == "5-123-7680.jpg").first() is None  # not absorbed
+        assert (cache / "5-123-7680.jpg").exists()                                       # left in place
+    finally:
+        for f in cache.glob("*"):
+            f.unlink()
+        cache.rmdir()

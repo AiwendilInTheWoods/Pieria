@@ -309,7 +309,9 @@ def sync_db_with_filesystem(db: Session) -> None:
 
     valid_extensions = {".jpg", ".jpeg", ".png", ".webp"}
     for item in ARTWORK_ROOT.iterdir():
-        if item.is_dir() and item.name != "_Library":
+        # Skip internal dirs (underscore-prefixed: _Library canonical store, _derivatives display cache).
+        # They are NOT collections — enumerating them here would mint a bogus playlist and absorb cache files.
+        if item.is_dir() and not item.name.startswith("_"):
             playlist = db.query(PlaylistModel).filter(PlaylistModel.name == item.name).first()
             if not playlist:
                 playlist = PlaylistModel(name=item.name)
@@ -1127,7 +1129,7 @@ async def factory_reset(db: Session = Depends(get_db)):
                 logger.warning(f"[Factory Reset] Could not delete {filepath}: {e}")
         # Also clean up any playlist symlinks pointing to this file
         for pl_dir in ARTWORK_ROOT.iterdir():
-            if pl_dir.is_dir() and pl_dir.name != '_Library':
+            if pl_dir.is_dir() and not pl_dir.name.startswith('_'):
                 pl_link = pl_dir / art.filename
                 if pl_link.is_symlink() or pl_link.exists():
                     try: pl_link.unlink()
@@ -1148,7 +1150,7 @@ async def factory_reset(db: Session = Depends(get_db)):
             except Exception: pass
         # Clean playlist symlinks for seed art too
         for pl_dir in ARTWORK_ROOT.iterdir():
-            if pl_dir.is_dir() and pl_dir.name != '_Library':
+            if pl_dir.is_dir() and not pl_dir.name.startswith('_'):
                 pl_link = pl_dir / art.filename
                 if pl_link.is_symlink() or pl_link.exists():
                     try: pl_link.unlink()
