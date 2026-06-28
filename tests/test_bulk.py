@@ -97,3 +97,39 @@ def test_bulk_endpoints_tolerate_empty_lists(client):
     assert c.post(f"/playlists/{pl.id}/artworks", json={"artwork_ids": []}).json()["count"] == 0
     assert c.request("DELETE", f"/playlists/{pl.id}/artworks", json={"artwork_ids": []}).json()["count"] == 0
     assert c.post("/artworks/delete", json={"artwork_ids": []}).json()["count"] == 0
+
+
+def _pending(db, tmp_path, name):
+    """A Review-Queue item: an artwork row with status='pending_review'."""
+    (tmp_path / name).write_bytes(b"img")
+    a = ArtworkModel(filename=name, original_width=10, original_height=10, status="pending_review")
+    db.add(a); db.commit(); db.refresh(a)
+    return a
+
+
+def test_bulk_approve_publishes_only_pending(client):
+    c, db, tmp = client
+    p1, p2 = _pending(db, tmp, "p1.jpg"), _pending(db, tmp, "p2.jpg")
+    already = _art(db, tmp, "ok.jpg")  # status='approved' — must be left untouched / not double-counted
+
+    r = c.post("/artworks/approve-bulk", json={"artwork_ids": [p1.id, p2.id, already.id, 99999]})
+    assert r.status_code == 200 and r.json()["count"] == 2  # only the two pending ones flipped
+    db.refresh(p1); db.refresh(p2); db.refresh(already)
+    assert p1.status == "approved" and p2.status == "approved"
+    assert already.status == "approved"  # was already approved; unchanged
+
+
+def test_bulk_approve_does_not_touch_in_flight(client):
+    c, db, tmp = client
+    (tmp / "x.jpg").write_bytes(b"img")
+    proc = ArtworkModel(filename="x.jpg", original_width=10, original_height=10, status="processing")
+    db.add(proc); db.commit(); db.refresh(proc)
+
+    r = c.post("/artworks/approve-bulk", json={"artwork_ids": [proc.id]})
+    assert r.json()["count"] == 0
+    db.refresh(proc); assert proc.status == "processing"  # still enriching — not force-published
+
+
+def test_bulk_approve_tolerates_empty_list(client):
+    c, db, tmp = client
+    assert c.post("/artworks/approve-bulk", json={"artwork_ids": []}).json()["count"] == 0

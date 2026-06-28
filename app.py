@@ -797,6 +797,19 @@ async def approve_artwork(artwork_id: int, data: ArtworkApproval, db: Session = 
     art.title, art.agent_name, art.agent_role, art.creation_date, art.cultural_context, art.medium, art.date_display, art.description_narrative, art.tags, art.status = data.title, data.agent_name, data.agent_role, data.creation_date, data.cultural_context, data.medium, data.date_display, data.description_narrative, data.tags, 'approved'
     db.commit(); db.refresh(art); return art
 
+@app.post("/artworks/approve-bulk")
+async def bulk_approve_artworks(payload: ArtworkIds, db: Session = Depends(get_db)):
+    """Bulk-publish Review-Queue items using their already-enriched stored values (multi-select
+    Approve). Only flips pending_review → approved, so it can't accidentally re-touch published or
+    in-flight items; ids that aren't pending are skipped. Per-item edits happen via the Edit landing."""
+    arts = db.query(ArtworkModel).filter(
+        ArtworkModel.id.in_(payload.artwork_ids or [-1]),
+        ArtworkModel.status == 'pending_review',
+    ).all()
+    for art in arts:
+        art.status = 'approved'
+    db.commit(); return {"status": "approved", "count": len(arts)}
+
 @app.patch("/artworks/{artwork_id}/metadata", response_model=ArtworkSchema)
 async def update_artwork_metadata(artwork_id: int, data: ArtworkApproval, db: Session = Depends(get_db)):
     """Edit an already-approved artwork's placard metadata in place — the Edit landing's Save for

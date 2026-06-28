@@ -915,7 +915,16 @@ function exitSelectMode() {
     gridSelected.clear();
     document.body.classList.remove('selecting');
     document.getElementById('bulk-bar').classList.remove('open');
-    document.querySelectorAll('.artwork-card.selected').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.artwork-card.selected, .review-card.selected').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.review-select input:checked').forEach(cb => { cb.checked = false; });
+}
+
+// Review Queue uses explicit checkboxes (whole-card click would fight the form inputs).
+function _reviewSelectToggle(id, checked) {
+    if (checked) gridSelected.add(id); else gridSelected.delete(id);
+    const card = document.querySelector(`.review-card[data-id="${id}"]`);
+    if (card) card.classList.toggle('selected', checked);
+    updateBulkBar();
 }
 
 // Capture-phase so a click in select mode toggles selection instead of opening Edit / firing ✕.
@@ -932,9 +941,14 @@ function _gridSelectClick(e) {
 
 function updateBulkBar() {
     document.getElementById('bulk-count').textContent = `${gridSelected.size} selected`;
+    const inReview = currentView === 'review';
     const inLibrary = currentView === 'library';
-    document.getElementById('bulk-remove-btn').style.display = inLibrary ? 'none' : '';
-    document.getElementById('bulk-delete-btn').style.display = inLibrary ? '' : 'none';
+    // Review Queue gets a single "Approve & Publish" action; the collection/library actions hide.
+    document.getElementById('bulk-approve-btn').style.display = inReview ? '' : 'none';
+    document.getElementById('bulk-add-target').style.display = inReview ? 'none' : '';
+    document.getElementById('bulk-remove-btn').style.display = (inReview || inLibrary) ? 'none' : '';
+    document.getElementById('bulk-delete-btn').style.display = (inLibrary && !inReview) ? '' : 'none';
+    if (inReview) return;
     const sel = document.getElementById('bulk-add-target');
     sel.innerHTML = '<option value="">Add to collection…</option>' +
         (currentPlaylists || [])
@@ -965,6 +979,20 @@ async function bulkRemoveFromCollection() {
             body: JSON.stringify({ artwork_ids: [...gridSelected] }) });
         showToast('Removed ✓', 'success'); exitSelectMode(); await refreshData();
     } catch (e) { console.error('[Admin] bulk remove failed:', e); showToast('Remove failed.', 'error'); }
+}
+
+// Bulk-approve pending Review-Queue items using their already-enriched stored values (no per-item
+// edit — that's the point of bulk). Anything off can be fixed afterward via the Edit overlay.
+async function bulkApproveSelected() {
+    if (!gridSelected.size) return;
+    const n = gridSelected.size;
+    if (!(await confirmModal(`Approve & publish ${n} item(s) with their current details? You can edit any of them later.`, { confirmText: 'Approve' }))) return;
+    try {
+        await fetch(`${API_BASE}/artworks/approve-bulk`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ artwork_ids: [...gridSelected] }) });
+        showToast(`Approved ${n} ✓`, 'success'); exitSelectMode(); await refreshData();
+    } catch (e) { console.error('[Admin] bulk approve failed:', e); showToast('Approve failed.', 'error'); }
 }
 
 async function bulkDeleteSelected() {
@@ -1237,6 +1265,7 @@ function renderReviewQueue(artworks) {
             card.className = 'review-card';
             card.dataset.id = art.id;
             card.innerHTML = `
+                <label class="review-select" title="Select for bulk approve"><input type="checkbox" onchange="_reviewSelectToggle(${art.id}, this.checked)"></label>
                 <div class="review-image"><img src="${API_BASE}/artworks/${art.id}/thumbnail?f=${encodeURIComponent(art.filename)}"></div>
                 <div class="review-form">
                     <div class="form-group"><label>Title</label><input type="text" id="title-${art.id}" value="${art.title || ''}"></div>
@@ -1272,6 +1301,9 @@ function renderReviewQueue(artworks) {
         // For new cards this just records the server baseline; for existing cards it
         // fills in any enrichment that has arrived since the card was first rendered.
         syncReviewCardFields(art);
+        // Keep the bulk-select checkbox in sync with gridSelected across polling re-renders.
+        const cb = card.querySelector('.review-select input');
+        if (cb) { const sel = gridSelected.has(art.id); cb.checked = sel; card.classList.toggle('selected', sel); }
         currentDOMIndex++;
     });
 

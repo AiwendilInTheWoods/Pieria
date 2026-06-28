@@ -160,7 +160,14 @@
             border-radius: 12px;
             padding: 25px;
             margin-bottom: 25px;
+            position: relative;
         }
+        /* Bulk-approve affordance: a checkbox overlay, revealed only in select mode. */
+        .review-select { display: none; position: absolute; top: 12px; left: 12px; z-index: 5;
+            background: rgba(15,23,42,.9); border-radius: 6px; padding: 5px 6px; cursor: pointer; }
+        .review-select input { width: 18px; height: 18px; cursor: pointer; }
+        body.selecting .review-select { display: block; }
+        .review-card.selected { outline: 2px solid var(--accent-color); outline-offset: 2px; }
         .review-image { width: 300px; flex-shrink: 0; }
         .review-image img { width: 100%; border-radius: 8px; }
         .review-form { flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -430,6 +437,9 @@
             <div id="ai-offline-banner" style="display:none; align-items:center; gap:12px; background:#1e293b; border:1px solid #f59e0b; border-radius:10px; padding:12px 16px; margin-bottom:18px; font-size:0.82rem; color:#fcd34d;">
                 <span style="flex-grow:1;">No AI model connected — fill in the details below and <strong>Approve &amp; Publish</strong>, or <a href="#" onclick="nudgeConnectModel(); return false;" style="color:var(--accent-color);">connect a model</a> to auto-fill metadata.</span>
                 <button class="secondary" onclick="this.parentElement.dataset.dismissed='1'; this.parentElement.style.display='none'" style="padding:4px 10px; font-size:0.75rem;">Dismiss</button>
+            </div>
+            <div id="review-toolbar" style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+                <button class="secondary" onclick="toggleSelectMode()" style="white-space:nowrap;">☑ Select</button>
             </div>
             <div id="review-list"></div>
         </div>
@@ -764,6 +774,7 @@
         <select id="bulk-add-target" onchange="bulkAddToCollection(this.value)"><option value="">Add to collection…</option></select>
         <button class="secondary" id="bulk-remove-btn" onclick="bulkRemoveFromCollection()">Remove from collection</button>
         <button class="secondary" id="bulk-delete-btn" onclick="bulkDeleteSelected()" style="color:#ef4444;">Delete</button>
+        <button class="success" id="bulk-approve-btn" onclick="bulkApproveSelected()" style="display:none;">Approve &amp; Publish</button>
         <button class="secondary" onclick="exitSelectMode()">Done</button>
     </div>
 
@@ -832,6 +843,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260627h"></script>
+    <script src="admin.js?v=20260627i"></script>
 </body>
 </html>
