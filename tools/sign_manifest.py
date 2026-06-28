@@ -1,8 +1,9 @@
-"""Publisher tooling — generate an Ed25519 keypair and sign a Manifest v2 file.
+"""Publisher tooling — generate an Ed25519 keypair and sign a Manifest v2 file in place.
 
-A publisher signs their manifest so subscribers can verify it's untampered and (once their key is in
-the registry) show it as a *verified* feed. The signature covers the canonical bytes
-(`federation.canonical_bytes`): the manifest minus `signature`, JSON sorted-keys + compact + UTF-8.
+The dependency-light CLI front door to the signing core in `publisher.py`. A publisher signs their
+manifest so subscribers can verify it's untampered and (once their key is in the registry) show it as
+a *verified* feed. The signature covers the canonical bytes (`federation.canonical_bytes`): the
+manifest minus `signature`, JSON sorted-keys + compact + UTF-8.
 
   python -m tools.sign_manifest keygen
       → prints a private signing key + public key (base64). Keep the private key SECRET.
@@ -10,23 +11,19 @@ the registry) show it as a *verified* feed. The signature covers the canonical b
   python -m tools.sign_manifest sign manifest.json --key <private-b64> [--public <pub-b64>]
       → writes publisher.public_key + signature into manifest.json in place.
 
-The eventual Manifest Entry Builder Studio wraps this; the CLI is the dependency-light core.
+The Publisher Studio (the /api/publisher/* routes) wraps the same core; this CLI and
+`tools/build_manifest` share it via `publisher.py` so there is one signing implementation.
 """
 
 import argparse
-import base64
 import json
 import sys
 
-from nacl.signing import SigningKey
-
-from federation import canonical_bytes
+import publisher
 
 
 def keygen() -> None:
-    sk = SigningKey.generate()
-    priv = base64.b64encode(bytes(sk)).decode()
-    pub = base64.b64encode(bytes(sk.verify_key)).decode()
+    priv, pub = publisher.keygen()
     print("private_key (KEEP SECRET):", priv)
     print("public_key  (put in manifest publisher.public_key + the registry):", pub)
 
@@ -34,14 +31,10 @@ def keygen() -> None:
 def sign(path: str, private_b64: str, public_b64: str | None) -> None:
     with open(path) as f:
         manifest = json.load(f)
-    sk = SigningKey(base64.b64decode(private_b64))
-    public_b64 = public_b64 or base64.b64encode(bytes(sk.verify_key)).decode()
-    manifest.setdefault("publisher", {})["public_key"] = public_b64
-    sig = sk.sign(canonical_bytes(manifest)).signature
-    manifest["signature"] = base64.b64encode(sig).decode()
+    signed = publisher.sign_manifest(manifest, private_b64, public_b64)
     with open(path, "w") as f:
-        json.dump(manifest, f, indent=2, ensure_ascii=False)
-    print(f"Signed {path} as publisher '{manifest.get('publisher', {}).get('id')}'.")
+        json.dump(signed, f, indent=2, ensure_ascii=False)
+    print(f"Signed {path} as publisher '{signed.get('publisher', {}).get('id')}'.")
 
 
 def main(argv=None) -> int:

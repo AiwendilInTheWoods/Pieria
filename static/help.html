@@ -298,10 +298,13 @@ docker compose up -d --build</code></pre>
                the publisher's server — and every feed is safety-checked and validated before it's added.
                Use <em>Sync</em> to refresh a feed, <em>Remove</em> to unsubscribe (already-added artworks
                stay in your library).</p>
-            <div class="tip">
-                <strong>Publishing your own?</strong> Collections are an open
-                <a href="https://github.com/AiwendilInTheWoods/Screen-Docent/blob/main/docs/manifest-v2.md" target="_blank" style="color:var(--accent-color);">Manifest&nbsp;v2</a>
-                format — host a JSON file anywhere and share the URL.
+            <div class="tip" id="publishing">
+                <strong>Publishing your own?</strong> Open <a href="/publisher" style="color:var(--accent-color);">Publisher&nbsp;Studio</a>
+                to author and sign a collection of your own hosted images, then host the exported
+                <code>manifest.json</code> anywhere and share its URL. Prefer the command line? Use
+                <code>python -m tools.build_manifest</code>. Full walkthrough:
+                <a href="https://github.com/AiwendilInTheWoods/Screen-Docent/blob/main/docs/how-to-publish.md" target="_blank" style="color:var(--accent-color);">How&nbsp;to&nbsp;publish</a>
+                (the <a href="https://github.com/AiwendilInTheWoods/Screen-Docent/blob/main/docs/manifest-v2.md" target="_blank" style="color:var(--accent-color);">Manifest&nbsp;v2</a> schema).
             </div>
 
             <h3 id="catalog">Hosting the catalog remotely (grow it without rebuilding)</h3>

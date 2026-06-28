@@ -196,3 +196,26 @@ class SubscriptionModel(Base):
     last_synced: Mapped[Optional[datetime]] = mapped_column(DateTime)
     last_status: Mapped[Optional[str]] = mapped_column(String)      # 'ok' | 'error: …'
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
+
+
+class PublisherCollectionModel(Base):
+    """A draft collection being authored here for *publishing* as a Manifest v2 feed.
+
+    The mirror image of SubscriptionModel: that consumes someone else's manifest; this AUTHORS one of
+    our own. Items live as a JSON array (``items_json``) rather than normalized rows — the draft shape
+    is 1:1 with the exported manifest, the field set is intentionally loose/forward-compatible (same
+    stance as the validator), and there are no cross-collection item queries. Publisher *identity*
+    (id/name/url + the Ed25519 keypair) is NOT here — it lives in SettingsModel, like every other
+    secret, and is shared across all collections.
+    """
+    __tablename__ = "publisher_collections"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    slug: Mapped[str] = mapped_column(String, unique=True, index=True)   # the manifest "id"
+    title: Mapped[str] = mapped_column(String)
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    default_license: Mapped[Optional[str]] = mapped_column(String)
+    cover_image: Mapped[Optional[str]] = mapped_column(String)           # URL shown with the collection name
+    items_json: Mapped[str] = mapped_column(Text, default="[]")          # JSON array of item dicts
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))

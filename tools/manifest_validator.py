@@ -151,6 +151,8 @@ def validate_manifest(obj) -> list[str]:
         errors.append("id is required (non-empty string)")
     if not _is_str(obj.get("title")):
         errors.append("title is required (non-empty string)")
+    if "cover_image" in obj and not _is_str(obj["cover_image"]):
+        errors.append("cover_image must be a non-empty string (URL) when present")
     if "publisher" in obj:
         validate_publisher(obj["publisher"], errors)
 

@@ -2,6 +2,10 @@
 
 > **Status:** schema frozen (draft 1, 2026-06-21). The validator
 > (`tools/manifest_validator.py`) is the executable source of truth; this doc explains intent.
+>
+> **Want to publish a collection?** See [**How to publish**](how-to-publish.md) — author it in the
+> Publisher Studio (`/publisher`) or the `tools/build_manifest` CLI. This page is the schema reference
+> behind both.
 
 Manifest v2 generalizes the v1 split catalog (`index.json` + per-collection files) into a
 **federated** format any publisher can produce, and makes it **forward-compatible** with
@@ -38,6 +42,7 @@ public-domain image.
 | `id` | ✓ | string | collection id, unique within the publisher |
 | `title` | ✓ | string | |
 | `description` | | string | |
+| `cover_image` | | string | URL of the image shown with the collection name in the browse view; defaults to the first item's thumbnail when omitted |
 | `publisher` | | object | `{id, name, url?, public_key?}` — `public_key` is base64 Ed25519 |
 | `generated_at` | | string | ISO-8601 |
 | `default_license` | | string | applied to items that omit `image.license` |
