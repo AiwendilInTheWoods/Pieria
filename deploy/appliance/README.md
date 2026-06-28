@@ -151,6 +151,7 @@ like Fire TV / bring-your-own-browser; it's simply inert here.)
 | `bin/sd-kiosk-launch` | Reads the config, builds the URL, runs `cage` + Chromium, relaunches on exit. |
 | `bin/sd-wait-for-server` | Polls the server so Chromium never lands on an error page at cold boot. |
 | `systemd/autologin.conf` | `getty@tty1` drop-in enabling kiosk-user autologin. |
+| `udev/99-screen-docent-no-cec-pointer.rules` | Ignores the HDMI-CEC phantom pointer so no stray cursor shows on the display. |
 | `config/screen-docent.conf.example` | Template seeded to the boot partition. |
 | `compose/docker-compose.appliance.yml` | All-in-one override (Uvicorn 4→2 workers) merged over the root compose. |
 

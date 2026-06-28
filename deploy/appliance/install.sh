@@ -67,6 +67,12 @@ echo "==> Installing launch scripts to /usr/local/bin"
 install -m 0755 "$BIN_SRC/sd-kiosk-launch"   /usr/local/bin/sd-kiosk-launch
 install -m 0755 "$BIN_SRC/sd-wait-for-server" /usr/local/bin/sd-wait-for-server
 
+echo "==> Installing udev rule (suppress the HDMI-CEC phantom pointer / stray cursor)"
+install -m 0644 "$HERE/udev/99-screen-docent-no-cec-pointer.rules" \
+  /etc/udev/rules.d/99-screen-docent-no-cec-pointer.rules
+udevadm control --reload-rules 2>/dev/null || true
+udevadm trigger --subsystem-match=input --action=change 2>/dev/null || true
+
 echo "==> Configuring tty1 autologin for $KIOSK_USER"
 install -d /etc/systemd/system/getty@tty1.service.d
 sed "s/__KIOSK_USER__/$KIOSK_USER/g" "$UNIT_SRC/autologin.conf" \

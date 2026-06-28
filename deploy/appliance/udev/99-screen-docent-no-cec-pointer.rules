@@ -1,0 +1,9 @@
+# Screen Docent appliance — suppress the HDMI-CEC phantom pointer.
+#
+# The Pi's HDMI-CEC input nodes (vc4-hdmi-0 / vc4-hdmi-1) advertise a RELATIVE
+# pointer (REL_X/REL_Y), so the cage/wlroots compositor sees "a mouse" and draws a
+# stray cursor on the display that just sits there (looks like a dead pixel on a TV).
+# A display appliance doesn't drive the Pi with the TV remote, so have libinput
+# ignore these devices — no phantom pointer, no cursor. The power button is untouched.
+SUBSYSTEM=="input", ATTRS{name}=="vc4-hdmi-0", ENV{LIBINPUT_IGNORE_DEVICE}="1"
+SUBSYSTEM=="input", ATTRS{name}=="vc4-hdmi-1", ENV{LIBINPUT_IGNORE_DEVICE}="1"
