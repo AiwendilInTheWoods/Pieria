@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# sd-rotate-keep OUTPUT TRANSFORM
+#
+# Keep a wlr-randr output transform asserted for the life of the kiosk session.
+#
+# WHY THIS EXISTS: a one-shot `wlr-randr --transform` at launch does NOT survive a
+# display power-cycle. When the TV/monitor sleeps (e.g. a built-in midnight timer)
+# the HDMI sink drops and the DRM connector goes down; on wake it re-hotplugs and
+# wlroots brings the output back with its DEFAULT (identity) transform — silently
+# reverting a portrait panel to sideways landscape until the next reboot. So we
+# re-assert the transform whenever it has drifted from the desired value. This also
+# absorbs the cold-boot race where the output isn't enumerated yet at launch.
+#
+# Runs INSIDE the cage/Wayland session (backgrounded by sd-kiosk-launch) so it
+# inherits WAYLAND_DISPLAY/XDG_RUNTIME_DIR. We only re-apply on actual drift, so a
+# correctly-rotated output is never needlessly reset (no periodic flash).
+set -u
+
+OUTPUT="${1:?usage: sd-rotate-keep OUTPUT TRANSFORM}"
+WANT="${2:?usage: sd-rotate-keep OUTPUT TRANSFORM}"
+INTERVAL="${SD_ROTATE_INTERVAL:-5}"
+
+command -v wlr-randr >/dev/null 2>&1 || {
+  echo "sd-rotate-keep: wlr-randr not found; cannot keep rotation" >&2
+  exit 0
+}
+
+# Current transform of $OUTPUT (e.g. "normal", "90"), or empty if the output is
+# absent (display asleep). Parses the indented `Transform:` line under the output.
+current_transform() {
+  wlr-randr 2>/dev/null | awk -v o="$OUTPUT" '
+    $1 == o            { f = 1; next }   # the output header line
+    /^[^[:space:]]/    { f = 0 }         # a new top-level (next output) ends our block
+    f && $1 == "Transform:" { print $2; exit }
+  '
+}
+
+while true; do
+  cur="$(current_transform)"
+  if [ -n "$cur" ] && [ "$cur" != "$WANT" ]; then
+    wlr-randr --output "$OUTPUT" --transform "$WANT" >/dev/null 2>&1 \
+      && echo "sd-rotate-keep: re-applied transform $WANT to $OUTPUT (was $cur)" >&2
+  fi
+  sleep "$INTERVAL"
+done

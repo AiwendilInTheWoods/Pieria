@@ -59,20 +59,18 @@ sd-wait-for-server "$SERVER_URL" "$WAIT_TIMEOUT" || true
 # What cage runs. For a portrait/rotated panel we rotate at the COMPOSITOR (the
 # responsive Canvas then just fills the rotated viewport — pixel-exact, no panel
 # scaling). cage itself has no rotation flag, so we apply it with wlr-randr inside
-# the session right before Chromium, retrying briefly in case the output isn't up
-# yet at cold boot. The kernel `rotate=` cmdline option only rotates the text
-# console, NOT the compositor, so it is deliberately not used here.
+# the session. CRUCIAL: the transform must be RE-ASSERTED, not set once — a display
+# power-cycle (e.g. the TV's own sleep timer) drops the HDMI sink and the output
+# re-hotplugs on wake with wlroots' default (identity) transform, reverting a
+# portrait panel to sideways landscape. So we background `sd-rotate-keep` in the
+# session: it re-applies the transform whenever it drifts (covering both the
+# cold-boot race and every sleep/wake). The kernel `rotate=` cmdline option only
+# rotates the text console, NOT the compositor, so it is deliberately not used here.
 APP=( "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" )
 if [ -n "$ROTATE" ] && [ "$ROTATE" != "normal" ]; then
   if command -v wlr-randr >/dev/null 2>&1; then
-    APP=( bash -c '
-      for _ in 1 2 3 4 5; do
-        wlr-randr --output "$1" --transform "$2" && break
-        sleep 0.4
-      done
-      shift 2
-      exec "$@"
-    ' _ "$OUTPUT" "$ROTATE" "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" )
+    APP=( bash -c 'sd-rotate-keep "$1" "$2" & shift 2; exec "$@"' \
+          _ "$OUTPUT" "$ROTATE" "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" )
   else
     echo "sd-kiosk-launch: ROTATE=$ROTATE set but wlr-randr is not installed; running unrotated" >&2
   fi

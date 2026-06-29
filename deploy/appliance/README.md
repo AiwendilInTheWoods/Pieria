@@ -93,6 +93,10 @@ OUTPUT=HDMI-A-1                       # which HDMI port ROTATE applies to
 > the **TV's own** orientation to **Landscape/Normal** and Picture Size to **"Just Scan"**
 > so it passes the HDMI signal 1:1 instead of stretching it. (The TV's built-in "portrait"
 > mode is for its internal player and will deform an external source.)
+>
+> The rotation is **re-asserted automatically** (`sd-rotate-keep`), so it survives the
+> TV powering off and on — e.g. a built-in sleep timer. Without that, an HDMI sink
+> dropping and re-hotplugging on wake resets wlroots to landscape until the next reboot.
 
 Then `sudo reboot`. The Pi comes up fullscreen on the Canvas. If the server
 isn't reachable yet, the screen stays black and paints automatically once it is.
@@ -150,6 +154,7 @@ like Fire TV / bring-your-own-browser; it's simply inert here.)
 | `install.sh` | Idempotent provisioner (run with `sudo`). |
 | `bin/sd-kiosk-launch` | Reads the config, builds the URL, runs `cage` + Chromium, relaunches on exit. |
 | `bin/sd-wait-for-server` | Polls the server so Chromium never lands on an error page at cold boot. |
+| `bin/sd-rotate-keep` | Re-asserts the `ROTATE` transform on every display power-cycle/hotplug so portrait survives the TV's sleep timer (only runs when `ROTATE` is set). |
 | `systemd/autologin.conf` | `getty@tty1` drop-in enabling kiosk-user autologin. |
 | `udev/99-screen-docent-no-cec-pointer.rules` | Ignores the HDMI-CEC phantom pointer so no stray cursor shows on the display. |
 | `config/screen-docent.conf.example` | Template seeded to the boot partition. |

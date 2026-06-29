@@ -66,6 +66,7 @@ done
 echo "==> Installing launch scripts to /usr/local/bin"
 install -m 0755 "$BIN_SRC/sd-kiosk-launch"   /usr/local/bin/sd-kiosk-launch
 install -m 0755 "$BIN_SRC/sd-wait-for-server" /usr/local/bin/sd-wait-for-server
+install -m 0755 "$BIN_SRC/sd-rotate-keep"    /usr/local/bin/sd-rotate-keep
 
 echo "==> Installing udev rule (suppress the HDMI-CEC phantom pointer / stray cursor)"
 install -m 0644 "$HERE/udev/99-screen-docent-no-cec-pointer.rules" \
