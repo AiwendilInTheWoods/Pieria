@@ -53,8 +53,43 @@ CHROME_FLAGS=(
   --ozone-platform=wayland
 )
 
-# Don't paint Chromium until the server is reachable (0 = wait forever).
-sd-wait-for-server "$SERVER_URL" "$WAIT_TIMEOUT" || true
+# Decide what Chromium opens FIRST. If the splash page is installed, paint it
+# immediately — it shows the admin URL and self-redirects to the canvas once the
+# server answers — so a fresh owner reads the address off the screen instead of
+# staring at black. If it's NOT installed (older image), fall back to the original
+# behavior: block until the server is reachable, then open the canvas directly.
+TARGET="$URL"
+SPLASH_SRC="/usr/local/share/screen-docent/sd-splash.html"
+if [ -r "$SPLASH_SRC" ]; then
+  IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
+  HOSTL="$(hostname 2>/dev/null).local"
+  ADMIN_URL="${SERVER_URL%/}/admin"
+  # All-in-one points SERVER_URL at localhost, which other devices can't reach —
+  # rewrite the DISPLAYED admin URL to this box's <hostname>.local so it's usable.
+  case "$SERVER_URL" in
+    *localhost*|*127.0.0.1*)
+      PORT="$(printf '%s\n' "$SERVER_URL" | sed -n 's@.*:\([0-9]\{2,5\}\).*@\1@p')"
+      [ -z "$PORT" ] && PORT=8000
+      ADMIN_URL="http://${HOSTL}:${PORT}/admin"
+      ;;
+  esac
+  # Escape sed-special chars (& \ #) in values — the canvas URL can carry &mode=…
+  esc() { printf '%s' "$1" | sed -e 's/[\\&#]/\\&/g'; }
+  SPLASH="${XDG_RUNTIME_DIR:-/tmp}/sd-splash.html"
+  if sed \
+      -e "s#__SERVER_URL__#$(esc "$SERVER_URL")#g" \
+      -e "s#__CANVAS_URL__#$(esc "$URL")#g" \
+      -e "s#__ADMIN_URL__#$(esc "$ADMIN_URL")#g" \
+      -e "s#__HOSTNAME_LOCAL__#$(esc "$HOSTL")#g" \
+      -e "s#__IP__#$(esc "$IP")#g" \
+      -e "s#__DISPLAY_ID__#$(esc "$DISPLAY_ID")#g" \
+      "$SPLASH_SRC" > "$SPLASH" 2>/dev/null; then
+    TARGET="file://$SPLASH"
+  fi
+else
+  # Don't paint Chromium until the server is reachable (0 = wait forever).
+  sd-wait-for-server "$SERVER_URL" "$WAIT_TIMEOUT" || true
+fi
 
 # What cage runs. For a portrait/rotated panel we rotate at the COMPOSITOR (the
 # responsive Canvas then just fills the rotated viewport — pixel-exact, no panel
@@ -66,11 +101,11 @@ sd-wait-for-server "$SERVER_URL" "$WAIT_TIMEOUT" || true
 # session: it re-applies the transform whenever it drifts (covering both the
 # cold-boot race and every sleep/wake). The kernel `rotate=` cmdline option only
 # rotates the text console, NOT the compositor, so it is deliberately not used here.
-APP=( "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" )
+APP=( "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$TARGET" )
 if [ -n "$ROTATE" ] && [ "$ROTATE" != "normal" ]; then
   if command -v wlr-randr >/dev/null 2>&1; then
     APP=( bash -c 'sd-rotate-keep "$1" "$2" & shift 2; exec "$@"' \
-          _ "$OUTPUT" "$ROTATE" "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$URL" )
+          _ "$OUTPUT" "$ROTATE" "$CHROME_BIN" "${CHROME_FLAGS[@]}" "$TARGET" )
   else
     echo "sd-kiosk-launch: ROTATE=$ROTATE set but wlr-randr is not installed; running unrotated" >&2
   fi
@@ -78,7 +113,7 @@ fi
 
 # Crash-recovery: if cage or Chromium exits, relaunch after a short pause.
 while true; do
-  echo "sd-kiosk-launch: starting cage -> $URL (rotate=${ROTATE:-normal})" >&2
+  echo "sd-kiosk-launch: starting cage -> $TARGET (rotate=${ROTATE:-normal})" >&2
   cage -- "${APP[@]}" || true
   echo "sd-kiosk-launch: session exited, restarting in 3s" >&2
   sleep 3

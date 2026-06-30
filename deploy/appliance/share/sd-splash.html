@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+  Screen Docent kiosk splash. Shown by sd-kiosk-launch FIRST, while the server is
+  still coming up, so a non-technical owner reads the admin address straight off the
+  screen instead of staring at black and hunting the DHCP lease.
+
+  sd-kiosk-launch sed-substitutes the __PLACEHOLDER__ tokens into a runtime copy:
+    __SERVER_URL__       the server this screen pulls from (used for the readiness ping)
+    __CANVAS_URL__       where to go once the server answers
+    __ADMIN_URL__        the human-reachable admin URL (localhost rewritten to <host>.local)
+    __HOSTNAME_LOCAL__   this device's <hostname>.local
+    __IP__               this device's LAN IP
+    __DISPLAY_ID__       this screen's display id
+
+  Readiness: we ping <SERVER_URL>/logo.svg (a 654-byte always-200 asset) every 2s via
+  an <img> load — the loosest-rules cross-scheme request, so it works from this file://
+  page without CORS/mixed-content trouble — and redirect to the canvas on first success.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screen Docent — starting…</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: #0b1120;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-user-select: none; user-select: none; cursor: none;
+  }
+  .card {
+    text-align: center; padding: 48px 56px; max-width: 760px;
+    background: #111a2e; border: 1px solid #1e293b; border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  }
+  h1 { font-size: 1.7rem; margin: 0 0 6px; color: #38bdf8; letter-spacing: 0.04em; }
+  .sub { color: #94a3b8; font-size: 0.95rem; margin-bottom: 30px; }
+  .spinner {
+    width: 26px; height: 26px; margin: 0 auto 28px;
+    border: 3px solid rgba(56,189,248,0.25); border-top-color: #38bdf8;
+    border-radius: 50%; animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 6px; }
+  .addr { font-size: 1.5rem; color: #34d399; font-weight: 600; word-break: break-all; }
+  .alt { font-size: 0.95rem; color: #94a3b8; margin-top: 8px; word-break: break-all; }
+  .foot { margin-top: 30px; font-size: 0.82rem; color: #475569; }
+  code { background: #0b1120; border: 1px solid #1e293b; padding: 2px 8px; border-radius: 6px; color: #cbd5e1; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="spinner"></div>
+    <h1>Screen Docent</h1>
+    <div class="sub">Waiting for the server to come online…</div>
+
+    <div class="label">Manage this display at</div>
+    <div class="addr">__ADMIN_URL__</div>
+
+    <div class="foot">
+      This screen: <code>__DISPLAY_ID__</code> &nbsp;·&nbsp; <code>__HOSTNAME_LOCAL__</code>
+      &nbsp;·&nbsp; pulling from <code>__SERVER_URL__</code>
+    </div>
+  </div>
+
+  <script>
+    var SERVER_URL = "__SERVER_URL__".replace(/\/+$/, "");
+    var CANVAS_URL = "__CANVAS_URL__";
+    function ping() {
+      var img = new Image();
+      img.onload = function () { window.location.replace(CANVAS_URL); };
+      img.onerror = function () { setTimeout(ping, 2000); };
+      img.src = SERVER_URL + "/logo.svg?t=" + Date.now();
+    }
+    ping();
+  </script>
+</body>
+</html>

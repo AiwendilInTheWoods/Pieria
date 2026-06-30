@@ -69,6 +69,10 @@ install -m 0755 "$BIN_SRC/sd-wait-for-server" /usr/local/bin/sd-wait-for-server
 install -m 0755 "$BIN_SRC/sd-rotate-keep"    /usr/local/bin/sd-rotate-keep
 install -m 0755 "$BIN_SRC/sd-metrics"        /usr/local/bin/sd-metrics
 
+echo "==> Installing boot splash (shows the admin URL while the server starts)"
+install -d /usr/local/share/screen-docent
+install -m 0644 "$HERE/share/sd-splash.html" /usr/local/share/screen-docent/sd-splash.html
+
 echo "==> Installing udev rule (suppress the HDMI-CEC phantom pointer / stray cursor)"
 install -m 0644 "$HERE/udev/99-screen-docent-no-cec-pointer.rules" \
   /etc/udev/rules.d/99-screen-docent-no-cec-pointer.rules
@@ -144,6 +148,10 @@ if [ "${ALL_IN_ONE:-0}" = "1" ]; then
   install -m 0644 "$UNIT_SRC/sd-metrics.timer" /etc/systemd/system/sd-metrics.timer
   systemctl daemon-reload
   systemctl enable --now sd-metrics.timer || true
+
+  echo "==> Advertising the server over mDNS (friendly name in network browsers)"
+  install -d /etc/avahi/services
+  install -m 0644 "$HERE/avahi/screen-docent.service" /etc/avahi/services/screen-docent.service
 fi
 
 echo "==> Finalizing"

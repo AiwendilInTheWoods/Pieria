@@ -509,8 +509,11 @@ sudo Screen-Docent/deploy/appliance/install.sh</code></pre>
 DISPLAY_ID=living_room                # unique name shown in the remote
 MODE=                                 # optional: ken-burns|static-crop|contain-matte
 CYCLE_TIME=                           # optional: seconds per image</code></pre>
-            <p>The Pi comes up full-screen on the Canvas. If the server isn't reachable yet, the screen stays
-               black and paints automatically once it is.</p>
+            <p>The Pi comes up full-screen on the Canvas. While the server is still starting (or not yet
+               reachable), the screen shows a <strong>boot splash with the admin URL</strong>, this display's
+               <code>&lt;hostname&gt;.local</code>, and its IP &mdash; so you can read the address right off the
+               wall instead of hunting the DHCP lease &mdash; then it switches to the art automatically once
+               the server answers.</p>
 
             <h3>All-in-one (server + display on one box)</h3>
             <p>For a single-frame setup with no separate server, set <code>ALL_IN_ONE=1</code>,
