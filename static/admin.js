@@ -53,6 +53,8 @@ async function init() {
     loadFrameSettings();   // non-blocking: populate the Frame TV panel
     loadCatalogSource();   // non-blocking: populate the Catalog Source panel
     loadDefaultPlaylist(); // non-blocking: populate the Default Playlist panel
+    loadCatalogCount();    // non-blocking: show the Museum Art count without opening the view
+    loadPhotosCount();     // non-blocking: show the My Photos count
 
     // Restore the view the user was last on (survives a browser refresh).
     let savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
@@ -2505,6 +2507,34 @@ function clearMuseumSearch() {
     renderCatalog();
 }
 
+// Populate the Museum Art (catalog) badge. Shared by renderCatalog and the init-time loader so the
+// count is correct on first paint, not only after the user opens the Museum view.
+function _setCatalogCount(collections) {
+    const total = (collections || []).reduce((n, c) => n + (c.count || 0), 0);
+    const el = document.getElementById('catalog-count');
+    if (el) el.textContent = total;
+}
+
+// Fetch just enough to show the Museum Art count on a fresh admin load (the badge otherwise sat at 0
+// until the user clicked into the Museum view, which is what populated it).
+async function loadCatalogCount() {
+    try {
+        const index = await (await fetch(`${API_BASE}/api/catalog`)).json();
+        _setCatalogCount(index.collections || []);
+    } catch (e) { /* leave the placeholder 0 */ }
+}
+
+// Populate the My Photos badge so it's consistent with the other nav counts. /api/studio/photos
+// returns a ready `count` of personal photos.
+async function loadPhotosCount() {
+    const el = document.getElementById('photos-count');
+    if (!el) return;
+    try {
+        const data = await (await fetch(`${API_BASE}/api/studio/photos`)).json();
+        el.textContent = data.count || 0;
+    } catch (e) { /* leave the placeholder 0 */ }
+}
+
 async function renderCatalog() {
     if (catalogSelectMode) exitCatalogSelect();  // clean slate when navigating between catalog views
     const container = document.getElementById('catalog-container');
@@ -2513,9 +2543,7 @@ async function renderCatalog() {
     try {
         const index = await (await fetch(`${API_BASE}/api/catalog`)).json();
         const collections = index.collections || [];
-        const total = collections.reduce((n, c) => n + (c.count || 0), 0);
-        const countEl = document.getElementById('catalog-count');
-        if (countEl) countEl.textContent = total;
+        _setCatalogCount(collections);
 
         if (!collections.length) {
             container.innerHTML = '<p style="color:#94a3b8;">No catalog collections are loaded. Screen Docent normally ships with a curated catalog — meanwhile, the <strong>Discover</strong> tab can search the world\'s museums directly.</p>';
