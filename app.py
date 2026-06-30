@@ -1238,17 +1238,18 @@ async def artwork_detail_page(artwork_id: int, db: Session = Depends(get_db)):
     return HTMLResponse(f"""<!DOCTYPE html><html lang=en><head>
 <meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1">
 <title>{title} — Screen Docent</title><style>
- :root {{ color-scheme: dark; }}
- body {{ margin:0; background:#0b1020; color:#e2e8f0; font-family:'Inter',system-ui,-apple-system,sans-serif; line-height:1.6; }}
+ /* Canonical palette inlined (kept self-contained so this public landing works offline). */
+ :root {{ color-scheme: dark; --bg:#0f172a; --surface:#1e293b; --inset:#0f172a; --border:#334155; --text:#f1f5f9; --muted:#94a3b8; --accent:#3b82f6; }}
+ body {{ margin:0; background:var(--bg); color:var(--text); font-family:'Inter',system-ui,-apple-system,sans-serif; line-height:1.6; }}
  .wrap {{ max-width:760px; margin:0 auto; padding:24px 20px 60px; }}
- img.hero {{ width:100%; border-radius:14px; background:#0f172a; display:block; margin-bottom:24px; box-shadow:0 10px 40px rgba(0,0,0,.5); }}
+ img.hero {{ width:100%; border-radius:14px; background:var(--inset); display:block; margin-bottom:24px; box-shadow:0 10px 40px rgba(0,0,0,.5); }}
  h1 {{ font-size:1.8rem; margin:0 0 6px; }}
  .artist {{ font-size:1.1rem; color:#cbd5e1; margin:0 0 4px; }}
- .meta {{ color:#94a3b8; font-size:.92rem; margin:0 0 20px; }}
+ .meta {{ color:var(--muted); font-size:.92rem; margin:0 0 20px; }}
  .desc {{ font-size:1.02rem; }}
  .tags {{ margin-top:22px; display:flex; flex-wrap:wrap; gap:8px; }}
- .tag {{ background:#1e293b; border:1px solid #334155; color:#cbd5e1; padding:4px 12px; border-radius:20px; font-size:.8rem; }}
- .source {{ display:inline-block; margin-top:24px; color:#3b82f6; text-decoration:none; }}
+ .tag {{ background:var(--surface); border:1px solid var(--border); color:#cbd5e1; padding:4px 12px; border-radius:20px; font-size:.8rem; }}
+ .source {{ display:inline-block; margin-top:24px; color:var(--accent); text-decoration:none; }}
  .brand {{ margin-top:40px; color:#475569; font-size:.78rem; display:flex; align-items:center; gap:8px; }}
  .brand img {{ height:20px; opacity:.7; }}
 </style></head><body><div class=wrap>
