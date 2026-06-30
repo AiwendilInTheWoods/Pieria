@@ -12,6 +12,7 @@ import json
 import logging
 import os
 import random
+import secrets
 import shutil
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime, timedelta
@@ -1580,6 +1581,48 @@ async def get_host_health(db: Session = Depends(get_db)):
             for d in displays
         ],
     }
+
+# --- Appliance update bridge (all-in-one only) -------------------------------------------------
+# The container is unprivileged and cannot run git/docker/reboot. So a GUI action just writes a
+# request file into the ./data bind mount; a root systemd .path unit notices it and runs the
+# whitelisted host helper `sd-update`, which writes status back here for the UI to poll. The web
+# app never gains host privileges.
+ALLOWED_UPDATE_ACTIONS = {"update-app", "update-scripts", "reboot"}
+
+
+class ApplianceUpdateRequest(BaseModel):
+    action: str
+
+
+@app.post("/api/appliance/update")
+async def appliance_update(req: ApplianceUpdateRequest):
+    if not config.IS_APPLIANCE:
+        raise HTTPException(status_code=403, detail="appliance update bridge not enabled")
+    if req.action not in ALLOWED_UPDATE_ACTIONS:
+        raise HTTPException(status_code=400, detail=f"unknown action: {req.action}")
+    nonce = secrets.token_hex(8)
+    config.APPLIANCE_DIR.mkdir(parents=True, exist_ok=True)
+    # Write the status FIRST (so the .path trigger always finds a status), then the request.
+    status = {"state": "queued", "action": req.action, "nonce": nonce,
+              "message": "queued", "log_tail": []}
+    (config.APPLIANCE_DIR / "status.json").write_text(json.dumps(status))
+    request = {"action": req.action, "requested_at": datetime.now(UTC).isoformat(), "nonce": nonce}
+    (config.APPLIANCE_DIR / "request.json").write_text(json.dumps(request))
+    logger.info(f"Appliance update queued: {req.action} (nonce {nonce})")
+    return {"status": "queued", "nonce": nonce}
+
+
+@app.get("/api/appliance/update/status")
+async def appliance_update_status():
+    if not config.IS_APPLIANCE:
+        raise HTTPException(status_code=403, detail="appliance update bridge not enabled")
+    status_file = config.APPLIANCE_DIR / "status.json"
+    if not status_file.exists():
+        return {"state": "idle"}
+    try:
+        return json.loads(status_file.read_text())
+    except (OSError, json.JSONDecodeError):
+        return {"state": "idle"}
 
 @app.post("/api/remote/change")
 async def remote_change_playlist(request: RemoteChangeRequest, db: Session = Depends(get_db)):

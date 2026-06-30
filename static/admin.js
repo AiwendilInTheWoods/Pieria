@@ -354,6 +354,73 @@ async function refreshHostHealth() {
     } catch (e) { /* transient — next poll retries */ }
 }
 
+// --- Appliance maintenance: GUI-triggered host updates ----------------------
+let _maintPoll = null;
+const _MAINT_BTNS = ['maint-update-app', 'maint-update-scripts', 'maint-reboot'];
+const _MAINT_PROMPTS = {
+    'update-app': 'Update the app now? This pulls the latest from origin/main and rebuilds — the display drops briefly while the container restarts.',
+    'update-scripts': 'Re-run the appliance installer to refresh the kiosk scripts and services?',
+    'reboot': 'Reboot this device now?',
+};
+
+function _maintButtons(disabled) {
+    _MAINT_BTNS.forEach(id => { const b = document.getElementById(id); if (b) b.disabled = disabled; });
+}
+
+async function applianceAction(action) {
+    const ok = await confirmModal(_MAINT_PROMPTS[action] || `Run ${action}?`, {
+        confirmText: action === 'reboot' ? 'Reboot' : 'Proceed',
+        danger: action === 'reboot' || action === 'update-app',
+    });
+    if (!ok) return;
+    const statusEl = document.getElementById('maint-status');
+    statusEl.style.display = 'block';
+    statusEl.textContent = '⏳ Queued…';
+    _maintButtons(true);
+    try {
+        const res = await fetch(`${API_BASE}/api/appliance/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action }),
+        });
+        if (!res.ok) {
+            const e = await res.json().catch(() => ({}));
+            statusEl.textContent = '✗ ' + (e.detail || 'request failed');
+            _maintButtons(false);
+            return;
+        }
+        _pollMaint();
+    } catch (e) {
+        statusEl.textContent = '✗ ' + e.message;
+        _maintButtons(false);
+    }
+}
+window.applianceAction = applianceAction;
+
+function _pollMaint() {
+    if (_maintPoll) clearInterval(_maintPoll);
+    _maintPoll = setInterval(async () => {
+        let data;
+        try {
+            const res = await fetch(`${API_BASE}/api/appliance/update/status`);
+            if (!res.ok) return;   // mid-update the container may be restarting — keep polling
+            data = await res.json();
+        } catch (e) { return; }    // transient (rebuild/reboot drops the server) — keep polling
+        const statusEl = document.getElementById('maint-status');
+        const logEl = document.getElementById('maint-log');
+        const icon = { queued: '⏳', running: '⏳', done: '✓', error: '✗' }[data.state] || '';
+        statusEl.textContent = `${icon} ${data.state}${data.message ? ' — ' + data.message : ''}`;
+        if (data.log_tail && data.log_tail.length) {
+            logEl.style.display = 'block';
+            logEl.textContent = data.log_tail.join('\n');
+        }
+        if (['done', 'error', 'idle'].includes(data.state)) {
+            clearInterval(_maintPoll); _maintPoll = null;
+            _maintButtons(false);
+        }
+    }, 2500);
+}
+
 // --- Federation: subscriptions + trust badges -------------------------------
 const _TRUST = {
     bundled:   { label: 'Official',  color: '#3b82f6' },

@@ -579,8 +579,20 @@
                     </div>
                 </div>
 
-                <!-- Appliance Maintenance card (Feature 2) is injected here. -->
-                <div id="appliance-maintenance-slot"></div>
+                <!-- Appliance Maintenance: GUI-triggered host updates via the sd-update bridge. -->
+                <div id="appliance-maintenance-slot" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">🛠 Appliance Maintenance</h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 16px;">
+                        Manage this box without SSH. Updates pull the latest from <code>origin/main</code> and rebuild.
+                    </p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="secondary" id="maint-update-app" onclick="applianceAction('update-app')">⬆ Update App</button>
+                        <button class="secondary" id="maint-update-scripts" onclick="applianceAction('update-scripts')">↻ Update Scripts</button>
+                        <button class="secondary" id="maint-reboot" onclick="applianceAction('reboot')" style="color:#ef4444;">⏻ Reboot</button>
+                    </div>
+                    <div id="maint-status" style="margin-top:16px; font-size:0.82rem; color:#94a3b8; display:none;"></div>
+                    <pre id="maint-log" style="margin-top:10px; max-height:200px; overflow:auto; background:#0f172a; border:1px solid var(--border-color); border-radius:8px; padding:12px; font-size:0.72rem; color:#cbd5e1; display:none; white-space:pre-wrap;"></pre>
+                </div>
             </div>
         </div>
 
@@ -916,6 +928,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260630a"></script>
+    <script src="admin.js?v=20260630b"></script>
 </body>
 </html>

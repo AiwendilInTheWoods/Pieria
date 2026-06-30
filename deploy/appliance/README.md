@@ -133,6 +133,28 @@ anyone with the SD card can read it.
 
 ---
 
+## GUI maintenance & updates (all-in-one)
+
+In all-in-one mode the admin gains a **🩺 Devices** tab (host health) and an **Appliance Maintenance**
+card that can **Update App** (git pull `origin/main` + `docker compose up -d --build`), **Update
+Scripts** (re-run `install.sh`), and **Reboot** — no SSH.
+
+**How the privilege boundary is kept.** The web app runs in an **unprivileged container** and never
+gains host access. A GUI action only writes `data/appliance/request.json` into the bind-mounted data
+dir. A root **systemd path unit** (`sd-update.path`) notices the file and runs the host helper
+`sd-update`, which performs a **fixed, whitelisted action** (the requested string is matched in a
+`case`, never evaluated), writes progress to `data/appliance/status.json` for the GUI to poll, and
+deletes the request. The container stays non-root; only the oneshot helper has host privilege.
+
+> **Trust assumption.** Anything that can write `data/appliance/request.json` (the app, or anyone
+> with write access to the data dir) can trigger a root-level pull/rebuild/reboot. The nonce is
+> anti-stale-replay, not authentication. The bridge is enabled **only** when the all-in-one compose
+> sets `SD_APPLIANCE_MODE=all-in-one`, and `update-app` is pinned to `git reset --hard origin/main`
+> (no arbitrary ref/URL) — which **discards any local edits on the Pi**. The appliance is not an edit
+> host, so that's intended; do bench work on a clone, not the deployed box.
+
+---
+
 ## How it works (and a design note)
 
 The kiosk is launched from the **autologin user's login shell on tty1**, not from
@@ -155,10 +177,16 @@ like Fire TV / bring-your-own-browser; it's simply inert here.)
 | `bin/sd-kiosk-launch` | Reads the config, builds the URL, runs `cage` + Chromium, relaunches on exit. |
 | `bin/sd-wait-for-server` | Polls the server so Chromium never lands on an error page at cold boot. |
 | `bin/sd-rotate-keep` | Re-asserts the `ROTATE` transform on every display power-cycle/hotplug so portrait survives the TV's sleep timer (only runs when `ROTATE` is set). |
+| `bin/sd-metrics` | (all-in-one) Writes the Pi `vcgencmd` throttle/under-voltage reading into `data/appliance/` for the Device Health console; run by `sd-metrics.timer` every 30 s. |
+| `bin/sd-update` | (all-in-one) Root host helper for GUI updates — whitelisted update-app / update-scripts / reboot; triggered by `sd-update.path`. |
+| `share/sd-splash.html` | Boot splash shown while the server starts, displaying the admin URL / `<hostname>.local` / IP; self-redirects to the canvas once the server answers. |
 | `systemd/autologin.conf` | `getty@tty1` drop-in enabling kiosk-user autologin. |
+| `systemd/sd-metrics.{service,timer}` | (all-in-one) Periodic host-metrics writer for Device Health. |
+| `systemd/sd-update.{path,service}` | (all-in-one) Watches for GUI update requests and runs `sd-update`. |
 | `udev/99-screen-docent-no-cec-pointer.rules` | Ignores the HDMI-CEC phantom pointer so no stray cursor shows on the display. |
+| `avahi/screen-docent.service` | (all-in-one) Advertises the server over mDNS with a friendly name. |
 | `config/screen-docent.conf.example` | Template seeded to the boot partition. |
-| `compose/docker-compose.appliance.yml` | All-in-one override (Uvicorn 4→2 workers) merged over the root compose. |
+| `compose/docker-compose.appliance.yml` | All-in-one override (Uvicorn 4→2 workers, `SD_APPLIANCE_MODE=all-in-one`) merged over the root compose. |
 
 ---
 

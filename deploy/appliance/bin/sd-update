@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# sd-update — host-side appliance updater.
+#
+# Triggered by sd-update.path when the (unprivileged) container writes
+# data/appliance/request.json. Runs as root via a systemd oneshot. Performs ONLY a
+# fixed, whitelisted action — the requested string is matched in a `case`, never
+# evaluated — and writes progress back to data/appliance/status.json for the GUI to
+# poll. Set DRY_RUN=1 to echo the dispatch instead of executing it (used in tests).
+#
+# Usage: sd-update <REPO_ROOT>   (the dir whose ./data is bind-mounted into the container)
+set -u
+
+REPO_ROOT="${1:-}"
+if [ -z "$REPO_ROOT" ]; then
+  echo "sd-update: REPO_ROOT argument required" >&2
+  exit 1
+fi
+
+DIR="$REPO_ROOT/data/appliance"
+REQ="$DIR/request.json"
+STATUS="$DIR/status.json"
+OVERRIDE="$REPO_ROOT/deploy/appliance/compose/docker-compose.appliance.yml"
+DRY_RUN="${DRY_RUN:-0}"
+LOG=""
+
+# Nothing queued (e.g. the .path re-fired on our own deletion of the request) — no-op.
+[ -r "$REQ" ] || exit 0
+
+# Parse the request WITHOUT trusting it as code.
+_get() { python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get(sys.argv[2],''))" "$REQ" "$1" 2>/dev/null; }
+ACTION="$(_get action)"
+NONCE="$(_get nonce)"
+
+write_status() {
+  local state="$1" msg="${2:-}" tail_json="[]"
+  if [ -n "$LOG" ] && [ -f "$LOG" ]; then
+    tail_json="$(tail -n 40 "$LOG" 2>/dev/null | python3 -c "import json,sys; print(json.dumps(sys.stdin.read().splitlines()))")"
+  fi
+  SD_STATE="$state" SD_MSG="$msg" SD_TAIL="$tail_json" SD_ACT="$ACTION" SD_NON="$NONCE" \
+  SD_NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)" python3 - "$STATUS" <<'PY'
+import json, os, sys
+json.dump({
+    "state": os.environ["SD_STATE"], "action": os.environ["SD_ACT"],
+    "nonce": os.environ["SD_NON"], "message": os.environ["SD_MSG"],
+    "log_tail": json.loads(os.environ["SD_TAIL"]), "updated_at": os.environ["SD_NOW"],
+}, open(sys.argv[1], "w"))
+PY
+}
+
+# Whitelist — anything else is rejected before any work happens.
+case "$ACTION" in
+  update-app|update-scripts|reboot) : ;;
+  *)
+    write_status error "unknown action: $ACTION"
+    rm -f "$REQ"
+    exit 1
+    ;;
+esac
+
+LOG="$(mktemp)"
+write_status running "starting $ACTION"
+
+run() {
+  if [ "$DRY_RUN" = "1" ]; then
+    echo "[dry-run] $*" >> "$LOG"
+    return 0
+  fi
+  echo "+ $*" >> "$LOG"
+  "$@" >> "$LOG" 2>&1
+}
+
+rc=0
+case "$ACTION" in
+  update-app)
+    # Exactly the documented manual sequence: pin to origin/main, rebuild the stack.
+    ( cd "$REPO_ROOT" && run git fetch --prune origin ) || rc=$?
+    [ $rc -eq 0 ] && { ( cd "$REPO_ROOT" && run git reset --hard origin/main ) || rc=$?; }
+    [ $rc -eq 0 ] && { ( cd "$REPO_ROOT" && run docker compose -f docker-compose.yml -f "$OVERRIDE" up -d --build ) || rc=$?; }
+    ;;
+  update-scripts)
+    # Re-run the idempotent installer to refresh sd-* binaries + units.
+    run "$REPO_ROOT/deploy/appliance/install.sh" || rc=$?
+    ;;
+  reboot)
+    write_status done "rebooting"
+    rm -f "$REQ"
+    if [ "$DRY_RUN" = "1" ]; then
+      echo "[dry-run] systemctl reboot" >> "$LOG"
+      rm -f "$LOG"
+      exit 0
+    fi
+    systemctl reboot
+    exit 0
+    ;;
+esac
+
+if [ $rc -eq 0 ]; then
+  write_status done "$ACTION completed"
+else
+  write_status error "$ACTION failed (exit $rc)"
+fi
+
+rm -f "$REQ"      # consume the request so the .path re-arms for the next one
+rm -f "$LOG"

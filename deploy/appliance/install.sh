@@ -68,6 +68,7 @@ install -m 0755 "$BIN_SRC/sd-kiosk-launch"   /usr/local/bin/sd-kiosk-launch
 install -m 0755 "$BIN_SRC/sd-wait-for-server" /usr/local/bin/sd-wait-for-server
 install -m 0755 "$BIN_SRC/sd-rotate-keep"    /usr/local/bin/sd-rotate-keep
 install -m 0755 "$BIN_SRC/sd-metrics"        /usr/local/bin/sd-metrics
+install -m 0755 "$BIN_SRC/sd-update"         /usr/local/bin/sd-update
 
 echo "==> Installing boot splash (shows the admin URL while the server starts)"
 install -d /usr/local/share/screen-docent
@@ -152,6 +153,12 @@ if [ "${ALL_IN_ONE:-0}" = "1" ]; then
   echo "==> Advertising the server over mDNS (friendly name in network browsers)"
   install -d /etc/avahi/services
   install -m 0644 "$HERE/avahi/screen-docent.service" /etc/avahi/services/screen-docent.service
+
+  echo "==> Installing GUI update bridge (Admin -> Devices -> Maintenance)"
+  sed "s#__REPO_ROOT__#$REPO_ROOT#g" "$UNIT_SRC/sd-update.path"    > /etc/systemd/system/sd-update.path
+  sed "s#__REPO_ROOT__#$REPO_ROOT#g" "$UNIT_SRC/sd-update.service" > /etc/systemd/system/sd-update.service
+  systemctl daemon-reload
+  systemctl enable --now sd-update.path || true
 fi
 
 echo "==> Finalizing"
