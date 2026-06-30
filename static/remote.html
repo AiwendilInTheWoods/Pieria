@@ -11,16 +11,10 @@
     <meta name="apple-mobile-web-app-title" content="Screen Docent">
     <link rel="icon" type="image/svg+xml" href="/logo.svg">
     <link rel="apple-touch-icon" href="/logo.svg">
+    <link rel="stylesheet" href="/app.css">
 
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --accent-color: #3b82f6;
-            --text-color: #f1f5f9;
-            --card-bg: #1e293b;
-            --border-color: rgba(255,255,255,0.1);
-        }
-
+        /* Remote — mobile-first PWA; shared tokens come from app.css. */
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background-color: var(--bg-color);
@@ -143,7 +137,7 @@
 
     <div class="footer">
         <span>Smart Discovery Remote V2.2</span>
-        <a href="/help">Help & Documentation</a>
+        <span><a href="/admin">⚙ Admin</a> &nbsp;·&nbsp; <a href="/help">Help</a></span>
     </div>
 
     <script>
