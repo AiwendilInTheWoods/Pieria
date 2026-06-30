@@ -622,7 +622,12 @@ async def get_full_library(db: Session = Depends(get_db)):
 
 @app.get("/playlists", response_model=List[PlaylistSchema])
 async def list_playlists(db: Session = Depends(get_db)):
-    return db.query(PlaylistModel).all()
+    # Underscore-prefixed names are internal pseudo-collections (e.g. "_derivatives", the optimized-image
+    # display cache) — never real collections. Keep their rows + cached images, but never surface them in
+    # the UI. Mirrors the sync-time skip of "_"-prefixed dirs; this is the matching display-layer guard,
+    # so even a stale "_" playlist (created before that skip existed) stays hidden everywhere /playlists
+    # feeds: the admin sidebar, the "Add to" picker, and the Canvas first-non-empty fallback.
+    return [p for p in db.query(PlaylistModel).all() if not p.name.startswith("_")]
 
 @app.post("/playlists", response_model=PlaylistSchema)
 async def create_playlist(name: str = Form(...), db: Session = Depends(get_db)):

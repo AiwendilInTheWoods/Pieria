@@ -133,3 +133,19 @@ def test_bulk_approve_does_not_touch_in_flight(client):
 def test_bulk_approve_tolerates_empty_list(client):
     c, db, tmp = client
     assert c.post("/artworks/approve-bulk", json={"artwork_ids": []}).json()["count"] == 0
+
+
+def test_list_playlists_hides_underscore_pseudo_collections(client):
+    """The /playlists API must never surface "_"-prefixed pseudo-collections (e.g. _derivatives, the
+    optimized-image cache) — they're internal, not real collections. Keeps the rows/data, hides them
+    from every consumer of the endpoint (sidebar, picker, Canvas fallback)."""
+    c, db, tmp = client
+    db.add(PlaylistModel(name="Summer"))
+    db.add(PlaylistModel(name="_derivatives"))
+    db.commit()
+
+    names = [p["name"] for p in c.get("/playlists").json()]
+    assert "Summer" in names
+    assert "_derivatives" not in names
+    # The row still exists in the DB — we hide, we don't delete.
+    assert db.query(PlaylistModel).filter(PlaylistModel.name == "_derivatives").first() is not None
