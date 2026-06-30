@@ -67,6 +67,7 @@ echo "==> Installing launch scripts to /usr/local/bin"
 install -m 0755 "$BIN_SRC/sd-kiosk-launch"   /usr/local/bin/sd-kiosk-launch
 install -m 0755 "$BIN_SRC/sd-wait-for-server" /usr/local/bin/sd-wait-for-server
 install -m 0755 "$BIN_SRC/sd-rotate-keep"    /usr/local/bin/sd-rotate-keep
+install -m 0755 "$BIN_SRC/sd-metrics"        /usr/local/bin/sd-metrics
 
 echo "==> Installing udev rule (suppress the HDMI-CEC phantom pointer / stray cursor)"
 install -m 0644 "$HERE/udev/99-screen-docent-no-cec-pointer.rules" \
@@ -137,6 +138,12 @@ if [ "${ALL_IN_ONE:-0}" = "1" ]; then
   echo "    Building & starting the stack (first run downloads + builds; be patient)..."
   ( cd "$REPO_ROOT" && docker compose -f docker-compose.yml -f "$OVERRIDE" up -d --build )
   echo "    Server is starting on http://localhost:8000 (restart: unless-stopped survives reboot)"
+
+  echo "==> Installing host metrics timer (Device Health throttle/under-voltage reading)"
+  sed "s#__REPO_ROOT__#$REPO_ROOT#g" "$UNIT_SRC/sd-metrics.service" > /etc/systemd/system/sd-metrics.service
+  install -m 0644 "$UNIT_SRC/sd-metrics.timer" /etc/systemd/system/sd-metrics.timer
+  systemctl daemon-reload
+  systemctl enable --now sd-metrics.timer || true
 fi
 
 echo "==> Finalizing"

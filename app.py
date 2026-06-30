@@ -129,8 +129,10 @@ _query_classifier = QueryClassifier()
 _result_ranker = ResultRanker()
 
 import ai_client
+import config
 import federation
 import frame_push
+import host_health
 import publisher
 from config import ARTWORK_ROOT, LIBRARY_DIR, SD_USER_AGENT
 from epaper import PALETTES, VALID_FORMATS, media_type_for, render_for_epaper
@@ -1557,6 +1559,27 @@ async def get_active_displays(db: Session = Depends(get_db)):
     cutoff = datetime.now(UTC) - timedelta(seconds=15)
     displays = db.query(ActiveDisplayModel).filter(ActiveDisplayModel.last_seen_at > cutoff).all()
     return [d.display_id for d in displays]
+
+@app.get("/api/health/host")
+async def get_host_health(db: Session = Depends(get_db)):
+    """Device Health console data: this box's host metrics + the displays it currently serves.
+
+    All-in-one only — returns 404 on a generic/MS-01 server or thin-client topology (where the
+    server isn't running ON the managed device), so the admin UI keeps the Devices tab hidden there.
+    Compute-on-request: the readers are microseconds of /proc + /sys reads, so no DB table or
+    background collector is needed."""
+    if not config.IS_APPLIANCE:
+        raise HTTPException(status_code=404, detail="host metrics unavailable")
+    cutoff = datetime.now(UTC) - timedelta(seconds=15)
+    displays = db.query(ActiveDisplayModel).filter(ActiveDisplayModel.last_seen_at > cutoff).all()
+    return {
+        "available": True,
+        "host": host_health.collect(),
+        "displays": [
+            {"display_id": d.display_id, "last_seen_at": d.last_seen_at.isoformat()}
+            for d in displays
+        ],
+    }
 
 @app.post("/api/remote/change")
 async def remote_change_playlist(request: RemoteChangeRequest, db: Session = Depends(get_db)):

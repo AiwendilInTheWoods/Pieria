@@ -1,0 +1,12 @@
+# Installed by install.sh (all-in-one only) as:
+#   /etc/systemd/system/sd-metrics.service
+#
+# Oneshot that writes the Pi throttle/under-voltage bitmask (vcgencmd) into the
+# bind-mounted data/appliance/host_metrics.json for the Device Health console.
+# Triggered by sd-metrics.timer. __REPO_ROOT__ is substituted by install.sh.
+[Unit]
+Description=Screen Docent host metrics writer (throttle/under-voltage)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/sd-metrics __REPO_ROOT__

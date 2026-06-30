@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# sd-metrics
+#
+# Writes the one host metric the containerized app CANNOT read itself — the Pi
+# throttle/under-voltage bitmask from `vcgencmd` (a host binary backed by /dev/vcio,
+# absent inside the unprivileged container). Drops it as JSON into the bind-mounted
+# data/appliance/ dir, where host_health.read_throttled() picks it up. Run on a short
+# systemd timer (sd-metrics.timer). Everything else (load/temp/disk/mem/uptime) the
+# app reads directly from /proc + /sys, so it is intentionally NOT duplicated here.
+#
+# Usage: sd-metrics <REPO_ROOT>   (the dir whose ./data is mounted into the container)
+set -u
+
+REPO_ROOT="${1:-}"
+if [ -z "$REPO_ROOT" ]; then
+  echo "sd-metrics: REPO_ROOT argument required" >&2
+  exit 1
+fi
+
+OUT_DIR="$REPO_ROOT/data/appliance"
+OUT="$OUT_DIR/host_metrics.json"
+mkdir -p "$OUT_DIR"
+
+THROTTLED=""
+TEMP=""
+if command -v vcgencmd >/dev/null 2>&1; then
+  # vcgencmd get_throttled -> "throttled=0x0"; measure_temp -> "temp=41.2'C"
+  THROTTLED="$(vcgencmd get_throttled 2>/dev/null | cut -d= -f2)"
+  TEMP="$(vcgencmd measure_temp 2>/dev/null | cut -d= -f2 | tr -d "'C")"
+fi
+
+# Write atomically so a concurrent reader never sees a half-written file.
+TMP="$(mktemp "$OUT_DIR/.host_metrics.XXXXXX")"
+printf '{"throttled": %s, "temp_c": %s}\n' \
+  "$( [ -n "$THROTTLED" ] && printf '"%s"' "$THROTTLED" || printf 'null' )" \
+  "$( [ -n "$TEMP" ] && printf '%s' "$TEMP" || printf 'null' )" \
+  > "$TMP"
+mv -f "$TMP" "$OUT"

@@ -45,6 +45,7 @@ async function init() {
     setupUploadZone();
     setupPlaylistInput(); // Add key listener
     initServerAddress();  // show the address to point displays/Pi/e-ink/Frame at
+    initDevicesCapability(); // un-hide the Devices tab only on an all-in-one appliance
     loadSubscriptions();  // federated collections panel
     await loadPremiumSettings();
     await handleOAuthCallback();   // catch an OpenRouter OAuth redirect (?code=…)
@@ -57,7 +58,7 @@ async function init() {
     let savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
     // Migrate the old split Discover/Browse-Catalog views to the merged Museum Art view.
     if (savedView === 'catalog' || savedView === 'discover') savedView = 'museum';
-    const validViews = ['playlists', 'library', 'review', 'museum', 'settings'];
+    const validViews = ['playlists', 'library', 'review', 'museum', 'devices', 'settings'];
     if (savedView && validViews.includes(savedView)) {
         switchView(savedView);
     }
@@ -123,6 +124,7 @@ function startPolling() {
 
         if (!isModalOpen) {
             await refreshData();
+            if (currentView === 'devices') refreshHostHealth();
         }
     }, 5000);
 }
@@ -147,12 +149,14 @@ function switchView(view) {
     document.getElementById('nav-library').classList.toggle('active', view === 'library');
     document.getElementById('nav-review').classList.toggle('active', view === 'review');
     document.getElementById('nav-museum').classList.toggle('active', view === 'museum');
+    document.getElementById('nav-devices').classList.toggle('active', view === 'devices');
     document.getElementById('nav-settings').classList.toggle('active', view === 'settings');
 
     document.getElementById('view-playlists').classList.toggle('hidden', view !== 'playlists');
     document.getElementById('view-library').classList.toggle('hidden', view !== 'library');
     document.getElementById('view-review').classList.toggle('hidden', view !== 'review');
     document.getElementById('view-museum').classList.toggle('hidden', view !== 'museum');
+    document.getElementById('view-devices').classList.toggle('hidden', view !== 'devices');
     document.getElementById('view-settings').classList.toggle('hidden', view !== 'settings');
 
     document.getElementById('sidebar-playlists').classList.toggle('hidden', view !== 'playlists');
@@ -161,6 +165,7 @@ function switchView(view) {
     document.body.classList.remove('sidebar-open');
 
     if (view === 'museum') enterMuseum();
+    if (view === 'devices') enterDevices();
 }
 
 // Mobile-only: toggle the slide-in sidebar drawer (no-op visual on desktop).
@@ -261,6 +266,93 @@ function copyServerAddress() {
     if (c) { c.style.display = 'inline'; setTimeout(() => { c.style.display = 'none'; }, 1500); }
 }
 window.copyServerAddress = copyServerAddress;
+
+// --- Devices (all-in-one appliance only) ------------------------------------
+// GET /api/health/host is 404 unless SD_APPLIANCE_MODE=all-in-one, so a successful
+// fetch is exactly the signal that this box is a manageable appliance. On a generic
+// server or a thin client the tab stays hidden.
+async function initDevicesCapability() {
+    const btn = document.getElementById('nav-devices');
+    if (!btn) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/health/host`);
+        if (res.ok) btn.style.display = '';
+    } catch (e) { /* not an appliance — leave hidden */ }
+}
+
+function enterDevices() {
+    refreshHostHealth();
+}
+
+function _fmtUptime(s) {
+    if (s == null) return '—';
+    const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
+    if (d > 0) return `${d}d ${h}h`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m`;
+}
+
+function _metricTile(label, value, warn) {
+    const color = warn ? '#fbbf24' : 'var(--success-color)';
+    return `<div style="background:#0f172a; border:1px solid var(--border-color); border-radius:8px; padding:12px 14px;">
+        <div style="font-size:0.68rem; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05rem;">${label}</div>
+        <div style="font-size:1.05rem; color:${color}; margin-top:4px;">${value}</div>
+    </div>`;
+}
+
+function _renderHostHealth(host) {
+    const grid = document.getElementById('host-health-grid');
+    if (!grid) return;
+    const load = host.loadavg ? host.loadavg.map(n => n.toFixed(2)).join(' ') : '—';
+    const temp = host.temp_c != null ? `${host.temp_c} °C` : '—';
+    const mem = host.memory ? `${host.memory.used_pct}% of ${host.memory.total_mb} MB` : '—';
+    const disk = host.disk ? `${host.disk.free_gb} GB free (${host.disk.used_pct}% used)` : '—';
+    const uptime = _fmtUptime(host.uptime_s);
+
+    let throttle, throttleWarn = false;
+    if (host.throttled === 'unavailable' || host.throttled == null) {
+        throttle = 'unavailable';
+    } else {
+        const t = host.throttled;
+        if (t.active && t.active.length) { throttle = '⚠ ' + t.active.join(', '); throttleWarn = true; }
+        else if (t.occurred && t.occurred.length) { throttle = 'OK (since boot: ' + t.occurred.join(', ') + ')'; throttleWarn = true; }
+        else { throttle = 'OK'; }
+    }
+
+    grid.innerHTML =
+        _metricTile('CPU Load', load) +
+        _metricTile('Temperature', temp, host.temp_c != null && host.temp_c >= 75) +
+        _metricTile('Memory', mem, host.memory && host.memory.used_pct >= 90) +
+        _metricTile('Disk', disk, host.disk && host.disk.used_pct >= 90) +
+        _metricTile('Uptime', uptime) +
+        _metricTile('Power / Throttle', throttle, throttleWarn);
+}
+
+function _renderActiveDisplays(displays) {
+    const el = document.getElementById('active-displays-list');
+    if (!el) return;
+    if (!displays || !displays.length) {
+        el.innerHTML = '<span style="color:#94a3b8;">No displays connected in the last 15s.</span>';
+        return;
+    }
+    el.innerHTML = displays.map(d =>
+        `<div style="display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--border-color);">
+            <span style="color:var(--success-color);">●</span>
+            <code style="color:var(--text-color);">${d.display_id}</code>
+        </div>`).join('');
+}
+
+async function refreshHostHealth() {
+    try {
+        const res = await fetch(`${API_BASE}/api/health/host`);
+        if (!res.ok) return;
+        const data = await res.json();
+        _renderHostHealth(data.host || {});
+        _renderActiveDisplays(data.displays || []);
+        const stamp = document.getElementById('device-health-updated');
+        if (stamp) stamp.textContent = '· updated ' + new Date().toLocaleTimeString();
+    } catch (e) { /* transient — next poll retries */ }
+}
 
 // --- Federation: subscriptions + trust badges -------------------------------
 const _TRUST = {

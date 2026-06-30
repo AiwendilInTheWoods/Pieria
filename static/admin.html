@@ -392,6 +392,12 @@
                 Review Queue <span id="review-count" class="badge">0</span>
             </button>
 
+            <!-- Shown only on an all-in-one appliance (initDevicesCapability un-hides it when
+                 GET /api/health/host succeeds). Stays hidden on generic servers / thin clients. -->
+            <button id="nav-devices" class="nav-btn" onclick="switchView('devices')" style="margin-top: 14px; display: none;">
+                🩺 Devices
+            </button>
+
             <button id="nav-settings" class="nav-btn" onclick="switchView('settings')" style="margin-top: 14px;">
                 ⚙ Settings
             </button>
@@ -544,6 +550,38 @@
             <button id="load-more-btn" class="secondary" onclick="loadMoreDiscoveries()" style="display:none; width:100%; margin-top:20px; padding: 14px; font-size: 0.9rem; border-color: var(--accent-color); color: var(--accent-color);">
                 Load More Results
             </button>
+        </div>
+
+        <!-- Devices View (all-in-one appliance only) -->
+        <div id="view-devices" class="hidden">
+            <h2 style="color: var(--accent-color); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1rem; margin-bottom: 30px;">Devices</h2>
+
+            <div style="display: flex; flex-direction: column; gap: 20px; max-width: 700px;">
+                <!-- Server (this box) health -->
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">🩺 Server Health <span id="device-health-updated" style="font-weight:normal; color:#64748b; font-size:0.72rem;"></span></h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 16px;">
+                        Live metrics for the box running Screen Docent (this all-in-one appliance).
+                    </p>
+                    <div id="host-health-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px;">
+                        <span style="color:#94a3b8; font-size:0.8rem;">Loading…</span>
+                    </div>
+                </div>
+
+                <!-- Active displays this server is currently serving -->
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+                    <h3 style="margin-top: 0; font-size: 0.9rem; color: var(--text-color);">🖥 Active Displays</h3>
+                    <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 14px;">
+                        Screens connected in the last 15 seconds (Canvas clients and e-ink frames).
+                    </p>
+                    <div id="active-displays-list" style="font-size:0.85rem; color:var(--text-color);">
+                        <span style="color:#94a3b8;">—</span>
+                    </div>
+                </div>
+
+                <!-- Appliance Maintenance card (Feature 2) is injected here. -->
+                <div id="appliance-maintenance-slot"></div>
+            </div>
         </div>
 
         <!-- Settings View -->
@@ -878,6 +916,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260628a"></script>
+    <script src="admin.js?v=20260630a"></script>
 </body>
 </html>

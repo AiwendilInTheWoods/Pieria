@@ -11,3 +11,8 @@
 services:
   art-curator:
     command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+    # Marks this as an all-in-one box (server + display on one Pi). Unlocks the Device Health
+    # console and the GUI update bridge in the admin UI. The base docker-compose.yml deliberately
+    # omits this, so a generic server or a thin-client topology never exposes those surfaces.
+    environment:
+      - SD_APPLIANCE_MODE=all-in-one

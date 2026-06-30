@@ -518,6 +518,16 @@ CYCLE_TIME=                           # optional: seconds per image</code></pre>
                Docker and runs the server on the same Pi. Reach the admin from another device at
                <code>http://&lt;hostname&gt;.local:8000/admin</code>.</p>
 
+            <h3>Device Health (all-in-one only)</h3>
+            <p>On an all-in-one box, a <strong>🩺 Devices</strong> tab appears in the admin sidebar with live
+               health for the machine running Screen Docent &mdash; CPU load, temperature, memory, free disk,
+               uptime, Pi power/throttle (under-voltage) state, and the displays currently being served.</p>
+            <p>This tab is shown <strong>only in all-in-one mode</strong>. A thin-client (display-only) Pi runs no
+               server, so there's nothing to measure there &mdash; its admin is served by your central server,
+               whose own Devices tab reflects <em>that</em> box. Under-voltage/throttle needs the host
+               <code>vcgencmd</code>, gathered by a small <code>sd-metrics</code> timer the installer sets up;
+               where it isn't available the field reads <em>unavailable</em>.</p>
+
             <div class="tip">
                 <strong>Can't reach the box?</strong> Use <code>http://&lt;hostname&gt;.local:8000/admin</code>
                 (the hostname you set in Imager) instead of hunting for the IP. If <code>.local</code> doesn't

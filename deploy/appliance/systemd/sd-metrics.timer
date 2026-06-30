@@ -1,0 +1,15 @@
+# Installed by install.sh (all-in-one only) as:
+#   /etc/systemd/system/sd-metrics.timer
+#
+# Runs sd-metrics.service ~30s after boot and every 30s thereafter, so the Device
+# Health console always has a fresh throttle/under-voltage reading.
+[Unit]
+Description=Run Screen Docent host metrics writer every 30s
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec=30
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target
