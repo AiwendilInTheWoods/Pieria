@@ -46,6 +46,7 @@ async function init() {
     setupPlaylistInput(); // Add key listener
     initServerAddress();  // show the address to point displays/Pi/e-ink/Frame at
     initDevicesCapability(); // un-hide the Devices tab only on an all-in-one appliance
+    initPublisherCapability(); // un-hide the Publisher tab only once an identity exists
     loadSubscriptions();  // federated collections panel
     await loadPremiumSettings();
     await handleOAuthCallback();   // catch an OpenRouter OAuth redirect (?code=…)
@@ -60,10 +61,19 @@ async function init() {
     let savedView = (() => { try { return localStorage.getItem('sd_admin_view'); } catch (e) { return null; } })();
     // Migrate the old split Discover/Browse-Catalog views to the merged Museum Art view.
     if (savedView === 'catalog' || savedView === 'discover') savedView = 'museum';
-    const validViews = ['playlists', 'library', 'review', 'museum', 'devices', 'settings'];
+    const validViews = ['playlists', 'library', 'review', 'museum', 'devices', 'publisher', 'settings'];
     if (savedView && validViews.includes(savedView)) {
         switchView(savedView);
     }
+    // Deep-link: /admin?view=publisher (from the /publisher redirect or the Help link) opens that view
+    // even before its capability-gated nav button is visible. Strip the param after applying.
+    try {
+        const qp = new URLSearchParams(window.location.search).get('view');
+        if (qp && validViews.includes(qp)) {
+            switchView(qp);
+            const u = new URL(window.location); u.searchParams.delete('view'); history.replaceState({}, '', u);
+        }
+    } catch (e) {}
 
     // Restore the collection that was open, so refresh returns to it (not the first one).
     // fetchPlaylists() (inside refreshData) reads currentPlaylistId to re-select it.
@@ -152,6 +162,7 @@ function switchView(view) {
     document.getElementById('nav-review').classList.toggle('active', view === 'review');
     document.getElementById('nav-museum').classList.toggle('active', view === 'museum');
     document.getElementById('nav-devices').classList.toggle('active', view === 'devices');
+    document.getElementById('nav-publisher').classList.toggle('active', view === 'publisher');
     document.getElementById('nav-settings').classList.toggle('active', view === 'settings');
 
     document.getElementById('view-playlists').classList.toggle('hidden', view !== 'playlists');
@@ -159,6 +170,7 @@ function switchView(view) {
     document.getElementById('view-review').classList.toggle('hidden', view !== 'review');
     document.getElementById('view-museum').classList.toggle('hidden', view !== 'museum');
     document.getElementById('view-devices').classList.toggle('hidden', view !== 'devices');
+    document.getElementById('view-publisher').classList.toggle('hidden', view !== 'publisher');
     document.getElementById('view-settings').classList.toggle('hidden', view !== 'settings');
 
     document.getElementById('sidebar-playlists').classList.toggle('hidden', view !== 'playlists');
@@ -168,6 +180,7 @@ function switchView(view) {
 
     if (view === 'museum') enterMuseum();
     if (view === 'devices') enterDevices();
+    if (view === 'publisher') enterPublisher();
 }
 
 // Mobile-only: toggle the slide-in sidebar drawer (no-op visual on desktop).
@@ -2660,3 +2673,276 @@ async function addCatalogItem(collectionId, itemIndex, btn) {
         btn.disabled = false; btn.textContent = orig;
     }
 }
+
+// ===========================================================================
+// Publisher Studio — folded-in view (was static/publish.html). All state +
+// helpers are pub*-prefixed and only initialized via enterPublisher(), so they
+// never bleed into the Personal (My Photos) or Subscriptions flows. Uses the
+// shared showToast / confirmModal / promptModal / _esc instead of its old
+// bespoke toast + native confirm/prompt/alert.
+// ===========================================================================
+const _pq = s => document.querySelector(s);
+const PUB_LICENSES = ["", "CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "PD", "proprietary"];
+let pubCollections = [];
+let pubCurrent = null;
+let pubIdentity = { has_private_key: false };
+let pubValidateTimer = null;
+
+function enterPublisher() { pubLoadIdentity(); pubLoadCollections(); }
+
+// Un-hide the Publisher nav only once an identity is configured (mirrors the Devices capability gate).
+async function initPublisherCapability() {
+    const btn = document.getElementById('nav-publisher');
+    if (!btn) return;
+    try {
+        const id = await (await fetch(`${API_BASE}/api/publisher/identity`)).json();
+        if (id && id.id) btn.style.display = '';
+    } catch (e) { /* leave hidden */ }
+}
+
+function pubLicenseOptions(sel, selected) {
+    sel.innerHTML = PUB_LICENSES.map(l => `<option value="${l}">${l || '— none —'}</option>`).join('');
+    sel.value = selected || "";
+}
+
+async function pubLoadIdentity() {
+    try { pubIdentity = await (await fetch(`${API_BASE}/api/publisher/identity`)).json(); } catch (e) { return; }
+    _pq('#pub-id').value = pubIdentity.id || '';
+    _pq('#pub-name').value = pubIdentity.name || '';
+    _pq('#pub-url').value = pubIdentity.url || '';
+    const st = _pq('#pub-identity-status');
+    if (pubIdentity.has_private_key) {
+        st.className = 'status ok'; st.textContent = '🔑 signing key ready';
+        _pq('#pub-pubkey').textContent = pubIdentity.public_key ? ('public key: ' + pubIdentity.public_key) : '';
+        _pq('#pub-regen-key').classList.remove('hidden');
+    } else {
+        st.className = 'status'; st.textContent = 'No signing key yet — saving identity generates one.';
+        _pq('#pub-pubkey').textContent = ''; _pq('#pub-regen-key').classList.add('hidden');
+    }
+}
+
+async function pubRegenKey() {
+    if (await confirmModal('Regenerate your signing key? This invalidates the signature on anything you already published.', { confirmText: 'Regenerate', danger: true }))
+        pubSaveIdentity(true);
+}
+
+async function pubSaveIdentity(regenerate) {
+    const body = { id: _pq('#pub-id').value.trim(), name: _pq('#pub-name').value.trim(), url: _pq('#pub-url').value.trim(), regenerate };
+    if (!body.id || !body.name) { showToast('Publisher ID and name are required', 'error'); return; }
+    try {
+        const r = await fetch(`${API_BASE}/api/publisher/identity`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        const d = await r.json();
+        if (!r.ok) { showToast(d.detail || 'Could not save identity', 'error'); return; }
+        pubIdentity = d; await pubLoadIdentity();
+        if (d.warning) { showToast('⚠ key rotated', 'error'); await confirmModal(d.warning, { confirmText: 'OK' }); }
+        else showToast('✓ identity saved', 'success');
+        const btn = document.getElementById('nav-publisher'); if (btn) btn.style.display = '';   // reveal the tab now
+    } catch (e) { showToast('Could not save identity', 'error'); }
+}
+
+async function pubLoadCollections(selectId) {
+    try { pubCollections = await (await fetch(`${API_BASE}/api/publisher/collections`)).json(); } catch (e) { pubCollections = []; }
+    const sel = _pq('#pub-collection-sel');
+    sel.innerHTML = pubCollections.length ? '' : '<option value="">— no collections yet —</option>';
+    pubCollections.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = `${c.title} (${c.item_count})`; sel.appendChild(o); });
+    if (selectId) { sel.value = String(selectId); await pubSelectCollection(selectId); }
+    else if (pubCollections.length) { sel.value = String(pubCollections[0].id); await pubSelectCollection(pubCollections[0].id); }
+    else { pubCurrent = null; pubRenderEditor(); }
+}
+
+async function pubSelectCollection(id) {
+    if (!id) { pubCurrent = null; pubRenderEditor(); return; }
+    try { pubCurrent = await (await fetch(`${API_BASE}/api/publisher/collections/${id}`)).json(); } catch (e) { return; }
+    pubRenderEditor();
+}
+
+async function pubNewCollection() {
+    const title = (await promptModal('Collection title') || '').trim();
+    if (!title) return;
+    try {
+        const r = await fetch(`${API_BASE}/api/publisher/collections`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, items: [] }) });
+        const d = await r.json();
+        if (!r.ok) { showToast(d.detail || 'Could not create', 'error'); return; }
+        await pubLoadCollections(d.id);
+    } catch (e) { showToast('Could not create collection', 'error'); }
+}
+
+async function pubDeleteCollection() {
+    if (!pubCurrent) return;
+    if (!(await confirmModal(`Delete collection "${pubCurrent.title}"? This cannot be undone.`, { confirmText: 'Delete', danger: true }))) return;
+    await fetch(`${API_BASE}/api/publisher/collections/${pubCurrent.id}`, { method: 'DELETE' });
+    await pubLoadCollections();
+}
+
+function pubRenderEditor() {
+    const has = !!pubCurrent;
+    _pq('#pub-collection-editor').classList.toggle('hidden', !has);
+    _pq('#pub-items-panel').hidden = !has;
+    _pq('#pub-del-collection').style.display = has ? '' : 'none';
+    if (!has) return;
+    _pq('#c-title').value = pubCurrent.title || '';
+    _pq('#c-slug').value = pubCurrent.slug || '';
+    _pq('#c-desc').value = pubCurrent.description || '';
+    _pq('#c-cover').value = pubCurrent.cover_image || '';
+    pubLicenseOptions(_pq('#c-license'), pubCurrent.default_license);
+    pubRenderItems();
+    pubScheduleValidate();
+}
+
+function pubRenderItems() {
+    const wrap = _pq('#pub-items'); wrap.innerHTML = '';
+    (pubCurrent.items || []).forEach((it, i) => wrap.appendChild(pubItemCard(it, i)));
+}
+
+function pubAddItem() {
+    pubCurrent.items = pubCurrent.items || [];
+    pubCurrent.items.push({ title: '', image: { full_url: '' } });
+    pubRenderItems(); pubScheduleValidate();
+}
+
+function pubItemCard(it, idx) {
+    const img = it.image || (it.image = {});
+    const el = document.createElement('div'); el.className = 'item-card';
+    const fp = img.focal_point;
+    el.innerHTML = `
+    <div class="thumb-wrap ${img.full_url ? '' : 'empty'}">
+      ${img.full_url ? `<img alt="preview" src="${_esc(img.full_url)}">` : 'paste an image URL below to preview'}
+      <span class="focal-dot" ${fp ? '' : 'hidden'}></span>
+      <span class="focal-hint">${img.full_url ? 'tap the image to set the focus point' : ''}</span>
+    </div>
+    <div class="item-body">
+      <div class="item-head"><span class="t">Artwork ${idx + 1}</span>
+        <button class="secondary remove" style="color:#ef4444">Remove</button></div>
+      <label class="field">Public image URL <span class="muted">(hosted by you)</span>
+        <input type="url" class="f-url" placeholder="https://yoursite/art/piece.jpg" value="${_esc(img.full_url || '')}"></label>
+      <span class="dims"></span>
+      <div class="row">
+        <label class="field">Title <input type="text" class="f-title" value="${_esc(it.title || '')}"></label>
+        <label class="field">Artist <input type="text" class="f-artist" value="${_esc(it.artist || '')}"></label>
+      </div>
+      <div class="row">
+        <label class="field">Date <input type="text" class="f-date" placeholder="1889" value="${_esc(it.date || '')}"></label>
+        <label class="field">Medium <input type="text" class="f-medium" value="${_esc(it.medium || '')}"></label>
+        <label class="field">Culture / movement <input type="text" class="f-culture" value="${_esc(it.culture || '')}"></label>
+      </div>
+      <label class="field">Placard <span class="muted">(short blurb on the display)</span>
+        <textarea class="f-placard">${_esc(it.placard || '')}</textarea></label>
+      <label class="field">Tags <span class="muted">(comma-separated)</span>
+        <input type="text" class="f-tags" value="${_esc((it.tags || []).join(', '))}"></label>
+      <div class="row">
+        <label class="field">License <select class="f-license"></select></label>
+        <label class="field f-attr-wrap">Attribution <span class="muted">(required for CC-BY*)</span>
+          <input type="text" class="f-attribution" value="${_esc(img.attribution || '')}"></label>
+        <label class="field">Rights holder <input type="text" class="f-rights" value="${_esc(img.rights_holder || '')}"></label>
+      </div>
+    </div>`;
+    const lic = el.querySelector('.f-license');
+    pubLicenseOptions(lic, img.license || pubCurrent.default_license);
+    const wrapEl = el.querySelector('.thumb-wrap');
+    const dot = el.querySelector('.focal-dot');
+    const dims = el.querySelector('.dims');
+    if (fp) { dot.style.left = (fp[0] * 100) + '%'; dot.style.top = (fp[1] * 100) + '%'; }
+    if (img.width && img.height) dims.textContent = `${img.width}×${img.height}px`;
+    // URL change → client-side preview + auto width/height (bytes never round-trip through us)
+    el.querySelector('.f-url').addEventListener('change', e => {
+        const url = e.target.value.trim(); img.full_url = url;
+        if (!url) { pubRenderItems(); return; }
+        const probe = new Image();
+        probe.onload = () => { img.width = probe.naturalWidth; img.height = probe.naturalHeight; pubRenderItems(); pubScheduleValidate(); };
+        probe.onerror = () => { dims.textContent = '⚠ could not load a preview (the URL is still saved)'; pubScheduleValidate(); };
+        probe.src = url;
+    });
+    // tap-to-set focal point
+    wrapEl.addEventListener('click', ev => {
+        if (!img.full_url) return;
+        const r = wrapEl.getBoundingClientRect();
+        const fx = Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width));
+        const fy = Math.min(1, Math.max(0, (ev.clientY - r.top) / r.height));
+        img.focal_point = [pubRound3(fx), pubRound3(fy)];
+        dot.hidden = false; dot.style.left = (fx * 100) + '%'; dot.style.top = (fy * 100) + '%';
+    });
+    const bind = (cls, set) => el.querySelector(cls).addEventListener('change', e => { set(e.target.value); pubScheduleValidate(); });
+    bind('.f-title', v => it.title = v);
+    bind('.f-artist', v => it.artist = v);
+    bind('.f-date', v => it.date = v);
+    bind('.f-medium', v => it.medium = v);
+    bind('.f-culture', v => it.culture = v);
+    bind('.f-placard', v => it.placard = v);
+    bind('.f-tags', v => it.tags = v.split(',').map(t => t.trim()).filter(Boolean));
+    bind('.f-license', v => img.license = v);
+    bind('.f-attribution', v => img.attribution = v);
+    bind('.f-rights', v => img.rights_holder = v);
+    el.querySelector('.remove').onclick = () => { pubCurrent.items.splice(idx, 1); pubRenderItems(); pubScheduleValidate(); };
+    return el;
+}
+
+function pubCollectPayload() {
+    return {
+        slug: _pq('#c-slug').value.trim() || null,
+        title: _pq('#c-title').value.trim(),
+        description: _pq('#c-desc').value.trim() || null,
+        cover_image: _pq('#c-cover').value.trim() || null,
+        default_license: _pq('#c-license').value || null,
+        items: (pubCurrent.items || []).map(it => {
+            const img = it.image || {};
+            return { id: it.id || null, title: it.title || '', artist: it.artist || null,
+                artist_role: it.artist_role || null, date: it.date || null, creation_date: it.creation_date || null,
+                medium: it.medium || null, culture: it.culture || null,
+                tags: (it.tags && it.tags.length) ? it.tags : null, placard: it.placard || null,
+                full_url: img.full_url || '', thumbnail_url: img.thumbnail_url || null,
+                license: img.license || null, attribution: img.attribution || null,
+                rights_holder: img.rights_holder || null,
+                width: img.width || null, height: img.height || null,
+                focal_point: img.focal_point || null };
+        })
+    };
+}
+
+async function pubSaveCollection() {
+    if (!pubCurrent) return false;
+    const r = await fetch(`${API_BASE}/api/publisher/collections/${pubCurrent.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pubCollectPayload()) });
+    const d = await r.json();
+    if (!r.ok) { showToast(d.detail || 'Save failed', 'error'); return false; }
+    // Keep the LOCAL model authoritative — reassigning pubCurrent to the response would replace every
+    // item object and detach the rendered cards' closures (silent edit loss). Only sync server-derived
+    // fields back onto the existing object.
+    pubCurrent.slug = d.slug; _pq('#c-slug').value = d.slug;
+    const opt = [..._pq('#pub-collection-sel').options].find(o => o.value === String(pubCurrent.id));
+    if (opt) opt.textContent = `${pubCurrent.title} (${(pubCurrent.items || []).length})`;
+    return true;
+}
+
+async function pubSaveCollectionClick() { if (await pubSaveCollection()) showToast('✓ saved', 'success'); }
+
+function pubScheduleValidate() { clearTimeout(pubValidateTimer); pubValidateTimer = setTimeout(pubValidateNow, 600); }
+
+async function pubValidateNow() {
+    if (!pubCurrent) return;
+    if (!(await pubSaveCollection())) return;   // validation runs against the persisted draft
+    try {
+        const d = await (await fetch(`${API_BASE}/api/publisher/collections/${pubCurrent.id}/validate`, { method: 'POST' })).json();
+        const v = _pq('#pub-validation');
+        if (d.valid) { v.innerHTML = '✓ <span style="color:var(--success-color)">valid — ready to export</span>'; }
+        else { v.innerHTML = `⚠ ${d.errors.length} issue(s):<ul>${d.errors.map(e => `<li>${_esc(e)}</li>`).join('')}</ul>`; }
+    } catch (e) {}
+}
+
+async function pubExport() {
+    if (!pubCurrent) return;
+    if (!pubIdentity.has_private_key) { showToast('Set up your publisher identity first', 'error'); return; }
+    if (!(await pubSaveCollection())) return;
+    const r = await fetch(`${API_BASE}/api/publisher/collections/${pubCurrent.id}/export`, { method: 'POST' });
+    if (!r.ok) {
+        let detail; try { detail = (await r.json()).detail; } catch (e) {}
+        if (Array.isArray(detail)) { _pq('#pub-validation').innerHTML = `⚠ fix before export:<ul>${detail.map(e => `<li>${_esc(e)}</li>`).join('')}</ul>`; showToast('Manifest invalid — see issues', 'error'); }
+        else showToast(detail || 'Export failed', 'error');
+        return;
+    }
+    const blob = await r.blob();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `${pubCurrent.slug}.json`; document.body.appendChild(a); a.click();
+    a.remove(); URL.revokeObjectURL(a.href);
+    showToast('✓ exported & signed', 'success');
+}
+
+function pubRound3(n) { return Math.round(n * 1000) / 1000; }

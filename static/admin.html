@@ -398,6 +398,12 @@
                 🩺 Devices
             </button>
 
+            <!-- Shown only once a publisher identity exists (initPublisherCapability). First-time entry
+                 is via /publisher or the Help "Publishing your own?" tip. -->
+            <button id="nav-publisher" class="nav-btn" onclick="switchView('publisher')" style="display: none;">
+                📤 Publisher
+            </button>
+
             <button id="nav-settings" class="nav-btn" onclick="switchView('settings')" style="margin-top: 14px;">
                 ⚙ Settings
             </button>
@@ -826,6 +832,99 @@
                 </div>
             </div>
         </div>
+
+        <!-- Publisher View (folded-in Publisher Studio; capability-gated nav). Scoped CSS below;
+             tokens get consolidated into the shared app.css in the design-system phase. -->
+        <style>
+        #view-publisher .intro{color:#94a3b8;font-size:.86rem;margin:0 0 8px;max-width:760px}
+        #view-publisher .panel{background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;padding:16px;margin:14px 0;max-width:820px}
+        #view-publisher .panel h2{margin:0 0 12px;font-size:1.05rem;color:var(--text-color)}
+        #view-publisher .row{display:flex;gap:10px;flex-wrap:wrap}
+        #view-publisher label.field{display:flex;flex-direction:column;gap:5px;font-size:.76rem;color:#94a3b8;flex:1;min-width:150px;margin-bottom:10px}
+        #view-publisher input[type=text],#view-publisher input[type=url],#view-publisher input[type=number],#view-publisher select,#view-publisher textarea{
+            background:#0f172a;border:1px solid var(--border-color);color:var(--text-color);padding:10px 12px;border-radius:9px;font-size:.92rem;width:100%;font-family:inherit}
+        #view-publisher textarea{resize:vertical;min-height:60px}
+        #view-publisher .status{font-size:.8rem;color:#94a3b8;margin-top:6px}
+        #view-publisher .status.ok{color:var(--success-color)}
+        #view-publisher .status.warn{color:#fbbf24}
+        #view-publisher .status.err{color:#ef4444}
+        #view-publisher .key{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.74rem;color:#94a3b8;word-break:break-all;margin-top:6px}
+        #view-publisher .item-card{background:#0f172a;border:1px solid var(--border-color);border-radius:12px;overflow:hidden;margin-bottom:14px}
+        #view-publisher .thumb-wrap{position:relative;width:100%;aspect-ratio:3/2;background:#0b1120;cursor:crosshair;overflow:hidden}
+        #view-publisher .thumb-wrap img{width:100%;height:100%;object-fit:contain;display:block}
+        #view-publisher .thumb-wrap.empty{display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:.8rem;cursor:default}
+        #view-publisher .focal-dot{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.5);background:rgba(59,130,246,.45);pointer-events:none;transition:.12s ease}
+        #view-publisher .focal-hint{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:.72rem;color:#dbe4ff;background:linear-gradient(transparent,rgba(0,0,0,.65));text-align:center;pointer-events:none}
+        #view-publisher .item-body{padding:14px}
+        #view-publisher .item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+        #view-publisher .item-head .t{font-size:.78rem;color:#94a3b8}
+        #view-publisher .dims{font-size:.72rem;color:#94a3b8}
+        #view-publisher .validation{position:sticky;bottom:0;margin-top:16px;background:#0f172a;border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;font-size:.82rem;max-width:820px}
+        #view-publisher .validation ul{margin:8px 0 0;padding-left:18px;color:#fbbf24}
+        #view-publisher .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+        #view-publisher .muted{color:#94a3b8}
+        </style>
+        <div id="view-publisher" class="hidden">
+            <h2 style="color: var(--accent-color); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1rem; margin-bottom: 16px;">Publisher Studio</h2>
+            <p class="intro">Author a collection of <strong>your own externally-hosted images</strong> into a signed Manifest&nbsp;v2 feed. Anyone running Screen Docent can subscribe to it. We index your URLs — we never host your images.</p>
+
+            <section class="panel">
+                <h2>1 · Publisher identity</h2>
+                <div class="row">
+                    <label class="field">Publisher ID <span class="muted">(stable, e.g. "jane-doe")</span>
+                        <input type="text" id="pub-id" placeholder="jane-doe"></label>
+                    <label class="field">Display name
+                        <input type="text" id="pub-name" placeholder="Jane Doe"></label>
+                    <label class="field">Homepage URL <span class="muted">(optional)</span>
+                        <input type="url" id="pub-url" placeholder="https://janedoe.art"></label>
+                </div>
+                <div class="actions">
+                    <button class="primary" onclick="pubSaveIdentity(false)">Save identity</button>
+                    <button class="secondary hidden" id="pub-regen-key" onclick="pubRegenKey()">Regenerate signing key</button>
+                </div>
+                <div class="status" id="pub-identity-status"></div>
+                <div class="key" id="pub-pubkey"></div>
+            </section>
+
+            <section class="panel">
+                <h2>2 · Collection</h2>
+                <div class="row">
+                    <label class="field" style="flex:2">Collection
+                        <select id="pub-collection-sel" onchange="pubSelectCollection(parseInt(this.value,10))"></select></label>
+                    <button class="secondary" id="pub-new-collection" onclick="pubNewCollection()" style="align-self:flex-end;margin-bottom:10px">＋ New</button>
+                    <button class="secondary" id="pub-del-collection" onclick="pubDeleteCollection()" style="align-self:flex-end;margin-bottom:10px;color:#ef4444">Delete</button>
+                </div>
+                <div id="pub-collection-editor" class="hidden">
+                    <div class="row">
+                        <label class="field" style="flex:2">Title
+                            <input type="text" id="c-title" onchange="pubScheduleValidate()" placeholder="My Collection"></label>
+                        <label class="field">Slug <span class="muted">(URL id; optional)</span>
+                            <input type="text" id="c-slug" onchange="pubScheduleValidate()" placeholder="auto from title"></label>
+                    </div>
+                    <label class="field">Description <span class="muted">(optional)</span>
+                        <textarea id="c-desc" onchange="pubScheduleValidate()" placeholder="What's in this collection?"></textarea></label>
+                    <div class="row">
+                        <label class="field">Cover image URL <span class="muted">(optional — defaults to the first artwork)</span>
+                            <input type="url" id="c-cover" onchange="pubScheduleValidate()" placeholder="https://yoursite/cover.jpg"></label>
+                        <label class="field" style="max-width:200px">Default license
+                            <select id="c-license" onchange="pubScheduleValidate()"></select></label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" id="pub-items-panel" hidden>
+                <h2>3 · Artworks</h2>
+                <div id="pub-items"></div>
+                <button class="secondary" onclick="pubAddItem()">＋ Add artwork</button>
+                <div class="validation" id="pub-validation">Add an artwork to begin.</div>
+                <div class="actions">
+                    <button class="secondary" onclick="pubSaveCollectionClick()">Save collection</button>
+                    <button class="primary" onclick="pubExport()">⬇ Export &amp; sign (download manifest.json)</button>
+                </div>
+            </section>
+
+            <p class="intro" style="margin-top:14px">Once exported, host <code>manifest.json</code> at a public URL (GitHub raw, S3, your site) — then anyone can subscribe in <strong>Settings → Subscriptions</strong>. See <a href="/help#publishing" style="color:var(--accent-color)">how to publish</a>.</p>
+        </div>
     </main>
 
     <!-- Library Picker Modal -->
@@ -928,6 +1027,6 @@
         </div>
     </div>
 
-    <script src="admin.js?v=20260630c"></script>
+    <script src="admin.js?v=20260630d"></script>
 </body>
 </html>

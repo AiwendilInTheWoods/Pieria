@@ -37,7 +37,7 @@ from fastapi import (
 )
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, ImageOps
 from pydantic import BaseModel
@@ -2772,7 +2772,9 @@ async def get_help_page(): return FileResponse(STATIC_DIR / "help.html")
 async def get_studio_page(): return FileResponse(STATIC_DIR / "studio.html")
 
 @app.get("/publisher")
-async def get_publisher_page(): return FileResponse(STATIC_DIR / "publish.html")
+async def get_publisher_page():
+    # Publisher Studio is now a view inside the admin SPA; keep this path working for bookmarks/links.
+    return RedirectResponse(url="/admin?view=publisher")
 
 if STATIC_DIR.exists():
     app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
