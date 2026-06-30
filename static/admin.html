@@ -841,6 +841,9 @@
         #view-publisher .panel h2{margin:0 0 12px;font-size:1.05rem;color:var(--text-color)}
         #view-publisher .row{display:flex;gap:10px;flex-wrap:wrap}
         #view-publisher label.field{display:flex;flex-direction:column;gap:5px;font-size:.76rem;color:#94a3b8;flex:1;min-width:150px;margin-bottom:10px}
+        /* Bottom-align the control in each field so rows stay aligned even when some labels wrap to a
+           second line (the "(optional)" sub-notes) and others don't. */
+        #view-publisher label.field > input, #view-publisher label.field > select, #view-publisher label.field > textarea{margin-top:auto}
         #view-publisher input[type=text],#view-publisher input[type=url],#view-publisher input[type=number],#view-publisher select,#view-publisher textarea{
             background:#0f172a;border:1px solid var(--border-color);color:var(--text-color);padding:10px 12px;border-radius:9px;font-size:.92rem;width:100%;font-family:inherit}
         #view-publisher textarea{resize:vertical;min-height:60px}
