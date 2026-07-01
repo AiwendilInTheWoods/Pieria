@@ -45,14 +45,7 @@ def get_db() -> Generator[Session, None, None]:
     finally:
         db.close()
 
-def init_db() -> None:
-    """
-    Initializes the database by creating all tables.
-    """
-    try:
-        # Create tables that don't exist
-        Base.metadata.create_all(bind=engine)
-        logger.info("Database initialized successfully.")
-    except Exception as e:
-        logger.critical(f"Failed to initialize database: {e}", exc_info=True)
-        raise
+# NOTE: schema creation is intentionally NOT done here. Alembic owns the schema as the single
+# source of truth — boot runs db_migrate.run_migrations() (base -> head builds it, or a legacy
+# DB is reconciled to the baseline). `Base.metadata.create_all` is used only by the test suite
+# against throwaway engines. See ADR-035 for why create_all was removed from the boot path.

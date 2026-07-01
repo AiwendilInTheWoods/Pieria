@@ -108,7 +108,7 @@ import httpx
 import curator
 import scout
 from agents import process_artwork
-from database import SessionLocal, get_db, init_db
+from database import SessionLocal, get_db
 from models import (
     ActiveDisplayModel,
     ArtworkModel,
@@ -431,34 +431,37 @@ async def run_factory_seed(db: Session):
     except Exception as e:
         logger.error(f"[Bootstrapper] Failed to parse factory_seed.json: {e}")
 
-from alembic import command
-from alembic.config import Config
+from db_migrate import run_migrations
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifecycle events for FastAPI application with multi-worker concurrency locks."""
 
-    lock_file = None
+    # Leader Election using fcntl: the first worker grabs the exclusive non-blocking lock
+    # and runs exclusive boot tasks; the other workers get BlockingIOError and skip them.
+    # We deliberately never unlock — the OS releases the flock when the worker process exits,
+    # so a slightly delayed follower can't grab it mid-boot and race the migrations.
+    lock_file = open("/tmp/screen_docent_startup.lock", "w")
     try:
-        # Leader Election using fcntl
-        # The first worker grabs the exclusive non-blocking lock.
-        # The other 3 workers will throw a BlockingIOError and skip initialization.
-        lock_file = open("/tmp/screen_docent_startup.lock", "w")
         fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        logger.info("[Startup] Follower worker initialized. Skipping exclusive boot tasks.")
+        yield
+        return
 
-        logger.info("[Startup] Leader elected. Running exclusive boot tasks (migrations, filesystem sync)...")
+    logger.info("[Startup] Leader elected. Running exclusive boot tasks (migrations, filesystem sync)...")
 
-        # Run Alembic migrations on startup
-        alembic_cfg = Config("alembic.ini")
-        logger.info("Running Alembic migrations...")
-        try:
-            command.upgrade(alembic_cfg, "head")
-            logger.info("Alembic migrations complete.")
-        except Exception as e:
-            logger.error(f"Failed to run Alembic migrations: {e}")
+    # 1) Schema: Alembic is the single source of truth (create_all no longer runs at boot).
+    #    A migration failure MUST halt startup — it is caught at deploy, not by a user's
+    #    black screen. Deliberately NOT wrapped in a swallowing try/except (see ADR-035).
+    logger.info("Running Alembic migrations...")
+    run_migrations()
+    logger.info("Alembic migrations complete.")
 
-        init_db()
+    # 2) Best-effort init: a hiccup in filesystem sync / seed / warmers should not wedge the
+    #    whole box, so these stay tolerant (unlike migrations above).
+    try:
         db = SessionLocal()
         try:
             sync_db_with_filesystem(db)
@@ -474,17 +477,10 @@ async def lifespan(app: FastAPI):
         # firing it once per uvicorn worker. No-op until enabled in Settings → Frame TV.
         asyncio.create_task(frame_push.frame_push_loop(_frame_select))
         logger.info("[Startup] Frame TV push loop scheduled (leader).")
-
-    except BlockingIOError:
-        logger.info("[Startup] Follower worker initialized. Skipping exclusive boot tasks.")
     except Exception as e:
-        logger.error(f"[Startup] Unexpected error during initialization: {e}")
-    finally:
-        # We deliberately do NOT unlock the file here.
-        # If we unlock it while the leader is still finishing startup tasks,
-        # a slightly delayed follower worker could grab the lock and run migrations concurrently.
-        # The OS will naturally release the lock when the Uvicorn worker process terminates on server shutdown.
-        yield
+        logger.error(f"[Startup] Non-fatal error during initialization: {e}", exc_info=True)
+
+    yield
 
 app = FastAPI(title="Artwork Display Engine API", version="0.4.5", lifespan=lifespan)
 

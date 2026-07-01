@@ -187,7 +187,8 @@ Screen-Docent/
 ├── app.py              # FastAPI: routes, WS hub, middleware, lifespan, catalog+federation+e-ink endpoints
 ├── ai_client.py        # ONE OpenAI-compatible client for all model calls (BYO provider/key/model)
 ├── config.py           # Shared constants (ARTWORK_ROOT, LIBRARY_DIR) — breaks circular imports
-├── database.py         # SQLAlchemy engine, session factory, create_all bootstrap
+├── database.py         # SQLAlchemy engine + session factory (schema owned by Alembic, NOT create_all)
+├── db_migrate.py       # Boot schema mgmt: run_migrations() — build/reconcile to head, fail loud (ADR-035)
 ├── models.py           # ORM: Playlist, Artwork, DiscoveryQueue, Settings, ActiveDisplay,
 │                       #   RemoteCommand, DisplayPlaybackSession, Subscription
 ├── agents.py           # Vision agent: image → VRA metadata (via ai_client)
@@ -209,7 +210,7 @@ Screen-Docent/
 ├── registry/trusted_publishers.json  # curated verified-publisher Ed25519 keys (federation)
 ├── docs/manifest-v2.md           # Manifest v2 spec
 │
-├── migrations/versions/  # Alembic revisions (… → add_focal_point_and_is_personal)
+├── migrations/versions/  # Alembic revisions — single baseline 0001_baseline (squash, ADR-035)
 ├── static/
 │   ├── index.html · app.js · styles.css     # Canvas + focal-adaptive Ken Burns + /art QR
 │   ├── admin.html · admin.js                # admin (responsive, toast/modal, subs panel, badges)
@@ -245,7 +246,10 @@ Screen-Docent/
    `google-generativeai` or hardcode a provider/model — config lives in `SettingsModel` (GUI-set, env fallback).
 6. **AI pipelines run as background tasks** that create + close their own `SessionLocal()`.
 7. **Optimise images before AI** (≤2048px, JPEG 85%, LANCZOS).
-8. **Schema changes go through Alembic** (additive — SQLite can't drop/rename in place).
+8. **Alembic is the single source of truth for the schema** (ADR-035). Add a migration on top of
+   `0001_baseline` (additive — SQLite can't drop/rename in place); boot `db_migrate.run_migrations()`
+   builds/reconciles to head and **halts loudly** on failure. Do NOT reintroduce `create_all` at boot
+   (it masked missing migrations and caused the drift). Tests build schema via `create_all` on throwaway engines.
 9. **WebSocket commands are targeted by `display_id` across workers via the DB** (`remote_commands` +
    `active_displays`); never assume in-process state is shared.
 10. **All artwork lives in `Artwork/_Library/`** (canonical); playlist dirs are symlink/organisation only.
