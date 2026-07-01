@@ -836,6 +836,9 @@
         <!-- Publisher View (folded-in Publisher Studio; capability-gated nav). Scoped CSS below;
              tokens get consolidated into the shared app.css in the design-system phase. -->
         <style>
+        /* The ported publisher CSS assumes border-box (standalone publish.html had a global reset);
+           admin.html has none, so width:100% inputs overflowed their cell + the panel. Scope it here. */
+        #view-publisher, #view-publisher *{box-sizing:border-box}
         #view-publisher .intro{color:#94a3b8;font-size:.86rem;margin:0 0 8px;max-width:760px}
         #view-publisher .panel{background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;padding:16px;margin:14px 0;max-width:820px}
         #view-publisher .panel h2{margin:0 0 12px;font-size:1.05rem;color:var(--text-color)}
