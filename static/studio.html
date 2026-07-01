@@ -9,13 +9,20 @@
   /* My Photos — phone-first; shared tokens/components come from app.css. */
   main{max-width:680px;margin:0 auto;padding:12px 18px 60px}
   .privacy{margin:6px 0 0;color:var(--success-color);font-size:.84rem}
-  .controls{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:14px 0}
-  label.field{display:flex;flex-direction:column;gap:5px;font-size:.78rem;color:var(--text-muted);flex:1;min-width:160px}
+  /* Album chips: one control that filters the gallery AND sets the upload target. */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+  .chip{cursor:pointer;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-color);
+       padding:8px 14px;border-radius:999px;font-size:.85rem;font-family:inherit}
+  .chip.active{background:var(--accent-color);border-color:var(--accent-color);color:#fff}
+  .chip-new{border-style:dashed;color:var(--text-muted)}
+  .chip-count{opacity:.6;font-size:.82em;margin-left:2px}
   .dropzone{display:block;margin:8px 0 18px;border:2px dashed var(--border-color);border-radius:16px;
-       padding:34px 18px;text-align:center;color:var(--text-muted);background:var(--card-bg);transition:.15s;cursor:pointer}
+       padding:30px 18px;text-align:center;color:var(--text-muted);background:var(--card-bg);transition:.15s;cursor:pointer}
   .dropzone:hover,.dropzone.drag{border-color:var(--accent-color);color:var(--text-color);background:#16203a}
   .dz-icon{display:block;font-size:2.4rem;color:var(--accent-color);line-height:1}
-  .dz-inner{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .dz-inner{display:flex;flex-direction:column;gap:6px;align-items:center}
+  .dz-target{font-size:.78rem;color:var(--text-muted)}
+  .dz-target b{color:var(--accent-color)}
   .photo-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;margin-bottom:16px}
   .thumb-wrap{position:relative;width:100%;aspect-ratio:3/2;background:var(--surface-2);cursor:crosshair;overflow:hidden}
   .thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
@@ -40,23 +47,21 @@
 <div class="topbar">
   <a class="brand" href="/admin"><img src="/logo.svg" alt=""> My Photos</a>
   <span class="spacer"></span>
-  <a class="topbar-link" href="/">▶ Display</a>
+  <a class="topbar-link" id="display-link" href="/?playlist=My%20Photos">▶ Display</a>
   <a class="topbar-link" href="/admin">⚙ Admin</a>
 </div>
 <main>
   <p class="privacy">🔒 Your photos stay on your server — never uploaded to anyone's cloud.</p>
-  <div class="controls">
-    <label class="field">Album
-      <select id="album"></select>
-    </label>
-    <button class="secondary" id="new-album">＋ New album</button>
-  </div>
+
+  <!-- One control: pick an album to view it + add photos to it; "＋ New album" creates one. -->
+  <div id="album-chips" class="chips"></div>
 
   <label class="dropzone" id="dropzone">
     <input type="file" id="file-input" accept="image/*" multiple capture="environment" hidden>
     <div class="dz-inner">
       <span class="dz-icon">＋</span>
       <span>Tap to add photos<br><small>or take a new one</small></span>
+      <span class="dz-target">Adding to <b id="dz-target">My Photos</b></span>
     </div>
   </label>
 
@@ -67,8 +72,12 @@
 <script src="/app-core.js"></script>
 <script>
 const $ = s => document.querySelector(s);
-const albumSel = $('#album'), grid = $('#grid'), fileInput = $('#file-input'), dz = $('#dropzone');
+const grid = $('#grid'), fileInput = $('#file-input'), dz = $('#dropzone'), chipsEl = $('#album-chips');
 let ai = { has_key:false, model_is_local:false, provider:'' };
+let albums = [];            // [{id,name,count,is_default}] — personal albums only
+let currentAlbum = 'all';   // 'all' | playlist id (number)
+let albumsInitialized = false;
+let photoData = { albums: [], count: 0 };
 
 async function init(){
   // AI status drives the ✨ Suggest button + its honest privacy note.
@@ -77,33 +86,56 @@ async function init(){
   await loadPhotos();
 }
 
-async function loadAlbums(selectId){
-  let pls = [];
-  try{ pls = await (await fetch('/playlists')).json(); }catch(e){}
-  const hasMyPhotos = pls.some(p => p.name === 'My Photos');
-  albumSel.innerHTML = '';
-  // Default option: backend uses/creates "My Photos" when no playlist_id is sent.
-  if(!hasMyPhotos){ const o=document.createElement('option'); o.value=''; o.textContent='My Photos (default)'; albumSel.appendChild(o); }
-  pls.forEach(p => { const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; albumSel.appendChild(o); });
-  const nw=document.createElement('option'); nw.value='__new__'; nw.textContent='＋ New album…'; albumSel.appendChild(nw);
-  if(selectId) albumSel.value=String(selectId);
-  else albumSel.value = hasMyPhotos ? String(pls.find(p=>p.name==='My Photos').id) : '';
+// --- albums (chips) ---
+async function loadAlbums(){
+  try{ albums = await (await fetch('/api/studio/albums')).json(); }catch(e){ albums = []; }
+  if(!albumsInitialized){
+    const def = albums.find(a => a.is_default) || albums[0];   // default the active chip to "My Photos"
+    currentAlbum = def ? def.id : 'all';
+    albumsInitialized = true;
+  }
+  renderChips(); updateDisplayLink(); updateDropzoneTarget();
 }
 
-$('#new-album').onclick = async () => {
+function renderChips(){
+  const out = [chipHtml('all', 'All photos', null, currentAlbum === 'all')];
+  for(const a of albums) out.push(chipHtml(a.id, a.name, a.count, currentAlbum === a.id));
+  chipsEl.innerHTML = out.join('') + `<button class="chip chip-new" onclick="newAlbum()">＋ New album</button>`;
+}
+function chipHtml(val, label, count, active){
+  const arg = (val === 'all') ? "'all'" : val;
+  const c = (count != null) ? ` <span class="chip-count">${count}</span>` : '';
+  return `<button class="chip${active ? ' active' : ''}" onclick="selectAlbum(${arg})">${_esc(label)}${c}</button>`;
+}
+function selectAlbum(v){
+  currentAlbum = v;
+  grid.innerHTML = '';               // drop any optimistic in-progress cards from the previous album
+  renderChips(); renderGallery(); updateDisplayLink(); updateDropzoneTarget();
+}
+async function newAlbum(){
   const name = (await promptModal('Name this album') || '').trim();
   if(!name) return;
-  try{
-    const fd = new FormData(); fd.append('name', name);
-    const r = await fetch('/playlists', {method:'POST', body:fd});
-    if(!r.ok){ showToast('Could not create album', 'error'); return; }
-    const p = await r.json(); await loadAlbums(p.id);
-  }catch(e){ showToast('Could not create album', 'error'); }
-};
+  const r = await fetch('/api/studio/albums', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name})});
+  const d = await r.json();
+  if(!r.ok){ showToast(d.detail || 'Could not create album', 'error'); return; }
+  await loadAlbums();
+  selectAlbum(d.id);
+}
 
-function albumPlaylistId(){
-  const v = albumSel.value;
-  return (v === '' || v === '__new__') ? null : parseInt(v,10);
+function activeAlbumName(){
+  if(typeof currentAlbum === 'number'){ const a = albums.find(x => x.id === currentAlbum); if(a) return a.name; }
+  const def = albums.find(x => x.is_default); return def ? def.name : 'My Photos';
+}
+// Upload target: the selected album, or the default "My Photos" when "All photos" is active.
+function uploadTargetId(){
+  if(typeof currentAlbum === 'number') return currentAlbum;
+  const def = albums.find(x => x.is_default); return def ? def.id : null;
+}
+function updateDisplayLink(){
+  const link = $('#display-link'); if(link) link.href = '/?playlist=' + encodeURIComponent(activeAlbumName());
+}
+function updateDropzoneTarget(){
+  const el = $('#dz-target'); if(el) el.textContent = activeAlbumName();
 }
 
 // --- drag & drop + file picker ---
@@ -116,7 +148,8 @@ fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileI
 // in most browsers, so a type-only check would silently skip it. The server validates + transcodes.
 const IMG_EXT = /\.(jpe?g|png|gif|webp|bmp|tiff?|heic|heif|avif)$/i;
 async function handleFiles(files){
-  const pid = albumPlaylistId();
+  const pid = uploadTargetId();
+  let any = false;
   for(const file of files){
     if(!(file.type.startsWith('image/') || IMG_EXT.test(file.name))) continue;
     const card = makeCard(file);
@@ -126,9 +159,10 @@ async function handleFiles(files){
       const r = await fetch('/upload/personal', {method:'POST', body:fd});
       if(!r.ok) throw new Error();
       bindCard(card, await r.json());
-      if(!albumPlaylistId()) loadAlbums();   // first upload may have created "My Photos"
+      any = true;
     }catch(e){ card.note.textContent='✗ upload failed'; card.note.className='note warn'; }
   }
+  if(any){ await loadAlbums(); await loadPhotos(); grid.innerHTML=''; }  // refresh counts + gallery; drop optimistic cards
 }
 
 // Build an empty photo card (no image source yet) + return its element refs.
@@ -165,21 +199,29 @@ function makeCardFromArtwork(art){
   return card;
 }
 
-// Studio gallery: load every personal photo, grouped by album, each re-editable via bindCard().
+// Load every personal photo (grouped by album); the gallery then renders per the active chip.
 async function loadPhotos(){
-  let data;
-  try{ data = await (await fetch('/api/studio/photos')).json(); }catch(e){ return; }
+  try{ photoData = await (await fetch('/api/studio/photos')).json(); }catch(e){ photoData = { albums: [], count: 0 }; }
+  renderGallery();
+}
+function renderGallery(){
   const gallery = $('#gallery');
   gallery.innerHTML = '';
-  if(!data.count){
+  if(!photoData.count){
     gallery.innerHTML = '<p class="note" style="text-align:center;margin-top:18px;">No photos yet — add some above and they\'ll show here to edit anytime.</p>';
     return;
   }
-  for(const album of (data.albums || [])){
-    const h = document.createElement('h2');
-    h.className = 'album-h';
-    h.textContent = album.name;
-    gallery.appendChild(h);
+  let groups = photoData.albums || [];
+  if(currentAlbum !== 'all') groups = groups.filter(g => g.playlist_id === currentAlbum);
+  if(!groups.length){
+    gallery.innerHTML = '<p class="note" style="text-align:center;margin-top:18px;">No photos in this album yet — add some above.</p>';
+    return;
+  }
+  for(const album of groups){
+    if(currentAlbum === 'all'){   // headers only make sense when several albums are shown at once
+      const h = document.createElement('h2'); h.className = 'album-h'; h.textContent = album.name;
+      gallery.appendChild(h);
+    }
     for(const art of album.photos){
       const card = makeCardFromArtwork(art);
       gallery.appendChild(card.el);
@@ -258,6 +300,8 @@ async function suggest(id, card){
   finally{ card.suggest.disabled=false; card.suggest.textContent=old; }
 }
 
+window.selectAlbum = selectAlbum;
+window.newAlbum = newAlbum;
 init();
 </script>
 </body>

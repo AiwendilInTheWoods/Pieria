@@ -727,11 +727,13 @@ async def upload_artwork(background_tasks: BackgroundTasks, file: UploadFile = F
 PERSONAL_PLAYLIST_NAME = "My Photos"
 
 
-def _get_or_create_playlist(db: Session, name: str) -> PlaylistModel:
+def _get_or_create_playlist(db: Session, name: str, is_personal: bool = False) -> PlaylistModel:
     pl = db.query(PlaylistModel).filter(PlaylistModel.name == name).first()
     if not pl:
-        pl = PlaylistModel(name=name)
+        pl = PlaylistModel(name=name, is_personal=is_personal)
         db.add(pl); db.commit(); db.refresh(pl)
+    elif is_personal and not pl.is_personal:
+        pl.is_personal = True; db.commit()   # self-heal a pre-existing "My Photos" created before the flag
     return pl
 
 
@@ -801,7 +803,7 @@ async def upload_personal_photo(
 
     pl = db.query(PlaylistModel).filter(PlaylistModel.id == playlist_id).first() if playlist_id else None
     if pl is None:
-        pl = _get_or_create_playlist(db, PERSONAL_PLAYLIST_NAME)
+        pl = _get_or_create_playlist(db, PERSONAL_PLAYLIST_NAME, is_personal=True)
     _link_artwork_to_playlist(db, pl.id, art.id)
     return art
 
@@ -903,6 +905,35 @@ async def list_personal_photos(db: Session = Depends(get_db)):
     if unfiled:
         out.append({"playlist_id": None, "name": "Unfiled", "photos": unfiled})
     return {"albums": out, "count": len(photos)}
+
+
+@app.get("/api/studio/albums")
+async def list_personal_albums(db: Session = Depends(get_db)):
+    """Personal albums for the My Photos chips — is_personal playlists only (Museum collections never
+    appear here), including empty ones (so a freshly-created album shows immediately). Photo counts come
+    from the playlist relationship. Sorted with the "My Photos" default first, then alphabetically."""
+    albums = db.query(PlaylistModel).filter(PlaylistModel.is_personal.is_(True)).all()
+    rows = [{"id": p.id, "name": p.name, "count": len(p.artworks),
+             "is_default": p.name == PERSONAL_PLAYLIST_NAME} for p in albums]
+    rows.sort(key=lambda r: (not r["is_default"], r["name"].lower()))
+    return rows
+
+
+class StudioAlbumPayload(BaseModel):
+    name: str
+
+
+@app.post("/api/studio/albums")
+async def create_personal_album(payload: StudioAlbumPayload, db: Session = Depends(get_db)):
+    """Create a personal album (a playlist flagged is_personal) from the My Photos chip row."""
+    name = (payload.name or "").strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="Album name required")
+    if db.query(PlaylistModel).filter(PlaylistModel.name == name).first():
+        raise HTTPException(status_code=400, detail=f"An album or collection named '{name}' already exists")
+    pl = PlaylistModel(name=name, is_personal=True)
+    db.add(pl); db.commit(); db.refresh(pl)
+    return {"id": pl.id, "name": pl.name, "count": 0, "is_default": False}
 
 
 @app.get("/artworks/pending", response_model=List[ArtworkSchema])

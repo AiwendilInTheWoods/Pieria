@@ -65,6 +65,9 @@ class PlaylistModel(Base):
     display_time: Mapped[int] = mapped_column(Integer, default=30)
     default_mode: Mapped[str] = mapped_column(String, default="ken-burns")
     shuffle: Mapped[bool] = mapped_column(Boolean, default=False)
+    # True for "My Photos" albums (created via the personal Studio). Keeps the personal world
+    # (My Photos chips) separate from Museum collections, which stay is_personal=False.
+    is_personal: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Placard Timers (stored in seconds)
     placard_initial_wait_sec: Mapped[int] = mapped_column(Integer, default=5)

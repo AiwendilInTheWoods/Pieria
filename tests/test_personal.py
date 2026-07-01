@@ -315,3 +315,38 @@ def test_update_artwork_metadata_edits_in_place_keeps_status(client):
 def test_update_artwork_metadata_404(client):
     c, _ = client
     assert c.patch("/artworks/99999/metadata", json=_META).status_code == 404
+
+
+# --- Personal albums (My Photos chips; is_personal playlists) ---------------------------------------
+
+def test_studio_albums_lists_only_personal(client):
+    """GET /api/studio/albums returns only is_personal playlists — Museum collections never appear."""
+    c, db = client
+    db.add(PlaylistModel(name="The Masterpieces", is_personal=False)); db.commit()
+    _upload(c)  # auto-creates the "My Photos" personal default
+    albums = c.get("/api/studio/albums").json()
+    names = [a["name"] for a in albums]
+    assert PERSONAL_PLAYLIST_NAME in names
+    assert "The Masterpieces" not in names
+    assert albums[0]["name"] == PERSONAL_PLAYLIST_NAME and albums[0]["is_default"] is True
+
+
+def test_create_personal_album(client):
+    """POST /api/studio/albums creates an is_personal playlist (empty albums list too); dedupes."""
+    c, db = client
+    r = c.post("/api/studio/albums", json={"name": "Vacation 2026"})
+    assert r.status_code == 200, r.text
+    pl = db.query(PlaylistModel).filter(PlaylistModel.name == "Vacation 2026").first()
+    assert pl is not None and pl.is_personal is True
+    # Empty album still appears in the chip list.
+    assert "Vacation 2026" in [a["name"] for a in c.get("/api/studio/albums").json()]
+    # Duplicate name rejected.
+    assert c.post("/api/studio/albums", json={"name": "Vacation 2026"}).status_code == 400
+
+
+def test_upload_personal_default_album_is_flagged(client):
+    """The auto-created 'My Photos' album is marked is_personal so it shows in My Photos."""
+    c, db = client
+    _upload(c)
+    pl = db.query(PlaylistModel).filter(PlaylistModel.name == PERSONAL_PLAYLIST_NAME).first()
+    assert pl is not None and pl.is_personal is True
