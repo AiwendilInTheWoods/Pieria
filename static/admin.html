@@ -6,19 +6,12 @@
     <title>Screen Docent Admin</title>
     <!-- Cropper.js + Sortable.js — vendored locally so admin works offline / air-gapped -->
     <link rel="stylesheet" href="/vendor/cropper.min.css">
+    <link rel="stylesheet" href="/app.css">
     <script src="/vendor/cropper.min.js"></script>
     <script src="/vendor/Sortable.min.js"></script>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --sidebar-bg: #1e293b;
-            --accent-color: #3b82f6;
-            --success-color: #10b981;
-            --text-color: #f1f5f9;
-            --border-color: #334155;
-            --card-bg: #1e293b;
-        }
-
+        /* Theme tokens + shared component/box-sizing come from app.css (linked above). Only the
+           admin shell + view-specific styling live here. */
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-color);
@@ -187,8 +180,6 @@
         }
         .review-actions { grid-column: span 2; display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
 
-        .hidden { display: none !important; }
-
         /* Modal */
         .modal {
             display: none;
@@ -248,9 +239,7 @@
         body.selecting #library-grid .artwork-card, body.selecting #artwork-grid .artwork-card, body.selecting #library-grid .artwork-card img, body.selecting #artwork-grid .artwork-card img { cursor: pointer; }
         .picker-card.selected { position: relative; outline: 3px solid var(--accent-color); outline-offset: -3px; }
 
-        button.primary { background: var(--accent-color); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-        button.success { background: var(--success-color); border: none; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        button.secondary { background: transparent; border: 1px solid var(--border-color); color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        /* button.primary / .success / .secondary now come from app.css */
 
         /* Library Picker */
         .library-picker-grid {
@@ -278,43 +267,7 @@
         }
         .ai-flash { animation: aiFlash 1.3s ease; border-color: var(--accent-color) !important; }
 
-        /* --- Toasts (transient, themed feedback; replaces native alert) --- */
-        #toast-container {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-            z-index: 200; display: flex; flex-direction: column; gap: 10px;
-            align-items: center; pointer-events: none;
-        }
-        .toast {
-            background: var(--sidebar-bg); border: 1px solid var(--border-color);
-            color: var(--text-color); padding: 12px 20px; border-radius: 10px;
-            font-size: 0.88rem; box-shadow: 0 8px 30px rgba(0,0,0,0.45); max-width: 90vw;
-            opacity: 0; transform: translateY(10px); transition: opacity .25s, transform .25s;
-        }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.success { border-color: var(--success-color); }
-        .toast.error { border-color: #ef4444; }
-
-        /* --- Modal (themed confirm / prompt; replaces native confirm()/prompt()) --- */
-        #modal-overlay {
-            position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.6);
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal-box {
-            background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 14px;
-            padding: 26px; max-width: 460px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.55);
-        }
-        .modal-box .modal-msg { font-size: 0.95rem; line-height: 1.55; margin: 0 0 18px; white-space: pre-line; }
-        .modal-box input {
-            width: 100%; box-sizing: border-box; background: #0f172a; border: 1px solid var(--border-color);
-            color: var(--text-color); padding: 10px 12px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem;
-        }
-        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-        .modal-actions button {
-            padding: 10px 18px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border-color);
-            background: transparent; color: var(--text-color); font-size: 0.88rem;
-        }
-        .modal-actions .btn-confirm { background: var(--accent-color); border-color: var(--accent-color); }
-        .modal-actions .btn-confirm.danger { background: #ef4444; border-color: #ef4444; }
+        /* Toasts + themed confirm/prompt modal now come from app.css */
 
         /* --- Mobile top bar + slide-in sidebar drawer (hidden on desktop) --- */
         .mobile-topbar { display: none; }
@@ -836,9 +789,6 @@
         <!-- Publisher View (folded-in Publisher Studio; capability-gated nav). Scoped CSS below;
              tokens get consolidated into the shared app.css in the design-system phase. -->
         <style>
-        /* The ported publisher CSS assumes border-box (standalone publish.html had a global reset);
-           admin.html has none, so width:100% inputs overflowed their cell + the panel. Scope it here. */
-        #view-publisher, #view-publisher *{box-sizing:border-box}
         #view-publisher .intro{color:#94a3b8;font-size:.86rem;margin:0 0 8px;max-width:760px}
         #view-publisher .panel{background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;padding:16px;margin:14px 0;max-width:820px}
         #view-publisher .panel h2{margin:0 0 12px;font-size:1.05rem;color:var(--text-color)}
